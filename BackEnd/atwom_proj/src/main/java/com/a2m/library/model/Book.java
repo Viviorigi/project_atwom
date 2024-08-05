@@ -46,8 +46,8 @@ public class Book {
     )
     private Set<Author> authors;
 
-    // @OneToMany(mappedBy = "book")
-    // private Set<CheckoutDetail> checkoutDetails;
+    @OneToMany(mappedBy = "book")
+    private Set<CheckoutDetail> checkoutDetails;
 
     @OneToMany(mappedBy = "book")
     private Set<ImagesBook> imagesBooks;
