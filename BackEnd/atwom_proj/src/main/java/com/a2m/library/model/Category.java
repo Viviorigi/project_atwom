@@ -20,6 +20,9 @@ public class Category {
     private Integer id;
 
     private String name;
+    
+    @Column(name = "deleted")
+	private Boolean deleted = false;
 
     @OneToMany(mappedBy = "category")
     private Set<Book> books;

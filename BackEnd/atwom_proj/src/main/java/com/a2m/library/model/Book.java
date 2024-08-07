@@ -26,6 +26,8 @@ public class Book {
     private String publisher;
     private Integer quantity;
     private byte[] image;
+    @Column(name = "deleted")
+	private Boolean deleted = false;
 
     @ManyToOne
     @JoinColumn(name = "status_id")

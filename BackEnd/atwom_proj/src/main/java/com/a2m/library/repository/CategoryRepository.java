@@ -6,11 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.a2m.library.model.Book;
-import com.a2m.library.model.User;
+import com.a2m.library.model.Category;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book, Integer> {
-	@Query("SELECT u FROM Book u WHERE u.deleted = false")
-	List<Book> findAllActiveBooks();
+public interface CategoryRepository extends JpaRepository<Category, Integer>{
+	@Query("SELECT u FROM Category u WHERE u.deleted = false")
+	List<Category> findAllActiveCategories();
 }

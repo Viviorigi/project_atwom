@@ -20,6 +20,7 @@ public class BookDTO implements Serializable {
     private CategoryDTO category; 
     private LocalDateTime creDt;
     private LocalDateTime updDt;
+    private Boolean deleted;
     private Set<AuthorDTO> authors;
 }
 
