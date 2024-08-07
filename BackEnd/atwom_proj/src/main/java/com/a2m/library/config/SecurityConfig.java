@@ -68,19 +68,13 @@ public class SecurityConfig {
 						.requestMatchers("/api/admin/signup").permitAll()
 						.requestMatchers("/api/admin/verify**").permitAll()
 	                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-<<<<<<< HEAD
-						//.anyRequest().authenticated());
-						.anyRequest().permitAll());
-=======
 	                    .requestMatchers("/api/student/*").permitAll()
 	                    .requestMatchers("/files/*").permitAll()
+	                    .requestMatchers("/api/admin/book/**").hasRole("ADMIN")
+	                    .requestMatchers("/api/admin/category/**").hasRole("ADMIN")
 						.anyRequest().authenticated());
->>>>>>> 733d4537731c020f231ed54c26103a0dd360d9dc
-		
 		http.authenticationProvider(authenticationProvider());
-
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
 		return http.build();
 	}
 	
