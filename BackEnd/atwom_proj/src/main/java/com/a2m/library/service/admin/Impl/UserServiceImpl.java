@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.coyote.BadRequestException;
@@ -19,8 +21,11 @@ import com.a2m.library.constant.RoleEnum;
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.model.User;
 import com.a2m.library.model.UserRole;
+import com.a2m.library.model.VerificationToken;
 import com.a2m.library.repository.UserRepository;
 import com.a2m.library.repository.UserRoleRepository;
+import com.a2m.library.repository.VerificationTokenRepository;
+import com.a2m.library.service.admin.EmailService;
 import com.a2m.library.service.admin.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -35,6 +40,12 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 	@Autowired
 	private UserRoleRepository userRoleRepository;
+
+	@Autowired
+	private VerificationTokenRepository tokenRepository;
+
+	@Autowired
+	private EmailService emailService;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
@@ -60,13 +71,25 @@ public class UserServiceImpl implements UserService {
 		user.setDob(userDTO.getDob());
 		user.setCre_dt(LocalDateTime.now());
 		user.setUpd_dt(LocalDateTime.now());
-
+		user.setActive(false);
 		userRepository.save(user);
 		UserRole userRole = new UserRole();
 		userRole.setRoleId(RoleEnum.STUDENT_USER.getValue());
 		userRole.setUserUid(user.getUserUid());
 
 		userRoleRepository.save(userRole);
+
+//		String token = UUID.randomUUID().toString();
+//		VerificationToken verificationToken = new VerificationToken();
+//		verificationToken.setToken(token);
+//		verificationToken.setUser(user);
+//		verificationToken.setExpiryDate(LocalDateTime.now().plusHours(24));
+//
+//		tokenRepository.save(verificationToken);
+//
+//		String verificationUrl = "http://localhost:8080/api/admin/verify?token=" + token;
+//		emailService.sendEmail(user.getEmail(), "Verify your email",
+//				"Click the link to verify your email: " + verificationUrl);
 	}
 
 	@Override
@@ -139,7 +162,11 @@ public class UserServiceImpl implements UserService {
 		user.setClassName(userDTO.getClassName());
 		user.setAddress(userDTO.getAddress());
 		user.setPhone(userDTO.getPhone());
-		user.setAvatar(userDTO.getAvatar());
+		if (userDTO.getAvatar() != null) {
+			user.setAvatar(userDTO.getAvatar());
+		}
+//		System.out.println(userDTO.isActive());
+		user.setActive(userDTO.isActive());
 		user.setDob(userDTO.getDob());
 		user.setUpd_dt(LocalDateTime.now());
 
@@ -157,4 +184,10 @@ public class UserServiceImpl implements UserService {
 
 		userRepository.save(user);
 	}
+	
+	@Override
+	public UserDTO findByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return convertToUserDTO(user.get());
+    }
 }

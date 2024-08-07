@@ -99,6 +99,7 @@
 			<version>0.11.5</version>
 			<scope>runtime</scope>
 		</dependency>
+<<<<<<< HEAD
 
 		<dependency>
 			<groupId>org.modelmapper</groupId>
@@ -106,6 +107,12 @@
 			<version>3.0.0</version> 
 		</dependency>
 
+=======
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+>>>>>>> 733d4537731c020f231ed54c26103a0dd360d9dc
 	</dependencies>
 
 

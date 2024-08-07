@@ -65,9 +65,17 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/admin/login").permitAll()
+						.requestMatchers("/api/admin/signup").permitAll()
+						.requestMatchers("/api/admin/verify**").permitAll()
 	                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+<<<<<<< HEAD
 						//.anyRequest().authenticated());
 						.anyRequest().permitAll());
+=======
+	                    .requestMatchers("/api/student/*").permitAll()
+	                    .requestMatchers("/files/*").permitAll()
+						.anyRequest().authenticated());
+>>>>>>> 733d4537731c020f231ed54c26103a0dd360d9dc
 		
 		http.authenticationProvider(authenticationProvider());
 
