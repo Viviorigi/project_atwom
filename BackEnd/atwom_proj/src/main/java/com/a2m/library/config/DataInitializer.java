@@ -47,13 +47,11 @@ public class DataInitializer {
 				adminUser.setCre_dt(LocalDateTime.now());
 				adminUser.setUpd_dt(LocalDateTime.now());
 				adminUser.setDeleted(false);
-
+				adminUser.setActive(true);
 				userRepository.save(adminUser);
-
 				UserRole adminRole = new UserRole();
 				adminRole.setRoleId(RoleEnum.ADMIN_USER.getValue());
 				adminRole.setUserUid(adminUser.getUserUid());
-
 				userRoleRepository.save(adminRole);
 			}
 		};
@@ -76,7 +74,7 @@ public class DataInitializer {
                 roleRepository.save(userRole);
             }
 
-            System.out.println("Default roles created if they did not exist");
+//            System.out.println("Default roles created if they did not exist");
         };
     }
 }

@@ -23,4 +23,5 @@ public interface UserService {
 	public void update(UserDTO userDTO) throws Exception;
 	
 	 public void deleteUser(Long userUid) throws Exception;
+	 public UserDTO findByUsername(String username);
 }

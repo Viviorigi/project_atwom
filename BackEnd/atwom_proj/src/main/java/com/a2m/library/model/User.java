@@ -68,6 +68,8 @@ public class User implements Serializable {
 
 	@Column(name = "deleted")
 	private Boolean deleted = false;
+	
+	private boolean isActive = false;
 
 	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
 	private List<Role> roles;
