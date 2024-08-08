@@ -6,7 +6,7 @@ import Book from '../pages/book/Book';
 import Student from '../pages/student/Student';
 import Order from '../pages/order/Order';
 export const indexRouter: any = {
-    path: 'admin',
+    path: '',
     element: (
         <Layout />
     ),
