@@ -42,13 +42,13 @@ public class User implements Serializable {
 	@Column(name = "email")
 	private String email;
 
-	@Column(name = "fullName")
+	@Column(name = "full_name")
 	private String fullName;
 
 	@Column(name = "dob")
 	private LocalDateTime dob;
 
-	@Column(name = "className")
+	@Column(name = "class_name")
 	private String className;
 
 	@Column(name = "phone")
@@ -68,7 +68,8 @@ public class User implements Serializable {
 
 	@Column(name = "deleted")
 	private Boolean deleted = false;
-	
+
+	@Column(name = "is_active")
 	private boolean isActive = false;
 
 	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
