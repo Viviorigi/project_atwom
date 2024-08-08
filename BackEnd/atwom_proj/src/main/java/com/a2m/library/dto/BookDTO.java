@@ -15,8 +15,10 @@ public class BookDTO implements Serializable {
     private Year publicationYear;
     private String publisher;
     private Integer quantity;
-    private String image;
-    private StatusDTO status;
+    private Integer quantityPlaced;
+    private Integer status;
+    private String[] image;
+//    private StatusDTO status;
     private CategoryDTO category; 
     private LocalDateTime creDt;
     private LocalDateTime updDt;

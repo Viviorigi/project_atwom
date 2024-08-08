@@ -72,7 +72,8 @@ public class SecurityConfig {
 	                    .requestMatchers("/files/*").permitAll()
 	                    .requestMatchers("/api/admin/book/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/admin/category/**").hasRole("ADMIN")
-						.anyRequest().authenticated());
+	                    .anyRequest().permitAll());
+//						.anyRequest().authenticated());
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();

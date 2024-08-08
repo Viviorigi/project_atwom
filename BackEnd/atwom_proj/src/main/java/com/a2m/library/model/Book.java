@@ -25,13 +25,16 @@ public class Book {
     private Year publicationYear;
     private String publisher;
     private Integer quantity;
-    private byte[] image;
+    private Integer quantityPlaced;
+    private Integer status;
+    private double price;
+    private String[] image;
     @Column(name = "deleted")
 	private Boolean deleted = false;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+//    @ManyToOne
+//    @JoinColumn(name = "status_id")
+//    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "cate_id")
