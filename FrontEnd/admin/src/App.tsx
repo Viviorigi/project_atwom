@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import './assets/css/unicons.css';
 import { Navigate, useRoutes } from 'react-router-dom';
 import { indexRouter } from './app/routers/indexRouter';
 import NotPermission from './app/pages/NotPermission';

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 
 export default function SideBar() {
     return (
-        <div>
-            <nav className="navbar navbar-vertical navbar-expand-lg">
+        <>
+        <nav className="navbar navbar-vertical navbar-expand-lg">
             <div className="collapse navbar-collapse" id="navbarVerticalCollapse">
                 {/* scrollbar removed*/}
                 <div className="navbar-vertical-content">
@@ -48,6 +48,6 @@ export default function SideBar() {
             </div>
             <div className="navbar-vertical-footer"><button className="btn navbar-vertical-toggle border-0 fw-semi-bold w-100 white-space-nowrap d-flex align-items-center"><span className="uil uil-left-arrow-to-left fs-0" /><span className="uil uil-arrow-from-right fs-0" /><span className="navbar-vertical-footer-text ms-2">Collapsed View</span></button></div>
         </nav>
-        </div>
+        </>
     )
 }
