@@ -19,7 +19,7 @@ import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.service.category.CategoryService;
 
 @RestController
-@RequestMapping(value = "api/admin")
+//@RequestMapping(value = "api/admin")
 public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
@@ -30,7 +30,7 @@ public class CategoryController {
 		return ResponseEntity.ok().body(categoryDTOs);
 	}
 	
-	@PostMapping("category/add")
+	@PostMapping("/category/add")
 	public ResponseEntity<?> categoryAddPost(@RequestBody CategoryDTO categoryDTO){
 		try {
 			categoryService.save(categoryDTO);
@@ -41,7 +41,7 @@ public class CategoryController {
 		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
 	}
 	
-	@PostMapping("category/edit")
+	@PostMapping("/category/edit")
 	public ResponseEntity<?> bookEditPost(@RequestBody CategoryDTO categoryDTO){
 		try {
 			categoryService.save(categoryDTO);
@@ -52,7 +52,33 @@ public class CategoryController {
 		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
 	}
 	
-	@DeleteMapping("category/delete")
+	@PostMapping("/category/hidden")
+	public ResponseEntity<?> categoryHiddenPost(@RequestParam Integer id){
+		try {
+			CategoryDTO categoryDTO = categoryService.findById(id);
+			categoryDTO.setDeleted(true);
+			categoryService.save(categoryDTO);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseEntity.badRequest().body(new MessageResponse("Hidden failed"));
+		}
+		return ResponseEntity.ok().body(new MessageResponse("Hidden ok"));
+	}
+	
+	@PostMapping("/category/active")
+	public ResponseEntity<?> categoryActivePost(@RequestParam Integer id){
+		try {
+			CategoryDTO categoryDTO = categoryService.findById(id);
+			categoryDTO.setDeleted(false);
+			categoryService.save(categoryDTO);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseEntity.badRequest().body(new MessageResponse("Active failed"));
+		}
+		return ResponseEntity.ok().body(new MessageResponse("Active ok"));
+	}
+	
+	@DeleteMapping("/category/delete")
 	public ResponseEntity<?> bookDelete(@RequestParam Integer id){
 		try {
 			categoryService.delete(id);

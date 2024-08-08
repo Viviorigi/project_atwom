@@ -21,6 +21,6 @@ public class Status {
 
     private String name;
 
-    @OneToMany(mappedBy = "status")
-    private Set<Book> books;
+//    @OneToMany(mappedBy = "status")
+//    private Set<Book> books;
 }

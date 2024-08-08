@@ -18,7 +18,7 @@ import com.a2m.library.model.Book;
 import com.a2m.library.service.book.BookService;
 
 @RestController
-@RequestMapping(value = "api/admin")
+//@RequestMapping(value = "api/admin")
 public class BookController {
 	@Autowired
 	BookService bookService;
@@ -29,7 +29,7 @@ public class BookController {
 		return ResponseEntity.ok().body(books);
 	}
 	
-	@PostMapping("book/add")
+	@PostMapping("/book/add")
 	public ResponseEntity<?> bookAddPost(@RequestBody BookDTO bookDTO){
 		try {
 			bookService.save(bookDTO);
@@ -40,7 +40,7 @@ public class BookController {
 		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
 	}
 	
-	@PostMapping("book/edit")
+	@PostMapping("/book/edit")
 	public ResponseEntity<?> bookEditPost(@RequestBody BookDTO bookDTO){
 		try {
 			bookService.save(bookDTO);
@@ -51,7 +51,33 @@ public class BookController {
 		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
 	}
 	
-	@DeleteMapping("book/delete")
+	@PostMapping("/book/hidden")
+	public ResponseEntity<?> bookHiddenPost(@RequestParam Integer id){
+		try {
+			BookDTO bookDTO = bookService.findById(id);
+			bookDTO.setDeleted(true);
+			bookService.save(bookDTO);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+		}
+		return ResponseEntity.ok().body(new MessageResponse("Hidden ok"));
+	}
+	
+	@PostMapping("/book/active")
+	public ResponseEntity<?> bookActivePost(@RequestParam Integer id){
+		try {
+			BookDTO bookDTO = bookService.findById(id);
+			bookDTO.setDeleted(false);
+			bookService.save(bookDTO);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+		}
+		return ResponseEntity.ok().body(new MessageResponse("Active ok"));
+	}
+	
+	@DeleteMapping("/book/delete")
 	public ResponseEntity<?> bookDelete(@RequestParam Integer id){
 		try {
 			bookService.delete(id);
