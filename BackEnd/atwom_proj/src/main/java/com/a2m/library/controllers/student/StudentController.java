@@ -31,7 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.request.ChangePasswordRequest;
+import com.a2m.library.dto.request.ForgotPasswordRequest;
 import com.a2m.library.dto.request.LoginRequest;
+import com.a2m.library.dto.request.ResetPasswordRequest;
 import com.a2m.library.dto.response.JwtResponse;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.User;
@@ -39,6 +41,7 @@ import com.a2m.library.repository.UserRepository;
 import com.a2m.library.repository.VerificationTokenRepository;
 import com.a2m.library.security.CustomUserDetails;
 import com.a2m.library.service.admin.UserService;
+import com.a2m.library.service.student.PasswordResetService;
 import com.a2m.library.service.student.StudentService;
 import com.a2m.library.util.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -71,6 +74,9 @@ public class StudentController {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordResetService passwordResetService;
 
 	public StudentController(UserService userService, ObjectMapper objectMapper) {
 		this.userService = userService;
@@ -177,7 +183,7 @@ public class StudentController {
 				user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new UsernameNotFoundException("User Not Found with -> username" + username));
 				boolean matches = passwordEncoder.matches(changePass.getCurrentPassword(), user.getPassword());
-				if(!matches) {
+				if (!matches) {
 					throw new BadCredentialsException("Current Password do not match");
 				}
 				if (changePass.getNewPassword() != null) {
@@ -191,6 +197,31 @@ public class StudentController {
 				return new ResponseEntity<>(new MessageResponse("Change pass successfully"), HttpStatus.OK);
 			} catch (UsernameNotFoundException exception) {
 				return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
+			}
+		}
+	}
+
+	@PostMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+		try {
+			passwordResetService.sendPasswordResetToken(request.getEmail());
+			return ResponseEntity.ok(new MessageResponse("Password reset link has been sent to your email"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+		}
+	}
+
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> resetPassword(@RequestParam("token") String token,
+			@Valid @RequestBody ResetPasswordRequest resetPass) {
+		if (!resetPass.getNewPassword().equals(resetPass.getConfirmationPassword())) {
+			throw new BadCredentialsException("New Password do not match");
+		} else {
+			try {
+				passwordResetService.resetPassword(token, resetPass.getNewPassword());
+				return ResponseEntity.ok(new MessageResponse("Password reset successful"));
+			} catch (Exception e) {
+				return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 			}
 		}
 	}

@@ -71,6 +71,13 @@ public class User implements Serializable {
 
 	@Column(name = "is_active")
 	private boolean isActive = false;
+	
+	// New fields for password reset
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
+    @Column(name = "token_expiration_date")
+    private LocalDateTime tokenExpirationDate;
 
 	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
 	private List<Role> roles;
