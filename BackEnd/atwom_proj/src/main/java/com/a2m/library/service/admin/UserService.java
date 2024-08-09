@@ -19,9 +19,10 @@ public interface UserService {
 			throws JsonMappingException, JsonProcessingException;
 
 	public List<UserDTO> getAll();
-	
+
 	public void update(UserDTO userDTO) throws Exception;
-	
-	 public void deleteUser(Long userUid) throws Exception;
-	 public UserDTO findByUsername(String username);
+
+	public void deleteUser(Long userUid) throws Exception;
+
+	public UserDTO findByUsername(String username);
 }
