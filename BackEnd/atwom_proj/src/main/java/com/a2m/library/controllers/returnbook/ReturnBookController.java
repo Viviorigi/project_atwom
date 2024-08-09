@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.ReturnBookDTO;
 import com.a2m.library.service.status.ReturnBookService;
 
@@ -35,8 +36,7 @@ public class ReturnBookController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ReturnBookDTO> updateStatus(@PathVariable Integer id, @RequestParam boolean status) {
+    public ResponseEntity<ReturnBookDTO> updateStatus(@PathVariable Integer id, @RequestParam CheckoutStatus status) {
         return ResponseEntity.ok(returnBookService.updateStatus(id, status));
     }
 }
-

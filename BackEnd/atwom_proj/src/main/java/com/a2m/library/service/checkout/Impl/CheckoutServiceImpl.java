@@ -1,23 +1,20 @@
 package com.a2m.library.service.checkout.Impl;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.a2m.library.constant.CheckoutStatus;
+import com.a2m.library.dto.CheckoutDTO;
+import com.a2m.library.model.Checkout;
+import com.a2m.library.repository.CheckoutRepository;
+import com.a2m.library.service.checkout.CheckoutMapper;
+import com.a2m.library.service.checkout.CheckoutService;
 import com.a2m.library.dto.response.ResourceNotFoundException;
-import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.a2m.library.dto.CheckoutDTO;
-import com.a2m.library.dto.CheckoutDetailDTO;
-import com.a2m.library.model.Checkout;
-import com.a2m.library.model.CheckoutDetail;
-import com.a2m.library.repository.CheckoutRepository;
-import com.a2m.library.repository.CheckoutDetailRepository;
-import com.a2m.library.service.checkout.CheckoutMapper;
-import com.a2m.library.service.checkout.CheckoutService;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
@@ -26,16 +23,13 @@ public class CheckoutServiceImpl implements CheckoutService {
     private CheckoutRepository checkoutRepository;
 
     @Autowired
-private CheckoutDetailRepository checkoutDetailRepository;
-
-    @Autowired
     private CheckoutMapper checkoutMapper;
 
     @Override
-    public Set<CheckoutDTO> findAll() {
+    public List<CheckoutDTO> findAll() {
         return checkoutRepository.findAll().stream()
-                                 .map(checkoutMapper::toDTO)
-                                 .collect(Collectors.toSet());
+                .map(checkoutMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -47,42 +41,44 @@ private CheckoutDetailRepository checkoutDetailRepository;
     @Transactional
     public CheckoutDTO save(CheckoutDTO checkoutDTO) {
         Checkout checkout = checkoutMapper.toEntity(checkoutDTO);
-        checkout.setStatus(false);
+        checkout.setStatus(CheckoutStatus.REQUESTED);
+        checkout.setStartTime(LocalDateTime.now());
+        checkout.setEndTime(checkout.getStartTime().plusDays(14));
         checkout = checkoutRepository.save(checkout);
+        // 
+        // messageService.sendToAdmin("A new book checkout has been requested.");
         return checkoutMapper.toDTO(checkout);
     }
 
     @Override
     @Transactional
-    public CheckoutDTO updateStatus(Integer id, boolean status) {
+    public CheckoutDTO updateStatus(Integer id, CheckoutStatus status) {
         Checkout checkout = checkoutRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
         checkout.setStatus(status);
+
+        if (status == CheckoutStatus.BORROWED) {
+            checkout.setStartTime(LocalDateTime.now());
+            checkout.setEndTime(checkout.getStartTime().plusDays(14));
+        }
+
         checkout = checkoutRepository.save(checkout);
         return checkoutMapper.toDTO(checkout);
     }
 
     @Override
-    @Transactional
-    public void completeCheckout(Integer id, Set<CheckoutDetailDTO> checkoutDetails) {
-        Checkout checkout = checkoutRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
-        
-        checkout.setStatus(true);
-        checkoutRepository.save(checkout);
+    public void checkExpiredCheckouts() {
+        List<Checkout> expiredCheckouts = checkoutRepository.findAll().stream()
+                .filter(checkout -> checkout.getEndTime().isBefore(LocalDateTime.now()) && checkout.getStatus() == CheckoutStatus.BORROWED)
+                .collect(Collectors.toList());
 
-        // Convert DTOs to entities and save details
-        Set<CheckoutDetail> details = checkoutDetails.stream()
-            .map(detailDTO -> {
-                CheckoutDetail detail = new CheckoutDetail();
-                detail.setBookId(detailDTO.getBookId());
-                detail.setCheckoutId(id);
-                detail.setQuantity(detailDTO.getQuantity());
-                return detail;
-            })
-            .collect(Collectors.toSet());
-        
-        checkoutDetailRepository.saveAll(details);
+        for (Checkout checkout : expiredCheckouts) {
+            checkout.setStatus(CheckoutStatus.EXPIRED);
+            checkoutRepository.save(checkout);
+            // tin nhan qua han
+            // messageService.sendToUser(checkout.getUser().getId(), "Your book is overdue. Please return it as soon as possible.");
+        }
     }
 }
+
 
