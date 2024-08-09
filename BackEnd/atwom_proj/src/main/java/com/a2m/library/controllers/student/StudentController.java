@@ -65,7 +65,7 @@ public class StudentController {
 
 	@Autowired
 	private VerificationTokenRepository tokenRepository;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -79,10 +79,10 @@ public class StudentController {
 
 	@Value("${file.upload-dir}")
 	private String uploadDir;
-	
+
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-		
+
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -91,14 +91,12 @@ public class StudentController {
 
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-		
 		User user = userRepository.findByUsername(loginRequest.getUsername())
-	            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-	    if (!user.isActive()) {
-	        throw new BadCredentialsException("User account is not verified");
-	    }
-		
+		if (!user.isActive()) {
+			throw new BadCredentialsException("User account is not verified");
+		}
 
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
@@ -151,41 +149,50 @@ public class StudentController {
 			throws JsonMappingException, JsonProcessingException {
 		return ResponseEntity.ok(userService.getByUserUid(userUid));
 	}
-	
+
 	@GetMapping("/myinfo")
-    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-        if (jwtUtil.validateJwtToken(token)) {
-            String username = jwtUtil.getUserNameFromJwtToken(token);
-            UserDTO userDTO = userService.findByUsername(username);
-            return ResponseEntity.ok(userDTO);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-        }
-    }
-	
+	public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
+		if (token.startsWith("Bearer ")) {
+			token = token.substring(7);
+		}
+		if (jwtUtil.validateJwtToken(token)) {
+			String username = jwtUtil.getUserNameFromJwtToken(token);
+			UserDTO userDTO = userService.findByUsername(username);
+			return ResponseEntity.ok(userDTO);
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+		}
+	}
+
 	@PatchMapping("/change/pass")
-	public ResponseEntity<?> changePass(HttpServletRequest request, @Valid @RequestBody ChangePasswordRequest changePass){
+	public ResponseEntity<?> changePass(HttpServletRequest request,
+			@Valid @RequestBody ChangePasswordRequest changePass) {
 		String jwt = jwtUtil.getJwt(request);
-        String username = jwtUtil.getUserNameFromJwtToken(jwt);
-        User user;
-        try {
-            user = userRepository.findByUsername(username).orElseThrow(()-> new UsernameNotFoundException("User Not Found with -> username"+username));
-            boolean matches = passwordEncoder.matches(changePass.getCurrentPassword(), user.getPassword());
-            if(changePass.getNewPassword() != null){
-                if(matches){
-                    user.setPassword(passwordEncoder.encode(changePass.getNewPassword()));
-                    userRepository.save(user);
-                } else {
-                    return new ResponseEntity<>(new MessageResponse("no"), HttpStatus.OK);
-                }
-            }
-            return new ResponseEntity<>(new MessageResponse("yes"), HttpStatus.OK);
-        } catch (UsernameNotFoundException exception){
-            return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
-        }
+		String username = jwtUtil.getUserNameFromJwtToken(jwt);
+		User user;
+		if (!changePass.getNewPassword().equals(changePass.getConfirmationPassword())) {
+			throw new BadCredentialsException("New Password do not match");
+		} else {
+			try {
+				user = userRepository.findByUsername(username)
+						.orElseThrow(() -> new UsernameNotFoundException("User Not Found with -> username" + username));
+				boolean matches = passwordEncoder.matches(changePass.getCurrentPassword(), user.getPassword());
+				if(!matches) {
+					throw new BadCredentialsException("Current Password do not match");
+				}
+				if (changePass.getNewPassword() != null) {
+					if (matches) {
+						user.setPassword(passwordEncoder.encode(changePass.getNewPassword()));
+						userRepository.save(user);
+					} else {
+						return new ResponseEntity<>(new MessageResponse("no"), HttpStatus.OK);
+					}
+				}
+				return new ResponseEntity<>(new MessageResponse("Change pass successfully"), HttpStatus.OK);
+			} catch (UsernameNotFoundException exception) {
+				return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
+			}
+		}
 	}
 
 }

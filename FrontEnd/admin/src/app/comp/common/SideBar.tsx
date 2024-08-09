@@ -1,7 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 export default function SideBar() {
+    const location = useLocation();
+    
     return (
         <>
         <nav className="navbar navbar-vertical navbar-expand-lg">
@@ -19,23 +21,23 @@ export default function SideBar() {
                                 <div className="parent-wrapper label-1">
                                     <ul className="nav collapse parent show" data-bs-parent="#navbarVerticalCollapse" id="nv-home">
                                         <li className="collapsed-nav-item-title d-none">Home</li>
-                                        <li className="nav-item"><Link className="nav-link active" to="student" data-bs-toggle aria-expanded="false">
-                                            <div className="d-flex align-items-center"><span className="nav-link-text">Manage Student</span></div>
+                                        <li className="nav-item"><Link className={location.pathname==="/student"?"nav-link active":"nav-link"} to="student" data-bs-toggle aria-expanded="false">
+                                            <div className="d-flex align-items-center"><span className="nav-link-text"><i className="fa-regular fa-user"></i> Manage Student</span></div>
                                         </Link>
                                         </li>
-                                        <li className="nav-item"><Link className="nav-link" to="category" data-bs-toggle aria-expanded="false">
-                                            <div className="d-flex align-items-center"><span className="nav-link-text">Manage Catgory</span></div>
+                                        <li className="nav-item"><Link className={location.pathname==="/category"?"nav-link active":"nav-link"} to="category" data-bs-toggle aria-expanded="false">
+                                            <div className="d-flex align-items-center"><span className="nav-link-text"><i className="fa-solid fa-layer-group"></i> Manage Catgory</span></div>
                                         </Link>
                                         </li>
-                                        <li className="nav-item"><Link className="nav-link" to="book" data-bs-toggle aria-expanded="false">
-                                            <div className="d-flex align-items-center"><span className="nav-link-text">Manage Book</span></div>
+                                        <li className="nav-item"><Link className={location.pathname==="/book"?"nav-link active":"nav-link"} to="book" data-bs-toggle aria-expanded="false">
+                                            <div className="d-flex align-items-center"><span className="nav-link-text"><i className="fa-solid fa-book"></i> Manage Book</span></div>
                                         </Link>
                                         </li>
-                                        <li className="nav-item"><Link className="nav-link" to="order" data-bs-toggle aria-expanded="false">
-                                            <div className="d-flex align-items-center"><span className="nav-link-text">Manage Order</span></div>
+                                        <li className="nav-item"><Link className={location.pathname==="/order"?"nav-link active":"nav-link"} to="order" data-bs-toggle aria-expanded="false">
+                                            <div className="d-flex align-items-center"><span className="nav-link-text"><i className="fa-brands fa-first-order"></i> Manage Order</span></div>
                                         </Link>
                                         </li>
-                                        <li className="nav-item"><Link className="nav-link" to="returnbook" data-bs-toggle aria-expanded="false">
+                                        <li className="nav-item"><Link className={location.pathname==="/returnbook"?"nav-link active":"nav-link"} to="returnbook" data-bs-toggle aria-expanded="false">
                                             <div className="d-flex align-items-center"><span className="nav-link-text">Manage Return Book</span></div>
                                         </Link>
                                         </li>

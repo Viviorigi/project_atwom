@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Login() {
   return (
@@ -6,11 +7,11 @@ export default function Login() {
       <main className="main" id="top">
         <div className="container">
           <div className="row flex-center min-vh-100 py-5">
-            <div className="col-sm-10 col-md-8 col-lg-5 col-xl-5 col-xxl-3"><a className="d-flex flex-center text-decoration-none mb-4" href="../../../index.html">
-              <div className="d-flex align-items-center fw-bolder fs-5 d-inline-block"><img src="../../../assets/img/icons/logo.png" alt="phoenix" width={58} /></div>
-            </a>
+            <div className="col-sm-10 col-md-8 col-lg-5 col-xl-5 col-xxl-3"><label className="d-flex flex-center text-decoration-none mb-4" >
+              <div className="d-flex align-items-center fw-bolder fs-5 d-inline-block"><img src="../../../assets/img/icons/logo.png" alt="phoenix" width={80} /></div>
+            </label>
               <div className="text-center mb-7">
-                <h3 className="text-1000">Sign In</h3>
+                <h3 className="text-1000">Admin Login</h3>
                 <p className="text-700">Get access to your account</p>
               </div>
               <div className="mb-3 text-start"><label className="form-label" htmlFor="email">UserName</label>
@@ -23,9 +24,8 @@ export default function Login() {
                 <div className="col-auto">
                   <div className="form-check mb-0"><input className="form-check-input" id="basic-checkbox" type="checkbox" /><label className="form-check-label mb-0" htmlFor="basic-checkbox">Remember me</label></div>
                 </div>
-                <div className="col-auto"><a className="fs--1 fw-semi-bold" href="forgot-password.html">Forgot Password?</a></div>
+                <div className="col-auto"><Link className="fs--1 fw-semi-bold" to={"/forgot-password"}>Forgot Password?</Link></div>
               </div><button className="btn btn-primary w-100 mb-3">Sign In</button>
-              <div className="text-center"><a className="fs--1 fw-bold" href="sign-up.html">Create an account</a></div>
             </div>
           </div>
         </div>
