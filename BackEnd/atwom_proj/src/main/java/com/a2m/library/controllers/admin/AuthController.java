@@ -186,4 +186,6 @@ public class AuthController {
 
 	        return ResponseEntity.ok("Account verified successfully");
 	    }
+	 
+	 
 }
