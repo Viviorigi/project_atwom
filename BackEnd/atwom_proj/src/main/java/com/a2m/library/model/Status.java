@@ -17,10 +17,15 @@ import java.util.Set;
 public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "st_id")
     private Integer id;
 
+    @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "status")
     private Set<Book> books;
+
+    @OneToMany(mappedBy = "status")
+    private Set<Checkout> checkouts;
 }

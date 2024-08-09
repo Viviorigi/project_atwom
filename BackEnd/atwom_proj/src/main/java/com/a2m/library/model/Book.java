@@ -17,38 +17,38 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Integer id;
 
-    private String title;
-    private Year publicationYear;
-    private String publisher;
-    private Integer quantity;
-    private byte[] image;
+  @Column(name = "title")
+  private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+  @Column(name = "publication_year")
+  private Integer publicationYear;
 
-    @ManyToOne
-    @JoinColumn(name = "cate_id")
-    private Category category;
+  @Column(name = "publisher")
+  private String publisher;
 
-    private LocalDateTime creDt;
-    private LocalDateTime updDt;
+  @Column(name = "quantity")
+  private Integer quantity;
 
-    @ManyToMany
-    @JoinTable(
-        name = "author_book",
-        joinColumns = @JoinColumn(name = "book_id"),
-        inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
-    private Set<Author> authors;
+  @Column(name = "image")
+  private String image;
 
-    @OneToMany(mappedBy = "book")
-    private Set<CheckoutDetail> checkoutDetails;
+  @Column(name = "status_id")
+  private Integer statusId;
 
-    @OneToMany(mappedBy = "book")
-    private Set<ImagesBook> imagesBooks;
+  @Column(name = "cate_id")
+  private Integer cateId;
+
+  @Column(name = "cre_dt")
+  private LocalDateTime createdDate;
+
+  @Column(name = "upd_dt")
+  private LocalDateTime updatedDate;
+
+  @OneToMany(mappedBy = "book")
+  private Set<Author> authorBooks;
 }

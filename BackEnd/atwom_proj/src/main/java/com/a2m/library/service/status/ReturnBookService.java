@@ -1,4 +1,4 @@
-package com.a2m.library.service.checkout;
+package com.a2m.library.service.status;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +9,6 @@ public interface ReturnBookService {
     List<ReturnBookDTO> findAll();
     Optional<ReturnBookDTO> findById(Integer id);
     ReturnBookDTO save(ReturnBookDTO returnBookDTO);
-    ReturnBookDTO update(Integer id, ReturnBookDTO returnBookDTO);
-    void delete(Integer id);
+    ReturnBookDTO updateStatus(Integer id, boolean status);
 }
+
