@@ -17,7 +17,7 @@ export default function Header() {
                             </div>
                         </Link>
                     </div>
-                    <div className="search-box navbar-top-search-box d-none d-lg-block" data-list="{&quot;valueNames&quot;:[&quot;title&quot;]}" style={{ width: '25rem' }}>
+                    {/* <div className="search-box navbar-top-search-box d-none d-lg-block" data-list="{&quot;valueNames&quot;:[&quot;title&quot;]}" style={{ width: '25rem' }}>
                         <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input fuzzy-search rounded-pill form-control-sm" type="search" placeholder="Search..." aria-label="Search" />
                             <span className="fas fa-search search-box-icon" />
                         </form>
@@ -127,10 +127,10 @@ export default function Header() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <ul className="navbar-nav navbar-nav-icons flex-row">
                         <li className="nav-item">
-                            <div className="theme-control-toggle fa-icon-wait px-2"><input className="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" defaultValue="dark" id="themeControlToggle" /><label className="mb-0 theme-control-toggle-label theme-control-toggle-light" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span className="icon" data-feather="moon" /></label><label className="mb-0 theme-control-toggle-label theme-control-toggle-dark" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span className="icon" data-feather="sun" /></label></div>
+                            <div className="theme-control-toggle fa-icon-wait px-2"><input className="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" defaultValue="dark" id="themeControlToggle" /><label className="mb-0 theme-control-toggle-label theme-control-toggle-light" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span className="fa-regular fa-moon" data-feather="moon" /></label><label className="mb-0 theme-control-toggle-label theme-control-toggle-dark" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span className="fa-regular fa-sun" data-feather="sun" /></label></div>
                         </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link" href="index.html#" style={{ minWidth: '2.5rem' }} role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span className="far fa-bell" style={{ height: 20, width: 20 }} /></a>

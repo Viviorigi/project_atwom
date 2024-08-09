@@ -7,6 +7,8 @@ import { indexRouter } from './app/routers/indexRouter';
 import NotPermission from './app/pages/NotPermission';
 import NotFound from './app/pages/NotFound';
 import Login from './app/pages/authentication/Login';
+import ForgotPassword from './app/pages/authentication/ForgotPassword';
+import { ToastContainer } from 'react-toastify';
 
 export const spinner = (
   <div className="progress-spinner text-center">
@@ -20,12 +22,14 @@ function App() {
     indexRouter,
     { path: '*', element: <NotFound /> } ,//404
     { path: 'login', element: <Login /> },
+    { path: 'forgot-password', element: <ForgotPassword /> },
+    
   ]);
   
   return (
     
     <div className="App">
-      {/* <ToastContainer></ToastContainer> */}
+      <ToastContainer></ToastContainer>
       <Suspense fallback={spinner}>{router}</Suspense>
     </div>
 
