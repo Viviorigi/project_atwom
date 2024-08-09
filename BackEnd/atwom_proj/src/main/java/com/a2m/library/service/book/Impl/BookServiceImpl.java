@@ -59,7 +59,6 @@ public class BookServiceImpl implements BookService{
 
 	@Override
 	public Book convertToBook(BookDTO bookDTO) {
-		// TODO Auto-generated method stub
 		ModelMapper modelMapper = new ModelMapper();
 
 		return modelMapper.map(bookDTO, Book.class);
@@ -70,7 +69,5 @@ public class BookServiceImpl implements BookService{
 		List<Book>books = bookRepository.findAllActiveBooks();
 		return books.stream().map(book -> convertToBookDTO(book)).collect(Collectors.toList());
 	}
-
-
 
 }

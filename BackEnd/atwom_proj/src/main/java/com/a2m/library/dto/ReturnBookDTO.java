@@ -1,13 +1,20 @@
 package com.a2m.library.dto;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import com.a2m.library.constant.CheckoutStatus;
+
 import lombok.Data;
-import java.time.LocalDate;
 
 @Data
-public class ReturnBookDTO {
+public class ReturnBookDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private Integer id;
     private Integer checkoutId;
     private Integer userId;
-    private LocalDate returnDate;
-    private Boolean status;
+    private LocalDateTime returnDate;
+    private CheckoutStatus status;
 }
+

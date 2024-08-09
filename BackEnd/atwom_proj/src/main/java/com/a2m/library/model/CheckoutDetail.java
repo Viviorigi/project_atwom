@@ -1,6 +1,8 @@
 package com.a2m.library.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,15 +18,18 @@ public class CheckoutDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @Column(name = "book_id")
+    @NotNull
+    private Integer bookId;
 
-    @ManyToOne
-    @JoinColumn(name = "checkout_id")
-    private Checkout checkout;
+    @Column(name = "checkout_id")
+    @NotNull
+    private Integer checkoutId;
 
+    @Column(name = "quantity")
+    @Min(value = 1)
     private Integer quantity;
 }

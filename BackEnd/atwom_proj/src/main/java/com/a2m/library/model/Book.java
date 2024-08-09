@@ -17,43 +17,43 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Integer id;
 
-    private String title;
-    private Year publicationYear;
-    private String publisher;
-    private Integer quantity;
-    private Integer quantityPlaced;
-    private Integer status;
-    private double price;
-    private String[] image;
-    @Column(name = "deleted")
+  private String title;
+  private Year publicationYear;
+  private Integer quantityPlaced;
+  private double price;
+
+  @Column(name = "image")
+  private String[] image;
+
+  @Column(name = "deleted")
 	private Boolean deleted = false;
 
-//    @ManyToOne
-//    @JoinColumn(name = "status_id")
-//    private Status status;
+  @Column(name = "publisher")
+  private String publisher;
 
-    @ManyToOne
-    @JoinColumn(name = "cate_id")
-    private Category category;
+  @Column(name = "quantity")
+  private Integer quantity;
 
-    private LocalDateTime creDt;
-    private LocalDateTime updDt;
+  @OneToMany(mappedBy = "book")
+  private Set<CheckoutDetail> checkoutDetails;
 
-    @ManyToMany
-    @JoinTable(
-        name = "author_book",
-        joinColumns = @JoinColumn(name = "book_id"),
-        inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
-    private Set<Author> authors;
+  @Column(name = "status_id")
+  private boolean status;
 
-    @OneToMany(mappedBy = "book")
-    private Set<CheckoutDetail> checkoutDetails;
+  @Column(name = "cate_id")
+  private Integer cateId;
 
-    @OneToMany(mappedBy = "book")
-    private Set<ImagesBook> imagesBooks;
+  @Column(name = "cre_dt")
+  private LocalDateTime createdDate;
+
+  @Column(name = "upd_dt")
+  private LocalDateTime updatedDate;
+
+  @OneToMany(mappedBy = "book")
+  private Set<Author> authorBooks;
 }

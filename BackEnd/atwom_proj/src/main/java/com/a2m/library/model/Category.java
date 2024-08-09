@@ -17,13 +17,16 @@ import java.util.Set;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
+    @Column(name = "name")
     private String name;
     
     @Column(name = "deleted")
 	private Boolean deleted = false;
 
     @OneToMany(mappedBy = "category")
+    @Column(name = "")
     private Set<Book> books;
 }
