@@ -17,7 +17,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.a2m.library.dto.UserDTO;
+import com.a2m.library.dto.request.ChangePasswordRequest;
 import com.a2m.library.dto.request.LoginRequest;
 import com.a2m.library.dto.response.JwtResponse;
 import com.a2m.library.dto.response.MessageResponse;
@@ -42,6 +45,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -61,6 +65,9 @@ public class StudentController {
 
 	@Autowired
 	private VerificationTokenRepository tokenRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -158,5 +165,27 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
         }
     }
+	
+	@PatchMapping("/change/pass")
+	public ResponseEntity<?> changePass(HttpServletRequest request, @Valid @RequestBody ChangePasswordRequest changePass){
+		String jwt = jwtUtil.getJwt(request);
+        String username = jwtUtil.getUserNameFromJwtToken(jwt);
+        User user;
+        try {
+            user = userRepository.findByUsername(username).orElseThrow(()-> new UsernameNotFoundException("User Not Found with -> username"+username));
+            boolean matches = passwordEncoder.matches(changePass.getCurrentPassword(), user.getPassword());
+            if(changePass.getNewPassword() != null){
+                if(matches){
+                    user.setPassword(passwordEncoder.encode(changePass.getNewPassword()));
+                    userRepository.save(user);
+                } else {
+                    return new ResponseEntity<>(new MessageResponse("no"), HttpStatus.OK);
+                }
+            }
+            return new ResponseEntity<>(new MessageResponse("yes"), HttpStatus.OK);
+        } catch (UsernameNotFoundException exception){
+            return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
+        }
+	}
 
 }

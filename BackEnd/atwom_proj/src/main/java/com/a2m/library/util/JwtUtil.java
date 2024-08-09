@@ -19,6 +19,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtUtil {
@@ -61,5 +62,13 @@ public class JwtUtil {
 			logger.error("JWT claims string is empty: {}", e.getMessage());
 		}
 		return false;
+	}
+	
+	public String getJwt(HttpServletRequest request) {
+		String authHeader = request.getHeader("Authorization");
+        if(authHeader !=null && authHeader.startsWith("Bearer")){
+            return authHeader.replace("Bearer", "");
+        }
+        return null;
 	}
 }
