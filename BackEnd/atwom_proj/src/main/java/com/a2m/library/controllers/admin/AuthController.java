@@ -121,20 +121,24 @@ public class AuthController {
 			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
 		UserDTO userDTO;
 		userDTO = objectMapper.readValue(userDTOJson, UserDTO.class);
-		if (!file.isEmpty()) {
-			try {
-				final Path directory = Paths.get(uploadDir);
-				final Path filePath = Paths.get(uploadDir + file.getOriginalFilename());
-				if (!Files.exists(directory)) {
-					Files.createDirectories(directory);
-				}
-				Files.write(filePath, file.getBytes());
-				userDTO.setAvatar(file.getOriginalFilename());
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
-			}
-		}
+		if (file != null && !file.isEmpty()) {
+	        try {
+	            String originalFilename = file.getOriginalFilename();
+	            String timestamp = String.valueOf(System.currentTimeMillis());
+	            String newFilename = timestamp + "_" + originalFilename;
+
+	            final Path directory = Paths.get(uploadDir);
+	            final Path filePath = Paths.get(uploadDir + newFilename);
+	            if (!Files.exists(directory)) {
+	                Files.createDirectories(directory);
+	            }
+	            Files.write(filePath, file.getBytes());
+	            userDTO.setAvatar(newFilename);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
+	        }
+	    }
 		try {
 			userService.update(userDTO);
 		} catch (Exception e) {
