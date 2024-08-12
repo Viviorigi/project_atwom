@@ -19,6 +19,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,7 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.Valid;
 
-@RestController
+@Controller
 @RequestMapping(value = "api/admin")
 public class AuthController {
 	@Autowired
@@ -75,7 +77,7 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-		
+
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -89,14 +91,13 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
 					.body(new MessageResponse("You don't have access, login account admin"));
 		}
-		
-		User user = userRepository.findByUsername(loginRequest.getUsername())
-	            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-	    if (!user.isActive()) {
-	        throw new BadCredentialsException("User account is not verified");
-	    }
-		
+		User user = userRepository.findByUsername(loginRequest.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+		if (!user.isActive()) {
+			throw new BadCredentialsException("User account is not verified");
+		}
 
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
@@ -122,23 +123,23 @@ public class AuthController {
 		UserDTO userDTO;
 		userDTO = objectMapper.readValue(userDTOJson, UserDTO.class);
 		if (file != null && !file.isEmpty()) {
-	        try {
-	            String originalFilename = file.getOriginalFilename();
-	            String timestamp = String.valueOf(System.currentTimeMillis());
-	            String newFilename = timestamp + "_" + originalFilename;
+			try {
+				String originalFilename = file.getOriginalFilename();
+				String timestamp = String.valueOf(System.currentTimeMillis());
+				String newFilename = timestamp + "_" + originalFilename;
 
-	            final Path directory = Paths.get(uploadDir);
-	            final Path filePath = Paths.get(uploadDir + newFilename);
-	            if (!Files.exists(directory)) {
-	                Files.createDirectories(directory);
-	            }
-	            Files.write(filePath, file.getBytes());
-	            userDTO.setAvatar(newFilename);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
-	        }
-	    }
+				final Path directory = Paths.get(uploadDir);
+				final Path filePath = Paths.get(uploadDir + newFilename);
+				if (!Files.exists(directory)) {
+					Files.createDirectories(directory);
+				}
+				Files.write(filePath, file.getBytes());
+				userDTO.setAvatar(newFilename);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
+			}
+		}
 		try {
 			userService.update(userDTO);
 		} catch (Exception e) {
@@ -175,21 +176,21 @@ public class AuthController {
 		}
 		return ResponseEntity.ok().body(new MessageResponse("Delete successful"));
 	}
-	
-	 @GetMapping("/verify")
-	    public ResponseEntity<?> verifyAccount(@RequestParam("token") String token) {
-	        VerificationToken verificationToken = tokenRepository.findByToken(token);
 
-	        if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-	            return ResponseEntity.badRequest().body("Invalid or expired token");
-	        }
+	@GetMapping("/verify")
+    public String verifyAccount(@RequestParam("token") String token, Model model) {
+        VerificationToken verificationToken = tokenRepository.findByToken(token);
 
-	        User user = verificationToken.getUser();
-	        user.setActive(true);
-	        userRepository.save(user);
+        if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+        	 model.addAttribute("message", "Invalid or expired token");
+        	 return "verification-error";
+        }
 
-	        return ResponseEntity.ok("Account verified successfully");
-	    }
-	 
-	 
+        User user = verificationToken.getUser();
+        user.setActive(true);
+        userRepository.save(user);
+
+        model.addAttribute("message", "Account verified successfully");
+        return "account-verification-success";
+    }
 }

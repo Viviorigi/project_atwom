@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.request.ChangePasswordRequest;
@@ -211,19 +213,38 @@ public class StudentController {
 		}
 	}
 
+	 @GetMapping("/reset-password")
+	    public ModelAndView showResetPasswordForm(@RequestParam("token") String token, ModelAndView modelAndView) {      
+	        // Render the reset password page
+	        modelAndView.setViewName("reset-password");
+	        modelAndView.addObject("token", token);
+	        return modelAndView;
+	    }
 	@PostMapping("/reset-password")
-	public ResponseEntity<?> resetPassword(@RequestParam("token") String token,
-			@Valid @RequestBody ResetPasswordRequest resetPass) {
-		if (!resetPass.getNewPassword().equals(resetPass.getConfirmationPassword())) {
-			throw new BadCredentialsException("New Password do not match");
-		} else {
-			try {
-				passwordResetService.resetPassword(token, resetPass.getNewPassword());
-				return ResponseEntity.ok(new MessageResponse("Password reset successful"));
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-			}
-		}
-	}
+	public ModelAndView resetPassword(@RequestParam Map<String, String> allParams,@RequestParam("token") String token,
+	                                   @RequestParam("newPassword") String newPassword,
+	                                   @RequestParam("confirmPassword") String confirmationPassword) {
+	    ModelAndView modelAndView = new ModelAndView();
 
+	    System.out.println("Received parameters: " + allParams);
+	    
+	    if (!newPassword.equals(confirmationPassword)) {
+	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
+	        modelAndView.addObject("message", "New Password does not match");
+	        modelAndView.addObject("token", token);
+	        return modelAndView;
+	    }
+
+	    try {
+	        passwordResetService.resetPassword(token, newPassword);
+	        modelAndView.setViewName("reset-password-success"); // Redirect to success page
+	        modelAndView.addObject("message", "Password reset successful");
+	        return modelAndView;
+	    } catch (Exception e) {
+	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
+	        modelAndView.addObject("message", e.getMessage());
+	        modelAndView.addObject("token", token);
+	        return modelAndView;
+	    }
+	}
 }
