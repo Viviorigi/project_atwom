@@ -28,7 +28,7 @@ public class Book {
   private double price;
 
   @Column(name = "image")
-  private String[] image;
+  private String image;
 
   @Column(name = "deleted")
 	private Boolean deleted = false;
