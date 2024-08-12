@@ -18,7 +18,7 @@ import com.a2m.library.model.Book;
 import com.a2m.library.service.book.BookService;
 
 @RestController
-//@RequestMapping(value = "api/admin")
+//@RequestMapping(value = "api/book")
 public class BookController {
 	@Autowired
 	BookService bookService;
