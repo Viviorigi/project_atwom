@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.a2m.library.dto.CheckoutDetailDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
+import com.a2m.library.model.Book;
+import com.a2m.library.model.Checkout;
 import com.a2m.library.model.CheckoutDetail;
 import com.a2m.library.repository.CheckoutDetailRepository;
 import com.a2m.library.service.checkout.CheckoutDetailService;
@@ -46,18 +48,25 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
     private CheckoutDetailDTO toDTO(CheckoutDetail checkoutDetail) {
         CheckoutDetailDTO dto = new CheckoutDetailDTO();
         dto.setId(checkoutDetail.getId());
-        //dto.setBookId(checkoutDetail.getBookId());
-        //dto.setCheckoutId(checkoutDetail.getCheckoutId());
+        dto.setBookId(checkoutDetail.getBook().getId());
+        dto.setCheckoutId(checkoutDetail.getCheckout().getId());
         dto.setQuantity(checkoutDetail.getQuantity());
         return dto;
-    }
+}
 
     private CheckoutDetail toEntity(CheckoutDetailDTO dto) {
         CheckoutDetail checkoutDetail = new CheckoutDetail();
         checkoutDetail.setId(dto.getId());
-        //checkoutDetail.setBookId(dto.getBookId());
-        //checkoutDetail.setCheckoutId(dto.getCheckoutId());
+        
+        Book book = new Book();
+        book.setId(dto.getBookId());
+        checkoutDetail.setBook(book);
+        
+        Checkout checkout = new Checkout();
+        checkout.setId(dto.getCheckoutId());
+        checkoutDetail.setCheckout(checkout);
+        
         checkoutDetail.setQuantity(dto.getQuantity());
         return checkoutDetail;
-    }
+}
 }

@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 
-export default function Order() {
+export default function Return() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedReturn, setSelectedReturn] = useState(null);
 
-  const handleRowClick = (order: any) => {
-    setSelectedOrder(order);
-    setIsModalOpen(true);
-  };
+  // const handleRowClick = (return: any) => {
+  //   setSelectedReturn(return);
+  //   setIsModalOpen(true);
+  // };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedOrder(null);
+    setSelectedReturn(null);
   };
 
   return (
@@ -20,10 +20,10 @@ export default function Order() {
         <div className="mb-9">
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mb-0">Orders</h2>
+              <h2 className="mb-0">Returns</h2>
             </div>
           </div>
-          <div id="orders" data-list="{&quot;valueNames&quot;:[&quot;student&quot;,&quot;start-time&quot;,&quot;end-time&quot;,&quot;status&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
+          <div id="Returns" data-list="{&quot;valueNames&quot;:[&quot;student&quot;,&quot;start-time&quot;,&quot;end-time&quot;,&quot;status&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
           <div className="mb-4">
         <div className="row g-3">
           <div className="col-auto">
@@ -55,22 +55,22 @@ export default function Order() {
           <div className="col-auto"><button className="btn btn-primary"><span className="fas fa-plus me-2" />Add customer</button></div>
         </div>
       </div>
-            <div className="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white border-top border-bottom border-200 position-relative top-1">
+            <div className="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white bReturn-top bReturn-bottom bReturn-200 position-relative top-1">
               <div className="table-responsive scrollbar-overlay mx-n1 px-1">
                 <table className="table table-sm fs--1 mb-0">
                   <thead>
                     <tr>
-                      <th className="sort align-middle pe-5" scope="col" data-sort="OrderID" style={{width: '20%'}}>OrderID</th>
+                      <th className="sort align-middle pe-5" scope="col" data-sort="ReturnID" style={{width: '20%'}}>ReturnID</th>
                       <th className="sort align-middle pe-5" scope="col" data-sort="student" style={{width: '30%'}}>Student</th>
-                      <th className="sort align-middle pe-5" scope="col" data-sort="start-time" style={{width: '15%'}}>Start Time</th>
-                      <th className="sort align-middle pe-5" scope="col" data-sort="end-time" style={{width: '15%'}}>End Time</th>
+                      <th className="sort align-middle pe-5" scope="col" data-sort="start-time" style={{width: '18%'}}>Return Date</th>
+                      <th className="sort align-middle pe-5" scope="col" data-sort="end-time" style={{width: '18%'}}>Update Time</th>
                       <th className="sort align-middle pe-5" scope="col" data-sort="status" style={{width: '20%'}}>Status</th>
                     </tr>
                   </thead>
                   <tbody className="list">
                     {/* Dữ liệu mẫu */}
-                    <tr className="hover-actions-trigger btn-reveal-trigger position-static" onClick={() => handleRowClick({ /* Dữ liệu của order */ })}>
-                      <td className="orderid align-middle">S01</td>
+                    <tr className="hover-actions-trigger btn-reveal-trigger position-static" >{/*onClick={() => handleRowClick({  })}*/}
+                      <td className="Returnid align-middle">S01</td>
                       <td className="student align-middle">John Doe</td>
                       <td className="start-time align-middle">2024-08-01 10:00</td>
                       <td className="end-time align-middle">2024-08-01 12:00</td>
@@ -96,7 +96,7 @@ export default function Order() {
             <div className="modal-dialog modal-lg" role="document">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">Order Details</h5>
+                  <h5 className="modal-title">Return Details</h5>
                   <button type="button" className="close" onClick={closeModal}>
                     <span aria-hidden="true">&times;</span>
                   </button>

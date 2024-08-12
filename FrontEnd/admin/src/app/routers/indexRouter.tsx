@@ -5,6 +5,7 @@ import Category from '../pages/category/Category';
 import Book from '../pages/book/Book';
 import Student from '../pages/student/Student';
 import Order from '../pages/order/Order';
+import Return from '../pages/return/Return';
 export const indexRouter: any = {
     path: '',
     element: (
@@ -16,5 +17,6 @@ export const indexRouter: any = {
         { path: 'book', element: <Book /> },
         { path: 'student', element: <Student /> },
         { path: 'order', element: <Order /> },
+        { path: 'returnbook', element: <Return /> }
     ],
 };
