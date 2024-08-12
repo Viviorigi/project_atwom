@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
-    List<Checkout> findExpiredCheckouts(LocalDateTime now);
+//    List<Checkout> findExpiredCheckouts(LocalDateTime now);
 }

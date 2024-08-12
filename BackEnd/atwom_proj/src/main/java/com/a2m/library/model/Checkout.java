@@ -30,6 +30,7 @@ public class Checkout {
     @NotNull(message = "User must not be null")
     private User user;
 
+    private LocalDateTime  ExpiredCheckouts;
     @Column(name = "start_time")
     @NotNull
     @PastOrPresent(message = "Start time cannot be in the future")

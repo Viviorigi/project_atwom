@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "category")
 @Getter
@@ -27,5 +29,6 @@ public class Category {
 	private Boolean deleted = false;
 
     @OneToMany(mappedBy = "category")
+    @JsonManagedReference
     private Set<Book> books;
 }

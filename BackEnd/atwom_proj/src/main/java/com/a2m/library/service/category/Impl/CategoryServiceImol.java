@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.a2m.library.dto.BookDTO;
@@ -23,6 +26,15 @@ public class CategoryServiceImol implements CategoryService{
 	public List<CategoryDTO> findAll() {
 		List<Category>categories = categoryRepository.findAll();
 		return categories.stream().map(category -> convertToCategoryDTO(category)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public Page<Category> findAll(String keySearch, int page, int size) {
+		// TODO Auto-generated method stub
+		Pageable pageable = PageRequest.of(page, size);
+		if(keySearch != null)
+			return categoryRepository.findAllCategory(keySearch, pageable);
+		return categoryRepository.findAll(pageable);
 	}
 
 	@Override

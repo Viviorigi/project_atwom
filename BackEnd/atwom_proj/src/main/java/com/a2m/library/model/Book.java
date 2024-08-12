@@ -10,6 +10,8 @@ import java.time.Year;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "book")
 @Getter
@@ -47,6 +49,7 @@ public class Book {
 
   @ManyToOne
   @JoinColumn(name = "cate_id")
+  @JsonBackReference
   private Category category;
 
   @Column(name = "cre_dt")

@@ -2,6 +2,8 @@ package com.a2m.library.service.category;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.model.Category;
 
@@ -15,4 +17,7 @@ public interface CategoryService {
     
     public CategoryDTO convertToCategoryDTO(Category category);
     public Category convertToCategory(CategoryDTO categoryDTO);
+    
+  //---------------------------------------------
+  	public Page<Category>findAll(String keySearch, int page, int size);
 }
