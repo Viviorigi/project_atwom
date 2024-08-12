@@ -21,13 +21,15 @@ public class CheckoutDetail {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "book_id")
+    @ManyToOne
+    @JoinColumn(name = "book_id")
     @NotNull
-    private Integer bookId;
+    private Book book;
 
-    @Column(name = "checkout_id")
+    @ManyToOne
+    @JoinColumn(name = "checkout_id")
     @NotNull
-    private Integer checkoutId;
+    private Checkout checkout;
 
     @Column(name = "quantity")
     @Min(value = 1)

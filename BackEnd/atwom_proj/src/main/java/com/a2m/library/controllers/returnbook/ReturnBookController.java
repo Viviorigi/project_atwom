@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.ReturnBookDTO;
-import com.a2m.library.service.status.ReturnBookService;
+import com.a2m.library.service.returnbook.ReturnBookService;
 
 import java.util.List;
 import java.util.Optional;

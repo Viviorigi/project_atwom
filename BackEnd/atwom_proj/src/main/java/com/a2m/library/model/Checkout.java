@@ -44,6 +44,6 @@ public class Checkout {
     @Column(name = "status")
     private CheckoutStatus status;
 
-    @OneToMany(mappedBy = "checkout")
+    @OneToMany(mappedBy = "checkout", cascade = CascadeType.ALL)
     private Set<CheckoutDetail> checkoutDetails;
 }
