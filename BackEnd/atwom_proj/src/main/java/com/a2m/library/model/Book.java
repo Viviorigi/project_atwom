@@ -28,7 +28,7 @@ public class Book {
   private double price;
 
   @Column(name = "image")
-  private String[] image;
+  private String image;
 
   @Column(name = "deleted")
 	private Boolean deleted = false;
@@ -43,10 +43,11 @@ public class Book {
   private Set<CheckoutDetail> checkoutDetails;
 
   @Column(name = "status_id")
-  private boolean status;
+  private Integer status;
 
-  @Column(name = "cate_id")
-  private Integer cateId;
+  @ManyToOne
+  @JoinColumn(name = "cate_id")
+  private Category category;
 
   @Column(name = "cre_dt")
   private LocalDateTime createdDate;
@@ -54,6 +55,11 @@ public class Book {
   @Column(name = "upd_dt")
   private LocalDateTime updatedDate;
 
-  @OneToMany(mappedBy = "book")
-  private Set<Author> authorBooks;
+  @ManyToMany
+    @JoinTable(
+        name = "book_author",
+        joinColumns = @JoinColumn(name = "book_id"),
+        inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
 }

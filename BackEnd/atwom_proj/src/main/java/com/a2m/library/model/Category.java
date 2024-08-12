@@ -27,6 +27,5 @@ public class Category {
 	private Boolean deleted = false;
 
     @OneToMany(mappedBy = "category")
-    @Column(name = "")
     private Set<Book> books;
 }

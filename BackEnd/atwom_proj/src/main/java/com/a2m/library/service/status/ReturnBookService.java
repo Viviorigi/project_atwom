@@ -8,7 +8,10 @@ import java.util.Optional;
 
 public interface ReturnBookService {
     List<ReturnBookDTO> findAll();
+
     Optional<ReturnBookDTO> findById(Integer id);
+
     ReturnBookDTO save(ReturnBookDTO returnBookDTO);
+
     ReturnBookDTO updateStatus(Integer id, CheckoutStatus status);
 }

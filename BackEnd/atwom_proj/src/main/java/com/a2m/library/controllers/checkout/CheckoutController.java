@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/checkouts")
+@RequestMapping("/api/checkout")
 public class CheckoutController {
 
     @Autowired
     private CheckoutService checkoutService;
 
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<CheckoutDTO>> getAllCheckouts() {
         return ResponseEntity.ok(checkoutService.findAll());
     }
@@ -29,7 +29,7 @@ public class CheckoutController {
         return checkoutDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<CheckoutDTO> createCheckout(@RequestBody CheckoutDTO checkoutDTO) {
         return ResponseEntity.ok(checkoutService.save(checkoutDTO));
     }
@@ -39,7 +39,7 @@ public class CheckoutController {
         return ResponseEntity.ok(checkoutService.updateStatus(id, status));
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?") //kiem tra het han moi 0h hang ngay
     public void checkExpiredCheckouts() {
         checkoutService.checkExpiredCheckouts();
     }

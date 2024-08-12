@@ -12,7 +12,6 @@ import com.a2m.library.dto.CheckoutDetailDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.model.CheckoutDetail;
 import com.a2m.library.repository.CheckoutDetailRepository;
-import com.a2m.library.service.checkout.CheckoutDetailMapper;
 import com.a2m.library.service.checkout.CheckoutDetailService;
 
 @Service
@@ -21,19 +20,16 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
     @Autowired
     private CheckoutDetailRepository checkoutDetailRepository;
 
-    @Autowired
-    private CheckoutDetailMapper checkoutDetailMapper;
-
     @Override
     public Set<CheckoutDetailDTO> findAll() {
         return checkoutDetailRepository.findAll().stream()
-                                       .map(checkoutDetailMapper::toDTO)
+                                       .map(this::toDTO)
                                        .collect(Collectors.toSet());
     }
 
     @Override
     public Optional<CheckoutDetailDTO> findById(Integer id) {
-        return checkoutDetailRepository.findById(id).map(checkoutDetailMapper::toDTO);
+        return checkoutDetailRepository.findById(id).map(this::toDTO);
     }
 
     @Override
@@ -44,5 +40,24 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         }
         checkoutDetailRepository.deleteById(id);
     }
-}
 
+    // Manual mapping methods
+
+    private CheckoutDetailDTO toDTO(CheckoutDetail checkoutDetail) {
+        CheckoutDetailDTO dto = new CheckoutDetailDTO();
+        dto.setId(checkoutDetail.getId());
+        //dto.setBookId(checkoutDetail.getBookId());
+        //dto.setCheckoutId(checkoutDetail.getCheckoutId());
+        dto.setQuantity(checkoutDetail.getQuantity());
+        return dto;
+    }
+
+    private CheckoutDetail toEntity(CheckoutDetailDTO dto) {
+        CheckoutDetail checkoutDetail = new CheckoutDetail();
+        checkoutDetail.setId(dto.getId());
+        //checkoutDetail.setBookId(dto.getBookId());
+        //checkoutDetail.setCheckoutId(dto.getCheckoutId());
+        checkoutDetail.setQuantity(dto.getQuantity());
+        return checkoutDetail;
+    }
+}
