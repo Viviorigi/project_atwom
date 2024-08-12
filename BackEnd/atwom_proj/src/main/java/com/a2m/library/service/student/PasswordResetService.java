@@ -33,10 +33,10 @@ public class PasswordResetService {
         user.setTokenExpirationDate(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
 
-        // Send email with reset link
         String resetLink = "http://localhost:8080/api/student/reset-password?token=" + token;
-        emailService.sendEmail(email, "Password Reset Request", 
-                "To reset your password, click the link below:\n" + resetLink);
+        
+        // Send the email
+        emailService.sendPasswordResetRequestEmail(email, "Password Reset Request", resetLink);
     }
 	
 	//reset new password
@@ -51,4 +51,5 @@ public class PasswordResetService {
         user.setTokenExpirationDate(null);
         userRepository.save(user);
     }
+	
 }

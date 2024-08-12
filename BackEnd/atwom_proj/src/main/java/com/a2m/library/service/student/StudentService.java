@@ -79,7 +79,7 @@ public class StudentService {
 		tokenRepository.save(verificationToken);
 
 		String verificationUrl = "http://localhost:8080/api/admin/verify?token=" + token;
-		emailService.sendEmail(user.getEmail(), "Verify your email",
-				"Click the link to verify your email: " + verificationUrl);
+		
+		emailService.SendEmailVerificationUrl(user.getEmail(), "Verify your email", verificationUrl);
 	}
 }
