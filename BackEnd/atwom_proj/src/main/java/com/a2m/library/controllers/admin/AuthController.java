@@ -48,7 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping(value = "api/admin")
 public class AuthController {
 	@Autowired

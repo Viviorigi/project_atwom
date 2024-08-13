@@ -9,7 +9,8 @@ import NotFound from './app/pages/NotFound';
 import Login from './app/pages/authentication/Login';
 import ForgotPassword from './app/pages/authentication/ForgotPassword';
 import { ToastContainer } from 'react-toastify';
-
+import 'react-toastify/dist/ReactToastify.css';
+import './assets/css/spinner.css';
 export const spinner = (
   <div className="progress-spinner text-center">
     <div className="swm-loader"></div>
