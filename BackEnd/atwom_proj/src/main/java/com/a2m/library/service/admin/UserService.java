@@ -4,6 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import com.a2m.library.dto.UserDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -25,4 +28,6 @@ public interface UserService {
 	public void deleteUser(Long userUid) throws Exception;
 
 	public UserDTO findByUsername(String username);
+	
+	Page<UserDTO> findByUsernameContaining(String keySearch, PageRequest pageRequest);
 }

@@ -110,7 +110,7 @@ public class StudentController {
 				.collect(Collectors.toList());
 
 		return ResponseEntity
-				.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(), "Bearer", roles));
+				.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(),user.getFullName(), "Bearer", roles));
 	}
 
 	@PostMapping("/register")

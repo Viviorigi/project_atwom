@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +38,7 @@ import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.request.LoginRequest;
 import com.a2m.library.dto.response.JwtResponse;
 import com.a2m.library.dto.response.MessageResponse;
+import com.a2m.library.dto.response.UserListResponse;
 import com.a2m.library.model.User;
 import com.a2m.library.model.VerificationToken;
 import com.a2m.library.repository.UserRepository;
@@ -102,8 +106,8 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		return ResponseEntity
-				.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(), "Bearer", roles));
+		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(),
+				user.getFullName(), "Bearer", roles));
 	}
 
 	@PostMapping("/signup")
@@ -156,8 +160,17 @@ public class AuthController {
 	}
 
 	@GetMapping(value = "/getAll")
-	public ResponseEntity<?> getUserInfo() {
-		return ResponseEntity.ok(userService.getAll());
+	public ResponseEntity<UserListResponse> getAll(@RequestParam(defaultValue = "") String keySearch, @RequestParam("page") int page,
+			@RequestParam("limit") int limit) {
+		 PageRequest pageRequest = PageRequest.of(page - 1, limit, Sort.by("upd_dt").descending());
+	        Page<UserDTO> userPage = userService.findByUsernameContaining(keySearch, pageRequest);
+	        
+	        UserListResponse response = UserListResponse.builder()
+	                .users(userPage.getContent())
+	                .totalPages(userPage.getTotalPages()) 
+	                .totalUsers(userPage.getTotalElements())
+	                .build();
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping(value = "/getByUserList")
@@ -178,19 +191,19 @@ public class AuthController {
 	}
 
 	@GetMapping("/verify")
-    public String verifyAccount(@RequestParam("token") String token, Model model) {
-        VerificationToken verificationToken = tokenRepository.findByToken(token);
+	public String verifyAccount(@RequestParam("token") String token, Model model) {
+		VerificationToken verificationToken = tokenRepository.findByToken(token);
 
-        if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-        	 model.addAttribute("message", "Invalid or expired token");
-        	 return "verification-error";
-        }
+		if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+			model.addAttribute("message", "Invalid or expired token");
+			return "verification-error";
+		}
 
-        User user = verificationToken.getUser();
-        user.setActive(true);
-        userRepository.save(user);
+		User user = verificationToken.getUser();
+		user.setActive(true);
+		userRepository.save(user);
 
-        model.addAttribute("message", "Account verified successfully");
-        return "account-verification-success";
-    }
+		model.addAttribute("message", "Account verified successfully");
+		return "account-verification-success";
+	}
 }

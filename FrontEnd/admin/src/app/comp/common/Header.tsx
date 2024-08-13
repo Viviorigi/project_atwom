@@ -1,7 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Cookies from 'universal-cookie';
 
 export default function Header() {
+
+    const cookie = new Cookies();
+    const [fullName,setFullName] = useState("");
+    useEffect(()=>{
+        const storedFullName = cookie.get("fullName");
+        if (storedFullName) {
+            setFullName(storedFullName)
+        }
+      },[])
 
     return (
         <>
@@ -322,25 +332,19 @@ export default function Header() {
                                             <div className="avatar avatar-xl ">
                                                 <img className="rounded-circle " src="assets/img/team/72x72/57.webp" alt="" />
                                             </div>
-                                            <h6 className="mt-2 text-black">Jerry Seinfield</h6>
+                                            <h6 className="mt-2 text-black">{fullName}</h6>
                                         </div>
-                                        <div className="mb-3 mx-3"><input className="form-control form-control-sm" id="statusUpdateInput" type="text" placeholder="Update your status" /></div>
                                     </div>
                                     <div className="overflow-auto scrollbar" style={{ height: '10rem' }}>
                                         <ul className="nav d-flex flex-column mb-2 pb-1">
-                                            <li className="nav-item"><a className="nav-link px-3" href="index.html#!"> <span className="me-2 text-900" data-feather="user" /><span>Profile</span></a></li>
-                                            <li className="nav-item"><a className="nav-link px-3" href="index.html#!"><span className="me-2 text-900" data-feather="pie-chart" />Dashboard</a></li>
-                                            <li className="nav-item"><a className="nav-link px-3" href="index.html#!"> <span className="me-2 text-900" data-feather="lock" />Posts &amp; Activity</a></li>
-                                            <li className="nav-item"><a className="nav-link px-3" href="index.html#!"> <span className="me-2 text-900" data-feather="settings" />Settings &amp; Privacy </a></li>
-                                            <li className="nav-item"><a className="nav-link px-3" href="index.html#!"> <span className="me-2 text-900" data-feather="help-circle" />Help Center</a></li>
-                                            <li className="nav-item"><a className="nav-link px-3" href="index.html#!"> <span className="me-2 text-900" data-feather="globe" />Language</a></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/dashboard"> <span className="me-2 text-900" data-feather="user" /><span>Profile</span></Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/dashboard"><span className="me-2 text-900" data-feather="pie-chart" />Dashboard</Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/student"> <span className="me-2 text-900" data-feather="lock" />Student </Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/order"> <span className="me-2 text-900" data-feather="lock" />Order </Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/book"> <span className="me-2 text-900" data-feather="lock" />Book </Link></li>
                                         </ul>
                                     </div>
                                     <div className="card-footer p-0 border-top">
-                                        <ul className="nav d-flex flex-column my-3">
-                                            <li className="nav-item"><a className="nav-link px-3" href="index.html#!"> <span className="me-2 text-900" data-feather="user-plus" />Add another account</a></li>
-                                        </ul>
-                                        <hr />
                                         <div className="px-3"> <a className="btn btn-phoenix-secondary d-flex flex-center w-100" href="index.html#!"> <span className="me-2" data-feather="log-out"> </span>Sign out</a></div>
                                         <div className="my-2 text-center fw-bold fs--2 text-600"><a className="text-600 me-1" href="index.html#!">Privacy policy</a>•<a className="text-600 mx-1" href="index.html#!">Terms</a>•<a className="text-600 ms-1" href="index.html#!">Cookies</a></div>
                                     </div>

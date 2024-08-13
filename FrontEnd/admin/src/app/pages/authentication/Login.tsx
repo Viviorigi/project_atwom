@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { LoginRequest } from '../../model/auth/LoginRequest'
 import { toast } from 'react-toastify';
-import { AuthService } from '../../services/AuthService';
-import { useAppDispatch, useAppSelector } from '../../store/hook';
+import { AuthService } from '../../services/auth/AuthService';
+import { useAppDispatch } from '../../store/hook';
 import { setLoading } from '../../reducers/spinnerSlice';
 import Cookies from 'universal-cookie';
 
@@ -67,6 +67,7 @@ export default function Login() {
       
           toast.success("Login successfully");
           cookie.set('access_token',resp.data.jwt)
+          cookie.set('fullName',resp.data.fullName)
           if (rememberMe) { 
             cookie.set('username',resp.data.username)
           }else{

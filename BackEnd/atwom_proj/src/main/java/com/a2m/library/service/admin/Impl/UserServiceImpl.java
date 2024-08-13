@@ -13,6 +13,9 @@ import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,7 +137,7 @@ public class UserServiceImpl implements UserService {
 		userDTO.setUsername(user.getUsername());
 		userDTO.setUserUid(user.getUserUid());
 		userDTO.setUpd_dt(user.getUpd_dt());
-
+		userDTO.setActive(user.isActive());
 		return userDTO;
 	}
 
@@ -190,4 +193,16 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findByUsername(username);
         return convertToUserDTO(user.get());
     }
+
+	@Override
+	public Page<UserDTO> findByUsernameContaining(String keySearch, PageRequest pageRequest) {
+		 Page<User> users = userRepository.searchUsers(keySearch, pageRequest);
+
+	        // Convert Page<User> to Page<UserDTO>
+	        List<UserDTO> userDTOs = users.stream()
+	                                      .map(this::convertToUserDTO)
+	                                      .collect(Collectors.toList());
+
+	        return new PageImpl<>(userDTOs, pageRequest, users.getTotalElements());
+	}
 }
