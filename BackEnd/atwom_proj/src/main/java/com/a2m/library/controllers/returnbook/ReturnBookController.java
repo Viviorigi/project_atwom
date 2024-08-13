@@ -27,7 +27,7 @@ public class ReturnBookController {
     public ResponseEntity<ReturnBookDTO> findById(@PathVariable Integer id) {
         Optional<ReturnBookDTO> returnBookDTO = returnBookService.findById(id);
         return returnBookDTO.map(ResponseEntity::ok)
-                            .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/add")

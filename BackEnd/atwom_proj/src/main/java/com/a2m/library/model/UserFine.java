@@ -6,29 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity
-@Table(name = "category")
+@Table(name = "user_fine")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class UserFine {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "name")
-    private String name;
-    
-    @Column(name = "deleted")
-	private Boolean deleted = false;
+    @ManyToOne
+    @JoinColumn(name = "returnbook_id")
+    private ReturnBook returnBook;
 
-    @OneToMany(mappedBy = "category")
-    @JsonManagedReference
-    private Set<Book> books;
+    @Column(name = "amount")
+    private Integer amount;
 }

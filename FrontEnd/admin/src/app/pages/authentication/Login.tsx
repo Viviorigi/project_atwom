@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { LoginRequest } from '../../models/auth/LoginRequest'
-import Swal from 'sweetalert2';
+import { LoginRequest } from '../../model/auth/LoginRequest'
 import { toast } from 'react-toastify';
 import { AuthService } from '../../services/AuthService';
 import { useAppDispatch, useAppSelector } from '../../store/hook';

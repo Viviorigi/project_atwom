@@ -43,8 +43,6 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         checkoutDetailRepository.deleteById(id);
     }
 
-    // Manual mapping methods
-
     private CheckoutDetailDTO toDTO(CheckoutDetail checkoutDetail) {
         CheckoutDetailDTO dto = new CheckoutDetailDTO();
         dto.setId(checkoutDetail.getId());

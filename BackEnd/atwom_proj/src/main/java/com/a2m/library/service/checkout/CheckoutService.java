@@ -12,4 +12,5 @@ public interface CheckoutService {
     CheckoutDTO save(CheckoutDTO checkoutDTO);
     CheckoutDTO updateStatus(Integer id, CheckoutStatus status);
     void checkExpiredCheckouts();
+    void scheduleEndTimeNotifications(CheckoutDTO checkoutDTO);
 }

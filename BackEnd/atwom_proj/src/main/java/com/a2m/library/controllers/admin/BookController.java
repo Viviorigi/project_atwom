@@ -3,6 +3,7 @@ package com.a2m.library.controllers.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +19,21 @@ import com.a2m.library.model.Book;
 import com.a2m.library.service.book.BookService;
 
 @RestController
-//@RequestMapping(value = "api/admin")
+//@RequestMapping(value = "api/book")
 public class BookController {
 	@Autowired
 	BookService bookService;
 	
+//	@GetMapping("/book/list")
+//	public ResponseEntity<?> bookGet() {
+//		List<BookDTO>books = bookService.findAllActive();
+//		return ResponseEntity.ok().body(books);
+//	}
+	
 	@GetMapping("/book/list")
-	public ResponseEntity<?> bookGet() {
-		List<BookDTO>books = bookService.findAllActive();
+	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,
+											@RequestParam("keySearch") String keySearch){
+		Page<Book>books = bookService.findAll(keySearch, page , 5);
 		return ResponseEntity.ok().body(books);
 	}
 	

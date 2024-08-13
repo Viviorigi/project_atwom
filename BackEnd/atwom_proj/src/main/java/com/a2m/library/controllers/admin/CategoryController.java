@@ -1,21 +1,18 @@
 package com.a2m.library.controllers.admin;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.dto.response.MessageResponse;
+import com.a2m.library.model.Category;
 import com.a2m.library.service.category.CategoryService;
 
 @RestController
@@ -24,10 +21,17 @@ public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
 
+//	@GetMapping("/category/list")
+//	public ResponseEntity<?> categoryGet() {
+//		List<CategoryDTO>categoryDTOs = categoryService.findAllActive();
+//		return ResponseEntity.ok().body(categoryDTOs);
+//	}
+	
 	@GetMapping("/category/list")
-	public ResponseEntity<?> categoryGet() {
-		List<CategoryDTO>categoryDTOs = categoryService.findAllActive();
-		return ResponseEntity.ok().body(categoryDTOs);
+	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,
+											@RequestParam("keySearch") String keySearch){
+		Page<Category>categories = categoryService.findAll(keySearch, page , 5);
+		return ResponseEntity.ok().body(categories);
 	}
 	
 	@PostMapping("/category/add")

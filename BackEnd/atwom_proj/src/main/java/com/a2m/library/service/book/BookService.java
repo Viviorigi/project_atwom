@@ -2,6 +2,8 @@ package com.a2m.library.service.book;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.a2m.library.dto.BookDTO;
 import com.a2m.library.model.Book;
 
@@ -16,6 +18,9 @@ public interface BookService {
     
     public BookDTO convertToBookDTO(Book book);
     public Book convertToBook(BookDTO bookDTO);
+    
+    //---------------------------------------------
+	public Page<Book>findAll(String keySearch, int page, int size);
 }
 
 

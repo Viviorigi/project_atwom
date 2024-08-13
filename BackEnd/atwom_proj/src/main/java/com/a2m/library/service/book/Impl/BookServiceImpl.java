@@ -1,17 +1,17 @@
 package com.a2m.library.service.book.Impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.a2m.library.dto.BookDTO;
-import com.a2m.library.dto.UserDTO;
 import com.a2m.library.model.Book;
-import com.a2m.library.model.User;
 import com.a2m.library.repository.BookRepository;
 import com.a2m.library.service.book.BookService;
 
@@ -24,6 +24,15 @@ public class BookServiceImpl implements BookService{
 	public List<BookDTO> findAll() {
 		List<Book>books = bookRepository.findAll();
 		return books.stream().map(book -> convertToBookDTO(book)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public Page<Book> findAll(String keySearch, int page, int size) {
+		// TODO Auto-generated method stub
+		Pageable pageable = PageRequest.of(page, size);
+		if(keySearch != null)
+			return bookRepository.findAllBook(keySearch, pageable);
+		return bookRepository.findAll(pageable);
 	}
 
 	@Override
