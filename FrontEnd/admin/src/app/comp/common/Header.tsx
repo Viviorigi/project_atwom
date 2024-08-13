@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Cookies from 'universal-cookie';
+import { AuthConstant } from '../../constants/AuthConstant';
 
 export default function Header() {
 
@@ -12,6 +13,11 @@ export default function Header() {
             setFullName(storedFullName)
         }
       },[])
+    const logout = ()=>{
+        cookie.remove(AuthConstant.ACCESS_TOKEN);
+        cookie.remove("fullName");
+        window.location.href = process.env.REACT_APP_AUTH_URL + "/"
+    }
 
     return (
         <>
@@ -218,36 +224,7 @@ export default function Header() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative unread border-bottom">
-                                                    <div className="d-flex align-items-center justify-content-between position-relative">
-                                                        <div className="d-flex">
-                                                            <div className="avatar avatar-m status-online me-3"><img className="rounded-circle" src="assets/img/team/40x40/59.webp" alt="" /></div>
-                                                            <div className="flex-1 me-sm-3">
-                                                                <h4 className="fs--1 text-black">Herman Carter</h4>
-                                                                <p className="fs--1 text-1000 mb-2 mb-sm-3 fw-normal"><span className="me-1 fs--2">👤</span>Tagged you in a comment.<span className="ms-2 text-400 fw-bold fs--2" /></p>
-                                                                <p className="text-800 fs--1 mb-0"><span className="me-1 fas fa-clock" /><span className="fw-bold">10:58 PM </span>August 7,2021</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
-                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as unread</a></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative read ">
-                                                    <div className="d-flex align-items-center justify-content-between position-relative">
-                                                        <div className="d-flex">
-                                                            <div className="avatar avatar-m status-online me-3"><img className="rounded-circle" src="assets/img/team/40x40/58.webp" alt="" /></div>
-                                                            <div className="flex-1 me-sm-3">
-                                                                <h4 className="fs--1 text-black">Benjamin Button</h4>
-                                                                <p className="fs--1 text-1000 mb-2 mb-sm-3 fw-normal"><span className="me-1 fs--2">👍</span>Liked your comment.<span className="ms-2 text-400 fw-bold fs--2" /></p>
-                                                                <p className="text-800 fs--1 mb-0"><span className="me-1 fas fa-clock" /><span className="fw-bold">10:18 AM </span>August 7,2021</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
-                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as unread</a></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -332,7 +309,7 @@ export default function Header() {
                                             <div className="avatar avatar-xl ">
                                                 <img className="rounded-circle " src="assets/img/team/72x72/57.webp" alt="" />
                                             </div>
-                                            <h6 className="mt-2 text-black">{fullName}</h6>
+                                            <h6 className="mt-2 text-black">{fullName?fullName:"USER"}</h6>
                                         </div>
                                     </div>
                                     <div className="overflow-auto scrollbar" style={{ height: '10rem' }}>
@@ -345,7 +322,7 @@ export default function Header() {
                                         </ul>
                                     </div>
                                     <div className="card-footer p-0 border-top">
-                                        <div className="px-3"> <a className="btn btn-phoenix-secondary d-flex flex-center w-100" href="index.html#!"> <span className="me-2" data-feather="log-out"> </span>Sign out</a></div>
+                                        <div className="px-3"> <button className="btn btn-phoenix-secondary d-flex flex-center w-100" onClick={logout}> <span className="me-2" data-feather="log-out"> </span>Log out</button></div>
                                         <div className="my-2 text-center fw-bold fs--2 text-600"><a className="text-600 me-1" href="index.html#!">Privacy policy</a>•<a className="text-600 mx-1" href="index.html#!">Terms</a>•<a className="text-600 ms-1" href="index.html#!">Cookies</a></div>
                                     </div>
                                 </div>
