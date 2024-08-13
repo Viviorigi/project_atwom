@@ -44,8 +44,8 @@ public class Book {
   @OneToMany(mappedBy = "book")
   private Set<CheckoutDetail> checkoutDetails;
 
-  @Column(name = "status_id")
-  private Integer status;
+//  @Column(name = "status_id")
+//  private Integer status = 0;
 
   @ManyToOne
   @JoinColumn(name = "cate_id")
