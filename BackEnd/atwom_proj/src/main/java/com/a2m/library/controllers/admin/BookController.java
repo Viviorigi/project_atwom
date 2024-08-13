@@ -1,7 +1,5 @@
 package com.a2m.library.controllers.admin;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +7,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,15 +34,26 @@ public class BookController {
 		return ResponseEntity.ok().body(books);
 	}
 	
+//	@PostMapping("/book/add")
+//	public ResponseEntity<?> bookAddPost(@RequestBody BookDTO bookDTO){
+//		try {
+//			bookService.save(bookDTO);
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+//		}
+//		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
+//	}
+	
 	@PostMapping("/book/add")
-	public ResponseEntity<?> bookAddPost(@RequestBody BookDTO bookDTO){
+	public ResponseEntity<?> studentAddList(@RequestBody Book book){
 		try {
-			bookService.save(bookDTO);
+			bookService.save(book);
 		} catch (Exception e) {
 			// TODO: handle exception
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
+		return ResponseEntity.ok().body("success");
 	}
 	
 	@PostMapping("/book/edit")

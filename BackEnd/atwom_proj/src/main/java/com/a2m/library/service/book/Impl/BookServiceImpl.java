@@ -46,6 +46,12 @@ public class BookServiceImpl implements BookService{
 	public void save(BookDTO bookDTO) {
 		bookRepository.save(convertToBook(bookDTO));
 	}
+	
+	@Override
+	public void save(Book book) {
+		// TODO Auto-generated method stub
+		bookRepository.save(book);
+	}
 
 	@Override
 	public BookDTO update(Integer id, BookDTO bookDTO) {

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { BookSearch } from './book-search'
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import AddBook from './AddBook';
+import { Dialog } from 'primereact/dialog';
 
 export default function Book() {
 
@@ -20,13 +22,13 @@ export default function Book() {
   }
 
   // Thêm sách
-  const addStudent = () => {
+  const addBook = () => {
     bookRef.current = null;
     setShowForm(true);
   }
 
   // edit
-  const editStudent = (studentDto: any) => {
+  const editBook = (studentDto: any) => {
     bookRef.current = studentDto;
     setShowForm(true);
   }
@@ -133,7 +135,7 @@ export default function Book() {
                     </div><button className="btn btn-phoenix-secondary px-7 flex-shrink-0">More filters</button>
                   </div>
                 </div>
-                <div className="col-auto"><button className="btn btn-link text-900 me-4 px-0"><span className="fa-solid fa-file-export fs--1 me-2" />Export</button><button className="btn btn-primary"><span className="fas fa-plus me-2" />Add customer</button></div>
+                <div className="col-auto"><button className="btn btn-link text-900 me-4 px-0"><span className="fa-solid fa-file-export fs--1 me-2" />Export</button><button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Add customer</button></div>
               </div>
             </div>
             <div className="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white border-top border-bottom border-200 position-relative top-1">
@@ -209,6 +211,9 @@ export default function Book() {
               </div>
             </div>
           </div>
+        </div>
+        <div>
+          {showForm && <AddBook hideForm={hideForm} studentDto={bookRef.current} />}
         </div>
         <footer className="footer position-absolute">
           <div className="row g-0 justify-content-between align-items-center h-100">

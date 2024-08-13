@@ -21,6 +21,7 @@ public interface BookService {
     
     //---------------------------------------------
 	public Page<Book>findAll(String keySearch, int page, int size);
+	void save(Book book);
 }
 
 
