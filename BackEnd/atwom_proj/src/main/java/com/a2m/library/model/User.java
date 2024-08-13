@@ -72,7 +72,7 @@ public class User implements Serializable {
 	@Column(name = "is_active")
 	private boolean isActive = false;
 	
-	// New fields for password reset
+	
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 

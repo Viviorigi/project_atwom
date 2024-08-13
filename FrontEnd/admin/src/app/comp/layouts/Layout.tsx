@@ -3,7 +3,13 @@ import SideBar from '../common/SideBar'
 import Header from '../common/Header'
 import { Outlet } from 'react-router-dom'
 
-export default function layout() {
+import { spinner } from '../../../App';
+import { useAppSelector } from '../../store/hook';
+
+export default function Layout() {
+
+  const loading = useAppSelector(state => state.spinner.loading);
+  console.log(loading);
 
   return (
     // <div className='d-flex'>
@@ -15,12 +21,15 @@ export default function layout() {
     //             <Outlet />
     //         </div>
     //     </div>
-    <main className="main" id="top">
-      <SideBar />
-      <Header />
-      <div className="content">
-        <Outlet />
-      </div>
-    </main>
+    <>
+      {loading ? spinner :
+        <main className="main" id="top">
+          <SideBar />
+          <Header />
+          <div className="content">
+            <Outlet />
+          </div>
+        </main>}
+    </>
   )
 }
