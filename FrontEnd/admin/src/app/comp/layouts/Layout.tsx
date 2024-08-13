@@ -9,7 +9,6 @@ import { useAppSelector } from '../../store/hook';
 export default function Layout() {
 
   const loading = useAppSelector(state => state.spinner.loading);
-  console.log(loading);
 
   return (
     // <div className='d-flex'>

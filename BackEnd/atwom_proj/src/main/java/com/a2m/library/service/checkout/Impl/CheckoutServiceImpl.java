@@ -77,14 +77,14 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     @Scheduled(cron = "0 0 0 * * ?") // Run every day at midnight
     public void checkExpiredCheckouts() {
-        List<Checkout> expiredCheckouts = checkoutRepository.findExpiredCheckouts(LocalDateTime.now());
-        for (Checkout checkout : expiredCheckouts) {
-            if (checkout.getStatus() != CheckoutStatus.RETURNED && checkout.getStatus() != CheckoutStatus.PENALTY) {
-                checkout.setStatus(CheckoutStatus.EXPIRED);
-                checkoutRepository.save(checkout);
-                sendExpirationNotification(checkout);
-            }
-        }
+//        List<Checkout> expiredCheckouts = checkoutRepository.findExpiredCheckouts(LocalDateTime.now());
+//        for (Checkout checkout : expiredCheckouts) {
+//            if (checkout.getStatus() != CheckoutStatus.RETURNED && checkout.getStatus() != CheckoutStatus.PENALTY) {
+//                checkout.setStatus(CheckoutStatus.EXPIRED);
+//                checkoutRepository.save(checkout);
+//                sendExpirationNotification(checkout);
+//            }
+//        }
     }
 
     @Transactional

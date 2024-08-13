@@ -1,5 +1,6 @@
 package com.a2m.library.config;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class DataInitializer {
 				adminUser.setClassName(null);
 				adminUser.setAddress(null);
 				adminUser.setPhone("0000000000");
-				adminUser.setDob(LocalDateTime.of(2000, 1, 1, 0, 0));
+				adminUser.setDob(LocalDate.of(2000, 1, 1));
 				adminUser.setCre_dt(LocalDateTime.now());
 				adminUser.setUpd_dt(LocalDateTime.now());
 				adminUser.setDeleted(false);

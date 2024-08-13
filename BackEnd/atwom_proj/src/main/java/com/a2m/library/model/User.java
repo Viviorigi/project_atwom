@@ -1,6 +1,7 @@
 package com.a2m.library.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class User implements Serializable {
 	private String fullName;
 
 	@Column(name = "dob")
-	private LocalDateTime dob;
+	private LocalDate dob;
 
 	@Column(name = "class_name")
 	private String className;

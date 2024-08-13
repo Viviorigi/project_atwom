@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.a2m.library.constant.RoleEnum;
 import com.a2m.library.dto.UserDTO;
+import com.a2m.library.dto.response.UserResponse;
+import com.a2m.library.model.Role;
 import com.a2m.library.model.User;
 import com.a2m.library.model.UserRole;
 import com.a2m.library.model.VerificationToken;
@@ -195,14 +197,36 @@ public class UserServiceImpl implements UserService {
     }
 
 	@Override
-	public Page<UserDTO> findByUsernameContaining(String keySearch, PageRequest pageRequest) {
+	public Page<UserResponse> findByUsernameContaining(String keySearch, PageRequest pageRequest) {
 		 Page<User> users = userRepository.searchUsers(keySearch, pageRequest);
 
 	        // Convert Page<User> to Page<UserDTO>
-	        List<UserDTO> userDTOs = users.stream()
-	                                      .map(this::convertToUserDTO)
+	        List<UserResponse> userDTOs = users.stream()
+	                                      .map(this::convertToUserResponse)
 	                                      .collect(Collectors.toList());
 
 	        return new PageImpl<>(userDTOs, pageRequest, users.getTotalElements());
+	}
+	
+	public UserResponse convertToUserResponse(User user) {
+		UserResponse userResponse = new UserResponse();
+		userResponse.setAddress(user.getAddress());
+		userResponse.setPassword(user.getPassword());
+		userResponse.setPhone(user.getPhone());
+		userResponse.setCre_dt(user.getCre_dt());
+		userResponse.setDob(user.getDob());
+		userResponse.setEmail(user.getEmail());
+		userResponse.setFullName(user.getFullName());
+		userResponse.setClassName(user.getClassName());
+		userResponse.setAvatar(user.getAvatar());
+		userResponse.setUsername(user.getUsername());
+		userResponse.setUserUid(user.getUserUid());
+		userResponse.setUpd_dt(user.getUpd_dt());
+		userResponse.setActive(user.isActive());
+		List<String> roleNames = user.getRoles().stream()
+                .map(roles->roles.getRoleName())
+                .collect(Collectors.toList());
+		userResponse.setRoles(roleNames);
+		return userResponse;
 	}
 }

@@ -16,7 +16,7 @@ export class AuthService {
   public login(login: any) {
     const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/login`);
     return axios.post(url, login, {
-      headers: HeadersUtil.getHeaders(),
+      headers: HeadersUtil.getHeaders()
     });
   }
 
@@ -25,11 +25,16 @@ export class AuthService {
     const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/getAll`, params);
 
     return axios.get(url, {
-      headers: {
-        ...HeadersUtil.getHeaders(),
-        ...HeadersUtil.getAuth()
-      }
+      headers: HeadersUtil.getHeadersAuth()
     });
+  }
+
+  public create(auth:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/create`);
+    return axios.post(url,auth, {
+      headers: HeadersUtil.getHeadersAuthFormData()
+    });
+
   }
 
 }

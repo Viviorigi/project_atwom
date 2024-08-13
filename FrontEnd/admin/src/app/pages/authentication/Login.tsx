@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LoginRequest } from '../../model/auth/LoginRequest'
 import { toast } from 'react-toastify';
 import { AuthService } from '../../services/auth/AuthService';
 import { useAppDispatch } from '../../store/hook';
 import { setLoading } from '../../reducers/spinnerSlice';
 import Cookies from 'universal-cookie';
+import { AuthConstant } from '../../constants/AuthConstant';
 
 export default function Login() {
   const [loginRequest, setLoginRequest] = useState<LoginRequest>(new LoginRequest());
   const dispatch = useAppDispatch();
   const [rememberMe, setRememberMe] = useState(false);
   const cookie = new Cookies();
-  
+  const navigate = useNavigate();
+
   const handleChangeText = (event: any) => {
     const { name, value } = event.target;
     setLoginRequest((prev) => ({
@@ -20,8 +22,8 @@ export default function Login() {
       [name]: value,
     }));
   };
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const storedUsername = cookie.get("username");
     if (storedUsername) {
       setLoginRequest(prev => ({
@@ -29,7 +31,7 @@ export default function Login() {
         username: storedUsername
       }));
     }
-  },[])
+  }, [])
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRememberMe(event.target.checked);
@@ -62,21 +64,24 @@ export default function Login() {
       return;
     }
     dispatch(setLoading(true));
-    AuthService.getInstance().login(loginRequest).then((resp:any)=>{
-      if(resp){
-      
-          toast.success("Login successfully");
-          cookie.set('access_token',resp.data.jwt)
-          cookie.set('fullName',resp.data.fullName)
-          if (rememberMe) { 
-            cookie.set('username',resp.data.username)
-          }else{
-            cookie.remove('username')
-          };      
+    AuthService.getInstance().login(loginRequest).then((resp: any) => {
+      if (resp) {
+        dispatch(setLoading(false))
+        toast.success("Login successfully");
+        const expires = new Date();
+        expires.setDate(expires.getDate() + AuthConstant.EXPIRES_TOKEN)
+        cookie.set(AuthConstant.ACCESS_TOKEN, resp.data.jwt, { path: '/', expires: expires })
+        cookie.set('fullName', resp.data.fullName)
+        navigate('/')
+        if (rememberMe) {
+          cookie.set('username', resp.data.username)
+        } else {
+          cookie.remove('username')
+        };
       }
     }).catch((error: any) => {
       dispatch(setLoading(false));
-      toast.error( "Username or Password wrong");
+      toast.error("Username or Password wrong");
     });
   }
 
@@ -114,8 +119,8 @@ export default function Login() {
               </div>
               <div className="row flex-between-center mb-7">
                 <div className="col-auto">
-                  <div className="form-check mb-0"><input className="form-check-input" id="basic-checkbox" type="checkbox"  checked={rememberMe}
-                      onChange={handleCheckboxChange} /><label className="form-check-label mb-0" htmlFor="basic-checkbox">Remember me</label></div>
+                  <div className="form-check mb-0"><input className="form-check-input" id="basic-checkbox" type="checkbox" checked={rememberMe}
+                    onChange={handleCheckboxChange} /><label className="form-check-label mb-0" htmlFor="basic-checkbox">Remember me</label></div>
                 </div>
                 <div className="col-auto"><Link className="fs--1 fw-semi-bold" to={"/forgot-password"}>Forgot Password?</Link></div>
               </div><button className="btn btn-primary w-100 mb-3" onClick={login}>Login In</button>

@@ -6,10 +6,11 @@ import Book from '../pages/book/Book';
 import Student from '../pages/student/Student';
 import Order from '../pages/order/Order';
 import Return from '../pages/return/Return';
+import AuthGuard from '../guard/AuthGuard';
 export const indexRouter: any = {
     path: '',
     element: (
-        <Layout />
+        <AuthGuard><Layout /></AuthGuard>
     ),
     children: [
         { path: 'dashboard', element: <DashBoard /> },

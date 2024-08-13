@@ -39,6 +39,7 @@ import com.a2m.library.dto.request.LoginRequest;
 import com.a2m.library.dto.response.JwtResponse;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.dto.response.UserListResponse;
+import com.a2m.library.dto.response.UserResponse;
 import com.a2m.library.model.User;
 import com.a2m.library.model.VerificationToken;
 import com.a2m.library.repository.UserRepository;
@@ -110,15 +111,39 @@ public class AuthController {
 				user.getFullName(), "Bearer", roles));
 	}
 
-	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
+	@PostMapping("/create")
+	public ResponseEntity<?> createUser(@Valid @RequestPart("userDTO") String userDTOJson,
+			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
+		UserDTO userDTO;
+		userDTO = objectMapper.readValue(userDTOJson, UserDTO.class);
+
+		if (file != null && !file.isEmpty()) {
+			try {
+				String originalFilename = file.getOriginalFilename();
+				String timestamp = String.valueOf(System.currentTimeMillis());
+				String newFilename = timestamp + "_" + originalFilename;
+
+				final Path directory = Paths.get(uploadDir);
+				final Path filePath = Paths.get(uploadDir + newFilename);
+				if (!Files.exists(directory)) {
+					Files.createDirectories(directory);
+				}
+				Files.write(filePath, file.getBytes());
+				userDTO.setAvatar(newFilename);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
+			}
+		}
+
+		// Save user information
 		try {
 			userService.signUp(userDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
-		return ResponseEntity.ok().body(new MessageResponse("Sign up successful"));
+		return ResponseEntity.ok().body(new MessageResponse("Create successful"));
 	}
 
 	@PostMapping("/update")
@@ -160,16 +185,13 @@ public class AuthController {
 	}
 
 	@GetMapping(value = "/getAll")
-	public ResponseEntity<UserListResponse> getAll(@RequestParam(defaultValue = "") String keySearch, @RequestParam("page") int page,
-			@RequestParam("limit") int limit) {
-		 PageRequest pageRequest = PageRequest.of(page - 1, limit, Sort.by("upd_dt").descending());
-	        Page<UserDTO> userPage = userService.findByUsernameContaining(keySearch, pageRequest);
-	        
-	        UserListResponse response = UserListResponse.builder()
-	                .users(userPage.getContent())
-	                .totalPages(userPage.getTotalPages()) 
-	                .totalUsers(userPage.getTotalElements())
-	                .build();
+	public ResponseEntity<UserListResponse> getAll(@RequestParam(defaultValue = "") String keySearch,
+			@RequestParam("page") int page, @RequestParam("limit") int limit) {
+		PageRequest pageRequest = PageRequest.of(page - 1, limit, Sort.by("upd_dt").descending());
+		Page<UserResponse> userPage = userService.findByUsernameContaining(keySearch, pageRequest);
+
+		UserListResponse response = UserListResponse.builder().users(userPage.getContent())
+				.totalPages(userPage.getTotalPages()).totalUsers(userPage.getTotalElements()).build();
 		return ResponseEntity.ok(response);
 	}
 

@@ -33,8 +33,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	User findByResetPasswordToken(String resetPasswordToken);
 
 	@Query("SELECT u FROM User u WHERE " +
-	           "u.username LIKE %:keyword% OR " +
-	           "u.email LIKE %:keyword% OR " +
-	           "u.fullName LIKE %:keyword%")
+		       "(u.username LIKE %:keyword% OR " +
+		       "u.email LIKE %:keyword% OR " +
+		       "u.fullName LIKE %:keyword%) AND " +
+		       "u.deleted = false")
 	    Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
 }
