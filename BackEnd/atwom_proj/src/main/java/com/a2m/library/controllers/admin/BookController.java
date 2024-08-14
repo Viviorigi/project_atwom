@@ -101,6 +101,6 @@ public class BookController {
 			// TODO: handle exception
 			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
-		return ResponseEntity.ok().body(new MessageResponse("Delete ok"));
+		return ResponseEntity.ok().body(new MessageResponse("success"));
 	}
 }

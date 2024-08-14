@@ -85,4 +85,11 @@ public class CategoryServiceImol implements CategoryService{
 		return modelMapper.map(categoryDTO, Category.class);
 	}
 
+	@Override
+	public void save(Category category) {
+		// TODO Auto-generated method stub
+		categoryRepository.save(category);
+		
+	}
+
 }

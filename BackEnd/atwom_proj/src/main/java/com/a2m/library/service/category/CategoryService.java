@@ -20,4 +20,5 @@ public interface CategoryService {
     
   //---------------------------------------------
   	public Page<Category>findAll(String keySearch, int page, int size);
+  	void save(Category category);
 }

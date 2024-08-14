@@ -4,6 +4,8 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { toast, ToastContainer } from 'react-toastify';
+// import './book-css.scss'
 
 
 export default function AddBook(props: any) {
@@ -75,6 +77,8 @@ export default function AddBook(props: any) {
         if (!chk()) {
             return;
         }
+        // setVisible(false);
+        hideForm(true);
 
         Swal.fire({
             title: `Xác nhận`,
@@ -91,10 +95,12 @@ export default function AddBook(props: any) {
                 let url = `http://localhost:8080/book/add`;
                 axios.post(url, book).then((resp: any) => {
                     if (resp.data === "success") {
-                        hideForm(true);
+                        // hideForm(true);
+                        toast.success("Lưu sách thành công");
                     }
                 }).catch((err: any) => {
-
+                    console.log(err);
+                    
                 })
             }
         })
@@ -104,23 +110,29 @@ export default function AddBook(props: any) {
         hideForm(false);
     }
     const [visible, setVisible] = useState(true);
-    const showDialog = () => setVisible(true);
+    const showDialog = () => {
+        setVisible(true);
+    }
 
     // Close dialog
-    const hideDialog = () => setVisible(false);
+    const hideDialog = () => {
+        setVisible(false);
+        // hideForm(true);
+    }
 
     return (
         <div>
             {/* <Button label="Show Form" icon="pi pi-plus" onClick={showDialog} /> */}
             <Dialog
                 visible={visible}
-                onHide={hideDialog}
-                style={{ width: '800px', backgroundColor: '#f5f5f5'}}
+                // onHide={hideDialog}
+                onHide={() => hideForm(true)}
+                style={{ width: '850px', height: '500px', backgroundColor: '#f5f5f5' }}
                 baseZIndex={1100}>
                 <div className="container form-group">
-                    <div className="row">
+                    <div className="row mb-3">
                         <div className="col-2">
-                            <span style={{ color: "red", width: "100px", height: "100px" }}>Title</span>
+                            Title
                         </div>
                         <div className="col-9">
                             <input type='text'
@@ -128,66 +140,96 @@ export default function AddBook(props: any) {
                                 name="title"
                                 value={book.title || ""}
                                 onChange={handleChangeText}
-                                placeholder="Nhập fullName" />
+                                placeholder="Nhập tên sách" />
                             <div className={`invalid-feedback ${book.title?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
                     </div>
-                    <div>
-                        <span style={{ color: "red" }}>Publisher</span>
-                        <input type='text'
-                            name="publisher"
-                            value={book.publisher || ""}
-                            onChange={handleChangeText}
-                            placeholder="Nhập fullName" />
-                        <div className={`invalid-feedback ${book.publisher?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                    <div className='row mb-3'>
+                        <div className='col-2'>
+                            Publisher
+                        </div>
+                        <div className='col-9'>
+                            <input type='text'
+                                className="form-control"
+                                name="publisher"
+                                value={book.publisher || ""}
+                                onChange={handleChangeText}
+                                placeholder="Nhập tên tác giả" />
+                            <div className={`invalid-feedback ${book.publisher?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
                     </div>
-                    <div>
-                        <span style={{ color: "red" }}>Publish year</span>
-                        <input type='number'
-                            name="publicationYear"
-                            value={book.publicationYear == undefined ? '' : book.publicationYear}
-                            onKeyDown={handleKeyPress}
-                            onChange={handleChangeNumber}
-                            placeholder="Nhập năm sinh" />
-                        <div className={`invalid-feedback ${book.publicationYear?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                    <div className='row mb-3'>
+                        <div className='col-2'>
+                            Publish year
+                        </div>
+                        <div className='col-9'>
+                            <input type='number'
+                                name="publicationYear"
+                                className="form-control"
+                                value={book.publicationYear == undefined ? '' : book.publicationYear}
+                                onKeyDown={handleKeyPress}
+                                onChange={handleChangeNumber}
+                                placeholder="Nhập năm xuất bản" />
+                            <div className={`invalid-feedback ${book.publicationYear?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
                     </div>
-                    <div>
-                        <span style={{ color: "red" }}>Placed</span>
-                        <input type='number'
-                            name="quantityPlaced"
-                            value={book.quantityPlaced == undefined ? '' : book.quantity}
-                            onKeyDown={handleKeyPress}
-                            onChange={handleChangeNumber}
-                            placeholder="Nhập năm sinh" />
-                        <div className={`invalid-feedback ${book.quantityPlaced?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                    <div className='row mb-3'>
+                        <div className='col-2'>
+                            Placed
+                        </div>
+                        <div className='col-9'>
+                            <input type='number'
+                                name="quantityPlaced"
+                                className="form-control"
+                                value={book.quantityPlaced == undefined ? '' : book.quantityPlaced}
+                                onKeyDown={handleKeyPress}
+                                onChange={handleChangeNumber}
+                                placeholder="Số sách đã đặt" />
+                            <div className={`invalid-feedback ${book.quantityPlaced?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
                     </div>
-                    <div>
-                        <span style={{ color: "red" }}>Quantity</span>
-                        <input type='text'
-                            name="quantity"
-                            value={book.quantity || ""}
-                            onChange={handleChangeText}
-                            placeholder="Nhập address" />
-                        <div className={`invalid-feedback ${book.quantity?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                    <div className='row mb-3'>
+                        <div className='col-2'>
+                            Quantity
+                        </div>
+                        <div className='col-9'>
+                            <input type='text'
+                                className="form-control"
+                                name="quantity"
+                                value={book.quantity == undefined ? '' : book.quantity}
+                                onChange={handleChangeText}
+                                placeholder="Số lượng sách" />
+                            <div className={`invalid-feedback ${book.quantity?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
                     </div>
-                    <div>
-                        <span style={{ color: "red" }}>Price</span>
-                        <input type='text'
-                            name="price"
-                            value={book.price || ""}
-                            onChange={handleChangeText}
-                            placeholder="Nhập address" />
-                        <div className={`invalid-feedback ${book.price?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                    <div className='row mb-3'>
+                        <div className='col-2'>
+                            Price
+                        </div>
+                        <div className='col-9'>
+                            <input type='text'
+                                className="form-control"
+                                name="price"
+                                value={book.price == undefined ? '' : book.price}
+                                onChange={handleChangeText}
+                                placeholder="Giá" />
+                            <div className={`invalid-feedback ${book.price?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
                     </div>
-                    <div>
-                        <span style={{ color: "red" }}>Active</span>
-                        <input type='text'
-                            name="deleted"
-                            value={book.deleted || ""}
-                            onChange={handleChangeText}
-                            placeholder="Nhập address" />
-                        <div className={`invalid-feedback ${book.deleted?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
-                    </div>
+                    {/* <div className='row mb-3'>
+                        <div className='col-2'>
+                            Active
+                        </div>
+                        <div className='col-9'>
+                            <input type='text'
+                                name="deleted"
+                                className="form-control"
+                                value={book.deleted == undefined ? '' : book.deleted}
+                                onChange={handleChangeText}
+                                placeholder="Trạng thái" />
+                            <div className={`invalid-feedback ${book.deleted?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
+                    </div> */}
                     {/* <div>
                     <span style={{ color: "red" }}>Date create</span>
                     <input type='text'
@@ -215,9 +257,10 @@ export default function AddBook(props: any) {
                         placeholder="Nhập address" />
                     <div className={`invalid-feedback ${book.publisher?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                 </div> */}
-                    <div>
-                        <button onClick={save}>Save</button>
-                        <button onClick={cancel}>Cancel</button>
+                    <div className="text-center mt-3">
+                        <button onClick={save} className="btn btn-primary btn-sm me-2">Save</button>
+                        {/* <button onClick={cancel} className="btn btn-danger btn-sm">Cancel</button> */}
+                        <button onClick={cancel} className="btn btn-danger btn-sm">Cancel</button>
                     </div>
                 </div>
             </Dialog>

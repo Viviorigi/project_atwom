@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.dto.response.MessageResponse;
+import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
 import com.a2m.library.service.category.CategoryService;
 
@@ -34,15 +35,26 @@ public class CategoryController {
 		return ResponseEntity.ok().body(categories);
 	}
 	
+//	@PostMapping("/category/add")
+//	public ResponseEntity<?> categoryAddPost(@RequestBody CategoryDTO categoryDTO){
+//		try {
+//			categoryService.save(categoryDTO);
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+//		}
+//		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
+//	}
+	
 	@PostMapping("/category/add")
-	public ResponseEntity<?> categoryAddPost(@RequestBody CategoryDTO categoryDTO){
+	public ResponseEntity<?> categoryAddList(@RequestBody Category category){
 		try {
-			categoryService.save(categoryDTO);
+			categoryService.save(category);
 		} catch (Exception e) {
 			// TODO: handle exception
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
+		return ResponseEntity.ok().body("success");
 	}
 	
 	@PostMapping("/category/edit")
@@ -90,6 +102,6 @@ public class CategoryController {
 			// TODO: handle exception
 			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
-		return ResponseEntity.ok().body(new MessageResponse("Delete ok"));
+		return ResponseEntity.ok().body(new MessageResponse("sucess"));
 	}
 }

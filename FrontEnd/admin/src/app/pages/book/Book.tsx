@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import AddBook from './AddBook';
 import { Dialog } from 'primereact/dialog';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Book() {
 
@@ -12,6 +13,7 @@ export default function Book() {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState(0);
   const bookRef = useRef<any>();
+  const visible = useRef<any>(true);
 
   // xử lý khi chữ thay đổi
   const handleChangeText = (event: any) => {
@@ -28,14 +30,14 @@ export default function Book() {
   }
 
   // edit
-  const editBook = (studentDto: any) => {
-    bookRef.current = studentDto;
+  const editBook = (bookDTO: any) => {
+    bookRef.current = bookDTO;
     setShowForm(true);
   }
 
   //delete
   //xóa
-  const delStudent = (id: number) => {
+  const delBook = (id: number) => {
     Swal.fire({
       title: `Xác nhận`,
       text: `Bạn có muốn thực hiện ...`,
@@ -47,19 +49,18 @@ export default function Book() {
       cancelButtonText: `No`
     }).then((result) => {
       if (result.value) {
-        // logic
         let url = `http://localhost:8080/book/delete?id=${id}`;
         axios.delete(url).then((resp: any) => {
-          if (resp.data === "success") {
-            console.log("Ok r nhe");
-
+          // if (resp.data === "success") {
+            toast.success("Đã xóa");
+            // console.log(resp.data);
             setSearchDto({
               ...searchDto,
               timer: new Date().getTime()
             })
-          }
+          // }
         }).catch((err: any) => {
-
+          // console.log(err);
         })
       }
     })
@@ -69,12 +70,11 @@ export default function Book() {
   useEffect(() => {
     let url = `http://localhost:8080/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
     axios.get(url).then((resp: any) => {
-      console.log(resp.data);
-
+      // console.log(resp.data);
       if (resp.data) {
         setBookList(resp.data.content);
         setTotalPages(resp.data.totalPages);
-        console.log(bookList);
+        // console.log(bookList);
       }
     }).catch((err: any) => {
 
@@ -87,7 +87,7 @@ export default function Book() {
     if (isCRUD) {
       setSearchDto({
         ...searchDto,
-        page: 1,
+        page: 0,
         timer: new Date().getTime()
       })
     }
@@ -153,7 +153,8 @@ export default function Book() {
                       <th className="sort align-middle text-end ps-3" scope="col" data-sort="total-spent" style={{ width: '10%' }}>Publisher</th>
                       <th className="sort align-middle ps-7" scope="col" data-sort="city" style={{ width: '25%' }}>Placed/quantity</th>
                       <th className="sort align-middle text-end" scope="col" data-sort="last-seen" style={{ width: '15%' }}>Price</th>
-                      <th className="sort align-middle text-end pe-0" scope="col" data-sort="last-order" style={{ width: '10%', minWidth: 150 }}>Hiden</th>
+                      <th className="sort align-middle text-end pe-0" scope="col" data-sort="last-order" style={{ width: '10%', minWidth: 150 }}>Active</th>
+                      <th className="sort align-middle text-end pe-0" scope="col" data-sort="last-order" style={{ width: '10%', minWidth: 150 }}>Operation</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
@@ -171,16 +172,10 @@ export default function Book() {
                           <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.quantityPlaced}/{e.quantity}</td>
                           <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.price}</td>
                           <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.deleted ? 1 : 0}</td>
-                          {/* <td>{e.title}</td>
-                          <td>{e.publisher}</td>
-                          <td>{e.quantity}</td>
-                          <td>{e.price}</td>
-                          <td></td>
-                          <td></td> */}
-                          {/* <td> */}
-                          {/* <button onClick={() => { editStudent(e) }}>Edit</button> */}
-                          {/* <button onClick={() => delStudent(e.id)}>Del</button> */}
-                          {/* </td> */}
+                          <td>
+                            <button onClick={() => { editBook(e) }}>Edit</button>
+                            <button onClick={() => delBook(e.id)}>Del</button>
+                          </td>
                         </tr>
                       ))
                     }
@@ -213,7 +208,7 @@ export default function Book() {
           </div>
         </div>
         <div>
-          {showForm && <AddBook hideForm={hideForm} studentDto={bookRef.current} />}
+          {showForm && <AddBook hideForm={hideForm} bookDTO={bookRef.current} />}
         </div>
         <footer className="footer position-absolute">
           <div className="row g-0 justify-content-between align-items-center h-100">
