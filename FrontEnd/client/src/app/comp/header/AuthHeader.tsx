@@ -3,7 +3,6 @@ import { HeaderMainWrapper, SiteBrandWrapper } from "../../styles/header";
 import { Container } from "../../styles/styles";
 import { BaseLinkGreen, BaseLinkOutlineDark } from "../../styles/button";
 import { breakpoints } from "../../styles/themes/default";
-import { staticImages } from "../../utils/images";
 
 const ButtonGroupWrapper = styled.div`
   gap: 8px;
@@ -22,9 +21,9 @@ const AuthHeader = () => {
         <div className="header-wrap flex items-center justify-between">
           <SiteBrandWrapper to="/" className="inline-flex">
             <div className="brand-img-wrap flex items-center justify-center">
-              <img className="site-brand-img" src={staticImages.logo} alt="" />
+              <img className="site-brand-img" src="https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg?w=360" alt="" />
             </div>
-            <span className="site-brand-text"></span>
+            <span className="site-brand-text">ATWM BOOK</span>
           </SiteBrandWrapper>
           <div className="flex items-center">
             <ButtonGroupWrapper className="flex items-center">

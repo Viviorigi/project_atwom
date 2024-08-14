@@ -318,6 +318,260 @@ const navMenuData = [
       ],
     },
   ];
+  const books = [
+    {
+      id: 1,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 2,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 3,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 4,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 5,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 6,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 7,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 8,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 9,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 10,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 11,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 12,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 13,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 14,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 15,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 16,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 17,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 18,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+    {
+      id: 19,
+      imgSource: staticImages.book_order,
+      title: "Title",
+      brand: "Title",
+      price: 123.0,
+    },
+  ];
+
+  const ProductFilterList = [
+    {
+      id: "prod_filter_1",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_2",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_3",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_4",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_5",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_6",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_7",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_8",
+      title: "Title",
+    },
+    {
+      id: "prod_filter_9",
+      title: "Title",
+    },
+  ];
+  const StyleFilterList = [
+    {
+      id: "style_filter_1",
+      title: "Title",
+    },
+    {
+      id: "style_filter_2",
+      title: "Title",
+    },
+    {
+      id: "style_filter_3",
+      title: "Title",
+    },
+    {
+      id: "style_filter_4",
+      title: "Title",
+    },
+    {
+      id: "style_filter_5",
+      title: "Title",
+    },
+    {
+      id: "style_filter_6",
+      title: "Title",
+    },
+  ];
+  const product_one = {
+    id: "product_01",
+    title: "Raven Hoodie With Black Colored Design",
+    previewImages: [
+      {
+        id: "preview1",
+        imgSource: staticImages.book_order,
+      },
+      {
+        id: "preview2",
+        imgSource: staticImages.book_order,
+      },
+      {
+        id: "preview3",
+        imgSource: staticImages.book_order,
+      },
+      {
+        id: "preview4",
+        imgSource: staticImages.book_order,
+      },
+      {
+        id: "preview5",
+        imgSource: staticImages.book_order,
+      },
+    ],
+    rating: 3.5,
+    comments_count: 120,
+    sizes: ["xs", "s", "m", "l", "xl"],
+    colors: ["#3C4242", "#EDD146", "#EB84B0", "#9C1F35"],
+    price: 63.0,
+  };
+  const productDescriptionTabHeads = [
+    {
+      id: "tab-description",
+      tabHead: "tabDescription",
+      tabText: "Description",
+      badgeValue: null,
+      badgeColor: "",
+    },
+    {
+      id: "tab-comments",
+      tabHead: "tabComments",
+      tabText: "User Comments",
+      badgeValue: 10,
+      badgeColor: "purple",
+    },
+    {
+      id: "tab-QNA",
+      tabHead: "tabQNA",
+      tabText: "Question & Answer",
+      badgeValue: 4,
+      badgeColor: "outerspace",
+    },
+  ];
 
   export {
     navMenuData,
@@ -327,5 +581,10 @@ const navMenuData = [
     bannerData,
     newArrivalData,
     feedbackData,
-    orderData
+    orderData,
+    books,
+    ProductFilterList,
+    StyleFilterList,
+    product_one,
+    productDescriptionTabHeads
   }
