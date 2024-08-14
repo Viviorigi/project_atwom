@@ -52,12 +52,12 @@ export default function Book() {
         let url = `http://localhost:8080/book/delete?id=${id}`;
         axios.delete(url).then((resp: any) => {
           // if (resp.data === "success") {
-            toast.success("Đã xóa");
-            // console.log(resp.data);
-            setSearchDto({
-              ...searchDto,
-              timer: new Date().getTime()
-            })
+          toast.success("Đã xóa");
+          // console.log(resp.data);
+          setSearchDto({
+            ...searchDto,
+            timer: new Date().getTime()
+          })
           // }
         }).catch((err: any) => {
           // console.log(err);
@@ -110,7 +110,14 @@ export default function Book() {
                 <div className="col-auto">
                   {/* Search input-------------------------------------------------------------------------------------------- */}
                   <div className="search-box">
-                    <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input search" type="search" placeholder="Tìm kiếm" aria-label="Search" />
+                    {/* <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input search" type="search" placeholder="Tìm kiếm" aria-label="Search" /> */}
+                    <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input search" type="search" placeholder="Tìm kiếm" aria-label="Search" onClick={() => {
+                      setSearchDto({
+                        ...searchDto,
+                        page: 0,
+                        timer: new Date().getTime()
+                      })
+                    }} />
                       <span className="fas fa-search search-box-icon" />
                     </form>
                   </div>
