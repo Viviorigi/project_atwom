@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { setLoading } from "../../reducers/spinnerSlice";
 import { AuthService } from "../../services/auth/AuthService";
 import { toast } from "react-toastify";
-
+import defaultPersonImage from "../../../assets/images/imagePerson.png"
 export default function StudentForm(props: any) {
   const { closeForm, onSave, user } = props;
   const [userSave, setUserSave] = useState<UserDTORequest>(
@@ -41,7 +41,7 @@ export default function StudentForm(props: any) {
     });
   };
 
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | undefined>(undefined);
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (event: any) => {
@@ -108,6 +108,9 @@ export default function StudentForm(props: any) {
     }
     return true;
   };
+
+
+  const imageSource = image? image : user!==null ? `http://localhost:8080/files/${user.avatar}`: defaultPersonImage;
 
   const save = () => {
     if (!chk()) {
@@ -192,11 +195,11 @@ export default function StudentForm(props: any) {
               value={userSave?.username || ""}
               onChange={handleChangeText}
               placeholder="Enter Username"
+              readOnly={user !== null ? true : false}
             />
             <div
-              className={`invalid-feedback ${
-                userSave?.username?.toString() === "" ? "d-block" : ""
-              }`}
+              className={`invalid-feedback ${userSave?.username?.toString() === "" ? "d-block" : ""
+                }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Username must not be empty and must be between 3 and 50
@@ -217,9 +220,8 @@ export default function StudentForm(props: any) {
                 placeholder="Enter Password"
               />
               <div
-                className={`invalid-feedback ${
-                  userSave?.password?.toString() === "" ? "d-block" : ""
-                }`}
+                className={`invalid-feedback ${userSave?.password?.toString() === "" ? "d-block" : ""
+                  }`}
                 style={{ fontSize: "100%", color: "red" }}
               >
                 Password must not be empty and must be at least 6 characters.
@@ -238,11 +240,11 @@ export default function StudentForm(props: any) {
               value={userSave?.email || ""}
               onChange={handleChangeText}
               placeholder="Enter Email"
+              readOnly={user !== null ? true : false}
             />
             <div
-              className={`invalid-feedback ${
-                userSave?.email?.toString() === "" ? "d-block" : ""
-              }`}
+              className={`invalid-feedback ${userSave?.email?.toString() === "" ? "d-block" : ""
+                }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Email must not be empty.
@@ -262,9 +264,8 @@ export default function StudentForm(props: any) {
               placeholder="Enter Full Name"
             />
             <div
-              className={`invalid-feedback ${
-                userSave?.fullName?.toString() === "" ? "d-block" : ""
-              }`}
+              className={`invalid-feedback ${userSave?.fullName?.toString() === "" ? "d-block" : ""
+                }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               FullName must not be empty.
@@ -284,9 +285,8 @@ export default function StudentForm(props: any) {
               placeholder="Enter Phone"
             />
             <div
-              className={`invalid-feedback ${
-                userSave?.phone?.toString() === "" ? "d-block" : ""
-              }`}
+              className={`invalid-feedback ${userSave?.phone?.toString() === "" ? "d-block" : ""
+                }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Phone must not be empty.
@@ -325,9 +325,8 @@ export default function StudentForm(props: any) {
               placeholder="Enter Full Name"
             />
             <div
-              className={`invalid-feedback ${
-                userSave?.className?.toString() === "" ? "d-block" : ""
-              }`}
+              className={`invalid-feedback ${userSave?.className?.toString() === "" ? "d-block" : ""
+                }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               ClassName must not be empty.
@@ -345,9 +344,8 @@ export default function StudentForm(props: any) {
               onChange={handleChangeText}
             />
             <div
-              className={`invalid-feedback ${
-                userSave?.dob?.toString() === "" ? "d-block" : ""
-              }`}
+              className={`invalid-feedback ${userSave?.dob?.toString() === "" ? "d-block" : ""
+                }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Dob must not be empty.
@@ -367,9 +365,8 @@ export default function StudentForm(props: any) {
               placeholder="Enter Address"
             />
             <div
-              className={`invalid-feedback ${
-                userSave?.address?.toString() === "" ? "d-block" : ""
-              }`}
+              className={`invalid-feedback ${userSave?.address?.toString() === "" ? "d-block" : ""
+                }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Address must not be empty.
@@ -387,9 +384,9 @@ export default function StudentForm(props: any) {
               accept="image/*"
               onChange={handleFileChange}
             />
-            {image && (
+            {imageSource && (
               <div
-                className="preview"
+                className="preview Image"
                 style={{
                   marginTop: "10px",
                   display: "flex",
@@ -398,9 +395,7 @@ export default function StudentForm(props: any) {
                 }}
               >
                 <img
-                  src={
-                    user !== null && user.avatar !== null ? user.avatar : image
-                  }
+                  src={imageSource}
                   alt="Preview"
                   style={{ width: "200px", height: "200px" }}
                 />

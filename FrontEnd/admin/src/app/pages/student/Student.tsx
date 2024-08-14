@@ -9,12 +9,15 @@ import StudentForm from './StudentForm';
 import Pagination from '../../comp/common/Pagination';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
+import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import InfoStudent from './InfoStudent';
 
 export default function Student() {
   const [listUser, setListUser] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [open, setOpen] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false);
   const [userSearchParams, setUserSearchParams] = useState<UserSearchParams>(
     new UserSearchParams("", 1, 5, new Date().getTime())
   );
@@ -25,7 +28,10 @@ export default function Student() {
   const handleClickClose = () => {
     setOpen(false);
   };
-  
+  const handleClickCloseDetail = () => {
+    setOpenDetail(false);
+  };
+
   const formatDOB = (date: any) => {
     return format(new Date(date), "dd/MM/yyyy");
   };
@@ -100,6 +106,10 @@ export default function Student() {
     userRef.current = u;
     setOpen(true);
   };
+  const info = (u: any) => {
+    userRef.current = u;
+    setOpenDetail(true);
+  };
 
   const deleteUser = (id: number) => {
     Swal.fire({
@@ -115,7 +125,7 @@ export default function Student() {
       if (result.value) {
         dispatch(setLoading(true));
         AuthService.getInstance()
-          .delete({userUid:id})
+          .delete({ userUid: id })
           .then((resp: any) => {
             dispatch(setLoading(false));
             setUserSearchParams({
@@ -135,15 +145,15 @@ export default function Student() {
 
   return (
     <div>
-    
-        <div className="mb-9">
+      <div className="mb-9">
+        <div className='card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white'>
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mb-0">List User</h2>
+              <h2 className="mt-4">List User</h2>
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
-            <div className="mb-6">
+            <div className="mb-4">
               <div className="row g-3">
                 <div className="col-auto">
                   <div className="search-box d-flex">
@@ -169,52 +179,52 @@ export default function Student() {
                 </div>
               </div>
             </div>
-            <div className="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white border-top border-bottom border-200 position-relative top-1">
+            <div className=" border-top border-bottom border-200 position-relative top-1">
               <div className="table-responsive scrollbar-overlay mx-n1 px-1">
-                <table className="table table-bordered fs--1 mb-0">
+                <table className="table table-bordered fs--1 mb-2 mt-5">
                   <thead>
                     <tr>
-                    <th className="sort align-middle " scope="col" style={{ width: '3%' }}>#</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>USER</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>EMAIL</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>USERNAME</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>PHONE</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>DOB</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>ADDRESS</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ROLE</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>ACTION</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>USER</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>EMAIL</th>
+                      <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>USERNAME</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>PHONE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>DOB</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>ADDRESS</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ROLE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>ACTION</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
                     {listUser.map((u: any, index: number) => {
-                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static"key={u.userUid} >
-                        <td className='align-middle white-space-nowrap  text-700 text-end'>{indexOfFirstItem + index + 1}</td>
+                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.userUid} >
+                        <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{indexOfFirstItem + index + 1}</td>
                         <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
-                          <div className="avatar avatar-m"><img className="rounded-circle" src={u.avatar ? `http://localhost:8080/files/${u.avatar}` : "https://scontent.fhan14-3.fna.fbcdn.net/v/t1.30497-1/453178253_471506465671661_2781666950760530985_n.png?stp=dst-png_p200x200&_nc_cat=1&ccb=1-7&_nc_sid=136b72&_nc_ohc=Cz0lTg2_DCEQ7kNvgFwztgC&_nc_ht=scontent.fhan14-3.fna&oh=00_AYBkfh5vKk60-PUCNGT9vOaQjV_nKakVB3lICchMxdNy5g&oe=66E273FA"} alt="" /></div>
+                          <div className="avatar avatar-m"><img className="rounded-circle" src={u.avatar ? `http://localhost:8080/files/${u.avatar}` : defaultPersonImage} alt="PersonAvatar" /></div>
                           <p className="mb-0 ms-3 text-1100 fw-bold">{u.fullName}</p>
                         </div></td>
-                        <td className="email align-middle white-space-nowrap pe-5">{u.email}</td>
+                        <td className="email align-middle white-space-nowrap ps-3">{u.email}</td>
                         <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.username}</td>
                         <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.phone}</td>
-                        <td className="city align-middle white-space-nowrap text-1000 ps-7">{formatDOB(u.dob)}</td>
-                        <td className="last-seen align-middle white-space-nowrap text-700 text-end">{u.address}</td>
+                        <td className="city align-middle white-space-nowrap text-1000 ">{formatDOB(u.dob)}</td>
+                        <td className="last-seen align-middle white-space-nowrap text-700 ps-3">{u.address}</td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.cre_dt)}</td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.upd_dt)}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-center"><span className={u.roles=='USER'? 'badge badge-phoenix fs--2 badge-phoenix-secondary':'badge badge-phoenix fs--2 badge-phoenix-info'}><span className="badge-label">{u.roles}</span></span></td>
+                        <td className="last-order align-middle white-space-nowrap text-700 text-center"><span className={u.roles == 'USER' ? 'badge badge-phoenix fs--2 badge-phoenix-secondary' : 'badge badge-phoenix fs--2 badge-phoenix-info'}><span className="badge-label">{u.roles}</span></span></td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">
-                        <span className={u.isActive ? 'badge badge-phoenix fs--2 badge-phoenix-success':'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
+                          <span className={u.isActive ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
                         </td>
                         <td className="last-order align-middle white-space-nowrap text-700 ">
-                        <button className="btn btn-phoenix-secondary me-1 mb-1" type="button"><i className="far fa-eye"></i></button>
-                        <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editUser(u)}><i className="fa-solid fa-pen"></i></button>
-                        <button className="btn btn-phoenix-danger me-1 mb-1" type="button"  onClick={() => deleteUser(u.userUid)}><i className="fa-solid fa-trash"></i></button>
+                          <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button>
+                          <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editUser(u)}><i className="fa-solid fa-pen"></i></button>
+                          <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteUser(u.userUid)}><i className="fa-solid fa-trash"></i></button>
                         </td>
                       </tr>
                     })}
-                    
+
                   </tbody>
                 </table>
               </div>
@@ -223,7 +233,7 @@ export default function Student() {
                   <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total user: </span>  {totalUsers} </p>
                 </div>
                 <div className="col-auto d-flex">
-                 <Pagination totalPage={totalPage} currentPage={userSearchParams.page} handlePageClick={handlePageClick} prev={prev} next={next}/>
+                  <Pagination totalPage={totalPage} currentPage={userSearchParams.page} handlePageClick={handlePageClick} prev={prev} next={next} />
                 </div>
               </div>
             </div>
@@ -244,20 +254,29 @@ export default function Student() {
                 }}
               />
             </Dialog>
+            <Dialog
+              baseZIndex={2000}
+              style={{ width: "1200px" }}
+              visible={openDetail}
+              onHide={() => handleClickCloseDetail()}
+            >
+              <InfoStudent info={userRef.current} setUserSearchParams={setUserSearchParams} closeDetail={handleClickCloseDetail} />
+            </Dialog>
 
           </div>
-          <footer className="footer position-absolute">
-            <div className="row g-0 justify-content-between align-items-center h-100">
-              <div className="col-12 col-sm-auto text-center">
-                <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2023 ©<a className="mx-1" href="https://themewagon.com">Themewagon</a></p>
-              </div>
-              <div className="col-12 col-sm-auto text-center">
-                <p className="mb-0 text-600">v1.13.0</p>
-              </div>
-            </div>
-          </footer>
         </div>
-    
+        <footer className="footer position-absolute">
+          <div className="row g-0 justify-content-between align-items-center h-100">
+            <div className="col-12 col-sm-auto text-center">
+              <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2023 ©<a className="mx-1" href="https://themewagon.com">Themewagon</a></p>
+            </div>
+            <div className="col-12 col-sm-auto text-center">
+              <p className="mb-0 text-600">v1.13.0</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+
     </div>
   )
 }
