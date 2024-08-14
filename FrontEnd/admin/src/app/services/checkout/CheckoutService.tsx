@@ -2,7 +2,7 @@ import axios from 'axios';
 import { CheckoutDTO } from '../../model/CheckoutDTO';
 import { CheckoutStatus } from '../../model/CheckoutStatus';
 
-const BASE_URL = '/api/checkout';
+const BASE_URL = 'http://localhost:8080/api/checkout';
 
 export const CheckoutService = {
   findAll: async (): Promise<CheckoutDTO[]> => {
@@ -37,9 +37,7 @@ export const CheckoutService = {
 
   updateStatus: async (id: number, status: CheckoutStatus): Promise<CheckoutDTO> => {
     try {
-      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/${id}/status`, null, {
-        params: { status }
-      });
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/status/${id}`, { status });
       return response.data;
     } catch (error) {
       console.error(`Error updating status for checkout with ID: ${id}`, error);
@@ -47,7 +45,47 @@ export const CheckoutService = {
     }
   },
 
+  approveCheckout: async (id: number): Promise<CheckoutDTO> => {
+    try {
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/approve/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error approving checkout with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
+  rejectCheckout: async (id: number): Promise<CheckoutDTO> => {
+    try {
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/reject/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error rejecting checkout with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
+  borrowCheckout: async (id: number): Promise<CheckoutDTO> => {
+    try {
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/borrow/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error borrowing checkout with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
+  deleteById: async (id: number): Promise<void> => {
+    try {
+      await axios.delete(`${BASE_URL}/${id}`);
+    } catch (error) {
+      console.error(`Error deleting checkout with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
   checkExpiredCheckouts: async (): Promise<void> => {
-    //run automatically on the backend.
-  }
+    // This is likely managed by the backend with a scheduled task.
+    console.log('Checking expired checkouts (this should run on the server side).');
+  },
 };

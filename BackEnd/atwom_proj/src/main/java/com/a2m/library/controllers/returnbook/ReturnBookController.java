@@ -1,12 +1,12 @@
 package com.a2m.library.controllers.returnbook;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.ReturnBookDTO;
 import com.a2m.library.service.status.ReturnBookService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +36,19 @@ public class ReturnBookController {
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ReturnBookDTO> updateStatus(@PathVariable Integer id, @RequestParam CheckoutStatus status) {
-        return ResponseEntity.ok(returnBookService.updateStatus(id, status));
+        if (status == CheckoutStatus.RETURNED || status == CheckoutStatus.PENALTY) {
+            return ResponseEntity.ok(returnBookService.updateStatus(id, status));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PostMapping("/applyPenalty/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> applyPenalty(@PathVariable Integer id) {
+        returnBookService.applyPenalty(id);
+        return ResponseEntity.ok().build();
     }
 }

@@ -25,20 +25,17 @@ public class Checkout {
     @Column(name = "id")
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @NotNull(message = "User must not be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_uid", nullable = false)
     private User user;
 
+    @Column(name = "expried_dt")
     private LocalDateTime  ExpiredCheckouts;
+
     @Column(name = "start_time")
-    @NotNull
-    @PastOrPresent(message = "Start time cannot be in the future")
     private LocalDateTime startTime;
 
     @Column(name = "end_time")
-    @NotNull
-    @PastOrPresent(message = "End time cannot be in the future")
     private LocalDateTime endTime;
 
     @Enumerated(EnumType.STRING)

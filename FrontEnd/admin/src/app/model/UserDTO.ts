@@ -6,17 +6,17 @@ export interface UserDTO {
     password: string;
     email: string;
     fullName: string;
-    dob: string;  // ISO string format for dates
+    dob: string;
     className: string;
     phone: string;
     address: string;
     avatar: string;
-    cre_dt: string;  // ISO string
-    upd_dt: string;  // ISO string
+    cre_dt: string;
+    upd_dt: string;
     deleted: boolean;
     isActive: boolean;
     resetPasswordToken?: string;
-    tokenExpirationDate?: string;  // ISO string
-    roles: RoleDTO[];  // Giả sử bạn có model `RoleDTO`.
+    tokenExpirationDate?: string;
+    roles: RoleDTO[];
   }
   
