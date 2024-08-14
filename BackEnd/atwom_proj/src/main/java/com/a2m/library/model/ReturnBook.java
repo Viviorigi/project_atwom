@@ -21,7 +21,7 @@ import com.a2m.library.constant.CheckoutStatus;
 public class ReturnBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
     @ManyToOne

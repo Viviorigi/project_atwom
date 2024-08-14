@@ -5,5 +5,6 @@ export enum CheckoutStatus {
     BORROWED = 'BORROWED',
     EXPIRED = 'EXPIRED',
     RETURNED = 'RETURNED',
+    PENALTY = "PENALTY",
   }
   

@@ -1,10 +1,17 @@
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
+.vscode/settings.json
+<<<<<<< HEAD
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+=======
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+.vscode/*.code-snippets
+>>>>>>> b5b1d6d (cm)
 
 # Local History for Visual Studio Code
 .history/
@@ -100,3 +107,8 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all
 
+<<<<<<< HEAD
+.vscode/settings.json
+=======
+
+>>>>>>> b5b1d6d (cm)

@@ -3,12 +3,12 @@ package com.a2m.library.service.status.Impl;
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.ReturnBookDTO;
 import com.a2m.library.exception.ResourceNotFoundException;
-import com.a2m.library.model.Checkout;
 import com.a2m.library.model.ReturnBook;
-import com.a2m.library.repository.CheckoutRepository;
 import com.a2m.library.repository.ReturnBookRepository;
 import com.a2m.library.service.status.ReturnBookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +22,6 @@ public class ReturnBookServiceImpl implements ReturnBookService {
 
     @Autowired
     private ReturnBookRepository returnBookRepository;
-
-    @Autowired
-    private CheckoutRepository checkoutRepository;
 
     @Override
     public List<ReturnBookDTO> findAll() {
@@ -50,6 +47,17 @@ public class ReturnBookServiceImpl implements ReturnBookService {
     @Override
     @Transactional
     public ReturnBookDTO updateStatus(Integer id, CheckoutStatus status) {
+        // Ensure only admin can set RETURNED or PENALTY status
+        if (status == CheckoutStatus.RETURNED || status == CheckoutStatus.PENALTY) {
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            boolean isAdmin = userDetails.getAuthorities().stream()
+                    .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+            if (!isAdmin) {
+                throw new SecurityException("Only admins can update to RETURNED or PENALTY status");
+            }
+        }
+
         ReturnBook returnBook = returnBookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ReturnBook", "id", id.toString()));
         returnBook.setStatus(status);
@@ -57,6 +65,7 @@ public class ReturnBookServiceImpl implements ReturnBookService {
         return toDTO(returnBook);
     }
 
+    @Override
     @Transactional
     public void applyPenalty(Integer id) {
         ReturnBook returnBook = returnBookRepository.findById(id)
@@ -65,12 +74,10 @@ public class ReturnBookServiceImpl implements ReturnBookService {
             LocalDateTime penaltyDate = LocalDateTime.now();
             if (penaltyDate.isAfter(returnBook.getReturnDate().plusDays(14))) {
                 returnBook.setStatus(CheckoutStatus.PENALTY);
-                // Apply penalty logic
-                returnBookRepository.save(returnBook);
             } else {
                 returnBook.setStatus(CheckoutStatus.RETURNED);
-                returnBookRepository.save(returnBook);
             }
+            returnBookRepository.save(returnBook);
         }
     }
 
@@ -79,7 +86,6 @@ public class ReturnBookServiceImpl implements ReturnBookService {
         dto.setId(returnBook.getId());
         dto.setReturnDate(returnBook.getReturnDate());
         dto.setStatus(returnBook.getStatus());
-        // Map other fields
         return dto;
     }
 
@@ -88,8 +94,6 @@ public class ReturnBookServiceImpl implements ReturnBookService {
         entity.setId(dto.getId());
         entity.setReturnDate(dto.getReturnDate());
         entity.setStatus(dto.getStatus());
-        // Map other fields
         return entity;
     }
 }
-
