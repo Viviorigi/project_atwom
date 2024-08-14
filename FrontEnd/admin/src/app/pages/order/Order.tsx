@@ -111,7 +111,7 @@ const Order: React.FC = () => {
 
   return (
     <div>
-      <div className="content">
+      
         <div className="mb-9">
           <div className="row g-2 mb-4">
             <div className="col-auto">
@@ -232,7 +232,7 @@ const Order: React.FC = () => {
             onClose={closeModal}
           />
         )}
-      </div>
+      
     </div>
   );
 };

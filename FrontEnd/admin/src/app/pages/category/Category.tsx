@@ -92,7 +92,7 @@ export default function Category() {
 
   return (
     <div>
-      <div className="content">
+     
         <div className="mb-9">
           <div className="row g-2 mb-4">
             <div className="col-auto">
@@ -216,7 +216,7 @@ export default function Category() {
             </div>
           </div>
         </footer>
-      </div>
+      
 
     </div>
   )

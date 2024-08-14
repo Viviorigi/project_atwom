@@ -27,7 +27,7 @@ export default function Student() {
     return format(new Date(date), "dd/MM/yyyy");
   };
   const formatDate = (date: any) => {
-    return format(new Date(date), 'MMM d y, hh:mm a');
+    return format(new Date(date), 'dd/MM/yyyy, hh:mm');
   };
 
   const prev = () => {
@@ -96,7 +96,7 @@ export default function Student() {
 
   return (
     <div>
-      <div className="content">
+    
         <div className="mb-9">
           <div className="row g-2 mb-4">
             <div className="col-auto">
@@ -122,9 +122,8 @@ export default function Student() {
                   </div>
                 </div>
                 <div className="col-auto scrollbar overflow-hidden-y flex-grow-1"></div>
-                <div className="col-auto scrollbar overflow-hidden-y flex-grow-1">
-                  <div className="col-auto"><button className="btn btn-link text-900 me-4 px-0">
-                    <span className="fa-solid fa-file-export fs--1 me-2" />Export</button>
+                <div className="col-auto scrollbar overflow-hidden-y flex-grow">
+                  <div className="col-auto">
                     <button className="btn btn-primary" onClick={addStudent}>
                       <span className="fas fa-plus me-2" />Create student
                     </button></div>
@@ -133,27 +132,27 @@ export default function Student() {
             </div>
             <div className="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white border-top border-bottom border-200 position-relative top-1">
               <div className="table-responsive scrollbar-overlay mx-n1 px-1">
-                <table className="table table-sm fs--1 mb-0">
+                <table className="table table-bordered fs--1 mb-0">
                   <thead>
                     <tr>
-                      <th className="sort align-middle pe-5" scope="col" style={{ width: '4%' }}>#</th>
-                      <th className="sort align-middle pe-5" scope="col" style={{ width: '10%' }}>USER</th>
-                      <th className="sort align-middle pe-5" scope="col" style={{ width: '12%' }}>EMAIL</th>
+                      <th className="sort align-middle pe-5 text-700 text-end" scope="col" style={{ width: '4%' }}>#</th>
+                      <th className="sort align-middle pe-5 text-center" scope="col" style={{ width: '10%' }}>USER</th>
+                      <th className="sort align-middle pe-5 text-center" scope="col" style={{ width: '12%' }}>EMAIL</th>
                       <th className="sort align-middle text-end" scope="col" style={{ width: '8%' }}>USERNAME</th>
-                      <th className="sort align-middle text-end ps-3" scope="col" style={{ width: '8%' }}>PHONE</th>
-                      <th className="sort align-middle ps-7 text-center" scope="col" style={{ width: '8%' }}>DOB</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '10%' }}>ADDRESS</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '10%' }}>CREATE_AT</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '10%' }}>UPDATE_AT</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '10%' }}>ROLE</th>
-                      <th className="sort align-middle text-end pe-0" scope="col" style={{ width: '5%', minWidth: 80 }}>ACTIVE</th>
-                      <th className="sort align-middle text-end pe-0" scope="col" style={{ width: '5%', minWidth: 80 }}>ACTION</th>
+                      <th className="sort align-middle text-center ps-3" scope="col" style={{ width: '8%' }}>PHONE</th>
+                      <th className="sort align-middle  text-center" scope="col" style={{ width: '8%' }}>DOB</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>ADDRESS</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '8%' }}>CREATE_AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '8%' }}>UPDATE_AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '8%' }}>ROLE</th>
+                      <th className="sort align-middle text-center pe-0" scope="col" style={{ width: '5%', minWidth: 80 }}>ACTIVE</th>
+                      <th className="sort align-middle text-center pe-0" scope="col" style={{ width: '10%', minWidth: 80 }}>ACTION</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
                     {listUser.map((u: any, index: number) => {
                       return <tr className="hover-actions-trigger btn-reveal-trigger position-static">
-                        <td className='align-middle white-space-nowrap pe-5'>{indexOfFirstItem + index + 1}</td>
+                        <td className='align-middle white-space-nowrap pe-5 text-700 text-end'>{indexOfFirstItem + index + 1}</td>
                         <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
                           <div className="avatar avatar-m"><img className="rounded-circle" src={u.avatar ? `http://localhost:8080/files/${u.avatar}` : "https://scontent.fhan14-3.fna.fbcdn.net/v/t1.30497-1/453178253_471506465671661_2781666950760530985_n.png?stp=dst-png_p200x200&_nc_cat=1&ccb=1-7&_nc_sid=136b72&_nc_ohc=Cz0lTg2_DCEQ7kNvgFwztgC&_nc_ht=scontent.fhan14-3.fna&oh=00_AYBkfh5vKk60-PUCNGT9vOaQjV_nKakVB3lICchMxdNy5g&oe=66E273FA"} alt="" /></div>
                           <p className="mb-0 ms-3 text-1100 fw-bold">{u.fullName}</p>
@@ -165,14 +164,16 @@ export default function Student() {
                         <td className="last-seen align-middle white-space-nowrap text-700 text-end">{u.address}</td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.cre_dt)}</td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.upd_dt)}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-end">{u.roles}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-end">{u.isActive ? "Active" : "InActive"}</td>
+                        <td className="last-order align-middle white-space-nowrap text-700 text-center"><span className={u.roles=='USER'? 'badge badge-phoenix fs--2 badge-phoenix-success':'badge badge-phoenix fs--2 badge-phoenix-secondary'}><span className="badge-label">{u.roles}</span></span></td>
+                        <td className="last-order align-middle white-space-nowrap text-700 text-end">
+                        <span className={u.isActive ? 'badge badge-phoenix fs--2 badge-phoenix-success':'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
+                        </td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">
 
                         </td>
                       </tr>
                     })}
-
+                    
                   </tbody>
                 </table>
               </div>
@@ -228,7 +229,7 @@ export default function Student() {
             </div>
           </footer>
         </div>
-      </div>
+    
     </div>
   )
 }
