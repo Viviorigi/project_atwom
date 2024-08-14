@@ -8,7 +8,7 @@ import com.a2m.library.constant.CheckoutStatus;
 @Data
 public class CheckoutDTO{
     private Integer id;
-    private Integer userId;
+    private Long userUid;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private CheckoutStatus status;

@@ -14,4 +14,6 @@ public interface ReturnBookService {
     ReturnBookDTO save(ReturnBookDTO returnBookDTO);
 
     ReturnBookDTO updateStatus(Integer id, CheckoutStatus status);
+    
+    void applyPenalty(Integer id);
 }

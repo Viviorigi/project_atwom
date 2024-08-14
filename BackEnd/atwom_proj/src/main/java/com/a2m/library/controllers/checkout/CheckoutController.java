@@ -21,31 +21,45 @@ public class CheckoutController {
 
     @GetMapping("/list")
     public ResponseEntity<List<CheckoutDTO>> getAllCheckouts() {
-        return ResponseEntity.ok(checkoutService.findAll());
+        List<CheckoutDTO> checkouts = checkoutService.findAll();
+        return ResponseEntity.ok(checkouts);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CheckoutDTO> getCheckoutById(@PathVariable Integer id) {
         Optional<CheckoutDTO> checkoutDTO = checkoutService.findById(id);
-        return checkoutDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return checkoutDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/add")
     public ResponseEntity<CheckoutDTO> createCheckout(@RequestBody CheckoutDTO checkoutDTO) {
         checkoutDTO.setStatus(CheckoutStatus.REQUESTED);
-        return ResponseEntity.ok(checkoutService.save(checkoutDTO));
+        CheckoutDTO createdCheckout = checkoutService.add(checkoutDTO);
+        return ResponseEntity.ok(createdCheckout);
     }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<CheckoutDTO> updateCheckoutStatus(@PathVariable Integer id, @RequestParam CheckoutStatus status) {
-        CheckoutDTO updatedCheckout = checkoutService.updateStatus(id, status);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteCheckout(@PathVariable Integer id) {
+        checkoutService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 
-        if (status == CheckoutStatus.BORROWED) {
-            updatedCheckout.setStartTime(LocalDateTime.now());
-            updatedCheckout.setEndTime(LocalDateTime.now().plusDays(30));
-            checkoutService.scheduleEndTimeNotifications(updatedCheckout);
-        }
+    @PutMapping("/approve/{id}")
+    public ResponseEntity<CheckoutDTO> approveCheckout(@PathVariable Integer id) {
+        CheckoutDTO updatedCheckout = checkoutService.approveCheckout(id);
+        return ResponseEntity.ok(updatedCheckout);
+    }
 
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<CheckoutDTO> rejectCheckout(@PathVariable Integer id) {
+        CheckoutDTO updatedCheckout = checkoutService.rejectCheckout(id);
+        return ResponseEntity.ok(updatedCheckout);
+    }
+
+    @PutMapping("/borrow/{id}")
+    public ResponseEntity<CheckoutDTO> borrowCheckout(@PathVariable Integer id) {
+        CheckoutDTO updatedCheckout = checkoutService.borrowCheckout(id);
         return ResponseEntity.ok(updatedCheckout);
     }
 
