@@ -1,15 +1,24 @@
-import React, { useState } from 'react'
-import { UserDTORequest } from '../../model/auth/UserDTORequest';
-import { useAppDispatch } from '../../store/hook';
-import Swal from 'sweetalert2';
-import { setLoading } from '../../reducers/spinnerSlice';
-import { AuthService } from '../../services/auth/AuthService';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import { UserDTORequest } from "../../model/auth/UserDTORequest";
+import { useAppDispatch } from "../../store/hook";
+import Swal from "sweetalert2";
+import { setLoading } from "../../reducers/spinnerSlice";
+import { AuthService } from "../../services/auth/AuthService";
+import { toast } from "react-toastify";
 
 export default function StudentForm(props: any) {
   const { closeForm, onSave, user } = props;
-  const [userSave, setUserSave] = useState<UserDTORequest>(new UserDTORequest());
+  const [userSave, setUserSave] = useState<UserDTORequest>(
+    new UserDTORequest()
+  );
   const dispatch = useAppDispatch();
+  console.log(user);
+
+  useEffect(() => {
+    if (user) {
+      setUserSave({ ...user });
+    }
+  }, []);
 
   const handleChangeText = (event: any) => {
     const { name, value } = event.target;
@@ -25,21 +34,27 @@ export default function StudentForm(props: any) {
       [name]: value,
     }));
   };
+  const handleActiveChange = (e: any) => {
+    setUserSave({
+      ...userSave,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  
+
   const handleFileChange = (event: any) => {
     const filePreview = event.target.files[0];
     setFile(filePreview);
-    if (filePreview && filePreview.type.startsWith('image/')) {
+    if (filePreview && filePreview.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
       };
       reader.readAsDataURL(filePreview);
     } else {
-      alert('Please select a valid image file.');
+      alert("Please select a valid image file.");
     }
   };
 
@@ -54,7 +69,7 @@ export default function StudentForm(props: any) {
         address: prev.address || "",
         className: prev.className || "",
         dob: prev.dob || "",
-        phone: prev.phone || ""
+        phone: prev.phone || "",
       };
     });
   };
@@ -64,7 +79,10 @@ export default function StudentForm(props: any) {
       setUserState();
       return false;
     }
-    if (userSave.password === undefined || userSave.password === "") {
+    if (
+      (user === null && userSave.password === undefined) ||
+      userSave.password === ""
+    ) {
       setUserState();
       return false;
     }
@@ -96,17 +114,17 @@ export default function StudentForm(props: any) {
       return;
     }
     const formData = new FormData();
-    
-    formData.append("userDTO",JSON.stringify(userSave));
+
+    formData.append("userDTO", JSON.stringify(userSave));
     if (file) {
-      formData.append('file', file);
+      formData.append("file", file);
     }
     Swal.fire({
       title: `Confirm`,
       text:
         user === null
           ? "Do you want to create a new student?"
-          : `Do you want to update the product?`,
+          : `Do you want to update the student?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -115,6 +133,7 @@ export default function StudentForm(props: any) {
       cancelButtonText: `No`,
     }).then((result) => {
       if (result.value) {
+        if (user === null) {
           dispatch(setLoading(true));
           AuthService.getInstance()
             .create(formData)
@@ -122,7 +141,7 @@ export default function StudentForm(props: any) {
               if (resp) {
                 setTimeout(() => {
                   dispatch(setLoading(false));
-                  toast.success("Create successfully");
+                  toast.success(resp.data.message);
                   closeForm();
                   onSave();
                 }, 1000);
@@ -131,17 +150,34 @@ export default function StudentForm(props: any) {
             .catch((error: any) => {
               dispatch(setLoading(false));
               closeForm();
-              toast.error("Create Failed");
+              toast.error(error.message);
             });
-        
+        } else {
+          dispatch(setLoading(true));
+          AuthService.getInstance()
+            .update(formData)
+            .then((resp: any) => {
+              if (resp) {
+                setTimeout(() => {
+                  dispatch(setLoading(false));
+                  toast.success(resp.data.message);
+                  closeForm();
+                  onSave();
+                }, 1000);
+              }
+            })
+            .catch((error: any) => {
+              dispatch(setLoading(false));
+              closeForm();
+              toast.error(error.message);
+            });
+        }
       }
     });
-    
-
-  }
+  };
   return (
     <div>
-      <h3>{user === null ? "Edit User" : "Add User"}</h3>
+      <h3>{user === null ? "Add User" : "Edit User"}</h3>
       <div className="row">
         {/* Column 1 */}
         <div className="col-md-6 mb-5">
@@ -158,34 +194,38 @@ export default function StudentForm(props: any) {
               placeholder="Enter Username"
             />
             <div
-              className={`invalid-feedback ${userSave?.username?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.username?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Username must not be empty and must be between 3 and 50 characters.
+              Username must not be empty and must be between 3 and 50
+              characters.
             </div>
           </div>
-
-          <div className="form-group">
-            <label>
-              Password <span className="text-danger">(*)</span>
-            </label>
-            <input
-              type="password"
-              name="password"
-              className="form-control"
-              value={userSave?.password || ""}
-              onChange={handleChangeText}
-              placeholder="Enter Password"
-            />
-            <div
-              className={`invalid-feedback ${userSave?.password?.toString() === "" ? "d-block" : ""
+          {user === null && (
+            <div className="form-group">
+              <label>
+                Password <span className="text-danger">(*)</span>
+              </label>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                value={userSave?.password || ""}
+                onChange={handleChangeText}
+                placeholder="Enter Password"
+              />
+              <div
+                className={`invalid-feedback ${
+                  userSave?.password?.toString() === "" ? "d-block" : ""
                 }`}
-              style={{ fontSize: "100%", color: "red" }}
-            >
-              Password must not be empty and must be at least 6 characters.
+                style={{ fontSize: "100%", color: "red" }}
+              >
+                Password must not be empty and must be at least 6 characters.
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="form-group">
             <label>
@@ -200,8 +240,9 @@ export default function StudentForm(props: any) {
               placeholder="Enter Email"
             />
             <div
-              className={`invalid-feedback ${userSave?.email?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.email?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Email must not be empty.
@@ -209,7 +250,9 @@ export default function StudentForm(props: any) {
           </div>
 
           <div className="form-group">
-            <label>Full Name <span className="text-danger">(*)</span></label>
+            <label>
+              Full Name <span className="text-danger">(*)</span>
+            </label>
             <input
               type="text"
               name="fullName"
@@ -219,8 +262,9 @@ export default function StudentForm(props: any) {
               placeholder="Enter Full Name"
             />
             <div
-              className={`invalid-feedback ${userSave?.fullName?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.fullName?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               FullName must not be empty.
@@ -228,7 +272,9 @@ export default function StudentForm(props: any) {
           </div>
 
           <div className="form-group">
-            <label>Phone <span className="text-danger">(*)</span></label>
+            <label>
+              Phone <span className="text-danger">(*)</span>
+            </label>
             <input
               type="text"
               name="phone"
@@ -238,19 +284,38 @@ export default function StudentForm(props: any) {
               placeholder="Enter Phone"
             />
             <div
-              className={`invalid-feedback ${userSave?.phone?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.phone?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Phone must not be empty.
             </div>
           </div>
-        </div>
+          {user !== null && (
+            <div className="form-group">
+              <label>
+                Active <span className="text-danger"></span>
+              </label>
+              <select
+                className="form-select"
+                value={userSave.isActive ? "true" : "false"}
+                onChange={handleActiveChange}
+                name="isActive"
+              >
+                <option value="true">Active</option>
+                <option value="false">InActive</option>
+              </select>
+            </div>
+          )}
 
+        </div>
         {/* Column 2 */}
         <div className="col-md-6">
           <div className="form-group">
-            <label>Class Name <span className="text-danger">(*)</span></label>
+            <label>
+              Class Name <span className="text-danger">(*)</span>
+            </label>
             <input
               type="text"
               name="className"
@@ -260,15 +325,18 @@ export default function StudentForm(props: any) {
               placeholder="Enter Full Name"
             />
             <div
-              className={`invalid-feedback ${userSave?.className?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.className?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               ClassName must not be empty.
             </div>
           </div>
           <div className="form-group">
-            <label>Date of Birth <span className="text-danger">(*)</span></label>
+            <label>
+              Date of Birth <span className="text-danger">(*)</span>
+            </label>
             <input
               type="date"
               name="dob"
@@ -277,8 +345,9 @@ export default function StudentForm(props: any) {
               onChange={handleChangeText}
             />
             <div
-              className={`invalid-feedback ${userSave?.dob?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.dob?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Dob must not be empty.
@@ -286,7 +355,9 @@ export default function StudentForm(props: any) {
           </div>
 
           <div className="form-group">
-            <label>Address <span className="text-danger">(*)</span></label>
+            <label>
+              Address <span className="text-danger">(*)</span>
+            </label>
             <input
               type="text"
               name="address"
@@ -296,8 +367,9 @@ export default function StudentForm(props: any) {
               placeholder="Enter Address"
             />
             <div
-              className={`invalid-feedback ${userSave?.address?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.address?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
               Address must not be empty.
@@ -305,7 +377,9 @@ export default function StudentForm(props: any) {
           </div>
 
           <div className="form-group">
-            <label>Avatar <span className="text-danger">(*)</span></label>
+            <label>
+              Avatar <span className="text-danger">(*)</span>
+            </label>
             <br />
             <input
               name="file"
@@ -314,8 +388,22 @@ export default function StudentForm(props: any) {
               onChange={handleFileChange}
             />
             {image && (
-              <div className="preview" style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src={image} alt="Preview" style={{ width: '200px', height: '200px' }} />
+              <div
+                className="preview"
+                style={{
+                  marginTop: "10px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src={
+                    user !== null && user.avatar !== null ? user.avatar : image
+                  }
+                  alt="Preview"
+                  style={{ width: "200px", height: "200px" }}
+                />
               </div>
             )}
           </div>
@@ -327,5 +415,4 @@ export default function StudentForm(props: any) {
       </button>
     </div>
   );
-
 }

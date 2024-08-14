@@ -34,7 +34,21 @@ export class AuthService {
     return axios.post(url,auth, {
       headers: HeadersUtil.getHeadersAuthFormData()
     });
-
+  }
+  
+  public update(auth:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/update`);
+    return axios.post(url,auth, {
+      headers: HeadersUtil.getHeadersAuthFormData()
+    });
   }
 
+  public delete(id:any){
+    const params: RequestParam[] = ParamUtil.toRequestParams(id);
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/delete`, params);
+
+    return axios.delete(url, {
+      headers: HeadersUtil.getHeadersAuth()
+    });
+  }
 }
