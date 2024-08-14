@@ -10,7 +10,7 @@ import AuthGuard from '../guard/AuthGuard';
 export const indexRouter: any = {
     path: '',
     element: (
-        <AuthGuard><Layout /></AuthGuard>
+        <AuthGuard><Layout /> </AuthGuard>
     ),
     children: [
         { path: 'dashboard', element: <DashBoard /> },
