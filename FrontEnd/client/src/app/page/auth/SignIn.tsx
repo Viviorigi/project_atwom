@@ -50,21 +50,11 @@ const SignIn = () => {
             </div>
             <div className="form-grid-right">
               <FormTitle>
-                <h3>Sign In</h3>
+                <h3 className="mt-3">Sign In</h3>
               </FormTitle>
-              <AuthOptions />
-              <div className="form-separator flex items-center justify-center">
-                <span className="separator-line"></span>
-                <span className="separator-text inline-flex items-center justify-center text-white">
-                  OR
-                </span>
-                <span className="separator-line"></span>
-              </div>
-
-              <form>
                 <FormElement>
                   <label htmlFor="" className="form-elem-label">
-                    User name or email address
+                    User name 
                   </label>
                   <Input
                     type="text"
@@ -75,18 +65,17 @@ const SignIn = () => {
                 </FormElement>
                 <PasswordInput fieldName="Password" name="password" />
                 <Link
-                  to="/reset"
+                  to="/forgot-password"
                   className="form-elem-text text-end font-medium"
                 >
                   Forgot your password?
                 </Link>
-                <BaseButtonBlack type="submit" className="form-submit-btn">
+                <BaseButtonBlack type="button" className="form-submit-btn">
                   Sign In
                 </BaseButtonBlack>
-              </form>
               <p className="flex flex-wrap account-rel-text">
                 Don&apos;t have a account?
-                <Link to="/sign_up" className="font-medium">
+                <Link to="/register" className="font-medium">
                   Sign Up
                 </Link>
                 `

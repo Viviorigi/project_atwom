@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useRoutes } from 'react-router-dom';
 import { GlobalStyles } from './app/styles/global/GlobalStyles';
 import BaseLayout from './app/comp/layout/BaseLayout';
 import Home from './app/page/home/Home';
@@ -17,33 +17,30 @@ import SignUp from './app/page/auth/SignUp';
 import ChangePassword from './app/page/auth/ChangePassword';
 import ResetPassword from './app/page/auth/RestePassword';
 import VerificationToken from './app/page/auth/VerificationToken';
+import { indexRouter } from './app/routers/indexRouter';
+import { authRouter } from './app/routers/authRouter';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+export const spinner = (
+  <div className="progress-spinner text-center">
+    <div className="swm-loader"></div>
+  </div>
+);
 function App() {
+  let router = useRoutes([
+    { path: '/', element: <Navigate to="home" replace /> },
+    indexRouter,
+    authRouter,
+    { path: '*', element: <NotFound /> }
+  ])
   return (
-    <BrowserRouter>
-        <GlobalStyles />
-        <Routes>
-          {/* main screens */}
-          <Route path="/" element={<BaseLayout />}>
-            <Route index element={<Home />} />
-            <Route path="/book" element={<BookListItem />} />
-            <Route path="/book/details" element={<BookDetail />} />
-            <Route path="/order" element={<OrderList />} />
-            <Route path="/order_detail" element={<OrderDetail />} />
-            <Route path="/account" element={<AccountScreen />} />
-          </Route>
+    <div className="App">
+      <GlobalStyles />
+      <ToastContainer></ToastContainer>
+      <Suspense fallback={spinner}>{router}</Suspense>
+    </div>
 
-
-           <Route path="/" element={<AuthLayout />}>
-            <Route path="sign_in" element={<SignIn />} />
-            <Route path="sign_up" element={<SignUp />} />
-            <Route path="change_password" element={<ChangePassword />} />
-            <Route path="reset" element={<ResetPassword />} />
-            <Route path="verification" element={<VerificationToken />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
   );
 }
 

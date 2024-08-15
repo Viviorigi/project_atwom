@@ -256,7 +256,6 @@ export default function Header() {
                                     </div>
                                     <div className="overflow-auto scrollbar" style={{ height: '10rem' }}>
                                         <ul className="nav d-flex flex-column mb-2 pb-1">
-                                            <li className="nav-item"><Link className="nav-link px-3" to="/dashboard"> <span className="me-2 text-900" data-feather="user" /><span>Profile</span></Link></li>
                                             <li className="nav-item"><Link className="nav-link px-3" to="/dashboard"><span className="me-2 text-900" data-feather="pie-chart" />Dashboard</Link></li>
                                             <li className="nav-item"><Link className="nav-link px-3" to="/student"> <span className="me-2 text-900" data-feather="lock" />Student </Link></li>
                                             <li className="nav-item"><Link className="nav-link px-3" to="/order"> <span className="me-2 text-900" data-feather="lock" />Order </Link></li>

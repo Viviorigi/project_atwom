@@ -37,7 +37,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "api/admin")
-public class UserControler {
+public class UserController {
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
@@ -57,7 +57,7 @@ public class UserControler {
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
-	public UserControler(UserService userService, ObjectMapper objectMapper) {
+	public UserController(UserService userService, ObjectMapper objectMapper) {
 		this.userService = userService;
 		this.objectMapper = objectMapper;
 	}
@@ -96,7 +96,13 @@ public class UserControler {
 		}
 		return ResponseEntity.ok().body(new MessageResponse("Create successful"));
 	}
-
+	
+	@GetMapping(value = "/getUserInfo")
+	public ResponseEntity<?> getUserInfo(@RequestParam Long userUid)
+			throws JsonMappingException, JsonProcessingException {
+		return ResponseEntity.ok(userService.getByUserUid(userUid));
+	}
+	
 	@PostMapping("/update")
 	public ResponseEntity<?> updateUser(@Valid @RequestPart("userDTO") String userDTOJson,
 			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {

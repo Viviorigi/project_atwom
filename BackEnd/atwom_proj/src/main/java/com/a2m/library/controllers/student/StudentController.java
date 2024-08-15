@@ -128,12 +128,6 @@ public class StudentController {
 		return ResponseEntity.ok().body(new MessageResponse("Update successful"));
 	}
 
-	@GetMapping(value = "/getUserInfo")
-	public ResponseEntity<?> getUserInfo(@RequestParam Long userUid)
-			throws JsonMappingException, JsonProcessingException {
-		return ResponseEntity.ok(userService.getByUserUid(userUid));
-	}
-
 	@GetMapping("/myinfo")
 	public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
 		if (token.startsWith("Bearer ")) {
@@ -179,48 +173,5 @@ public class StudentController {
 		}
 	}
 
-	@PostMapping("/forgot-password")
-	public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-		try {
-			passwordResetService.sendPasswordResetToken(request.getEmail());
-			return ResponseEntity.ok(new MessageResponse("Password reset link has been sent to your email"));
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-		}
-	}
-
-	 @GetMapping("/reset-password")
-	    public ModelAndView showResetPasswordForm(@RequestParam("token") String token, ModelAndView modelAndView) {      
-	        // Render the reset password page
-	        modelAndView.setViewName("reset-password");
-	        modelAndView.addObject("token", token);
-	        return modelAndView;
-	    }
-	@PostMapping("/reset-password")
-	public ModelAndView resetPassword(@RequestParam Map<String, String> allParams,@RequestParam("token") String token,
-	                                   @RequestParam("newPassword") String newPassword,
-	                                   @RequestParam("confirmPassword") String confirmationPassword) {
-	    ModelAndView modelAndView = new ModelAndView();
-
-	    System.out.println("Received parameters: " + allParams);
-	    
-	    if (!newPassword.equals(confirmationPassword)) {
-	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
-	        modelAndView.addObject("message", "New Password does not match");
-	        modelAndView.addObject("token", token);
-	        return modelAndView;
-	    }
-
-	    try {
-	        passwordResetService.resetPassword(token, newPassword);
-	        modelAndView.setViewName("reset-password-success"); // Redirect to success page
-	        modelAndView.addObject("message", "Password reset successful");
-	        return modelAndView;
-	    } catch (Exception e) {
-	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
-	        modelAndView.addObject("message", e.getMessage());
-	        modelAndView.addObject("token", token);
-	        return modelAndView;
-	    }
-	}
+	
 }

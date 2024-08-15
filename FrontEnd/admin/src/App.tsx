@@ -23,8 +23,7 @@ function App() {
     indexRouter,
     { path: '*', element: <NotFound /> } ,//404
     { path: 'login', element: <Login /> },
-    { path: 'forgot-password', element: <ForgotPassword /> },
-    
+    { path: 'forgot-password', element: <ForgotPassword /> }
   ]);
   
   return (

@@ -44,7 +44,7 @@ const ResetPassword = () => {
                 </BaseButtonBlack>
               </form>
               <p className="flex flex-wrap account-rel-text">
-                <Link to="/sign_in" className="font-medium">
+                <Link to="/login" className="font-medium">
                   Back to Login
                 </Link>
               </p>

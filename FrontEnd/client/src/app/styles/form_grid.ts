@@ -70,6 +70,7 @@ export const FormGridWrapper = styled.div`
 
 export const FormTitle = styled.div`
   margin-bottom: 24px;
+  margin-top:52px;
   h3 {
     font-size: 32px;
     margin-bottom: 4px;

@@ -95,7 +95,7 @@ const SignUp = () => {
               </form>
               <p className="flex flex-wrap account-rel-text">
                 Already have an account?
-                <Link to="/sign_in" className="font-medium">
+                <Link to="/login" className="font-medium">
                   Log in
                 </Link>
               </p>

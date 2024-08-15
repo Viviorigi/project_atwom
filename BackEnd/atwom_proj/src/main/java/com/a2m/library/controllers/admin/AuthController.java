@@ -4,7 +4,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,8 +37,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.a2m.library.dto.UserDTO;
+import com.a2m.library.dto.request.ForgotPasswordRequest;
 import com.a2m.library.dto.request.LoginRequest;
 import com.a2m.library.dto.response.JwtResponse;
 import com.a2m.library.dto.response.MessageResponse;
@@ -48,6 +52,7 @@ import com.a2m.library.repository.UserRepository;
 import com.a2m.library.repository.VerificationTokenRepository;
 import com.a2m.library.security.CustomUserDetails;
 import com.a2m.library.service.admin.UserService;
+import com.a2m.library.service.student.PasswordResetService;
 import com.a2m.library.util.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -71,6 +76,9 @@ public class AuthController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PasswordResetService passwordResetService;
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -124,8 +132,8 @@ public class AuthController {
 		if(jwtUtil.validateJwtToken(jwt)) {
 			String username = jwtUtil.getUserNameFromJwtToken(jwt);
 			Optional<UserResponse> user =userService.findUserByName(username);
-			System.out.println(user.get().getRoles());
-			boolean hasRole = user.get().getRoles().stream().anyMatch(role::contains);
+			List<String> roles = Arrays.asList(role.split(","));
+			boolean hasRole = user.get().getRoles().stream().anyMatch(roles::contains);
 			if(hasRole) {
 				return ResponseEntity.ok(true);
 			}else {
@@ -134,5 +142,49 @@ public class AuthController {
 		}else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
 		}		
+	}
+	@PostMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+		try {
+			passwordResetService.sendPasswordResetToken(request.getEmail());
+			return ResponseEntity.ok(new MessageResponse("Password reset link has been sent to your email"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+		}
+	}
+
+	 @GetMapping("/reset-password")
+	    public ModelAndView showResetPasswordForm(@RequestParam("token") String token, ModelAndView modelAndView) {      
+	        // Render the reset password page
+	        modelAndView.setViewName("reset-password");
+	        modelAndView.addObject("token", token);
+	        return modelAndView;
+	    }
+	@PostMapping("/reset-password")
+	public ModelAndView resetPassword(@RequestParam Map<String, String> allParams,@RequestParam("token") String token,
+	                                   @RequestParam("newPassword") String newPassword,
+	                                   @RequestParam("confirmPassword") String confirmationPassword) {
+	    ModelAndView modelAndView = new ModelAndView();
+
+	    System.out.println("Received parameters: " + allParams);
+	    
+	    if (!newPassword.equals(confirmationPassword)) {
+	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
+	        modelAndView.addObject("message", "New Password does not match");
+	        modelAndView.addObject("token", token);
+	        return modelAndView;
+	    }
+
+	    try {
+	        passwordResetService.resetPassword(token, newPassword);
+	        modelAndView.setViewName("reset-password-success"); // Redirect to success page
+	        modelAndView.addObject("message", "Password reset successful");
+	        return modelAndView;
+	    } catch (Exception e) {
+	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
+	        modelAndView.addObject("message", e.getMessage());
+	        modelAndView.addObject("token", token);
+	        return modelAndView;
+	    }
 	}
 }
