@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -54,7 +56,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "api/admin")
+@RequestMapping(value = "api/auth")
 public class AuthController {
 	@Autowired
 	private MessageSource messageSource;
@@ -64,21 +66,11 @@ public class AuthController {
 	private JwtUtil jwtUtil;
 	@Autowired
 	private UserService userService;
-	private final ObjectMapper objectMapper;
-
 	@Autowired
 	private VerificationTokenRepository tokenRepository;
 
 	@Autowired
 	private UserRepository userRepository;
-
-	public AuthController(UserService userService, ObjectMapper objectMapper) {
-		this.userService = userService;
-		this.objectMapper = objectMapper;
-	}
-
-	@Value("${file.upload-dir}")
-	private String uploadDir;
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -91,11 +83,6 @@ public class AuthController {
 
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-		// Check if the user has the ADMIN role
-		if (!userDetails.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"))) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new MessageResponse("You don't have access, login account admin"));
-		}
 
 		User user = userRepository.findByUsername(loginRequest.getUsername())
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -110,108 +97,8 @@ public class AuthController {
 		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(),
 				user.getFullName(), "Bearer",user.getAvatar(), roles));
 	}
-
-	@PostMapping("/create")
-	public ResponseEntity<?> createUser(@Valid @RequestPart("userDTO") String userDTOJson,
-			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
-		UserDTO userDTO;
-		userDTO = objectMapper.readValue(userDTOJson, UserDTO.class);
-
-		if (file != null && !file.isEmpty()) {
-			try {
-				String originalFilename = file.getOriginalFilename();
-				String timestamp = String.valueOf(System.currentTimeMillis());
-				String newFilename = timestamp + "_" + originalFilename;
-
-				final Path directory = Paths.get(uploadDir);
-				final Path filePath = Paths.get(uploadDir + newFilename);
-				if (!Files.exists(directory)) {
-					Files.createDirectories(directory);
-				}
-				Files.write(filePath, file.getBytes());
-				userDTO.setAvatar(newFilename);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
-			}
-		}
-
-		// Save user information
-		try {
-			userService.signUp(userDTO);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-		}
-		return ResponseEntity.ok().body(new MessageResponse("Create successful"));
-	}
-
-	@PostMapping("/update")
-	public ResponseEntity<?> updateUser(@Valid @RequestPart("userDTO") String userDTOJson,
-			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
-		UserDTO userDTO;
-		userDTO = objectMapper.readValue(userDTOJson, UserDTO.class);
-		if (file != null && !file.isEmpty()) {
-			try {
-				String originalFilename = file.getOriginalFilename();
-				String timestamp = String.valueOf(System.currentTimeMillis());
-				String newFilename = timestamp + "_" + originalFilename;
-
-				final Path directory = Paths.get(uploadDir);
-				final Path filePath = Paths.get(uploadDir + newFilename);
-				if (!Files.exists(directory)) {
-					Files.createDirectories(directory);
-				}
-				Files.write(filePath, file.getBytes());
-				userDTO.setAvatar(newFilename);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
-			}
-		}
-		try {
-			userService.update(userDTO);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-		}
-		return ResponseEntity.ok().body(new MessageResponse("Update successful"));
-	}
-
-	@GetMapping(value = "/getUserInfo")
-	public ResponseEntity<?> getUserInfo(@RequestParam Long userUid)
-			throws JsonMappingException, JsonProcessingException {
-		return ResponseEntity.ok(userService.getByUserUid(userUid));
-	}
-
-	@GetMapping(value = "/getAll")
-	public ResponseEntity<UserListResponse> getAll(@RequestParam(defaultValue = "") String keySearch,
-			@RequestParam("page") int page, @RequestParam("limit") int limit) {
-		PageRequest pageRequest = PageRequest.of(page - 1, limit, Sort.by("upd_dt").descending());
-		Page<UserResponse> userPage = userService.findByUsernameContaining(keySearch, pageRequest);
-
-		UserListResponse response = UserListResponse.builder().users(userPage.getContent())
-				.totalPages(userPage.getTotalPages()).totalUsers(userPage.getTotalElements()).build();
-		return ResponseEntity.ok(response);
-	}
-
-	@PostMapping(value = "/getByUserList")
-	public ResponseEntity<?> getByUserList(@RequestBody List<String> userUidList)
-			throws JsonMappingException, JsonProcessingException {
-		return ResponseEntity.ok(userService.getByUserUidList(userUidList));
-	}
-
-	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteUser(@RequestParam Long userUid) {
-		try {
-			userService.deleteUser(userUid);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-		}
-		return ResponseEntity.ok().body(new MessageResponse("Delete successful"));
-	}
-
+	
+	
 	@GetMapping("/verify")
 	public String verifyAccount(@RequestParam("token") String token, Model model) {
 		VerificationToken verificationToken = tokenRepository.findByToken(token);
@@ -227,5 +114,25 @@ public class AuthController {
 
 		model.addAttribute("message", "Account verified successfully");
 		return "account-verification-success";
+	}
+	
+	@GetMapping("/getroles")
+	public ResponseEntity<?> checkRole(@RequestParam("role")String role,@RequestHeader("Authorization") String jwt){
+		System.out.println(role);
+		System.out.println(jwt);
+		if (jwt.startsWith("Bearer ")) {
+			jwt = jwt.substring(7);
+		}
+		if(jwtUtil.validateJwtToken(jwt)) {
+			String username = jwtUtil.getUserNameFromJwtToken(jwt);
+			Optional<UserResponse> user =userService.findUserByName(username);
+			if(user.get().getRoles().contains(role)) {
+				return ResponseEntity.ok(true);
+			}else {
+				return ResponseEntity.ok(false);
+			}
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+		}		
 	}
 }

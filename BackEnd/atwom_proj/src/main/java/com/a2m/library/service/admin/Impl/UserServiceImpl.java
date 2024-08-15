@@ -195,6 +195,12 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findByUsername(username);
         return convertToUserDTO(user.get());
     }
+	
+	@Override
+	public Optional<UserResponse> findUserByName(String username) {
+		Optional<User> user = userRepository.findByUsername(username);
+		return 	 user.map(this::convertToUserResponse);
+	}
 
 	@Override
 	public Page<UserResponse> findByUsernameContaining(String keySearch, PageRequest pageRequest) {

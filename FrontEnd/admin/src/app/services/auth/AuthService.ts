@@ -14,7 +14,7 @@ export class AuthService {
   }
 
   public login(login: any) {
-    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/login`);
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/auth/login`);
     return axios.post(url, login, {
       headers: HeadersUtil.getHeaders()
     });

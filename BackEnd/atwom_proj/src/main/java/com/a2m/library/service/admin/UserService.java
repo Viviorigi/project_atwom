@@ -3,6 +3,7 @@ package com.a2m.library.service.admin;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,8 @@ public interface UserService {
 	public void deleteUser(Long userUid) throws Exception;
 
 	public UserDTO findByUsername(String username);
+	
+	Optional<UserResponse> findUserByName(String username);
 	
 	Page<UserResponse> findByUsernameContaining(String keySearch, PageRequest pageRequest);
 }

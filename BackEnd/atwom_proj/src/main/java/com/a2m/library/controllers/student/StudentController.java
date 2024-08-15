@@ -88,31 +88,7 @@ public class StudentController {
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
-	@PostMapping("/login")
-	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtil.generateJwtToken(authentication);
-
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-		User user = userRepository.findByUsername(loginRequest.getUsername())
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-		if (!user.isActive()) {
-			throw new BadCredentialsException("User account is not verified");
-		}
-
-		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-
-		return ResponseEntity
-				.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(),user.getFullName(), "Bearer", roles));
-	}
-
+	
 	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
 		try {

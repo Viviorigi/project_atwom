@@ -64,9 +64,9 @@ public class SecurityConfig {
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/admin/login").permitAll()
-						.requestMatchers("/api/admin/signup").permitAll()
-						.requestMatchers("/api/admin/verify**").permitAll()
+						.requestMatchers("/api/auth/login").permitAll()
+						.requestMatchers("/api/auth/signup").permitAll()
+						.requestMatchers("/api/auth/verify**").permitAll()
 	                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/student/*").permitAll()
 	                    .requestMatchers("/files/*").permitAll()
