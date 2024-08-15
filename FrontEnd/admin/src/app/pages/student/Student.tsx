@@ -149,11 +149,11 @@ export default function Student() {
         <div className='card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white'>
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mt-4">List User</h2>
+              <h2 className="mt-4">List Student</h2>
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
-            <div className="mb-4">
+            <div className="">
               <div className="row g-3">
                 <div className="col-auto">
                   <div className="search-box d-flex">
@@ -179,7 +179,7 @@ export default function Student() {
                 </div>
               </div>
             </div>
-            <div className=" border-top border-bottom border-200 position-relative top-1">
+            <div className=" border-bottom border-200 position-relative top-1">
               <div className="table-responsive scrollbar-overlay mx-n1 px-1">
                 <table className="table table-bordered fs--1 mb-2 mt-5">
                   <thead>

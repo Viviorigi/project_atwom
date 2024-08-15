@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth/AuthService';
 import { useAppDispatch } from '../../store/hook';
 import { setLoading } from '../../reducers/spinnerSlice';
 import { toast } from 'react-toastify';
+import defaultPersonImage from "../../../assets/images/imagePerson.png"
 
 export default function InfoStudent(props: any) {
   const { info, setUserSearchParams, closeDetail } = props;
@@ -54,7 +55,7 @@ export default function InfoStudent(props: any) {
         </div>
         <div className="col-auto">
           <div className="row g-2 g-sm-3">
-            <div className="col-auto"><button className="btn btn-phoenix-danger" onClick={()=>deleteUser(info.userUid)}><i className="fa-solid fa-trash"></i> Delete Student</button></div>
+            <div className="col-auto"><button className="btn btn-phoenix-danger" onClick={() => deleteUser(info.userUid)}><i className="fa-solid fa-trash"></i> Delete Student</button></div>
           </div>
         </div>
       </div>
@@ -64,14 +65,13 @@ export default function InfoStudent(props: any) {
             <div className="card-body">
               <div className="border-bottom border-dashed border-300 pb-4">
                 <div className="row align-items-center g-3 g-sm-5 text-center text-sm-start">
-                  <div className="col-12 col-sm-auto"><input className="d-none" id="avatarFile" type="file" />
+                  <div className="col-12 col-sm-auto">
                     <label className="cursor-pointer avatar avatar-5xl" htmlFor="avatarFile">
-                      <img className="rounded-circle" src={`http://localhost:8080/files/${info.avatar}`} alt="" /></label>
+                      <img className="rounded-circle" src={info.avatar ? `http://localhost:8080/files/${info.avatar}` : defaultPersonImage} alt="" /></label>
                   </div>
                   <div className="col-12 col-sm-auto mb-3">
                     <h3>{info.fullName}</h3>
                     <p className="text-800">{formatDOB(info.dob)}</p>
-
                   </div>
                 </div>
               </div>
