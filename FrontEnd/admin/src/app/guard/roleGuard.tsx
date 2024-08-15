@@ -55,6 +55,4 @@ export default function RoleGuard(props: any) {
   ? props.children
   :  <Navigate to="/not-permission" replace></Navigate>;
 
-
-
 }

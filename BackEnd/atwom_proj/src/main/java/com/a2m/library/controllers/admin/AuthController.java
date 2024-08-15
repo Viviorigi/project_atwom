@@ -118,15 +118,15 @@ public class AuthController {
 	
 	@GetMapping("/getroles")
 	public ResponseEntity<?> checkRole(@RequestParam("role")String role,@RequestHeader("Authorization") String jwt){
-		System.out.println(role);
-		System.out.println(jwt);
 		if (jwt.startsWith("Bearer ")) {
 			jwt = jwt.substring(7);
 		}
 		if(jwtUtil.validateJwtToken(jwt)) {
 			String username = jwtUtil.getUserNameFromJwtToken(jwt);
 			Optional<UserResponse> user =userService.findUserByName(username);
-			if(user.get().getRoles().contains(role)) {
+			System.out.println(user.get().getRoles());
+			boolean hasRole = user.get().getRoles().stream().anyMatch(role::contains);
+			if(hasRole) {
 				return ResponseEntity.ok(true);
 			}else {
 				return ResponseEntity.ok(false);

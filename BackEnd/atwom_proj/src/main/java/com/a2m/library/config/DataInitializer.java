@@ -31,7 +31,27 @@ public class DataInitializer {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	@Bean
+    CommandLineRunner loadRoles() {
+        return args -> {
+            if (!roleRepository.existsById("ROLE_ADMIN")) {
+                Role adminRole = new Role();
+                adminRole.setRoleId("ROLE_ADMIN");
+                adminRole.setRoleName("ADMIN");
+                roleRepository.save(adminRole);
+            }
 
+            if (!roleRepository.existsById("ROLE_STUDENT")) {
+                Role userRole = new Role();
+                userRole.setRoleId("ROLE_STUDENT");
+                userRole.setRoleName("STUDENT");
+                roleRepository.save(userRole);
+            }
+
+//            System.out.println("Default roles created if they did not exist");
+        };
+    }
+	
 	@Bean
 	CommandLineRunner init() {
 		return args -> {
@@ -57,25 +77,4 @@ public class DataInitializer {
 			}
 		};
 	}
-	
-	@Bean
-    CommandLineRunner loadRoles() {
-        return args -> {
-            if (!roleRepository.existsById("ROLE_ADMIN")) {
-                Role adminRole = new Role();
-                adminRole.setRoleId("ROLE_ADMIN");
-                adminRole.setRoleName("ADMIN");
-                roleRepository.save(adminRole);
-            }
-
-            if (!roleRepository.existsById("ROLE_STUDENT")) {
-                Role userRole = new Role();
-                userRole.setRoleId("ROLE_STUDENT");
-                userRole.setRoleName("USER");
-                roleRepository.save(userRole);
-            }
-
-//            System.out.println("Default roles created if they did not exist");
-        };
-    }
 }
