@@ -2,15 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Cookies from 'universal-cookie';
 import { AuthConstant } from '../../constants/AuthConstant';
-
+import defaultPersonImage from "../../../assets/images/imagePerson.png"
 export default function Header() {
 
     const cookie = new Cookies();
     const [fullName,setFullName] = useState("");
+    const [avatar,setAvatar] = useState("")
     useEffect(()=>{
         const storedFullName = cookie.get("fullName");
+        const storedAvatar = cookie.get("avatar");
         if (storedFullName) {
             setFullName(storedFullName)
+        }
+        if(storedAvatar){
+            setAvatar(storedAvatar);
         }
       },[])
     const logout = ()=>{
@@ -236,7 +241,7 @@ export default function Header() {
                         </li>           
                         <li className="nav-item dropdown"><a className="nav-link lh-1 pe-0" id="navbarDropdownUser" href="index.html#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                             <div className="avatar avatar-l ">
-                                <img className="rounded-circle " src="assets/img/team/40x40/57.webp" alt="" />
+                                <img className="rounded-circle "  src={avatar?`http://localhost:8080/files/${avatar}`:defaultPersonImage} alt="" />
                             </div>
                         </a>
                             <div className="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border border-300" aria-labelledby="navbarDropdownUser">
@@ -244,7 +249,7 @@ export default function Header() {
                                     <div className="card-body p-0">
                                         <div className="text-center pt-4 pb-3">
                                             <div className="avatar avatar-xl ">
-                                                <img className="rounded-circle " src="assets/img/team/72x72/57.webp" alt="" />
+                                                <img className="rounded-circle " src={avatar?`http://localhost:8080/files/${avatar}`:defaultPersonImage} alt="" />
                                             </div>
                                             <h6 className="mt-2 text-black">{fullName?fullName:"USER"}</h6>
                                         </div>
@@ -259,7 +264,7 @@ export default function Header() {
                                         </ul>
                                     </div>
                                     <div className="card-footer p-0 border-top">
-                                        <div className="px-3"> <button className="btn btn-phoenix-secondary d-flex flex-center w-100" onClick={logout}> <span className="me-2" data-feather="log-out"> </span>Log out</button></div>
+                                        <div className="px-3 mt-3"> <button className="btn btn-phoenix-secondary d-flex flex-center w-100" onClick={logout}> <span className="me-2">Log out</span><i className="fa-solid fa-arrow-right-from-bracket"></i></button></div>
                                         <div className="my-2 text-center fw-bold fs--2 text-600"><a className="text-600 me-1" href="index.html#!">Privacy policy</a>•<a className="text-600 mx-1" href="index.html#!">Terms</a>•<a className="text-600 ms-1" href="index.html#!">Cookies</a></div>
                                     </div>
                                 </div>

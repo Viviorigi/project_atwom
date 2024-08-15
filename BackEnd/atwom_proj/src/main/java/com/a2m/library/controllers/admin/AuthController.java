@@ -108,7 +108,7 @@ public class AuthController {
 				.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(),
-				user.getFullName(), "Bearer", roles));
+				user.getFullName(), "Bearer",user.getAvatar(), roles));
 	}
 
 	@PostMapping("/create")

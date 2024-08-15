@@ -7,11 +7,13 @@ import { useAppDispatch } from '../../store/hook';
 import { setLoading } from '../../reducers/spinnerSlice';
 import Cookies from 'universal-cookie';
 import { AuthConstant } from '../../constants/AuthConstant';
+import CryptoJS from 'crypto-js';
 
 export default function Login() {
   const [loginRequest, setLoginRequest] = useState<LoginRequest>(new LoginRequest());
   const dispatch = useAppDispatch();
   const [rememberMe, setRememberMe] = useState(false);
+  const [msg, setMsg] = useState('');
   const cookie = new Cookies();
   const navigate = useNavigate();
 
@@ -25,10 +27,17 @@ export default function Login() {
 
   useEffect(() => {
     const storedUsername = cookie.get("username");
+    const storedPassword = cookie.get("password");
     if (storedUsername) {
       setLoginRequest(prev => ({
         ...prev,
         username: storedUsername
+      }));
+    }
+    if(storedPassword) {
+      setLoginRequest(prev => ({
+        ...prev,
+        password: decryptPassword(storedPassword,'1234')
       }));
     }
   }, [])
@@ -58,6 +67,14 @@ export default function Login() {
 
     return true;
   };
+  
+  const encryptPassword = (password:any, secretKey:any) => {
+    return CryptoJS.AES.encrypt(password, secretKey).toString();
+  };
+  const decryptPassword = (encryptedPassword: string, secretKey: string): string => {
+    const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  };
 
   const login = () => {
     if (!chk()) {
@@ -67,20 +84,25 @@ export default function Login() {
     AuthService.getInstance().login(loginRequest).then((resp: any) => {
       if (resp) {
         dispatch(setLoading(false))
-        toast.success("Login successfully");
         const expires = new Date();
         expires.setDate(expires.getDate() + AuthConstant.EXPIRES_TOKEN)
         cookie.set(AuthConstant.ACCESS_TOKEN, resp.data.jwt, { path: '/', expires: expires })
         cookie.set('fullName', resp.data.fullName)
+        cookie.set('avatar', resp.data.avatar)
         navigate('/')
         if (rememberMe) {
           cookie.set('username', resp.data.username)
+          cookie.set('password', encryptPassword(loginRequest.password,'1234'), { expires: expires})
         } else {
           cookie.remove('username')
+          cookie.remove('password')
         };
       }
     }).catch((error: any) => {
       dispatch(setLoading(false));
+      if (error.response.data.message === "You don't have access, login account admin") {
+        setMsg(error.response.data.message)
+      }
       toast.error("Username or Password wrong");
     });
   }
@@ -96,6 +118,7 @@ export default function Login() {
               <div className="text-center mb-7">
                 <h3 className="text-1000">Admin Login</h3>
                 <p className="text-700">Get access to your account</p>
+                <h5 className="text-1000 text-danger">{msg}</h5>
               </div>
               <div className="mb-3 text-start"><label className="form-label" htmlFor="email">UserName</label>
                 <div className="form-icon-container"><input className="form-control form-icon-input" id="email" value={loginRequest.username || ""}
@@ -117,12 +140,12 @@ export default function Login() {
                   Password not empty
                 </div>
               </div>
-              <div className="row flex-between-center mb-7">
+              <div className="row flex-between-center mb-5">
                 <div className="col-auto">
-                  <div className="form-check mb-0"><input className="form-check-input" id="basic-checkbox" type="checkbox" checked={rememberMe}
+                  <div className="form-check  mb-0"><input className="form-check-input" id="basic-checkbox" type="checkbox" checked={rememberMe}
                     onChange={handleCheckboxChange} /><label className="form-check-label mb-0" htmlFor="basic-checkbox">Remember me</label></div>
                 </div>
-                <div className="col-auto"><Link className="fs--1 fw-semi-bold" to={"/forgot-password"}>Forgot Password?</Link></div>
+
               </div><button className="btn btn-primary w-100 mb-3" onClick={login}>Login In</button>
             </div>
           </div>
