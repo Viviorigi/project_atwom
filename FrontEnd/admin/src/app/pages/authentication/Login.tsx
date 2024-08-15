@@ -145,7 +145,9 @@ export default function Login() {
                   <div className="form-check  mb-0"><input className="form-check-input" id="basic-checkbox" type="checkbox" checked={rememberMe}
                     onChange={handleCheckboxChange} /><label className="form-check-label mb-0" htmlFor="basic-checkbox">Remember me</label></div>
                 </div>
-
+                <div className="col-auto">
+                <Link className="fs--1 fw-semi-bold" to="/forgot-password">Forgot Password?</Link>
+                </div>
               </div><button className="btn btn-primary w-100 mb-3" onClick={login}>Login In</button>
             </div>
           </div>

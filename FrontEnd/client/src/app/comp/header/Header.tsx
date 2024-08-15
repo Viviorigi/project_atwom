@@ -141,7 +141,7 @@ const Header = () => {
                   alt="site logo"
                 />
               </div>
-              <span className="site-brand-text text-outerspace">library.</span>
+              <span className="site-brand-text text-outerspace">ATWOM BOOK</span>
             </SiteBrandWrapper>
           </div>
           <NavigationAndSearchWrapper className="flex items-center">

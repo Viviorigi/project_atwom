@@ -23,12 +23,12 @@ const AuthHeader = () => {
             <div className="brand-img-wrap flex items-center justify-center">
               <img className="site-brand-img" src="https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg?w=360" alt="" />
             </div>
-            <span className="site-brand-text">ATWM BOOK</span>
+            <span className="site-brand-text">ATWOM BOOK</span>
           </SiteBrandWrapper>
           <div className="flex items-center">
             <ButtonGroupWrapper className="flex items-center">
-              <BaseLinkGreen to="/sign_in">Login</BaseLinkGreen>
-              <BaseLinkOutlineDark to="/sign_up">Sign up</BaseLinkOutlineDark>
+              <BaseLinkGreen to="/login">Login</BaseLinkGreen>
+              <BaseLinkOutlineDark to="/register">Sign up</BaseLinkOutlineDark>
             </ButtonGroupWrapper>
           </div>
         </div>
