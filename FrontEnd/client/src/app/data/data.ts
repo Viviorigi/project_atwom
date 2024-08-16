@@ -572,6 +572,58 @@ const navMenuData = [
       badgeColor: "outerspace",
     },
   ];
+  const cartItems = [
+    {
+      id: "C001",
+      title: "Blue Flower Print Crop Top",
+      color: "Yellow",
+      size: "M",
+      price: 29.0,
+      quantity: 2,
+      shipping: 0.0,
+      imgSource: staticImages.book_order,
+    },
+    {
+      id: "C002",
+      title: "Blue Flower Print Crop Top",
+      color: "Blue",
+      size: "XL",
+      price: 199.0,
+      quantity: 5,
+      shipping: 0.0,
+      imgSource: staticImages.book_order,
+    },
+    {
+      id: "C003",
+      title: "Blue Flower Print Crop Top",
+      color: "Yellow",
+      size: "M",
+      price: 123.0,
+      quantity: 1,
+      shipping: 5.0,
+      imgSource: staticImages.book_order,
+    },
+    {
+      id: "C004",
+      title: "Blue Flower Print Crop Top",
+      color: "Yellow",
+      size: "M",
+      price: 123.0,
+      quantity: 1,
+      shipping: 5.0,
+      imgSource: staticImages.book_order,
+    },
+    {
+      id: "C005",
+      title: "Blue Flower Print Crop Top",
+      color: "Yellow",
+      size: "M",
+      price: 123.0,
+      quantity: 1,
+      shipping: 5.0,
+      imgSource: staticImages.book_order,
+    },
+  ];
 
   export {
     navMenuData,
@@ -586,5 +638,6 @@ const navMenuData = [
     ProductFilterList,
     StyleFilterList,
     product_one,
-    productDescriptionTabHeads
+    productDescriptionTabHeads,
+    cartItems
   }

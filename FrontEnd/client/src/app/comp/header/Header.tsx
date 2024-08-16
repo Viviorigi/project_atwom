@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { HeaderMainWrapper, SiteBrandWrapper } from "../../styles/header";
 import { Container } from "../../styles/styles";
-import { Link, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Input, InputGroupWrapper } from "../../styles/form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useDispatch } from "react-redux";
@@ -9,7 +9,7 @@ import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 import { staticImages } from "../../utils/images";
 import Cookies from "universal-cookie";
 import { useEffect, useState } from "react";
-import { BaseLinkGreen, BaseLinkOutlineDark } from "../../styles/button";
+import { BaseButtonGreen, BaseLinkGreen, BaseLinkOutlineDark } from "../../styles/button";
 import { jwtDecode } from "jwt-decode";
 import { AuthConstant } from "../../constants/authConstant";
 
@@ -95,7 +95,7 @@ const NavigationMenuWrapper = styled.nav`
 const IconLinksWrapper = styled.div`
   column-gap: 18px;
   .icon-link {
-    width: 36px;
+    width: 50px;
     height: 36px;
     border-radius: 6px;
 
@@ -158,7 +158,7 @@ const Header = () => {
 
       }
     }
-  }, [isLoggedIn])
+  }, [])
 
   return (
     <HeaderMainWrapper className="header flex items-center">
@@ -205,13 +205,32 @@ const Header = () => {
           </NavigationAndSearchWrapper>
 
           <IconLinksWrapper className="flex items-center">
-            <Link
+          <Link
               to="/book"
               className={`icon-link ${location.pathname === "/book" ? "active" : ""
                 } inline-flex items-center justify-center`}
             >
-              <img src={staticImages.book_menu} alt="" />
+              <span>Book</span>
             </Link>
+
+            <Link
+              to="/about"
+              className={`icon-link ${location.pathname === "/about" ? "active" : ""
+                } inline-flex items-center justify-center`}
+            >
+              <span>About</span>
+            </Link>
+            <Link
+              to="/contact"
+              className={`icon-link ${location.pathname === "/contact" ? "active" : ""
+                } inline-flex items-center justify-center`}
+            >
+              <span>Contact</span>
+            </Link>
+            
+          </IconLinksWrapper>
+          
+          <IconLinksWrapper className="flex items-center">
             {isLoggedIn && 
               <>
                 <Link

@@ -7,6 +7,7 @@ import { authRouter } from './app/routers/authRouter';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NotFound from './app/comp/error/NotFound';
+import About from './app/page/about/About';
 
 export const spinner = (
   <div className="progress-spinner text-center">

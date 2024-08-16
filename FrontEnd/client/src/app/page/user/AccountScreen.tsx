@@ -79,9 +79,9 @@ const AccountScreen = () => {
                   <div className="form-input-wrapper flex items-center">
                     <Input
                       type="text"
-                      className="form-elem-control text-outerspace font-semibold"
-                      value="Richard Doe"
-                      readOnly
+                      className="form-elem-control text-outerspace font-semibold "
+                      
+                      
                     />
                     <button type="button" className="form-control-change-btn">
                       Change
@@ -147,75 +147,36 @@ const AccountScreen = () => {
                 </FormElement>
               </div>
             </form>
-            <div>
-              <h4 className="title-sm">My Contact Addresss</h4>
-              <BaseLinkGreen to="/account/add">Add Address</BaseLinkGreen>
-              <div className="address-list grid">
-                <div className="address-item grid">
-                  <p className="text-outerspace text-lg font-semibold address-title">
-                    Richard Doe
-                  </p>
-                  <p className="text-gray text-base font-medium address-description">
-                    1/4 Watson Street Flat, East Coastal Road, Ohio City
-                  </p>
-                  <ul className="address-tags flex flex-wrap">
-                    <li className="text-gray text-base font-medium inline-flex items-center justify-center">
-                      Home
-                    </li>
-                    <li className="text-gray text-base font-medium inline-flex items-center justify-center">
-                      Default billing address
-                    </li>
-                  </ul>
-                  <div className="address-btns flex">
-                    <Link
-                      to="/"
-                      className="text-base text-outerspace font-semibold"
-                    >
-                      Remove
-                    </Link>
-                    <div className="btn-separator"></div>
-                    <Link
-                      to="/"
-                      className="text-base text-outerspace font-semibold"
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </div>
+            <div className="form-group">
+            <label>
+              Avatar <span className="text-danger">(*)</span>
+            </label>
+            <br />
+            <input
+              name="file"
+              type="file"
+              accept="image/*"
+              onChange={() => {}}
+              aria-label="d"
+            />
 
-                <div className="address-item grid">
-                  <p className="text-outerspace text-lg font-semibold address-title">
-                    Richard Doe
-                  </p>
-                  <p className="text-gray text-base font-medium address-description">
-                    1/4 Watson Street Flat, East Coastal Road, Ohio City
-                  </p>
-                  <ul className="address-tags flex flex-wrap">
-                    <li className="text-gray text-base font-medium inline-flex items-center justify-center">
-                      Home
-                    </li>
-                    <li className="text-gray text-base font-medium inline-flex items-center justify-center">
-                      Default billing address
-                    </li>
-                  </ul>
-                  <div className="address-btns flex">
-                    <Link
-                      to="/"
-                      className="text-base text-outerspace font-semibold"
-                    >
-                      Remove
-                    </Link>
-                    <div className="btn-separator"></div>
-                    <Link
-                      to="/"
-                      className="text-base text-outerspace font-semibold"
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </div>
+              <div
+                className="preview Image"
+                style={{
+                  marginTop: "10px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src=""
+                  alt="Preview"
+                  style={{ width: "200px", height: "200px" }}
+                />
               </div>
-            </div>
+
+          </div>
           </UserContent>
         </UserDashboardWrapper>
       </Container>
