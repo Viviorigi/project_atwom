@@ -23,7 +23,7 @@ export class AuthService {
   public register(student:any){
     const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/student/register`);
     return axios.post(url,student, {
-      headers: HeadersUtil.getHeadersAuthFormData()
+      headers: HeadersUtil.getHeaders()
     });
   }
   

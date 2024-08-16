@@ -82,6 +82,8 @@ public class StudentController {
 
 	@Autowired
 	private PasswordResetService passwordResetService;
+	
+	
 
 	public StudentController(UserService userService, ObjectMapper objectMapper) {
 		this.userService = userService;
@@ -188,6 +190,8 @@ public class StudentController {
 		User user = verificationToken.getUser();
 		user.setActive(true);
 		userRepository.save(user);
+		tokenRepository.deleteById(user.getUserUid());
+		
 
 		model.addAttribute("message", "Account verified successfully");
 		return "account-verification-success";
