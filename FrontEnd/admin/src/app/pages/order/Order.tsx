@@ -1,196 +1,169 @@
-import React, { useState, useEffect } from 'react';
-import { CheckoutService } from '../../services/checkout/CheckoutService';
+import React, { useEffect, useState, useRef } from 'react';
 import { CheckoutDTO } from '../../model/CheckoutDTO';
-import OrderModal from './OrderModal';
+import { format } from 'date-fns';
+import OrderForm from './OrderForm';
+import Pagination from '../../comp/common/Pagination';
+import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
-import { CheckoutStatus } from '../../model/CheckoutStatus';
+import { useAppDispatch } from '../../store/hook';
+import { setLoading } from '../../reducers/spinnerSlice';
+import { CheckoutService } from '../../services/checkout/CheckoutService';
+import OrderDetail from './OrderDetail'; // Import OrderDetail component
 
-const Order: React.FC = () => {
+const Order = () => {
   const [orders, setOrders] = useState<CheckoutDTO[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<CheckoutDTO[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<CheckoutDTO | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<CheckoutStatus | 'ALL'>('ALL');
-  const [currentPage, setCurrentPage] = useState<number>(1);
-
-  const rowsPerPage = 10;
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [orderDetailOpen, setOrderDetailOpen] = useState(false); // Track OrderDetail visibility
+  const [orderSearchParams, setOrderSearchParams] = useState({ keySearch: '', page: 1, limit: 5, timer: new Date().getTime() });
+  const dispatch = useAppDispatch();
+  const orderRef = useRef<CheckoutDTO | null>(null);
+  const indexOfLastItem = orderSearchParams.page * orderSearchParams.limit;
+  const indexOfFirstItem = indexOfLastItem - orderSearchParams.limit;
 
   useEffect(() => {
     fetchOrders();
-  }, []);
-
-  useEffect(() => {
-    filterOrders();
-  }, [searchTerm, statusFilter, orders]);
+  }, [orderSearchParams.timer, orderSearchParams.page]);
 
   const fetchOrders = async () => {
-    setLoading(true);
+    //dispatch(setLoading(true));
     try {
-      const fetchedOrders = await CheckoutService.findAll();
-      setOrders(fetchedOrders);
+      const resp = await CheckoutService.findAll({
+        keySearch: orderSearchParams.keySearch,
+        limit: orderSearchParams.limit,
+        page: orderSearchParams.page,
+      });
+  
+      dispatch(setLoading(false));
+      setOrders(resp);
+      setTotalOrders(resp.length);
+      setTotalPage(Math.ceil(resp.length / orderSearchParams.limit));
     } catch (error) {
-      toast.error("Error fetching orders");
-    } finally {
-      setLoading(false);
+      console.error('Error fetching orders', error);
+      dispatch(setLoading(false));
     }
   };
 
-  const filterOrders = () => {
-    let filtered = orders;
-
-    if (searchTerm) {
-      filtered = filtered.filter(order => 
-        order.user?.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (statusFilter !== 'ALL') {
-      filtered = filtered.filter(order => order.status === statusFilter);
-    }
-
-    setFilteredOrders(filtered);
+  const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setOrderSearchParams({ ...orderSearchParams, [event.target.name]: event.target.value, page: 1 });
   };
 
-  const handleRowClick = (order: CheckoutDTO) => {
-    setSelectedOrder(order);
-    setIsModalOpen(true);
+  const handleKeyUpSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setOrderSearchParams({ ...orderSearchParams, timer: new Date().getTime() });
+    }
   };
 
-  const handleStatusChange = async (orderId: number, newStatus: CheckoutStatus) => {
-    if (window.confirm(`Are you sure you want to change the status to ${newStatus}?`)) {
-      try {
-        let updatedOrder: CheckoutDTO;
+  const addOrder = () => {
+    orderRef.current = null;
+    setOpen(true);
+  };
 
-        switch (newStatus) {
-          case CheckoutStatus.APPROVED:
-            updatedOrder = await CheckoutService.approveCheckout(orderId);
-            break;
-          case CheckoutStatus.REJECTED:
-            updatedOrder = await CheckoutService.rejectCheckout(orderId);
-            break;
-          case CheckoutStatus.BORROWED:
-            updatedOrder = await CheckoutService.borrowCheckout(orderId);
-            break;
-          default:
-            throw new Error('Invalid status update');
+  const editOrder = (order: CheckoutDTO) => {
+    orderRef.current = order;
+    setOpen(true);
+  };
+
+  const viewOrderDetail = (order: CheckoutDTO) => {
+    orderRef.current = order;
+    setOrderDetailOpen(true);
+  };
+
+  const deleteOrder = (id: number) => {
+    Swal.fire({
+      title: 'Confirm',
+      text: 'Do you want to delete this order?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#89B449',
+      cancelButtonColor: '#E68A8C',
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    }).then(async (result) => {
+      if (result.value) {
+        dispatch(setLoading(true));
+        try {
+          await CheckoutService.deleteById(id);
+          dispatch(setLoading(false));
+          setOrderSearchParams({ ...orderSearchParams, timer: new Date().getTime() });
+          toast.success('Order deleted successfully');
+        } catch (error) {
+          dispatch(setLoading(false));
+          toast.error('Error deleting order');
         }
-
-        toast.success(`Status updated successfully to ${newStatus}`);
-        fetchOrders();
-      } catch (error) {
-        toast.error(`Error updating status to ${newStatus}`);
       }
-    }
+    });
   };
 
-  const handleDelete = async (orderId: number) => {
-    if (window.confirm("Are you sure you want to delete this order?")) {
-      try {
-        await CheckoutService.deleteById(orderId);
-        toast.success("Order deleted successfully");
-        fetchOrders();
-      } catch (error) {
-        toast.error("Error deleting order");
-      }
-    }
+  const handleCloseOrderForm = () => {
+    setOpen(false);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedOrder(null);
+  const handleCloseOrderDetail = () => {
+    setOrderDetailOpen(false);
   };
-
-  const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
-
-  const paginatedOrders = filteredOrders.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
 
   return (
     <div>
-      
-        <div className="mb-9">
+      <div className="mb-9">
+        <div className="card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white">
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mb-0">Orders</h2>
+              <h2 className="mt-4">List Orders</h2>
             </div>
-            <div className="col-auto ms-auto">
-              <input
-                type="text"
-                placeholder="Search by student name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-control"
-              />
-            </div>
+          </div>
+          <div className="row g-3">
             <div className="col-auto">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as CheckoutStatus | 'ALL')}
-                className="form-select"
-              >
-                <option value="ALL">All Statuses</option>
-                <option value={CheckoutStatus.REQUESTED}>Requested</option>
-                <option value={CheckoutStatus.APPROVED}>Approved</option>
-                <option value={CheckoutStatus.REJECTED}>Rejected</option>
-                <option value={CheckoutStatus.BORROWED}>Borrowed</option>
-              </select>
+              <div className="search-box d-flex">
+                <input
+                  className="form-control search-input search"
+                  type="search"
+                  placeholder="Search orders"
+                  name="keySearch"
+                  aria-label="Search"
+                  value={orderSearchParams.keySearch || ''}
+                  onChange={handleChangeSearch}
+                  onKeyUp={handleKeyUpSearch}
+                />
+                <button className="btn btn-primary" onClick={() => setOrderSearchParams({ ...orderSearchParams, timer: new Date().getTime() })}>
+                  <span className="fas fa-search" />
+                </button>
+              </div>
+            </div>
+            <div className="col-auto"></div>
+            <div className="col-auto">
+              <button className="btn btn-primary" onClick={addOrder}>
+                <span className="fas fa-plus me-2" />Create Order
+              </button>
             </div>
           </div>
 
-          <div className="table-responsive scrollbar-overlay mx-n1 px-1">
-            <table className="table table-sm fs--1 mb-0">
+          <div className="table-responsive scrollbar-overlay mx-n1 px-1 mt-5">
+            <table className="table table-bordered fs--1 mb-2">
               <thead>
                 <tr>
-                  <th className="sort align-middle pe-5" scope="col">OrderID</th>
-                  <th className="sort align-middle pe-5" scope="col">Full Name</th>
-                  <th className="sort align-middle pe-5" scope="col">Start Time</th>
-                  <th className="sort align-middle pe-5" scope="col">End Time</th>
-                  <th className="sort align-middle pe-5" scope="col">Status</th>
-                  <th className="sort align-middle pe-5" scope="col">Actions</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>User</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Status</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Start Time</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Upd Time</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedOrders.map(order => (
-                  <tr key={order.id} className="hover-actions-trigger btn-reveal-trigger position-static">
-                    <td className="orderid align-middle">{order.id}</td>
-                    <td className="full-name align-middle">{order.user?.fullName || 'N/A'}</td>
-                    <td className="start-time align-middle">{order.startTime}</td>
-                    <td className="end-time align-middle">{order.endTime}</td>
-                    <td className="status align-middle">
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value as CheckoutStatus)}
-                        disabled={order.status === CheckoutStatus.BORROWED}
-                        className="form-select"
-                      >
-                        {order.status === CheckoutStatus.REQUESTED && (
-                          <>
-                            <option value={CheckoutStatus.APPROVED}>Approved</option>
-                            <option value={CheckoutStatus.REJECTED}>Rejected</option>
-                          </>
-                        )}
-                        {(order.status === CheckoutStatus.APPROVED || order.status === CheckoutStatus.REJECTED) && (
-                          <option value={CheckoutStatus.BORROWED}>Borrowed</option>
-                        )}
-                        <option value={order.status}>{order.status}</option>
-                      </select>
-                    </td>
-                    <td className="actions align-middle">
-                      <button
-                        className="btn btn-info me-2"
-                        onClick={() => handleRowClick(order)}
-                      >
-                        <i className="fas fa-eye" />
-                      </button>
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => handleDelete(order.id)}
-                      >
-                        <i className="fas fa-trash" />
+                {orders.map((order, index) => (
+                  <tr key={order.id}>
+                    <td className="align-middle text-end pe-3">{indexOfFirstItem + index + 1}</td>
+                    <td className="align-middle"> {order.user ? order.user.fullName : 'N/A'}</td>
+                    <td className="align-middle text-center">{order.status}</td>
+                    <td className="align-middle text-center">{format(new Date(order.startTime), 'dd/MM/yyyy, hh:mm')}</td>
+                    <td className="align-middle text-center">{format(new Date(order.endTime), 'dd/MM/yyyy, hh:mm')}</td>
+                    <td className="align-middle text-center">
+                      <button className="btn btn-warning btn-sm me-2" onClick={() => editOrder(order)}>Edit</button>
+                      <button className="btn btn-danger btn-sm me-2" onClick={() => deleteOrder(order.id)}>Delete</button>
+                      <button className="btn btn-info btn-sm" onClick={() => viewOrderDetail(order)}>
+                        <span className="fas fa-eye" />
                       </button>
                     </td>
                   </tr>
@@ -198,41 +171,29 @@ const Order: React.FC = () => {
               </tbody>
             </table>
           </div>
-
+          
           <div className="d-flex justify-content-between align-items-center mt-3">
-            <span>Total Orders: {filteredOrders.length}</span>
             <div className="col-auto d-flex">
-              <button
-                className="page-link"
-                data-list-pagination="prev"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <span className="fas fa-chevron-left" />
-              </button>
-              <ul className="mb-0 pagination">
-                {/* Add pagination controls if needed */}
-              </ul>
-              <button
-                className="page-link pe-0"
-                data-list-pagination="next"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage >= totalPages}
-              >
-                <span className="fas fa-chevron-right" />
-              </button>
+                <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total user: </span> {/* */} </p>
             </div>
+            <Pagination
+              totalItems={totalOrders}
+              itemsPerPage={orderSearchParams.limit}
+              currentPage={orderSearchParams.page}
+              onPageChange={(page: any) => setOrderSearchParams({ ...orderSearchParams, page })}
+            />
+            <div />
           </div>
         </div>
-
-        {isModalOpen && selectedOrder && (
-          <OrderModal
-            order={selectedOrder}
-            isOpen={isModalOpen}
-            onClose={closeModal}
-          />
-        )}
-      
+      </div>
+      {open && orderRef.current && (
+        <OrderForm order={orderRef.current} users={[]} onSave={function (order: CheckoutDTO): void {
+          throw new Error('Function not implemented.');
+        } } />
+      )}
+      {orderDetailOpen && orderRef.current && (
+        <OrderDetail orderId={orderRef.current.id} />
+      )}
     </div>
   );
 };

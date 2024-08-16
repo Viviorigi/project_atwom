@@ -5,15 +5,16 @@ import { CheckoutStatus } from '../../model/CheckoutStatus';
 const BASE_URL = 'http://localhost:8080/api/checkout';
 
 export const CheckoutService = {
-  findAll: async (): Promise<CheckoutDTO[]> => {
+  findAll: async (params?: { keySearch?: string; limit?: number; page?: number; }): Promise<CheckoutDTO[]> => {
     try {
-      const response = await axios.get<CheckoutDTO[]>(`${BASE_URL}/list`);
+      const response = await axios.get<CheckoutDTO[]>(`${BASE_URL}/list`, { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching checkouts", error);
       throw error;
     }
   },
+  
 
   findById: async (id: number): Promise<CheckoutDTO> => {
     try {

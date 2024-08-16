@@ -2,6 +2,7 @@ package com.a2m.library.service.checkout.Impl;
 
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.CheckoutDTO;
+import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.model.Checkout;
 import com.a2m.library.model.User;
@@ -41,21 +42,23 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     public Optional<CheckoutDTO> findById(Integer id) {
-        return checkoutRepository.findById(id).map(this::toDTO);
+        return checkoutRepository.findById(id)
+                .map(this::toDTO);
     }
 
     @Override
-    @Transactional
-    public CheckoutDTO add(CheckoutDTO checkoutDTO) {
-        User user = userRepository.findById(checkoutDTO.getUserUid())
+@Transactional
+public CheckoutDTO add(CheckoutDTO checkoutDTO) {
+    User user = userRepository.findById(checkoutDTO.getUserUid())
             .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + checkoutDTO.getUserUid()));
+    Checkout checkout = toEntity(checkoutDTO);
+    checkout.setUser(user);
 
-        Checkout checkout = toEntity(checkoutDTO);
-        checkout.setUser(user); // Thiết lập User cho Checkout
-        checkout.setStatus(CheckoutStatus.REQUESTED);
-        checkout = checkoutRepository.save(checkout);
-        return toDTO(checkout);
-    }
+    checkout.setStatus(CheckoutStatus.REQUESTED);
+
+    checkout = checkoutRepository.save(checkout);
+    return toDTO(checkout);
+}
 
     @Override
     @Transactional
@@ -64,14 +67,13 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
 
         // Check role
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
         if (status == CheckoutStatus.APPROVED || status == CheckoutStatus.REJECTED || status == CheckoutStatus.BORROWED) {
             if (!isAdmin) {
-                throw new SecurityException("Only admins can update to APPROVED, REJECTED or BORROWED status");
+                throw new SecurityException("Only admins can update to APPROVED, REJECTED, or BORROWED status");
             }
         }
 
@@ -79,7 +81,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         if (status == CheckoutStatus.BORROWED) {
             checkout.setStartTime(LocalDateTime.now());
-            checkout.setEndTime(LocalDateTime.now().plusDays(30)); // Default
+            checkout.setEndTime(LocalDateTime.now().plusDays(30)); // Default duration
         }
 
         checkout = checkoutRepository.save(checkout);
@@ -106,7 +108,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     public void scheduleEndTimeNotifications(CheckoutDTO checkoutDTO) {
-        //Logic Notification
+        // Logic for notifications
     }
 
     @Override
@@ -130,7 +132,12 @@ public class CheckoutServiceImpl implements CheckoutService {
     private CheckoutDTO toDTO(Checkout checkout) {
         CheckoutDTO dto = new CheckoutDTO();
         dto.setId(checkout.getId());
-        dto.setUserUid(checkout.getUser().getUserUid());
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserUid(checkout.getUser().getUserUid());
+        userDTO.setFullName(checkout.getUser().getFullName()); // Set fullName
+        dto.setUser(userDTO);
+
         dto.setStatus(checkout.getStatus());
         dto.setStartTime(checkout.getStartTime());
         dto.setEndTime(checkout.getEndTime());
@@ -140,7 +147,6 @@ public class CheckoutServiceImpl implements CheckoutService {
     private Checkout toEntity(CheckoutDTO dto) {
         Checkout checkout = new Checkout();
         checkout.setId(dto.getId());
-        //
         checkout.setStatus(dto.getStatus());
         checkout.setStartTime(dto.getStartTime());
         checkout.setEndTime(dto.getEndTime());

@@ -5,6 +5,6 @@ export class  CategoryDTO {
   name?: string;
   description?: string;
   deleted?: boolean;
-  books?: BookDTO[];  // Giả sử bạn có model `BookDTO`.
+  books?: BookDTO[];
   }
   
