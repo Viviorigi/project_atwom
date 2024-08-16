@@ -2,7 +2,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Cookies from 'universal-cookie';
-import { AuthConstant } from '../constants/AuthConstant';
+import { AuthConstant } from '../constants/authConstant';
+
 
 
 export default function AuthGuard(props: any) {

@@ -3,6 +3,7 @@ package com.a2m.library.controllers.student;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +41,7 @@ import com.a2m.library.dto.request.ResetPasswordRequest;
 import com.a2m.library.dto.response.JwtResponse;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.User;
+import com.a2m.library.model.VerificationToken;
 import com.a2m.library.repository.UserRepository;
 import com.a2m.library.repository.VerificationTokenRepository;
 import com.a2m.library.security.CustomUserDetails;
@@ -172,6 +175,22 @@ public class StudentController {
 			}
 		}
 	}
+	
+	@GetMapping("/verify")
+	public String verifyAccount(@RequestParam("token") String token, Model model) {
+		VerificationToken verificationToken = tokenRepository.findByToken(token);
 
+		if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+			model.addAttribute("message", "Invalid or expired token");
+			return "verification-error";
+		}
+
+		User user = verificationToken.getUser();
+		user.setActive(true);
+		userRepository.save(user);
+
+		model.addAttribute("message", "Account verified successfully");
+		return "account-verification-success";
+	}
 	
 }

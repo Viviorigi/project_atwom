@@ -4,16 +4,14 @@ import { Container } from "../../styles/styles";
 import { staticImages } from "../../utils/images";
 import { FormElement, Input } from "../../styles/form";
 import { Link, useNavigate } from "react-router-dom";
-import { BaseButtonBlack } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import PasswordInput from "../../comp/auth/PasswordInput";
-import AuthOptions from "../../comp/auth/AuthOptions";
 import { LoginRequest } from "../../model/auth/LoginRequest";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AuthConstant } from "../../constants/authConstant";
 import Cookies from "universal-cookie";
 import { AuthService } from "../../services/AuthService";
+import CryptoJS from 'crypto-js';
 
 const SignInScreenWrapper = styled.section`
   .form-separator {
@@ -49,6 +47,7 @@ const SignIn = () => {
   const [loginRequest, setLoginRequest] = useState<LoginRequest>(new LoginRequest());
   const navigate = useNavigate();
   const cookie = new Cookies();
+  const [rememberMe, setRememberMe] = useState(false);
   const handleChangeText = (event: any) => {
     const { name, value } = event.target;
     setLoginRequest((prev) => ({
@@ -56,6 +55,26 @@ const SignIn = () => {
       [name]: value,
     }));
   };
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRememberMe(event.target.checked);
+  };
+
+  useEffect(() => {
+    const storedUsername = cookie.get("username");
+    const storedPassword = cookie.get("password");
+    if (storedUsername) {
+      setLoginRequest(prev => ({
+        ...prev,
+        username: storedUsername
+      }));
+    }
+    if(storedPassword) {
+      setLoginRequest(prev => ({
+        ...prev,
+        password: decryptPassword(storedPassword,'1234')
+      }));
+    }
+  }, [])
 
   const setLoginState = () => {
     setLoginRequest((prev: LoginRequest) => {
@@ -79,6 +98,14 @@ const SignIn = () => {
     return true;
   };
 
+  const encryptPassword = (password:any, secretKey:any) => {
+    return CryptoJS.AES.encrypt(password, secretKey).toString();
+  };
+  const decryptPassword = (encryptedPassword: string, secretKey: string): string => {
+    const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  };
+
   const login = () => {
     if (!chk()) {
       return;
@@ -93,13 +120,13 @@ const SignIn = () => {
         cookie.set('fullName', resp.data.fullName)
         cookie.set('avatar', resp.data.avatar)
         navigate('/')
-        // if (rememberMe) {
-        //   cookie.set('username', resp.data.username)
-        //   cookie.set('password', encryptPassword(loginRequest.password,'1234'), { expires: expires})
-        // } else {
-        //   cookie.remove('username')
-        //   cookie.remove('password')
-        // };
+        if (rememberMe) {
+          cookie.set('username', resp.data.username)
+          cookie.set('password', encryptPassword(loginRequest.password,'1234'), { expires: expires})
+        } else {
+          cookie.remove('username')
+          cookie.remove('password')
+        };
       }
     }).catch((error: any) => {
       // dispatch(setLoading(false));
@@ -132,7 +159,7 @@ const SignIn = () => {
                   className="form-elem-control"
                 />
                 <div
-                  className={`invalid-feedback ${loginRequest.username?.toString() === "" ? "d-block" : "d-none"}`}
+                  className={`invalid-feedback ${loginRequest.username?.toString() === "" ? "d-block" : ""}`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
                   Username not empty
@@ -146,20 +173,26 @@ const SignIn = () => {
                   onChange={handleChangeText}
                   value={loginRequest.password || ""} />
                 <div
-                  className={`invalid-feedback ${loginRequest.password?.toString() === "" ? "d-block" : "d-none"}`}
+                  className={`invalid-feedback ${loginRequest.password?.toString() === "" ? "d-block" : ""}`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
                   Password not empty
                 </div>
               </FormElement>
-              <Link
-                to="/forgot-password"
-                className="form-elem-text text-end font-medium"
-              >
-                Forgot your password?
-              </Link>
+              <div className="d-flex justify-content-between">
+                <div className="col-auto">
+                  <div className="form-check  mb-0 mt-1"><input className="form-check-input" id="basic-checkbox" type="checkbox" checked={rememberMe}
+                    onChange={handleCheckboxChange} /><label className="form-check-label mb-0" htmlFor="basic-checkbox">Remember me</label></div>
+                </div>
+                <Link
+                  to="/forgot-password"
+                  className="form-elem-text font-medium mt-1"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
               {/* <BaseButtonBlack type="button" className="form-submit-btn" > */}
-                <button className="form-submit-btn" style={{backgroundColor:"black",color:"white"}} onClick={login}>Sign in</button>
+              <button className="form-submit-btn" style={{ backgroundColor: "black", color: "white" }} onClick={login}>Sign in</button>
               {/* </BaseButtonBlack> */}
               <p className="flex flex-wrap account-rel-text">
                 Don&apos;t have a account?

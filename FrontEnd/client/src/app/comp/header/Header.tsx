@@ -6,8 +6,10 @@ import { Input, InputGroupWrapper } from "../../styles/form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useDispatch } from "react-redux";
 import { toggleSidebar } from "../../redux/slices/sidebarSlice";
-import { navMenuData } from "../../data/data";
 import { staticImages } from "../../utils/images";
+import Cookies from "universal-cookie";
+import { useEffect, useState } from "react";
+import { BaseLinkGreen, BaseLinkOutlineDark } from "../../styles/button";
 
 const NavigationAndSearchWrapper = styled.div`
   column-gap: 20px;
@@ -119,6 +121,14 @@ const IconLinksWrapper = styled.div`
 const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const [fullName, setFullName] = useState("");
+  const cookie = new Cookies();
+  useEffect(() => {
+    const storedFullName = cookie.get("fullName");
+    if (storedFullName) {
+      setFullName(storedFullName)
+    }
+  }, [])
 
   return (
     <HeaderMainWrapper className="header flex items-center">
@@ -147,7 +157,7 @@ const Header = () => {
           <NavigationAndSearchWrapper className="flex items-center">
             <NavigationMenuWrapper>
               <ul className="nav-menu-list flex items-center">
-                
+
               </ul>
             </NavigationMenuWrapper>
             <form className="search-form">
@@ -167,31 +177,47 @@ const Header = () => {
           <IconLinksWrapper className="flex items-center">
             <Link
               to="/wishlist"
-              className={`icon-link ${
-                location.pathname === "/wishlist" ? "active" : ""
-              } inline-flex items-center justify-center`}
+              className={`icon-link ${location.pathname === "/wishlist" ? "active" : ""
+                } inline-flex items-center justify-center`}
             >
               <img src={staticImages.heart} alt="" />
             </Link>
-            <Link
-              to="/account"
-              className={`icon-link ${
-                location.pathname === "/account" ||
-                location.pathname === "/account/add"
+            {fullName &&
+              <Link
+                to="/account"
+                className={` ${location.pathname === "/account" ||
+                  location.pathname === "/account/add"
                   ? "active"
                   : ""
-              } inline-flex items-center justify-center`}
+                  } inline-flex items-center justify-center`}
+                style={{ marginTop: "14px" }}
+              >
+                <p>{fullName}</p>
+              </Link>}
+            <Link
+              to="/account"
+              className={`icon-link ${location.pathname === "/account" ||
+                location.pathname === "/account/add"
+                ? "active"
+                : ""
+                } inline-flex items-center justify-center`}
             >
+
               <img src={staticImages.user} alt="" />
             </Link>
             <Link
               to="/cart"
-              className={`icon-link ${
-                location.pathname === "/cart" ? "active" : ""
-              } inline-flex items-center justify-center`}
+              className={`icon-link ${location.pathname === "/cart" ? "active" : ""
+                } inline-flex items-center justify-center`}
             >
               <img src={staticImages.cart} alt="" />
             </Link>
+            {!fullName &&
+              <div className="flex items-center ">
+                <BaseLinkGreen to="/login">Login</BaseLinkGreen>
+                <BaseLinkOutlineDark to="/register">Sign up</BaseLinkOutlineDark>
+              </div>}
+
           </IconLinksWrapper>
         </div>
       </Container>

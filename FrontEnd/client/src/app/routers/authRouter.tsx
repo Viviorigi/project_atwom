@@ -3,7 +3,7 @@ import AuthLayout from '../comp/layout/AuthLayout';
 import SignIn from '../page/auth/SignIn';
 import SignUp from '../page/auth/SignUp';
 import ChangePassword from '../page/auth/ChangePassword';
-import ResetPassword from '../page/auth/RestePassword';
+import ResetPassword from '../page/auth/ResetPassword';
 
 export const authRouter: any = {
   path: '',

@@ -20,17 +20,24 @@ export class AuthService {
     });
   }
 
-  public register(auth:any){
-    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/create`);
-    return axios.post(url,auth, {
+  public register(student:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/student/register`);
+    return axios.post(url,student, {
       headers: HeadersUtil.getHeadersAuthFormData()
     });
   }
   
-  public update(auth:any){
-    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/update`);
-    return axios.post(url,auth, {
+  public update(student:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/student/update`);
+    return axios.post(url,student, {
       headers: HeadersUtil.getHeadersAuthFormData()
+    });
+  }
+
+  public resetPass(email:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/auth/forgot-password`);
+    return axios.post(url,email, {
+      headers: HeadersUtil.getHeaders()
     });
   }
 
