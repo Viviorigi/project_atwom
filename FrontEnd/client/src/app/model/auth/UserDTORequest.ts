@@ -3,6 +3,7 @@ export class  UserDTORequest {
   userUid?:number;
   username?: string;
   password?: string;
+  confirmpassword?: string;
   email?: string;
   fullName?: string;
   dob?: string;  

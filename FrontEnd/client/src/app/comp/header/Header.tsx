@@ -6,8 +6,12 @@ import { Input, InputGroupWrapper } from "../../styles/form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useDispatch } from "react-redux";
 import { toggleSidebar } from "../../redux/slices/sidebarSlice";
-import { navMenuData } from "../../data/data";
 import { staticImages } from "../../utils/images";
+import Cookies from "universal-cookie";
+import { useEffect, useState } from "react";
+import { BaseLinkGreen, BaseLinkOutlineDark } from "../../styles/button";
+import { jwtDecode } from "jwt-decode";
+import { AuthConstant } from "../../constants/authConstant";
 
 const NavigationAndSearchWrapper = styled.div`
   column-gap: 20px;
@@ -115,10 +119,46 @@ const IconLinksWrapper = styled.div`
     column-gap: 6px;
   }
 `;
+interface JwtPayload {
+  exp: number;
+}
 
 const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const cookie = new Cookies();
+  useEffect(() => {
+    const storedFullName = cookie.get("fullName");
+    if (storedFullName) {
+      setFullName(storedFullName)
+    }
+
+    const access_token = cookie.get('access_token');
+
+    if (access_token) {
+      try {
+        const decodedToken = jwtDecode<JwtPayload>(access_token);
+
+        const expiryTime = decodedToken.exp * 1000;
+
+        const currentTime = new Date().getTime();
+
+        if (currentTime < expiryTime) {
+          setIsLoggedIn(true);
+        } else {
+          cookie.remove(AuthConstant.ACCESS_TOKEN);
+          cookie.remove('fullName');
+          cookie.remove('avatar');
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.log(error);
+
+      }
+    }
+  }, [isLoggedIn])
 
   return (
     <HeaderMainWrapper className="header flex items-center">
@@ -141,13 +181,13 @@ const Header = () => {
                   alt="site logo"
                 />
               </div>
-              <span className="site-brand-text text-outerspace">library.</span>
+              <span className="site-brand-text text-outerspace">ATWOM BOOK</span>
             </SiteBrandWrapper>
           </div>
           <NavigationAndSearchWrapper className="flex items-center">
             <NavigationMenuWrapper>
               <ul className="nav-menu-list flex items-center">
-                
+
               </ul>
             </NavigationMenuWrapper>
             <form className="search-form">
@@ -166,32 +206,61 @@ const Header = () => {
 
           <IconLinksWrapper className="flex items-center">
             <Link
+              to="/book"
+              className={`icon-link ${location.pathname === "/book" ? "active" : ""
+                } inline-flex items-center justify-center`}
+            >
+              <img src={staticImages.book_menu} alt="" />
+            </Link>
+            {isLoggedIn && 
+              <>
+                <Link
               to="/wishlist"
-              className={`icon-link ${
-                location.pathname === "/wishlist" ? "active" : ""
-              } inline-flex items-center justify-center`}
+              className={`icon-link ${location.pathname === "/wishlist" ? "active" : ""
+                } inline-flex items-center justify-center`}
             >
               <img src={staticImages.heart} alt="" />
             </Link>
+
             <Link
               to="/account"
-              className={`icon-link ${
-                location.pathname === "/account" ||
+              className={` ${location.pathname === "/account" ||
                 location.pathname === "/account/add"
-                  ? "active"
-                  : ""
-              } inline-flex items-center justify-center`}
+                ? "active"
+                : ""
+                } inline-flex items-center justify-center`}
+              style={{ marginTop: "14px" }}
             >
+              <p>{fullName}</p>
+            </Link>
+
+            <Link
+              to="/account"
+              className={`icon-link ${location.pathname === "/account" ||
+                location.pathname === "/account/add"
+                ? "active"
+                : ""
+                } inline-flex items-center justify-center`}
+            >
+
               <img src={staticImages.user} alt="" />
             </Link>
             <Link
               to="/cart"
-              className={`icon-link ${
-                location.pathname === "/cart" ? "active" : ""
-              } inline-flex items-center justify-center`}
+              className={`icon-link ${location.pathname === "/cart" ? "active" : ""
+                } inline-flex items-center justify-center`}
             >
               <img src={staticImages.cart} alt="" />
             </Link>
+              </>
+            }
+            
+            {!isLoggedIn &&
+              <div className="flex items-center ">
+                <BaseLinkGreen to="/login">Login</BaseLinkGreen>
+                <BaseLinkOutlineDark to="/register">Sign up</BaseLinkOutlineDark>
+              </div>}
+
           </IconLinksWrapper>
         </div>
       </Container>
@@ -200,3 +269,4 @@ const Header = () => {
 };
 
 export default Header;
+

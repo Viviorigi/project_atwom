@@ -24,7 +24,7 @@ const NotFound = () => {
         <div className="flex items-center justify-center flex-col">
           <div className="page-not-found-img flex items-center justify-center">
             <img
-              src=""
+              src="https://static-00.iconduck.com/assets.00/404-page-not-found-illustration-2048x998-yjzeuy4v.png"
               alt=""
               className="object-fit-cover"
             />

@@ -2,6 +2,9 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Title from "../common/Title";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import Cookies from "universal-cookie";
+import { AuthConstant } from "../../constants/authConstant";
+import { toast } from "react-toastify";
 
 const NavMenuWrapper = styled.nav`
   margin-top: 32px;
@@ -65,6 +68,11 @@ const NavMenuWrapper = styled.nav`
 
 const UserMenu = () => {
   const location = useLocation();
+  const cookie = new Cookies();
+  const logout =()=>{
+    cookie.remove(AuthConstant.ACCESS_TOKEN);
+    cookie.remove("fullName");
+  }
   return (
     <div>
       <Title titleText={"Hello Richard"} />
@@ -127,7 +135,7 @@ const UserMenu = () => {
             </Link>
           </li>
           <li className="nav-menu-item">
-            <Link to="/" className={`nav-menu-link flex items-center`}>
+            <Link to="/" className={`nav-menu-link flex items-center`} onClick={logout}>
               <span className="nav-link-icon flex items-center justify-center">
                 <img src="./assets/icons/ac_sign_out.svg" alt="" />
               </span>

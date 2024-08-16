@@ -76,7 +76,7 @@ public class AuthController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private PasswordResetService passwordResetService;
 
@@ -91,7 +91,6 @@ public class AuthController {
 
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-
 		User user = userRepository.findByUsername(loginRequest.getUsername())
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -103,46 +102,31 @@ public class AuthController {
 				.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getEmail(),
-				user.getFullName(), "Bearer",user.getAvatar(), roles));
+				user.getFullName(), "Bearer", user.getAvatar(), roles));
 	}
-	
-	
-	@GetMapping("/verify")
-	public String verifyAccount(@RequestParam("token") String token, Model model) {
-		VerificationToken verificationToken = tokenRepository.findByToken(token);
 
-		if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-			model.addAttribute("message", "Invalid or expired token");
-			return "verification-error";
-		}
 
-		User user = verificationToken.getUser();
-		user.setActive(true);
-		userRepository.save(user);
 
-		model.addAttribute("message", "Account verified successfully");
-		return "account-verification-success";
-	}
-	
 	@GetMapping("/getroles")
-	public ResponseEntity<?> checkRole(@RequestParam("role")String role,@RequestHeader("Authorization") String jwt){
+	public ResponseEntity<?> checkRole(@RequestParam("role") String role, @RequestHeader("Authorization") String jwt) {
 		if (jwt.startsWith("Bearer ")) {
 			jwt = jwt.substring(7);
 		}
-		if(jwtUtil.validateJwtToken(jwt)) {
+		if (jwtUtil.validateJwtToken(jwt)) {
 			String username = jwtUtil.getUserNameFromJwtToken(jwt);
-			Optional<UserResponse> user =userService.findUserByName(username);
+			Optional<UserResponse> user = userService.findUserByName(username);
 			List<String> roles = Arrays.asList(role.split(","));
 			boolean hasRole = user.get().getRoles().stream().anyMatch(roles::contains);
-			if(hasRole) {
+			if (hasRole) {
 				return ResponseEntity.ok(true);
-			}else {
+			} else {
 				return ResponseEntity.ok(false);
 			}
-		}else {
+		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-		}		
+		}
 	}
+
 	@PostMapping("/forgot-password")
 	public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 		try {
@@ -153,38 +137,39 @@ public class AuthController {
 		}
 	}
 
-	 @GetMapping("/reset-password")
-	    public ModelAndView showResetPasswordForm(@RequestParam("token") String token, ModelAndView modelAndView) {      
-	        // Render the reset password page
-	        modelAndView.setViewName("reset-password");
-	        modelAndView.addObject("token", token);
-	        return modelAndView;
-	    }
+	@GetMapping("/reset-password")
+	public ModelAndView showResetPasswordForm(@RequestParam("token") String token, ModelAndView modelAndView) {
+		// Render the reset password page
+		modelAndView.setViewName("reset-password");
+		modelAndView.addObject("token", token);
+		return modelAndView;
+	}
+
 	@PostMapping("/reset-password")
-	public ModelAndView resetPassword(@RequestParam Map<String, String> allParams,@RequestParam("token") String token,
-	                                   @RequestParam("newPassword") String newPassword,
-	                                   @RequestParam("confirmPassword") String confirmationPassword) {
-	    ModelAndView modelAndView = new ModelAndView();
+	public ModelAndView resetPassword(@RequestParam Map<String, String> allParams, @RequestParam("token") String token,
+			@RequestParam("newPassword") String newPassword,
+			@RequestParam("confirmPassword") String confirmationPassword) {
+		ModelAndView modelAndView = new ModelAndView();
 
-	    System.out.println("Received parameters: " + allParams);
-	    
-	    if (!newPassword.equals(confirmationPassword)) {
-	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
-	        modelAndView.addObject("message", "New Password does not match");
-	        modelAndView.addObject("token", token);
-	        return modelAndView;
-	    }
+		System.out.println("Received parameters: " + allParams);
 
-	    try {
-	        passwordResetService.resetPassword(token, newPassword);
-	        modelAndView.setViewName("reset-password-success"); // Redirect to success page
-	        modelAndView.addObject("message", "Password reset successful");
-	        return modelAndView;
-	    } catch (Exception e) {
-	        modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
-	        modelAndView.addObject("message", e.getMessage());
-	        modelAndView.addObject("token", token);
-	        return modelAndView;
-	    }
+		if (!newPassword.equals(confirmationPassword)) {
+			modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
+			modelAndView.addObject("message", "New Password does not match");
+			modelAndView.addObject("token", token);
+			return modelAndView;
+		}
+
+		try {
+			passwordResetService.resetPassword(token, newPassword);
+			modelAndView.setViewName("reset-password-success"); // Redirect to success page
+			modelAndView.addObject("message", "Password reset successful");
+			return modelAndView;
+		} catch (Exception e) {
+			modelAndView.setViewName("reset-password"); // Redirect back to the reset password form
+			modelAndView.addObject("message", e.getMessage());
+			modelAndView.addObject("token", token);
+			return modelAndView;
+		}
 	}
 }
