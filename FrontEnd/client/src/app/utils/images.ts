@@ -22,6 +22,7 @@ import color10 from "../../assets/icons/color10.svg";
 import color11 from "../../assets/icons/color11.svg";
 import color12 from "../../assets/icons/color12.svg";
 import play_icon from "../../assets/icons/play_icon.svg";
+import book_menu from "../../assets/icons/book_menu.svg";
 
 
 export const staticImages = {
@@ -48,6 +49,7 @@ export const staticImages = {
     color10,
     color11,
     color12,
-    play_icon
+    play_icon,
+    book_menu
   };
   

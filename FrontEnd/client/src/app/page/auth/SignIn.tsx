@@ -115,7 +115,7 @@ const SignIn = () => {
       if (resp) {
         // dispatch(setLoading(false))
         const expires = new Date();
-        expires.setDate(expires.getDate() + AuthConstant.EXPIRES_TOKEN)
+        expires.setDate(expires.getSeconds() + 20)
         cookie.set(AuthConstant.ACCESS_TOKEN, resp.data.jwt, { path: '/', expires: expires })
         cookie.set('fullName', resp.data.fullName)
         cookie.set('avatar', resp.data.avatar)
