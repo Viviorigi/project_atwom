@@ -127,8 +127,13 @@ const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [fullName, setFullName] = useState("");
   const cookie = new Cookies();
   useEffect(() => {
+    const storedFullName = cookie.get("fullName");
+    if (storedFullName) {
+      setFullName(storedFullName)
+    }
 
     const access_token = cookie.get('access_token');
 
@@ -226,7 +231,7 @@ const Header = () => {
                 } inline-flex items-center justify-center`}
               style={{ marginTop: "14px" }}
             >
-              {/* <p>{fullName}</p> */}
+              <p>{fullName}</p>
             </Link>
 
             <Link
