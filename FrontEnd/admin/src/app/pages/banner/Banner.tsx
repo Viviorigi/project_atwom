@@ -88,7 +88,7 @@ export default function Banner() {
         if (resp.status === 200) {
           setListListBanner(resp.data.banners);
           console.log(resp.data.banners);
-          
+
           setTotalUsers(resp.data.totalBanners);
           setTotalPage(resp.data.totalPages);
         }
@@ -185,28 +185,28 @@ export default function Banner() {
                 <table className="table table-bordered fs--1 mb-2 mt-5">
                   <thead>
                     <tr>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>Banner</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>TITLE</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>DESCRIPTION</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
-                      <th className="sort align-middle text-center justify-content-center" scope="col" style={{ width: '9%' }}>Action</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>#</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Banner</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>TITLE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '25%' }}>DESCRIPTION</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>CREATE_AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>UPDATE_AT</th>
+                      <th className="sort align-middle text-center justify-content-center" scope="col" style={{ width: '15%' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
                     {listBanner.map((u: any, index: number) => {
                       return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.userUid} >
                         <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{indexOfFirstItem + index + 1}</td>
-                        <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
-                          <div className="avatar avatar-m"><img className="rounded-circle" src={`http://localhost:8080/api/admin/banner/image/${u.image}`} alt="" /></div>
+                        <td className="customer align-middle white-space-nowrap ps-10"><div className="d-flex align-items-center text-1100">
+                          <img style={{ width: "200px" }} src={`http://localhost:8080/files/${u.image}`} alt="" />
                         </div></td>
-                        <td className="email align-middle white-space-nowrap ps-3">{u.title}</td>
-                        <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.description}</td>
+                        <td className="email align-middle white-space-nowrap text-center ps-3">{u.title}</td>
+                        <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-1000">{u.description}</td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.cre_dt)}</td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.upd_dt)}</td>
-                        
-                        <td className="last-order align-middle white-space-nowrap text-700 align-content-center">
+
+                        <td className="last-order align-middle white-space-nowrap text-700 align-content-center ps-4">
                           <button aria-label='d' className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button>
                           <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editBanner(u)}><i className="fa-solid fa-pen"></i></button>
                           <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteUser(u.id)}><i className="fa-solid fa-trash"></i></button>
