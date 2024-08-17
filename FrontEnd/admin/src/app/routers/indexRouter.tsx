@@ -11,14 +11,13 @@ import RoleGuard from '../guard/roleGuard';
 export const indexRouter: any = {
     path: '',
     element: (
-        // <AuthGuard><Layout /> </AuthGuard>
-        <Layout />
+        <AuthGuard><Layout /> </AuthGuard>
     ),
     children: [
         { path: 'dashboard', element: <RoleGuard role="ADMIN"> <DashBoard /> </RoleGuard> },
         { path: 'category', element: <RoleGuard role="ADMIN"><Category /></RoleGuard>  },
         { path: 'book', element: <RoleGuard role="ADMIN"><Book /> </RoleGuard> },
-        { path: 'student', element: <Student /> },
+        { path: 'student', element:  <RoleGuard role="ADMIN"><Student /></RoleGuard> },
         { path: 'order', element: <RoleGuard role="ADMIN"><Order /></RoleGuard>  },
         { path: 'returnbook', element: <RoleGuard role="ADMIN"><Return /></RoleGuard> }
     ],
