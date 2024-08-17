@@ -15,5 +15,5 @@ export class BookDTO {
   createdDate?: string;
   updatedDate?: string;
   category?: CategoryDTO;
-  authors?: AuthorDTO[];
+  authors?: AuthorDTO[];  
 }

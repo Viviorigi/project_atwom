@@ -31,7 +31,7 @@ public class CategoryController {
 	@GetMapping("/category/list")
 	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,
 											@RequestParam("keySearch") String keySearch){
-		Page<Category>categories = categoryService.findAll(keySearch, page , 5);
+		Page<Category>categories = categoryService.findAll(keySearch, page-1 , 5);
 		return ResponseEntity.ok().body(categories);
 	}
 	

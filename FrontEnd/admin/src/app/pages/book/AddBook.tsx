@@ -23,7 +23,14 @@ export default function AddBook(props: any) {
     useEffect(() => {
         if (bookDTO != null) {
             setBook({
-                ...bookDTO
+                ...bookDTO,
+                updatedDate: new Date().toISOString() 
+            })
+        }else{
+            setBook({
+                ...bookDTO,
+                createdDate: new Date().toISOString(),
+                updatedDate: new Date().toISOString()
             })
         }
     }, [])
