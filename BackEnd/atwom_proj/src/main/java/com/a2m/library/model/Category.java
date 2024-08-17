@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -28,8 +29,14 @@ public class Category {
     @Column(name = "description")
     private String description;
     
-    @Column(name = "deleted")
-	private Boolean deleted = false;
+    @Column(name = "active")
+	private Boolean active = false;
+    
+    @Column(name = "cre_dt")
+    private LocalDateTime createdDate;
+
+    @Column(name = "upd_dt")
+    private LocalDateTime updatedDate;
 
     @OneToMany(mappedBy = "category")
     @JsonManagedReference

@@ -7,7 +7,7 @@ import { Dialog } from 'primereact/dialog';
 import { toast, ToastContainer } from 'react-toastify';
 import Pagination from '../../comp/common/Pagination';
 import { format } from 'date-fns';
-import {formatCurrency, formatDate} from "../../utils/FunctionUtils";
+import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
 
 export default function Book() {
 
@@ -36,7 +36,7 @@ export default function Book() {
     }
   };
   const next = () => {
-    if (searchDto.page < totalPages -1) {
+    if (searchDto.page < totalPages - 1) {
       setSearchDto(() => ({
         ...searchDto,
         page: searchDto.page + 1,
@@ -97,7 +97,7 @@ export default function Book() {
 
   //Lây du lieu
   useEffect(() => {
-    let url = `http://localhost:8080/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
+    let url = `http://localhost:8080/category/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
     axios.get(url).then((resp: any) => {
       // console.log(resp.data);
       if (resp.data) {
@@ -180,16 +180,13 @@ export default function Book() {
                 <thead>
                   <tr>
                     <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>TITLE</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>PUBLISHER</th>
-                    <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>PUBLISH_YEAR</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>QUANTITY</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>PRICE</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>NAME</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>DESCRIPTION</th>
+                    <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>NUM_OF_BOOKS</th>
                     <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
-                    <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>ACTION</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>UPDATE_AT</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>ACTIVE</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>ACTION</th>
                   </tr>
                 </thead>
                 <tbody className="list" id="customers-table-body">
@@ -197,17 +194,12 @@ export default function Book() {
                     return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id} >
                       <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{index + 1}</td>
                       <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
-                        {/* <div className="avatar avatar-m"><img className="rounded-circle" src={u.avatar ? `http://localhost:8080/files/${u.avatar}` : defaultPersonImage} alt="PersonAvatar" /></div> */}
-                        <p className="mb-0 ms-3 text-1100 fw-bold">{u.title}</p>
+                        <p className="mb-0 ms-3 text-1100 fw-bold">{u.name}</p>
                       </div></td>
-                      <td className="email align-middle white-space-nowrap ps-3">{u.publisher}</td>
-                      <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.publicationYear}</td>
-                      <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.quantity}</td>
-                      <td className="last-seen align-middle white-space-nowrap text-700 ps-3">{formatCurrency(u.price)}</td>
-                      <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.description}</td>
+                      <td className="email align-middle white-space-nowrap ps-3">{u.description}</td>
+                      <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.books.length}</td>
                       <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.createdDate)}</td>
-                      <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.updatedDate)}</td> 
-                      {/* <td className="last-order align-middle white-space-nowrap text-700 text-center"><span className={u.roles == 'STUDENT' ? 'badge badge-phoenix fs--2 badge-phoenix-secondary' : 'badge badge-phoenix fs--2 badge-phoenix-info'}><span className="badge-label">{u.roles}</span></span></td> */}
+                      <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.updatedDate)}</td>
                       <td className="last-order align-middle white-space-nowrap text-700 text-end">
                         <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
                       </td>

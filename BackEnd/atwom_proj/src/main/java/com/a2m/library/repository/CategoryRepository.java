@@ -13,7 +13,7 @@ import com.a2m.library.model.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer>{
-	@Query("SELECT u FROM Category u WHERE u.deleted = false")
+	@Query("SELECT u FROM Category u WHERE u.active = false")
 	List<Category> findAllActiveCategories();
 	
 	@Query("SELECT u FROM Category u WHERE u.name like %:keySearch%")
