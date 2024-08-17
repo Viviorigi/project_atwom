@@ -243,7 +243,12 @@ export default function Book() {
         </div>
       </div>
       <div>
-        {showForm && <AddBook hideForm={hideForm} bookDTO={bookRef.current} />}
+        {showForm && <AddBook hideForm={hideForm} bookDTO={bookRef.current}onSave={() => {
+                  setSearchDto((prev) => ({
+                    ...prev,
+                    timer: new Date().getTime(),
+                  }));
+                }} />}
       </div>
       <footer className="footer position-absolute">
         <div className="row g-0 justify-content-between align-items-center h-100">

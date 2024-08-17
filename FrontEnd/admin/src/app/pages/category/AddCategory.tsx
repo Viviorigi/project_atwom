@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
 
 export default function AddCategory(props: any) {
-    const { hideForm, categoryDTO } = props;
+    const { hideForm, categoryDTO,onSave } = props;
     const [category, setCategory] = useState<CategoryDTO>(new CategoryDTO());
     const currentDate = new Date().toISOString(); 
 
@@ -97,6 +97,7 @@ export default function AddCategory(props: any) {
                     if (resp.data === "success") {
                         // hideForm(true);
                         toast.success("Lưu danh mục thành công");
+                        onSave()
                     }
                 }).catch((err: any) => {
                     console.log(err);
