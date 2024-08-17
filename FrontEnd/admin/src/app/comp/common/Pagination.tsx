@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Pagination = (props:any) => {
-    const { totalPage, currentPage, handlePageClick, prev, next } = props;
+const Pagination = (props: any) => {
+  const { totalPage, currentPage, handlePageClick, prev, next } = props;
   return (
     <>
       <button className="page-link" data-list-pagination="prev" onClick={prev}>

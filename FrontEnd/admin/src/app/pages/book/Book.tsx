@@ -5,6 +5,9 @@ import axios from 'axios';
 import AddBook from './AddBook';
 import { Dialog } from 'primereact/dialog';
 import { toast, ToastContainer } from 'react-toastify';
+import Pagination from '../../comp/common/Pagination';
+import { format } from 'date-fns';
+import {formatCurrency, formatDate} from "../../utils/FunctionUtils";
 
 export default function Book() {
 
@@ -12,8 +15,34 @@ export default function Book() {
   const [bookList, setBookList] = useState([]);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
   const bookRef = useRef<any>();
   const visible = useRef<any>(true);
+
+  //phân trang
+  const handlePageClick = (pageNumber: any) => {
+    setSearchDto(() => ({
+      ...searchDto,
+      page: pageNumber,
+    }));
+  };
+
+  const prev = () => {
+    if (searchDto.page > 0) {
+      setSearchDto(() => ({
+        ...searchDto,
+        page: searchDto.page - 1,
+      }));
+    }
+  };
+  const next = () => {
+    if (searchDto.page < totalPages -1) {
+      setSearchDto(() => ({
+        ...searchDto,
+        page: searchDto.page + 1,
+      }));
+    }
+  };
 
   // xử lý khi chữ thay đổi
   const handleChangeText = (event: any) => {
@@ -74,6 +103,7 @@ export default function Book() {
       if (resp.data) {
         setBookList(resp.data.content);
         setTotalPages(resp.data.totalPages);
+        setTotalItems(resp.data.totalElements);
         // console.log(bookList);
       }
     }).catch((err: any) => {
@@ -144,70 +174,60 @@ export default function Book() {
               <div className="col-auto"><button className="btn btn-link text-900 me-4 px-0"><span className="fa-solid fa-file-export fs--1 me-2" />Export</button><button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Add customer</button></div>
             </div>
           </div>
-          <div className="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white border-top border-bottom border-200 position-relative top-1">
+          <div className=" border-bottom border-200 position-relative top-1">
             <div className="table-responsive scrollbar-overlay mx-n1 px-1">
-              {/* ----------------------------------------Bảng lọc dữ liệu----------------------------------------- */}
-              <table className="table table-sm fs--1 mb-0">
+              <table className="table table-bordered fs--1 mb-2 mt-5">
                 <thead>
                   <tr>
-                    {/* <th className="white-space-nowrap fs--1 align-middle ps-0">
-                        <div className="form-check mb-0 fs-0"><input className="form-check-input" id="checkbox-bulk-customers-select" type="checkbox" data-bulk-select="{&quot;body&quot;:&quot;customers-table-body&quot;}" /></div>
-                      </th> */}
-                    <th className="sort align-middle pe-5" scope="col" data-sort="email" style={{ width: '5%' }}>No</th>
-                    <th className="sort align-middle pe-5" scope="col" data-sort="customer" style={{ width: '10%' }}>Avatar</th>
-                    <th className="sort align-middle text-end" scope="col" data-sort="total-orders" style={{ width: '10%' }}>Title</th>
-                    <th className="sort align-middle text-end ps-3" scope="col" data-sort="total-spent" style={{ width: '10%' }}>Publisher</th>
-                    <th className="sort align-middle ps-7" scope="col" data-sort="city" style={{ width: '25%' }}>Placed/quantity</th>
-                    <th className="sort align-middle text-end" scope="col" data-sort="last-seen" style={{ width: '15%' }}>Price</th>
-                    <th className="sort align-middle text-end pe-0" scope="col" data-sort="last-order" style={{ width: '10%', minWidth: 150 }}>Active</th>
-                    <th className="sort align-middle text-end pe-0" scope="col" data-sort="last-order" style={{ width: '10%', minWidth: 150 }}>Operation</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>TITLE</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>PUBLISHER</th>
+                    <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>PUBLISH_YEAR</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>QUANTITY</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>PRICE</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
+                    <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>ACTION</th>
                   </tr>
                 </thead>
                 <tbody className="list" id="customers-table-body">
+                  {bookList.map((u: any, index: number) => {
+                    return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id} >
+                      <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{index + 1}</td>
+                      <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
+                        {/* <div className="avatar avatar-m"><img className="rounded-circle" src={u.avatar ? `http://localhost:8080/files/${u.avatar}` : defaultPersonImage} alt="PersonAvatar" /></div> */}
+                        <p className="mb-0 ms-3 text-1100 fw-bold">{u.title}</p>
+                      </div></td>
+                      <td className="email align-middle white-space-nowrap ps-3">{u.publisher}</td>
+                      <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.publicationYear}</td>
+                      <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.quantity}</td>
+                      <td className="last-seen align-middle white-space-nowrap text-700 ps-3">{formatCurrency(u.price)}</td>
+                      <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.description}</td>
+                      <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.createdDate)}</td>
+                      <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.updatedDate)}</td> 
+                      {/* <td className="last-order align-middle white-space-nowrap text-700 text-center"><span className={u.roles == 'STUDENT' ? 'badge badge-phoenix fs--2 badge-phoenix-secondary' : 'badge badge-phoenix fs--2 badge-phoenix-info'}><span className="badge-label">{u.roles}</span></span></td> */}
+                      <td className="last-order align-middle white-space-nowrap text-700 text-end">
+                        <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
+                      </td>
+                      <td className="last-order align-middle white-space-nowrap text-700 ">
+                        {/* <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button> */}
+                        <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editBook(u)}><i className="fa-solid fa-pen"></i></button>
+                        <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delBook(u.userUid)}><i className="fa-solid fa-trash"></i></button>
+                      </td>
+                    </tr>
+                  })}
 
-                  {
-                    bookList.map((e: any, index: number) => (
-                      <tr key={index}>
-                        <td>{e.id}</td>
-                        <td className="customer align-middle white-space-nowrap pe-5"><a className="d-flex align-items-center text-1100" href="../landing/profile.html">
-                          <div className="avatar avatar-m"><img className="rounded-circle" src="https://prium.github.io/phoenix/v1.13.0/assets/img/team/32.webp" alt="" /></div>
-                          <p className="mb-0 ms-3 text-1100 fw-bold">Carry Anna</p>
-                        </a></td>
-                        <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.title}</td>
-                        <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.publisher}</td>
-                        <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.quantityPlaced}/{e.quantity}</td>
-                        <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.price}</td>
-                        <td className="city align-middle white-space-nowrap text-1000 ps-7">{e.deleted ? 1 : 0}</td>
-                        <td>
-                          <button onClick={() => { editBook(e) }}>Edit</button>
-                          <button onClick={() => delBook(e.id)}>Del</button>
-                        </td>
-                      </tr>
-                    ))
-                  }
                 </tbody>
               </table>
             </div>
             <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
               <div className="col-auto d-flex">
-                <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info" /><a className="fw-semi-bold" href="customers.html#!" data-list-view="*">View all<span className="fas fa-angle-right ms-1" data-fa-transform="down-1" /></a><a className="fw-semi-bold d-none" href="customers.html#!" data-list-view="less">View Less<span className="fas fa-angle-right ms-1" data-fa-transform="down-1" /></a>
+                <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total books: </span>  {totalItems} </p>
               </div>
-
-              {/* -----------------------------------------------------Phân trang */}
               <div className="col-auto d-flex">
-                <button className="page-link" data-list-pagination="prev" onClick={() => {
-                  setSearchDto({
-                    ...searchDto,
-                    page: searchDto.page - 1
-                  })
-                }} disabled={searchDto.page === 0}><span className="fas fa-chevron-left" /></button>
-                <ul className="mb-0 pagination" />
-                <button className="page-link pe-0" data-list-pagination="next" onClick={() => {
-                  setSearchDto({
-                    ...searchDto,
-                    page: searchDto.page + 1
-                  })
-                }} disabled={searchDto.page >= (totalPages - 1)}><span className="fas fa-chevron-right" /></button>
+                <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={prev} next={next} />
               </div>
             </div>
           </div>

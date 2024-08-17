@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
 
-export default function AddBook(props: any) {
+export default function AddCategory(props: any) {
     const { hideForm, categoryDTO } = props;
     const [category, setCategory] = useState<CategoryDTO>(new CategoryDTO());
 

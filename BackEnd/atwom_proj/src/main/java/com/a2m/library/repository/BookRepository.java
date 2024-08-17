@@ -13,7 +13,7 @@ import com.a2m.library.model.Book;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
-	@Query("SELECT u FROM Book u WHERE u.deleted = false")
+	@Query("SELECT u FROM Book u WHERE u.active = false")
 	List<Book> findAllActiveBooks();
 	
 	@Query("SELECT u FROM Book u WHERE u.title like %:keySearch% OR u.publisher LIKE %:keySearch%")

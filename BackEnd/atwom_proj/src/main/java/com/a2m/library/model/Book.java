@@ -32,8 +32,11 @@ public class Book {
   @Column(name = "image")
   private String image;
 
-  @Column(name = "deleted")
-	private Boolean deleted = false;
+  @Column(name = "active")
+	private Boolean active = false;
+  
+  @Column(name = "description")
+  private String description;
 
   @Column(name = "publisher")
   private String publisher;
