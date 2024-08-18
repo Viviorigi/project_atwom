@@ -21,17 +21,15 @@ public class CheckoutDetail {
     @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @ManyToOne
-    @JoinColumn(name = "checkout_id")
-    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "checkout_id", nullable = false)
     private Checkout checkout;
 
     @Column(name = "quantity")
-    @Min(value = 1)
+    @NotNull
     private Integer quantity;
 }

@@ -1,6 +1,6 @@
 import { CheckoutStatus } from './CheckoutStatus';
 
-export interface ReturnBookDTO {
+export interface ReturnDTO {
     id: number;
     checkoutId: number;
     userId: number;

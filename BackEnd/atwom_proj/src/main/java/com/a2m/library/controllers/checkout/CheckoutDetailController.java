@@ -2,14 +2,11 @@ package com.a2m.library.controllers.checkout;
 
 import com.a2m.library.dto.CheckoutDetailDTO;
 import com.a2m.library.service.checkout.CheckoutDetailService;
-import com.a2m.library.dto.response.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/checkoutdt")
@@ -19,39 +16,31 @@ public class CheckoutDetailController {
     private CheckoutDetailService checkoutDetailService;
 
     @GetMapping("/list")
-    public ResponseEntity<Set<CheckoutDetailDTO>> findAll() {
-        Set<CheckoutDetailDTO> checkoutDetails = checkoutDetailService.findAll();
-        return ResponseEntity.ok(checkoutDetails);
+    public ResponseEntity<List<CheckoutDetailDTO>> getAllDetails() {
+        return ResponseEntity.ok(checkoutDetailService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CheckoutDetailDTO> findById(@PathVariable Integer id) {
-        Optional<CheckoutDetailDTO> checkoutDetailDTO = checkoutDetailService.findById(id);
-        return checkoutDetailDTO.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(null));
+    public ResponseEntity<List<CheckoutDetailDTO>> getDetailsByCheckoutId(@PathVariable Integer id) {
+        return ResponseEntity.ok(checkoutDetailService.findByCheckoutId(id));
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<CheckoutDetailDTO> addCheckoutDetail(@RequestBody CheckoutDetailDTO checkoutDetailDTO) {
-        CheckoutDetailDTO savedDetail = checkoutDetailService.add(checkoutDetailDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedDetail);
+    @PostMapping("/add/{checkoutId}")
+    public ResponseEntity<CheckoutDetailDTO> addDetailToCheckout(
+            @PathVariable Integer checkoutId,
+            @RequestBody CheckoutDetailDTO checkoutDetailDTO) {
+        return ResponseEntity.ok(checkoutDetailService.addDetailToCheckout(checkoutId, checkoutDetailDTO));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CheckoutDetailDTO> updateCheckoutDetail(@PathVariable Integer id, @RequestBody CheckoutDetailDTO checkoutDetailDTO) {
-        checkoutDetailDTO.setId(id);
-        CheckoutDetailDTO updatedDetail = checkoutDetailService.update(checkoutDetailDTO);
-        return ResponseEntity.ok(updatedDetail);
+    public ResponseEntity<CheckoutDetailDTO> updateDetail(@PathVariable Integer id, @RequestBody CheckoutDetailDTO checkoutDetailDTO) {
+        return ResponseEntity.ok(checkoutDetailService.update(id, checkoutDetailDTO));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-        try {
-            checkoutDetailService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public ResponseEntity<Void> deleteDetail(@PathVariable Integer id) {
+        checkoutDetailService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
+

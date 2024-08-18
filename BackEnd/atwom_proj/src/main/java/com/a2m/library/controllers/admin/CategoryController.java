@@ -1,5 +1,7 @@
 package com.a2m.library.controllers.admin;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,11 @@ public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
 
-//	@GetMapping("/category/list")
-//	public ResponseEntity<?> categoryGet() {
-//		List<CategoryDTO>categoryDTOs = categoryService.findAllActive();
-//		return ResponseEntity.ok().body(categoryDTOs);
-//	}
+	@GetMapping("api/categories")
+	public ResponseEntity<?> categoryGet() {
+		List<CategoryDTO>categoryDTO = categoryService.findAll();
+		return ResponseEntity.ok().body(categoryDTO);
+	}
 	
 	@GetMapping("/category/list")
 	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,

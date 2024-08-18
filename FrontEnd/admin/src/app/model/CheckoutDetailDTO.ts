@@ -1,9 +1,9 @@
-import { BookDTO } from './BookDTO';
-import { CheckoutDTO } from './CheckoutDTO';
-
 export interface CheckoutDetailDTO {
   id: number;
-  book: BookDTO;
-  checkout: CheckoutDTO;
+  bookId: number;
+  bookTitle: string;
+  categoryId: number;
+  categoryName: string;
   quantity: number;
+  checkoutId: number;
 }

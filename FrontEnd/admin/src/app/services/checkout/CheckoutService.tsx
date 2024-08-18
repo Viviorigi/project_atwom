@@ -78,7 +78,7 @@ export const CheckoutService = {
 
   deleteById: async (id: number): Promise<void> => {
     try {
-      await axios.delete(`${BASE_URL}/${id}`);
+      await axios.delete(`${BASE_URL}/delete/${id}`);
     } catch (error) {
       console.error(`Error deleting checkout with ID: ${id}`, error);
       throw error;

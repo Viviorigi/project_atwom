@@ -8,33 +8,37 @@ import { toast } from 'react-toastify';
 import { useAppDispatch } from '../../store/hook';
 import { setLoading } from '../../reducers/spinnerSlice';
 import { CheckoutService } from '../../services/checkout/CheckoutService';
-import OrderDetail from './OrderDetail'; // Import OrderDetail component
+import OrderDetail from './OrderDetail';
+//import { UserService } from '../../services/user/UserService';
+import { Dialog } from 'primereact/dialog';
+import axios from 'axios';
+import { AuthService } from '../../services/auth/AuthService';
 
 const Order = () => {
   const [orders, setOrders] = useState<CheckoutDTO[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [open, setOpen] = useState(false);
-  const [orderDetailOpen, setOrderDetailOpen] = useState(false); // Track OrderDetail visibility
+  const [orderDetailOpen, setOrderDetailOpen] = useState(false);
   const [orderSearchParams, setOrderSearchParams] = useState({ keySearch: '', page: 1, limit: 5, timer: new Date().getTime() });
+  const [users, setUsers] = useState([]);
   const dispatch = useAppDispatch();
-  const orderRef = useRef<CheckoutDTO | null>(null);
   const indexOfLastItem = orderSearchParams.page * orderSearchParams.limit;
   const indexOfFirstItem = indexOfLastItem - orderSearchParams.limit;
+  const orderRef = useRef<CheckoutDTO | null>(null);
 
   useEffect(() => {
     fetchOrders();
+    //fetchUsers();
   }, [orderSearchParams.timer, orderSearchParams.page]);
 
   const fetchOrders = async () => {
-    //dispatch(setLoading(true));
     try {
       const resp = await CheckoutService.findAll({
         keySearch: orderSearchParams.keySearch,
         limit: orderSearchParams.limit,
         page: orderSearchParams.page,
       });
-  
       dispatch(setLoading(false));
       setOrders(resp);
       setTotalOrders(resp.length);
@@ -44,6 +48,20 @@ const Order = () => {
       dispatch(setLoading(false));
     }
   };
+
+  // const fetchUsers = async () => {
+  //   try {
+  //     const usersResp = await AuthService.getInstance()
+  //     .getList({
+  //       keySearch: orderSearchParams.keySearch,
+  //       limit: orderSearchParams.limit,
+  //       page: orderSearchParams.page,
+  //     });
+  //     setUsers(usersResp);
+  //   } catch (error) {
+  //     console.error('Error fetching users', error);
+  //   }
+  // };
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOrderSearchParams({ ...orderSearchParams, [event.target.name]: event.target.value, page: 1 });
@@ -94,14 +112,6 @@ const Order = () => {
         }
       }
     });
-  };
-
-  const handleCloseOrderForm = () => {
-    setOpen(false);
-  };
-
-  const handleCloseOrderDetail = () => {
-    setOrderDetailOpen(false);
   };
 
   return (
@@ -160,11 +170,9 @@ const Order = () => {
                     <td className="align-middle text-center">{format(new Date(order.startTime), 'dd/MM/yyyy, hh:mm')}</td>
                     <td className="align-middle text-center">{format(new Date(order.endTime), 'dd/MM/yyyy, hh:mm')}</td>
                     <td className="align-middle text-center">
-                      <button className="btn btn-warning btn-sm me-2" onClick={() => editOrder(order)}>Edit</button>
-                      <button className="btn btn-danger btn-sm me-2" onClick={() => deleteOrder(order.id)}>Delete</button>
-                      <button className="btn btn-info btn-sm" onClick={() => viewOrderDetail(order)}>
-                        <span className="fas fa-eye" />
-                      </button>
+                      <button className="btn btn-warning btn-sm me-2" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>
+                      <button className="btn btn-danger btn-sm me-2" onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i></button>
+                      <button className="btn btn-info btn-sm" onClick={() => viewOrderDetail(order)}><span className="fas fa-eye" /></button>
                     </td>
                   </tr>
                 ))}
@@ -172,27 +180,50 @@ const Order = () => {
             </table>
           </div>
           
-          <div className="d-flex justify-content-between align-items-center mt-3">
+          <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
             <div className="col-auto d-flex">
-                <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total user: </span> {/* */} </p>
+                <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total user: </span> {/* Total users info */} </p>
             </div>
+            <div className="d-flex justify-content-end mt-3">
             <Pagination
               totalItems={totalOrders}
               itemsPerPage={orderSearchParams.limit}
               currentPage={orderSearchParams.page}
               onPageChange={(page: any) => setOrderSearchParams({ ...orderSearchParams, page })}
             />
+            </div>
             <div />
           </div>
         </div>
       </div>
-      {open && orderRef.current && (
-        <OrderForm order={orderRef.current} users={[]} onSave={function (order: CheckoutDTO): void {
-          throw new Error('Function not implemented.');
-        } } />
+      {open && (
+        <Dialog
+          baseZIndex={2000}
+          style={{ width: "1150px" }}
+          visible={open}
+          onHide={() => setOpen(false)}
+        >
+          <OrderForm
+            order={orderRef.current}
+            users={[]}
+            //users={users}
+            hideForm={() => setOpen(false)}
+            onSave={() => setOrderSearchParams({ ...orderSearchParams, timer: new Date().getTime() })}
+          />
+        </Dialog>
       )}
-      {orderDetailOpen && orderRef.current && (
-        <OrderDetail orderId={orderRef.current.id} />
+      {orderDetailOpen && (
+        <Dialog
+          baseZIndex={2000}
+          style={{ width: "1150px" }}
+          visible={orderDetailOpen}
+          onHide={() => setOrderDetailOpen(false)}
+        >
+          <OrderDetail
+            orderId={orderRef.current ? orderRef.current.id : 0}
+            onHide={() => setOrderDetailOpen(false)}
+          />
+        </Dialog>
       )}
     </div>
   );

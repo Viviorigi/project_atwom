@@ -3,16 +3,24 @@ package com.a2m.library.service.checkout.Impl;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.a2m.library.dto.BookDTO;
+import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.dto.CheckoutDetailDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.model.Book;
 import com.a2m.library.model.Checkout;
 import com.a2m.library.model.CheckoutDetail;
+import com.a2m.library.repository.BookRepository;
 import com.a2m.library.repository.CheckoutDetailRepository;
+import com.a2m.library.repository.CheckoutRepository;
 import com.a2m.library.service.checkout.CheckoutDetailService;
+
+import java.util.List;
 
 @Service
 public class CheckoutDetailServiceImpl implements CheckoutDetailService {
@@ -20,95 +28,85 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
     @Autowired
     private CheckoutDetailRepository checkoutDetailRepository;
 
+    @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
+    private CheckoutRepository checkoutRepository;
+
     @Override
-    public Set<CheckoutDetailDTO> findAll() {
+    public List<CheckoutDetailDTO> findAll() {
         return checkoutDetailRepository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toSet());
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<CheckoutDetailDTO> findById(Integer id) {
-        return checkoutDetailRepository.findById(id).map(this::toDTO);
+    public CheckoutDetailDTO findById(Integer id) {
+        return checkoutDetailRepository.findById(id)
+            .map(this::mapToDTO)
+            .orElseThrow(() -> new ResourceNotFoundException("CheckoutDetail not found"));
+    }
+
+    @Override
+    public List<CheckoutDetailDTO> findByCheckoutId(Integer checkoutId) {
+        List<CheckoutDetail> details = checkoutDetailRepository.findByCheckoutId(checkoutId);
+        if (details.isEmpty()) {
+            throw new ResourceNotFoundException("No details found for checkout with id " + checkoutId);
+        }
+        return details.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public CheckoutDetailDTO add(CheckoutDetailDTO checkoutDetailDTO) {
+    public CheckoutDetailDTO addDetailToCheckout(Integer checkoutId, CheckoutDetailDTO checkoutDetailDTO) {
+        Checkout checkout = checkoutRepository.findById(checkoutId)
+            .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + checkoutId));
+        
+        if (bookRepository.findById(checkoutDetailDTO.getBookId()).isEmpty()) {
+            throw new ResourceNotFoundException("Book not found with id " + checkoutDetailDTO.getBookId());
+        }
+
         CheckoutDetail checkoutDetail = new CheckoutDetail();
-
-        // Thêm thông tin về Book
-        Book book = new Book();
-        book.setId(checkoutDetailDTO.getBookId());
-        checkoutDetail.setBook(book);
-
-        // Thêm thông tin về Checkout
-        Checkout checkout = new Checkout();
-        checkout.setId(checkoutDetailDTO.getCheckoutId());
+        checkoutDetail.setBook(bookRepository.findById(checkoutDetailDTO.getBookId()).get());
         checkoutDetail.setCheckout(checkout);
-
-        // Thêm số lượng sách
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
 
-        // Lưu vào database
-        checkoutDetail = checkoutDetailRepository.save(checkoutDetail);
-        return toDTO(checkoutDetail);
+        return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
     }
 
     @Override
-    @Transactional
-    public CheckoutDetailDTO update(CheckoutDetailDTO checkoutDetailDTO) {
-        CheckoutDetail checkoutDetail = checkoutDetailRepository.findById(checkoutDetailDTO.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("CheckoutDetail not found with id " + checkoutDetailDTO.getId()));
-
-        // Chỉ cập nhật số lượng sách
+    public CheckoutDetailDTO save(CheckoutDetailDTO checkoutDetailDTO) {
+        CheckoutDetail checkoutDetail = new CheckoutDetail();
+        checkoutDetail.setBook(bookRepository.findById(checkoutDetailDTO.getBookId()).orElseThrow(() -> new ResourceNotFoundException("Book not found")));
+        checkoutDetail.setCheckout(checkoutRepository.findById(checkoutDetailDTO.getCheckoutId()).orElseThrow(() -> new ResourceNotFoundException("Checkout not found")));
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
-
-        // Lưu vào database
-        checkoutDetail = checkoutDetailRepository.save(checkoutDetail);
-        return toDTO(checkoutDetail);
+        return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
     }
 
     @Override
-    @Transactional
-    public void deleteById(Integer id) {
+    public CheckoutDetailDTO update(Integer id, CheckoutDetailDTO checkoutDetailDTO) {
         CheckoutDetail checkoutDetail = checkoutDetailRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("CheckoutDetail not found with id " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("CheckoutDetail not found"));
+        checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
+        return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
+    }
 
-        // Xóa thông tin Book và số lượng
-        checkoutDetail.setBook(null);
-        checkoutDetail.setQuantity(0);
-
-        // Xóa CheckoutDetail khỏi database
+    @Override
+    public void deleteById(Integer id) {
         checkoutDetailRepository.deleteById(id);
     }
 
-    private CheckoutDetailDTO toDTO(CheckoutDetail checkoutDetail) {
+    private CheckoutDetailDTO mapToDTO(CheckoutDetail checkoutDetail) {
         CheckoutDetailDTO dto = new CheckoutDetailDTO();
         dto.setId(checkoutDetail.getId());
-        if (checkoutDetail.getBook() != null) {
-            dto.setBookId(checkoutDetail.getBook().getId());
-        }
-        dto.setCheckoutId(checkoutDetail.getCheckout().getId());
+        dto.setBookId(checkoutDetail.getBook().getId());
+        dto.setBookTitle(checkoutDetail.getBook().getTitle());
+        dto.setCategoryId(checkoutDetail.getBook().getCategory().getId());
+        dto.setCategoryName(checkoutDetail.getBook().getCategory().getName());
         dto.setQuantity(checkoutDetail.getQuantity());
         return dto;
     }
-
-    private CheckoutDetail toEntity(CheckoutDetailDTO dto) {
-        CheckoutDetail checkoutDetail = new CheckoutDetail();
-        checkoutDetail.setId(dto.getId());
-
-        if (dto.getBookId() != null) {
-            Book book = new Book();
-            book.setId(dto.getBookId());
-            checkoutDetail.setBook(book);
-        }
-
-        Checkout checkout = new Checkout();
-        checkout.setId(dto.getCheckoutId());
-        checkoutDetail.setCheckout(checkout);
-
-        checkoutDetail.setQuantity(dto.getQuantity());
-        return checkoutDetail;
-    }
 }
+
+
