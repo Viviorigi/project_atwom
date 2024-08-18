@@ -7,11 +7,11 @@ import { Dialog } from 'primereact/dialog';
 import { toast, ToastContainer } from 'react-toastify';
 import Pagination from '../../comp/common/Pagination';
 import { format } from 'date-fns';
-import {formatCurrency, formatDate} from "../../utils/FunctionUtils";
+import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
 
 export default function Book() {
 
-  const [searchDto, setSearchDto] = useState(new BookSearch('', 0, 0, new Date().getTime()))
+  const [searchDto, setSearchDto] = useState(new BookSearch('', 1, 0, new Date().getTime()))
   const [bookList, setBookList] = useState([]);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState(0);
@@ -28,7 +28,7 @@ export default function Book() {
   };
 
   const prev = () => {
-    if (searchDto.page > 0) {
+    if (searchDto.page > 1) {
       setSearchDto(() => ({
         ...searchDto,
         page: searchDto.page - 1,
@@ -36,7 +36,7 @@ export default function Book() {
     }
   };
   const next = () => {
-    if (searchDto.page < totalPages -1) {
+    if (searchDto.page < totalPages) {
       setSearchDto(() => ({
         ...searchDto,
         page: searchDto.page + 1,
@@ -51,6 +51,16 @@ export default function Book() {
       [event.target.name]: event.target.value
     });
   }
+
+  //
+  const handleKeyUpSearch = (e: any) => {
+    if (e.key === "Enter") {
+      setSearchDto({
+        ...searchDto,
+        timer: new Date().getTime(),
+      });
+    }
+  };
 
   // Thêm sách
   const addBook = () => {
@@ -90,6 +100,7 @@ export default function Book() {
           // }
         }).catch((err: any) => {
           // console.log(err);
+          toast.error("Xóa thất bại");
         })
       }
     })
@@ -117,7 +128,7 @@ export default function Book() {
     if (isCRUD) {
       setSearchDto({
         ...searchDto,
-        page: 0,
+        page: 1,
         timer: new Date().getTime()
       })
     }
@@ -138,17 +149,20 @@ export default function Book() {
             <div className="row g-3">
               <div className="col-auto">
                 {/* Search input-------------------------------------------------------------------------------------------- */}
-                <div className="search-box">
-                  {/* <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input search" type="search" placeholder="Tìm kiếm" aria-label="Search" /> */}
-                  <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input search" type="search" placeholder="Tìm kiếm" aria-label="Search" onClick={() => {
+                <div className="search-box d-flex">
+                  {/* search input */}
+                  <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
+                    value={searchDto.keySearch || ""}
+                    onChange={handleChangeText}
+                    onKeyUp={handleKeyUpSearch}
+                  />
+                  <button className='btn btn-primary' onClick={() => {
                     setSearchDto({
                       ...searchDto,
-                      page: 0,
-                      timer: new Date().getTime()
-                    })
-                  }} />
-                    <span className="fas fa-search search-box-icon" />
-                  </form>
+                      page:1,
+                      timer: new Date().getTime(),
+                    });
+                  }}><span className="fas fa-search " /></button>
                 </div>
               </div>
               <div className="col-auto scrollbar overflow-hidden-y flex-grow-1">
@@ -161,17 +175,12 @@ export default function Book() {
                       <li><a className="dropdown-item" href="customers.html#">Australia</a></li>
                     </ul>
                   </div>
-                  <div className="btn-group position-static text-nowrap"><button className="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> VIP<span className="fas fa-angle-down ms-2" /></button>
-                    <ul className="dropdown-menu">
-                      <li><a className="dropdown-item" href="customers.html#">VIP 1</a></li>
-                      <li><a className="dropdown-item" href="customers.html#">VIP 2</a></li>
-                      <li><a className="dropdown-item" href="customers.html#">VIP 3</a></li>
-                      <li />
-                    </ul>
-                  </div><button className="btn btn-phoenix-secondary px-7 flex-shrink-0">More filters</button>
                 </div>
               </div>
-              <div className="col-auto"><button className="btn btn-link text-900 me-4 px-0"><span className="fa-solid fa-file-export fs--1 me-2" />Export</button><button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Add customer</button></div>
+              <div className="col-auto">
+                {/* <button className="btn btn-link text-900 me-4 px-0"><span className="fa-solid fa-file-export fs--1 me-2" />Export</button> */}
+                <button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Add book</button>
+              </div>
             </div>
           </div>
           <div className=" border-bottom border-200 position-relative top-1">
@@ -206,7 +215,7 @@ export default function Book() {
                       <td className="last-seen align-middle white-space-nowrap text-700 ps-3">{formatCurrency(u.price)}</td>
                       <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.description}</td>
                       <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.createdDate)}</td>
-                      <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.updatedDate)}</td> 
+                      <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.updatedDate)}</td>
                       {/* <td className="last-order align-middle white-space-nowrap text-700 text-center"><span className={u.roles == 'STUDENT' ? 'badge badge-phoenix fs--2 badge-phoenix-secondary' : 'badge badge-phoenix fs--2 badge-phoenix-info'}><span className="badge-label">{u.roles}</span></span></td> */}
                       <td className="last-order align-middle white-space-nowrap text-700 text-end">
                         <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
@@ -214,7 +223,7 @@ export default function Book() {
                       <td className="last-order align-middle white-space-nowrap text-700 ">
                         {/* <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button> */}
                         <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editBook(u)}><i className="fa-solid fa-pen"></i></button>
-                        <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delBook(u.userUid)}><i className="fa-solid fa-trash"></i></button>
+                        <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delBook(u.id)}><i className="fa-solid fa-trash"></i></button>
                       </td>
                     </tr>
                   })}
@@ -234,7 +243,12 @@ export default function Book() {
         </div>
       </div>
       <div>
-        {showForm && <AddBook hideForm={hideForm} bookDTO={bookRef.current} />}
+        {showForm && <AddBook hideForm={hideForm} bookDTO={bookRef.current}onSave={() => {
+                  setSearchDto((prev) => ({
+                    ...prev,
+                    timer: new Date().getTime(),
+                  }));
+                }} />}
       </div>
       <footer className="footer position-absolute">
         <div className="row g-0 justify-content-between align-items-center h-100">

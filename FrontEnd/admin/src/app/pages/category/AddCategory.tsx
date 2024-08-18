@@ -6,8 +6,9 @@ import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
 
 export default function AddCategory(props: any) {
-    const { hideForm, categoryDTO } = props;
+    const { hideForm, categoryDTO,onSave } = props;
     const [category, setCategory] = useState<CategoryDTO>(new CategoryDTO());
+    const currentDate = new Date().toISOString(); 
 
     // xử lý nhập ký tự không phải số
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -20,7 +21,14 @@ export default function AddCategory(props: any) {
     useEffect(() => {
         if (categoryDTO != null) {
             setCategory({
-                ...categoryDTO
+                ...categoryDTO,
+                updatedDate: new Date().toISOString()  
+            })
+        }else{
+            setCategory({
+                ...categoryDTO,
+                createdDate: new Date().toISOString(),
+                updatedDate: new Date().toISOString()
             })
         }
     }, [])
@@ -89,10 +97,11 @@ export default function AddCategory(props: any) {
                     if (resp.data === "success") {
                         // hideForm(true);
                         toast.success("Lưu danh mục thành công");
+                        onSave()
                     }
                 }).catch((err: any) => {
                     console.log(err);
-                    
+
                 })
             }
         })
@@ -150,7 +159,6 @@ export default function AddCategory(props: any) {
                             <div className={`invalid-feedback ${category.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
                     </div>
-                    
 
                     <div className="text-center mt-3">
                         <button onClick={save} className="btn btn-primary btn-sm me-2">Save</button>

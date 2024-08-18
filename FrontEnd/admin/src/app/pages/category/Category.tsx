@@ -11,12 +11,12 @@ import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
 
 export default function Book() {
 
-  const [searchDto, setSearchDto] = useState(new CategorySearch('', 0, 0, new Date().getTime()))
+  const [searchDto, setSearchDto] = useState(new CategorySearch('', 1, 0, new Date().getTime()))
   const [bookList, setBookList] = useState([]);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-  const bookRef = useRef<any>();
+  const categoryRef = useRef<any>();
   const visible = useRef<any>(true);
 
   //phân trang
@@ -28,7 +28,7 @@ export default function Book() {
   };
 
   const prev = () => {
-    if (searchDto.page > 0) {
+    if (searchDto.page > 1) {
       setSearchDto(() => ({
         ...searchDto,
         page: searchDto.page - 1,
@@ -36,7 +36,7 @@ export default function Book() {
     }
   };
   const next = () => {
-    if (searchDto.page < totalPages - 1) {
+    if (searchDto.page < totalPages) {
       setSearchDto(() => ({
         ...searchDto,
         page: searchDto.page + 1,
@@ -52,21 +52,31 @@ export default function Book() {
     });
   }
 
+  // 
+  const handleKeyUpSearch = (e: any) => {
+    if (e.key === "Enter") {
+      setSearchDto({
+        ...searchDto,
+        timer: new Date().getTime(),
+      });
+    }
+  };
+
   // Thêm sách
-  const addBook = () => {
-    bookRef.current = null;
+  const addCategory = () => {
+    categoryRef.current = null;
     setShowForm(true);
   }
 
   // edit
-  const editBook = (bookDTO: any) => {
-    bookRef.current = bookDTO;
+  const editCategory = (categoryDTO: any) => {
+    categoryRef.current = categoryDTO;
     setShowForm(true);
   }
 
   //delete
   //xóa
-  const delBook = (id: number) => {
+  const delCategory = (id: number) => {
     Swal.fire({
       title: `Xác nhận`,
       text: `Bạn có muốn thực hiện ...`,
@@ -80,6 +90,10 @@ export default function Book() {
       if (result.value) {
         let url = `http://localhost:8080/category/delete?id=${id}`;
         axios.delete(url).then((resp: any) => {
+          console.log("thông báo xóa: ");
+          console.log(resp.data);
+          
+          
           // if (resp.data === "success") {
           toast.success("Đã xóa");
           // console.log(resp.data);
@@ -89,7 +103,8 @@ export default function Book() {
           })
           // }
         }).catch((err: any) => {
-          // console.log(err);
+          console.log(err);
+          toast.error("Xóa thất bại");
         })
       }
     })
@@ -117,7 +132,7 @@ export default function Book() {
     if (isCRUD) {
       setSearchDto({
         ...searchDto,
-        page: 0,
+        page: 1,
         timer: new Date().getTime()
       })
     }
@@ -130,7 +145,7 @@ export default function Book() {
         <div className="row g-2 mb-4">
           <div className="col-auto">
             {/*----------------------------------------------------------Tiêu đề  */}
-            <h2 className="mb-0">Sách</h2>
+            <h2 className="mb-0">Category</h2>
           </div>
         </div>
         <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
@@ -138,40 +153,28 @@ export default function Book() {
             <div className="row g-3">
               <div className="col-auto">
                 {/* Search input-------------------------------------------------------------------------------------------- */}
-                <div className="search-box">
-                  {/* <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input search" type="search" placeholder="Tìm kiếm" aria-label="Search" /> */}
-                  <form className="position-relative" data-bs-toggle="search" data-bs-display="static"><input className="form-control search-input search" type="search" placeholder="Tìm kiếm" aria-label="Search" onClick={() => {
+                <div className="search-box d-flex">
+                  {/* search input */}
+                  <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
+                    value={searchDto.keySearch || ""}
+                    onChange={handleChangeText}
+                    onKeyUp={handleKeyUpSearch} 
+                    />
+                  <button className='btn btn-primary' onClick={() => {
                     setSearchDto({
                       ...searchDto,
-                      page: 0,
-                      timer: new Date().getTime()
-                    })
-                  }} />
-                    <span className="fas fa-search search-box-icon" />
-                  </form>
+                      page:1,
+                      timer: new Date().getTime(),
+                    });
+                  }}><span className="fas fa-search " /></button>
                 </div>
               </div>
               <div className="col-auto scrollbar overflow-hidden-y flex-grow-1">
-                <div className="btn-group position-static" role="group">
-                  {/*------------------------Lọc theo category  */}
-                  <div className="btn-group position-static text-nowrap"><button className="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> Category<span className="fas fa-angle-down ms-2" /></button>
-                    <ul className="dropdown-menu">
-                      <li><a className="dropdown-item" href="customers.html#">US</a></li>
-                      <li><a className="dropdown-item" href="customers.html#">Uk</a></li>
-                      <li><a className="dropdown-item" href="customers.html#">Australia</a></li>
-                    </ul>
-                  </div>
-                  <div className="btn-group position-static text-nowrap"><button className="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> VIP<span className="fas fa-angle-down ms-2" /></button>
-                    <ul className="dropdown-menu">
-                      <li><a className="dropdown-item" href="customers.html#">VIP 1</a></li>
-                      <li><a className="dropdown-item" href="customers.html#">VIP 2</a></li>
-                      <li><a className="dropdown-item" href="customers.html#">VIP 3</a></li>
-                      <li />
-                    </ul>
-                  </div><button className="btn btn-phoenix-secondary px-7 flex-shrink-0">More filters</button>
-                </div>
+                {/* .............................................................. */}
               </div>
-              <div className="col-auto"><button className="btn btn-link text-900 me-4 px-0"><span className="fa-solid fa-file-export fs--1 me-2" />Export</button><button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Add customer</button></div>
+              <div className="col-auto">
+                <button className="btn btn-primary" onClick={addCategory}><span className="fas fa-plus me-2" />Add category</button>
+              </div>
             </div>
           </div>
           <div className=" border-bottom border-200 position-relative top-1">
@@ -205,8 +208,8 @@ export default function Book() {
                       </td>
                       <td className="last-order align-middle white-space-nowrap text-700 ">
                         {/* <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button> */}
-                        <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editBook(u)}><i className="fa-solid fa-pen"></i></button>
-                        <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delBook(u.userUid)}><i className="fa-solid fa-trash"></i></button>
+                        <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editCategory(u)}><i className="fa-solid fa-pen"></i></button>
+                        <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delCategory(u.id)}><i className="fa-solid fa-trash"></i></button>
                       </td>
                     </tr>
                   })}
@@ -226,7 +229,12 @@ export default function Book() {
         </div>
       </div>
       <div>
-        {showForm && <AddCategory hideForm={hideForm} bookDTO={bookRef.current} />}
+        {showForm && <AddCategory hideForm={hideForm} categoryDTO={categoryRef.current} onSave={() => {
+                  setSearchDto((prev) => ({
+                    ...prev,
+                    timer: new Date().getTime(),
+                  }));
+                }} />}
       </div>
       <footer className="footer position-absolute">
         <div className="row g-0 justify-content-between align-items-center h-100">
@@ -238,6 +246,6 @@ export default function Book() {
           </div>
         </div>
       </footer>
-    </div>
+    </div >
   )
 }

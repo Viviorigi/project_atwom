@@ -9,7 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 
 
 export default function AddBook(props: any) {
-    const { hideForm, bookDTO } = props;
+    const { hideForm, bookDTO,onSave } = props;
     const [book, setBook] = useState<BookDTO>(new BookDTO());
 
     // xử lý nhập ký tự không phải số
@@ -23,7 +23,14 @@ export default function AddBook(props: any) {
     useEffect(() => {
         if (bookDTO != null) {
             setBook({
-                ...bookDTO
+                ...bookDTO,
+                updatedDate: new Date().toISOString() 
+            })
+        }else{
+            setBook({
+                ...bookDTO,
+                createdDate: new Date().toISOString(),
+                updatedDate: new Date().toISOString()
             })
         }
     }, [])
@@ -97,6 +104,7 @@ export default function AddBook(props: any) {
                     if (resp.data === "success") {
                         // hideForm(true);
                         toast.success("Lưu sách thành công");
+                        onSave()
                     }
                 }).catch((err: any) => {
                     console.log(err);

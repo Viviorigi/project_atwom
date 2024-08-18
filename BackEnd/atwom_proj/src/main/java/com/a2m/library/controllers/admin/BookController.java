@@ -30,7 +30,7 @@ public class BookController {
 	@GetMapping("/book/list")
 	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,
 											@RequestParam("keySearch") String keySearch){
-		Page<Book>books = bookService.findAll(keySearch, page , 5);
+		Page<Book>books = bookService.findAll(keySearch, page-1 , 5);
 		return ResponseEntity.ok().body(books);
 	}
 	
