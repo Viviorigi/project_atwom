@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -40,5 +41,6 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     @JsonManagedReference
+//    @JsonIgnore
     private Set<Book> books;
 }

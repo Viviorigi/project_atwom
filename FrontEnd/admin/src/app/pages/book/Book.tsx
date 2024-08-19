@@ -187,6 +187,7 @@ export default function Book() {
                       <select
                         style={{
                           backgroundColor: '#f0f0f0', /* Màu nền xám sáng */
+                          border: '1px solid #ccc', /* Viền xám sáng */
                         }}
                         className="form-select"
                         value={searchDto.cate_id}

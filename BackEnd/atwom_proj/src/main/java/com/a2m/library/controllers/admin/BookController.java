@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.Book;
+import com.a2m.library.model.Category;
 import com.a2m.library.service.admin.UserService;
 import com.a2m.library.service.book.BookService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,6 +53,12 @@ public class BookController {
 											@RequestParam("cateId") Integer cateId){
 		Page<Book>books = bookService.findAll(keySearch, cateId ,page-1 , 5);
 		return ResponseEntity.ok().body(books);
+	}
+	
+	@GetMapping("/book/getCate")
+	public Category getCate(@RequestParam("id") Integer id) {
+		Book book = bookService.findById(id);
+		return book.getCategory();
 	}
 	
 	@PostMapping("/book/add")
@@ -98,32 +105,6 @@ public class BookController {
 			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
 		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
-	}
-	
-	@PostMapping("/book/hidden")
-	public ResponseEntity<?> bookHiddenPost(@RequestParam Integer id){
-		try {
-			BookDTO bookDTO = bookService.findById(id);
-			bookDTO.setDeleted(true);
-			bookService.save(bookDTO);
-		} catch (Exception e) {
-			// TODO: handle exception
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-		}
-		return ResponseEntity.ok().body(new MessageResponse("Hidden ok"));
-	}
-	
-	@PostMapping("/book/active")
-	public ResponseEntity<?> bookActivePost(@RequestParam Integer id){
-		try {
-			BookDTO bookDTO = bookService.findById(id);
-			bookDTO.setDeleted(false);
-			bookService.save(bookDTO);
-		} catch (Exception e) {
-			// TODO: handle exception
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-		}
-		return ResponseEntity.ok().body(new MessageResponse("Active ok"));
 	}
 	
 	@DeleteMapping("/book/delete")

@@ -35,11 +35,18 @@ public class BookServiceImpl implements BookService{
 		return bookRepository.findAll(pageable);
 	}
 
+//	@Override
+//	public BookDTO findById(Integer id) {
+//		// TODO Auto-generated method stub
+//		Book book = bookRepository.findById(id).get();
+//		return convertToBookDTO(book);
+//	}
+	
 	@Override
-	public BookDTO findById(Integer id) {
+	public Book findById(Integer id) {
 		// TODO Auto-generated method stub
 		Book book = bookRepository.findById(id).get();
-		return convertToBookDTO(book);
+		return book;
 	}
 
 	@Override

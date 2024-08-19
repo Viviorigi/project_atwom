@@ -156,7 +156,7 @@ export default function Book() {
                   {/* Search input-------------------------------------------------------------------------------------------- */}
                   <div className="search-box d-flex">
                     {/* search input */}
-                    <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
+                    <input className="form-control search-input search" type="search" placeholder="Search category" name="keySearch" aria-label="Search"
                       value={searchDto.keySearch || ""}
                       onChange={handleChangeText}
                       onKeyUp={handleKeyUpSearch}

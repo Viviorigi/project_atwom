@@ -17,6 +17,14 @@ export default function AddCategory(props: any) {
         }
     }
 
+    //xử lý active
+    const handleActiveChange = (e: any) => {
+        setCategory({
+            ...category,
+            [e.target.name]: e.target.value,
+        });
+    };
+
     //xử lý edit
     useEffect(() => {
         if (categoryDTO != null) {
@@ -132,8 +140,9 @@ export default function AddCategory(props: any) {
                 style={{ width: '1150px', backgroundColor: '#f5f5f5' }}
                 baseZIndex={1100}>
 
-                <h3>Category</h3>
+                <h3>{categoryDTO === null ? "Add Category" : "Edit Category"}</h3>
                 <div className="row">
+                    {/* cột 1 */}
                     <div className="col-md-6 mb-5">
                         <div className="form-group">
                             <label>
@@ -147,6 +156,24 @@ export default function AddCategory(props: any) {
                                 placeholder="Nhập tên danh mục" />
                             <div className={`invalid-feedback ${category.name?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
+
+                        {categoryDTO !== null && (
+                            <div className="form-group">
+                                <label>
+                                    Active <span className="text-danger"></span>
+                                </label>
+                                <select
+                                    className="form-select"
+                                    value={category.active ? "true" : "false"}
+                                    onChange={handleActiveChange}
+                                    name="active"
+                                >
+                                    <option value="true">Active</option>
+                                    <option value="false">InActive</option>
+                                </select>
+                            </div>
+                        )}
+
                     </div>
 
                     <div className="col-md-6 mb-5">

@@ -6,12 +6,27 @@ import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { toast, ToastContainer } from 'react-toastify';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import { log } from 'console';
+import { CategoryDTO } from '../../model/CategoryDTO';
 // import './book-css.scss'
 
 
 export default function AddBook(props: any) {
     const { hideForm, bookDTO, onSave } = props;
     const [book, setBook] = useState<BookDTO>(new BookDTO());
+    const [categoryList, setCategoryList] = useState([]);
+    const [categoryEdit, setCategoryEdit] = useState<CategoryDTO>();
+    useEffect(() => {
+        let url = `http://localhost:8080/category/list/all`;
+        axios.get(url).then((resp: any) => {
+            // console.log(resp.data.name);
+            if (resp.data) {
+                setCategoryList(resp.data);
+            }
+        }).catch((err: any) => {
+
+        })
+    }, [])
     const [image, setImage] = useState<string | undefined>(undefined);
     const [file, setFile] = useState<File | null>(null);
 
@@ -28,6 +43,19 @@ export default function AddBook(props: any) {
             ...book,
             [e.target.name]: e.target.value,
         });
+    };
+
+    // Xử lý thay đổi danh mục
+    // Thay thế hàm handleActiveChange
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedCategoryId = parseInt(e.target.value, 10);
+        const selectedCategory = categoryList.find((cat: any) => cat.id === selectedCategoryId);
+        console.log("đây là cate");
+        console.log(selectedCategory);
+        setBook(prev => ({
+            ...prev,
+            category: selectedCategory || undefined
+        }));
     };
 
     //Xử lý đọc đường dẫn ảnh
@@ -49,6 +77,7 @@ export default function AddBook(props: any) {
 
     //xử lý edit
     useEffect(() => {
+
         if (bookDTO != null) {
             setBook({
                 ...bookDTO,
@@ -57,9 +86,25 @@ export default function AddBook(props: any) {
         } else {
             setBook({
                 ...bookDTO,
-                active:true,
+                active: true,
                 createdDate: new Date().toISOString(),
                 updatedDate: new Date().toISOString()
+            })
+        }
+
+    }, [])
+
+    useEffect(() => {
+        if (bookDTO != null) {
+            let url = `http://localhost:8080/book/getCate?id=${bookDTO.id}`;
+            axios.get(url).then((resp: any) => {
+                // console.log("dữ liệu");
+                // console.log(resp.data);
+                if (resp.data) {
+                    setCategoryEdit(resp.data);
+                }
+            }).catch((err: any) => {
+
             })
         }
     }, [])
@@ -91,7 +136,6 @@ export default function AddBook(props: any) {
             return false;
         }
 
-
         if (book.quantity === undefined || book.quantity.toString() === '') {
             setBookState();
             return false;
@@ -111,7 +155,8 @@ export default function AddBook(props: any) {
                 publisher: prev.publisher || '',
                 publicationYear: prev.publicationYear || 0,
                 quantity: prev.quantity || 0,
-                price: prev.price || 0
+                price: prev.price || 0,
+                category: prev.category || undefined
             }
         })
     }
@@ -183,7 +228,7 @@ export default function AddBook(props: any) {
                 onHide={() => hideForm(true)}
                 style={{ width: '1150px', backgroundColor: '#f5f5f5' }}
                 baseZIndex={1100}>
-                <h3>Book</h3>
+                <h3>{bookDTO === null ? "Add Book" : "Edit Book"}</h3>
                 <div className="row">
                     {/* Cột 1 */}
                     <div className="col-md-6 mb-5">
@@ -253,6 +298,32 @@ export default function AddBook(props: any) {
                                 onChange={handleChangeNumber}
                                 placeholder="Giá" />
                             <div className={`invalid-feedback ${book.price?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
+
+                        <div className='form-group'>
+                            <label>
+                                Category
+                            </label>
+                            <select
+                                style={{
+                                    backgroundColor: '#f0f0f0', /* Màu nền xám sáng */
+                                    border: '1px solid #ccc', /* Viền xám sáng */
+                                }}
+                                className="form-select"
+                                onChange={handleCategoryChange}
+                                value={book.category?.id || 0}
+                            >
+                                {bookDTO != null && (
+                                    <option value={categoryEdit?.id}>
+                                        {categoryEdit?.name}
+                                    </option>
+                                )}
+                                {categoryList.map((u: any, index: number) => (
+                                    <option key={u.id} value={u.id}>
+                                        {u.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                     </div>
