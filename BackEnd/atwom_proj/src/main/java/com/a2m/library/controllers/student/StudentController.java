@@ -179,22 +179,25 @@ public class StudentController {
 	}
 	
 	@GetMapping("/verify")
-	public String verifyAccount(@RequestParam("token") String token, Model model) {
-		VerificationToken verificationToken = tokenRepository.findByToken(token);
+	public ModelAndView verifyAccount(@RequestParam("token") String token,ModelAndView modelAndView) {
+	
+	    VerificationToken verificationToken = tokenRepository.findByToken(token);
 
-		if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-			model.addAttribute("message", "Invalid or expired token");
-			return "verification-error";
-		}
+	    if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+	        modelAndView.addObject("message", "Invalid or expired token");
+	        modelAndView.setViewName("verification-error");
+	        return modelAndView;
+	    }
 
-		User user = verificationToken.getUser();
-		user.setActive(true);
-		userRepository.save(user);
-		tokenRepository.deleteById(user.getUserUid());
-		
+	    User user = verificationToken.getUser();
+	    user.setActive(true);
+	    userRepository.save(user);
+	    tokenRepository.deleteById(user.getUserUid());
 
-		model.addAttribute("message", "Account verified successfully");
-		return "account-verification-success";
+	    modelAndView.addObject("message", "Account verified successfully");
+	    modelAndView.setViewName("account-verification-success");
+	    return modelAndView;
 	}
+
 	
 }

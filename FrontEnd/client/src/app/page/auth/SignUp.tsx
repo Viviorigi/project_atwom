@@ -7,7 +7,7 @@ import {
 import { Container } from "../../styles/styles";
 import { staticImages } from "../../utils/images";
 import { FormElement, Input } from "../../styles/form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BaseButtonBlack } from "../../styles/button";
 import AuthOptions from "../../comp/auth/AuthOptions";
 import PasswordInput from "../../comp/auth/PasswordInput";
@@ -34,6 +34,7 @@ const SignUp = () => {
   const [userRegister, setUserRegister] = useState<UserDTORequest>(
     new UserDTORequest()
   );
+  const navigate = useNavigate();
   const handleChangeText = (event: any) => {
     const { name, value } = event.target;
     setUserRegister((prev) => ({
@@ -111,6 +112,7 @@ const SignUp = () => {
         setTimeout(() => {
           // dispatch(setLoading(false));
           toast.success('Register successfully please check email to verify account');
+          navigate('/register-success')
         }, 1000);
       }
     })
