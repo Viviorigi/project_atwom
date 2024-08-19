@@ -5,6 +5,8 @@ import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import Cookies from "universal-cookie";
 import { AuthConstant } from "../../constants/authConstant";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const NavMenuWrapper = styled.nav`
   margin-top: 32px;
@@ -65,17 +67,52 @@ const NavMenuWrapper = styled.nav`
     }
   }
 `;
+interface JwtPayload {
+  exp: number;
+}
 
 const UserMenu = () => {
   const location = useLocation();
+  const [fullName, setFullName] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const cookie = new Cookies();
+  useEffect(() => {
+    const storedFullName = cookie.get("fullName");
+    if (storedFullName) {
+      setFullName(storedFullName)
+    }
+
+    const access_token = cookie.get('access_token');
+
+    if (access_token) {
+      try {
+        const decodedToken = jwtDecode<JwtPayload>(access_token);
+
+        const expiryTime = decodedToken.exp * 1000;
+
+        const currentTime = new Date().getTime();
+
+        if (currentTime < expiryTime) {
+          setIsLoggedIn(true);
+        } else {
+          cookie.remove(AuthConstant.ACCESS_TOKEN);
+          cookie.remove('fullName');
+          cookie.remove('avatar');
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.log(error);
+
+      }
+    }
+  }, [])
   const logout =()=>{
     cookie.remove(AuthConstant.ACCESS_TOKEN);
     cookie.remove("fullName");
   }
   return (
     <div>
-      <Title titleText={"Hello Richard"} />
+      <Title titleText={`Hello  ${fullName}`} />
       <p className="text-base font-light italic">Welcome to your account.</p>
 
       <NavMenuWrapper>

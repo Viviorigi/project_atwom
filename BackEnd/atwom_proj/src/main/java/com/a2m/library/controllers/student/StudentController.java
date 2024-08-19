@@ -40,6 +40,7 @@ import com.a2m.library.dto.request.LoginRequest;
 import com.a2m.library.dto.request.ResetPasswordRequest;
 import com.a2m.library.dto.response.JwtResponse;
 import com.a2m.library.dto.response.MessageResponse;
+import com.a2m.library.dto.response.UserResponse;
 import com.a2m.library.model.User;
 import com.a2m.library.model.VerificationToken;
 import com.a2m.library.repository.UserRepository;
@@ -140,20 +141,22 @@ public class StudentController {
 		}
 		if (jwtUtil.validateJwtToken(token)) {
 			String username = jwtUtil.getUserNameFromJwtToken(token);
-			UserDTO userDTO = userService.findByUsername(username);
-			return ResponseEntity.ok(userDTO);
+			UserResponse userRes = userService.findByUsername(username);
+			return ResponseEntity.ok(userRes);
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
 		}
 	}
 
-	@PatchMapping("/change/pass")
-	public ResponseEntity<?> changePass(HttpServletRequest request,
+	@PostMapping("/change-pass")
+	public ResponseEntity<?> changePass(@RequestHeader("Authorization") String token,
 			@Valid @RequestBody ChangePasswordRequest changePass) {
-		String jwt = jwtUtil.getJwt(request);
-		String username = jwtUtil.getUserNameFromJwtToken(jwt);
+		if (token.startsWith("Bearer ")) {
+			token = token.substring(7);
+		}
+		String username = jwtUtil.getUserNameFromJwtToken(token);
 		User user;
-		if (!changePass.getNewPassword().equals(changePass.getConfirmationPassword())) {
+		if (!changePass.getNewPassword().equals(changePass.getConfirmPassword())) {
 			throw new BadCredentialsException("New Password do not match");
 		} else {
 			try {
@@ -163,15 +166,17 @@ public class StudentController {
 				if (!matches) {
 					throw new BadCredentialsException("Current Password do not match");
 				}
-				if (changePass.getNewPassword() != null) {
+				if (!changePass.getNewPassword().equals(changePass.getCurrentPassword())) {
 					if (matches) {
 						user.setPassword(passwordEncoder.encode(changePass.getNewPassword()));
 						userRepository.save(user);
 					} else {
 						return new ResponseEntity<>(new MessageResponse("no"), HttpStatus.OK);
 					}
+				}else {
+					throw new BadCredentialsException("The new password cannot be the same as the old password.");
 				}
-				return new ResponseEntity<>(new MessageResponse("Change pass successfully"), HttpStatus.OK);
+				return new ResponseEntity<>(new MessageResponse("Change password successfully!"), HttpStatus.OK);
 			} catch (UsernameNotFoundException exception) {
 				return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
 			}

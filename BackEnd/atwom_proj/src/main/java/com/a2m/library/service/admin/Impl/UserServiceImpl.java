@@ -191,9 +191,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public UserDTO findByUsername(String username) {
+	public UserResponse findByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
-        return convertToUserDTO(user.get());
+        return convertToUserResponse(user.get());
     }
 	
 	@Override

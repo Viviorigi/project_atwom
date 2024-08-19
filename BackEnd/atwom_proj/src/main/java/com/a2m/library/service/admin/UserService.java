@@ -29,7 +29,7 @@ public interface UserService {
 
 	public void deleteUser(Long userUid) throws Exception;
 
-	public UserDTO findByUsername(String username);
+	public UserResponse findByUsername(String username);
 	
 	Optional<UserResponse> findUserByName(String username);
 	

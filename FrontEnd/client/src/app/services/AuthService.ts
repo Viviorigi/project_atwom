@@ -41,5 +41,18 @@ export class AuthService {
     });
   }
 
+  public getInfo(){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/student/myinfo`);
+    return axios.get(url, {
+      headers: HeadersUtil.getHeadersAuth()
+    });
+  }
+
+  public changePassword(pass:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/student/change-pass`);
+    return axios.post(url,pass, {
+      headers: HeadersUtil.getHeadersAuth()
+    });
+  }
  
 }

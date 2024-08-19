@@ -12,7 +12,8 @@ export default function RoleGuard(props: any) {
 
   const navigate = useNavigate();
   const [roles, setRoles] = useState<any>({});
-
+  console.log(role);
+  
   useEffect(() => {
     axios
       .get(process.env.REACT_APP_API_URL + `/api/auth/getroles?role=${role}`, {

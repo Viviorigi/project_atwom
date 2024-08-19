@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import { BaseLinkGreen } from "../../styles/button";
-
+import  imgNotFound  from "../../../assets/images/404notfoundimg.png"
 const NotFoundScreenWrapper = styled.main`
     margin: 24px 0;
     .page-not-found-img{
@@ -24,7 +24,7 @@ const NotFound = () => {
         <div className="flex items-center justify-center flex-col">
           <div className="page-not-found-img flex items-center justify-center">
             <img
-              src="https://static-00.iconduck.com/assets.00/404-page-not-found-illustration-2048x998-yjzeuy4v.png"
+              src={imgNotFound}
               alt=""
               className="object-fit-cover"
             />

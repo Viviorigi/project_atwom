@@ -1,13 +1,18 @@
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
-import { FormElement, Input } from "../../styles/form";
-import { BaseLinkGreen } from "../../styles/button";
-import { Link } from "react-router-dom";
+import { FormElement } from "../../styles/form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import Breadcrumb from "../../comp/common/Breadcrumb";
 import UserMenu from "../../comp/user/UserMenu";
 import Title from "../../comp/common/Title";
 import { UserContent, UserDashboardWrapper } from "../../styles/user";
+import { useEffect, useState } from "react";
+import { UserDetail } from "../../model/auth/UserDetail";
+import { AuthService } from "../../services/AuthService";
+import defaultPerson from "../../../assets/images/imagePerson.png"
+import { format } from "date-fns";
+import { BaseLinkGreen } from "../../styles/button";
+
 
 const AccountScreenWrapper = styled.main`
   .address-list {
@@ -58,6 +63,22 @@ const breadcrumbItems = [
 ];
 
 const AccountScreen = () => {
+  const [userDetail, SetUserDetail] = useState<UserDetail>(new UserDetail());
+  useEffect(() => {
+    AuthService.getInstance().getInfo().then((resp: any) => {
+      if (resp) {
+        SetUserDetail(resp.data);
+        console.log(userDetail);
+      }
+    }
+    ).catch()
+  }, [])
+  const formatDOB = (date: any) => {
+    if (!date) {
+      return "Date not provided";
+    }
+    return format(new Date(date), "dd-MM-yyyy");
+  };
   return (
     <AccountScreenWrapper className="page-py-spacing">
       <Container>
@@ -66,121 +87,140 @@ const AccountScreen = () => {
           <UserMenu />
           <UserContent>
             <Title titleText={"My Account"} />
-            <h4 className="title-sm">Contact Details</h4>
-            <form>
-              <div className="form-wrapper">
-                <FormElement className="form-elem">
-                  <label
-                    htmlFor=""
-                    className="form-label font-semibold text-base"
-                  >
-                    Your Name
-                  </label>
-                  <div className="form-input-wrapper flex items-center">
-                    <Input
-                      type="text"
-                      className="form-elem-control text-outerspace font-semibold "
-                      
-                      
-                    />
-                    <button type="button" className="form-control-change-btn">
-                      Change
-                    </button>
-                  </div>
-                </FormElement>
-                <FormElement className="form-elem">
-                  <label
-                    htmlFor=""
-                    className="form-label font-semibold text-base"
-                  >
-                    Email Address
-                  </label>
-                  <div className="form-input-wrapper flex items-center">
-                    <Input
-                      type="email"
-                      className="form-elem-control text-outerspace font-semibold"
-                      value="richard@gmail.com"
-                      readOnly
-                    />
-                    <button type="button" className="form-control-change-btn">
-                      Change
-                    </button>
-                  </div>
-                </FormElement>
-                <FormElement className="form-elem">
-                  <label
-                    htmlFor=""
-                    className="form-label font-semibold text-base"
-                  >
-                    Phone Number
-                  </label>
-                  <div className="form-input-wrapper flex items-center">
-                    <Input
-                      type="text"
-                      className="form-elem-control text-outerspace font-semibold"
-                      value="+9686 6864 3434"
-                      readOnly
-                    />
-                    <button type="button" className="form-control-change-btn">
-                      Change
-                    </button>
-                  </div>
-                </FormElement>
-                <FormElement className="form-elem">
-                  <label
-                    htmlFor=""
-                    className="form-label font-semibold text-base"
-                  >
-                    Password
-                  </label>
-                  <div className="form-input-wrapper flex items-center">
-                    <Input
-                      type="password"
-                      className="form-elem-control text-outerspace font-semibold"
-                      value="Pass Key"
-                      readOnly
-                    />
-                    <button type="button" className="form-control-change-btn">
-                      Change
-                    </button>
-                  </div>
-                </FormElement>
+            <div className="d-flex justify-content-between">
+              <h3 className="mt-2">Details Info</h3>
+              <div>
+              <BaseLinkGreen className="p-2 m-2" to="/change_password">Change Password</BaseLinkGreen>
+              <button className="btn btn-primary">Update info</button>
               </div>
-            </form>
-            <div className="form-group">
-            <label>
-              Avatar <span className="text-danger">(*)</span>
-            </label>
-            <br />
-            <input
-              name="file"
-              type="file"
-              accept="image/*"
-              onChange={() => {}}
-              aria-label="d"
-            />
+            </div>
 
-              <div
-                className="preview Image"
-                style={{
-                  marginTop: "10px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  src=""
-                  alt="Preview"
-                  style={{ width: "200px", height: "200px" }}
-                />
+            <div className="form-wrapper">
+              <div className="form-group">
+                <label className="form-label font-semibold text-base" style={{ fontSize: "20px" }}>
+                  Avatar
+                </label>
+                <br />
+                <div
+                  className="preview Image"
+                  style={{
+                    marginBottom: "20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <img
+                    src={userDetail.avatar ? userDetail.avatar : defaultPerson}
+                    alt="Preview"
+                    style={{ width: "200px", height: "200px" }}
+                  />
+                </div>
               </div>
-
-          </div>
+              <FormElement className="form-elem" style={{ marginTop: "90px" }}>
+                <label
+                  htmlFor=""
+                  className="form-label font-semibold text-base"
+                  style={{ fontSize: "20px" }}
+                >
+                  Your Name
+                </label>
+                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                  <h4 className="form-elem-control text-outerspace font-semibold ">
+                    {userDetail.fullName || ""}
+                  </h4>
+                </div>
+              </FormElement>
+              <FormElement className="form-elem">
+                <label
+                  htmlFor=""
+                  className="form-label font-semibold text-base"
+                  style={{ fontSize: "20px" }}
+                >
+                  Email Address
+                </label>
+                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                  <h4 className="form-elem-control text-outerspace font-semibold ">
+                    {userDetail.email || ""}
+                  </h4>
+                </div>
+              </FormElement>
+              <FormElement className="form-elem">
+                <label
+                  htmlFor=""
+                  className="form-label font-semibold text-base"
+                  style={{ fontSize: "20px" }}
+                >
+                  Phone Number
+                </label>
+                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                  <h4 className="form-elem-control text-outerspace font-semibold ">
+                    {userDetail.phone || ""}
+                  </h4>
+                </div>
+              </FormElement>
+              <FormElement className="form-elem">
+                <label
+                  htmlFor=""
+                  className="form-label font-semibold text-base"
+                  style={{ fontSize: "20px" }}
+                >
+                  Address
+                </label>
+                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                  <h4 className="form-elem-control text-outerspace font-semibold ">
+                    {userDetail.address || ""}
+                  </h4>
+                </div>
+              </FormElement>
+              <FormElement className="form-elem">
+                <label
+                  htmlFor=""
+                  className="form-label font-semibold text-base"
+                  style={{ fontSize: "20px" }}
+                >
+                  Dob
+                </label>
+                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                  <h4 className="form-elem-control text-outerspace font-semibold ">
+                    {formatDOB(userDetail.dob)}
+                  </h4>
+                </div>
+              </FormElement>
+              <FormElement className="form-elem">
+                <label
+                  htmlFor=""
+                  className="form-label font-semibold text-base"
+                  style={{ fontSize: "20px" }}
+                >
+                  ClassName
+                </label>
+                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                  <h4 className="form-elem-control text-outerspace font-semibold ">
+                    {userDetail.className || ""}
+                  </h4>
+                </div>
+              </FormElement>
+              <FormElement className="form-elem">
+                <label
+                  htmlFor=""
+                  className="form-label font-semibold text-base"
+                  style={{ fontSize: "20px" }}
+                >
+                  Create Date Account
+                </label>
+                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                  <h4 className="form-elem-control text-outerspace font-semibold ">
+                    {formatDOB(userDetail.cre_dt)}
+                  </h4>
+                </div>
+              </FormElement>
+            </div>
           </UserContent>
         </UserDashboardWrapper>
       </Container>
     </AccountScreenWrapper>
+
   );
 };
 

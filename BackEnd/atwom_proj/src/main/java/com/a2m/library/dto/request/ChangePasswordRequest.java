@@ -11,5 +11,5 @@ public class ChangePasswordRequest {
 	@NotEmpty
     private String newPassword;
 	@NotEmpty
-    private String confirmationPassword;
+    private String confirmPassword;
 }
