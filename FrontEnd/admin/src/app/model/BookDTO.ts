@@ -7,11 +7,13 @@ export class BookDTO {
   publisher?:string;
   publicationYear?: number;
   quantityPlaced?: number;
+  description?:string;
   price?: number;
-  image?: string;
+  image?: string; 
   deleted?: number;
   quantity?: number;
   status?: number;
+  active?:boolean;
   createdDate?: string;
   updatedDate?: string;
   category?: CategoryDTO;

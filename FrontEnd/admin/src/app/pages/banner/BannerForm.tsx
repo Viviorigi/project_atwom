@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { setLoading } from "../../reducers/spinnerSlice";
 import { AuthService } from "../../services/auth/AuthService";
 import { toast } from "react-toastify";
-import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import defaultPersonImage from "../../../assets/images/imagePerson.png"   
 import { BannerDTO } from "../../model/BannerDTO";
 import { BannerService } from "../../services/banner/BannerService";
 export default function BannerForm(props: any) {

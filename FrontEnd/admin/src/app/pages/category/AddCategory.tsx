@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
 
 export default function AddCategory(props: any) {
-    const { hideForm, categoryDTO,onSave } = props;
+    const { hideForm, categoryDTO, onSave } = props;
     const [category, setCategory] = useState<CategoryDTO>(new CategoryDTO());
-    const currentDate = new Date().toISOString(); 
+    const currentDate = new Date().toISOString();
 
     // xử lý nhập ký tự không phải số
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -22,9 +22,9 @@ export default function AddCategory(props: any) {
         if (categoryDTO != null) {
             setCategory({
                 ...categoryDTO,
-                updatedDate: new Date().toISOString()  
+                updatedDate: new Date().toISOString()
             })
-        }else{
+        } else {
             setCategory({
                 ...categoryDTO,
                 createdDate: new Date().toISOString(),
@@ -78,7 +78,7 @@ export default function AddCategory(props: any) {
             return;
         }
         // setVisible(false);
-        hideForm(true);
+        // hideForm(true);
 
         Swal.fire({
             title: `Xác nhận`,
@@ -95,7 +95,7 @@ export default function AddCategory(props: any) {
                 let url = `http://localhost:8080/category/add`;
                 axios.post(url, category).then((resp: any) => {
                     if (resp.data === "success") {
-                        // hideForm(true);
+                        hideForm(true);
                         toast.success("Lưu danh mục thành công");
                         onSave()
                     }
@@ -128,14 +128,16 @@ export default function AddCategory(props: any) {
                 visible={visible}
                 // onHide={hideDialog}
                 onHide={() => hideForm(true)}
-                style={{ width: '850px', height: '500px', backgroundColor: '#f5f5f5' }}
+                style={{ width: '1150px', backgroundColor: '#f5f5f5' }}
                 baseZIndex={1100}>
-                <div className="container form-group">
-                    <div className="row mb-3">
-                        <div className="col-2">
-                            Name
-                        </div>
-                        <div className="col-9">
+
+                <h3>Category</h3>
+                <div className="row">
+                    <div className="col-md-6 mb-5">
+                        <div className="form-group">
+                            <label>
+                                Name
+                            </label>
                             <input type='text'
                                 className="form-control"
                                 name="name"
@@ -145,11 +147,12 @@ export default function AddCategory(props: any) {
                             <div className={`invalid-feedback ${category.name?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
                     </div>
-                    <div className="row mb-3">
-                        <div className="col-2">
-                            Description
-                        </div>
-                        <div className="col-9">
+
+                    <div className="col-md-6 mb-5">
+                        <div className="form-group">
+                            <label>
+                                Description
+                            </label>
                             <input type='text'
                                 className="form-control"
                                 name="description"
@@ -160,11 +163,13 @@ export default function AddCategory(props: any) {
                         </div>
                     </div>
 
-                    <div className="text-center mt-3">
-                        <button onClick={save} className="btn btn-primary btn-sm me-2">Save</button>
-                        <button onClick={cancel} className="btn btn-danger btn-sm">Cancel</button>
-                    </div>
                 </div>
+
+                <div className="text-center mt-3">
+                    <button onClick={save} className="btn btn-primary btn-sm me-2">Save</button>
+                    <button onClick={cancel} className="btn btn-danger btn-sm">Cancel</button>
+                </div>
+
             </Dialog>
         </div>
     )

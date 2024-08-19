@@ -110,7 +110,7 @@ export default function StudentForm(props: any) {
   };
 
 
-  const imageSource = image? image : user!==null ? `http://localhost:8080/files/${user.avatar}`: defaultPersonImage;
+  const imageSource = image ? image : user !== null ? `http://localhost:8080/files/${user.avatar}` : defaultPersonImage;
 
   const save = () => {
     if (!chk()) {

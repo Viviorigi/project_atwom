@@ -1,6 +1,11 @@
 package com.a2m.library.controllers.admin;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,17 +14,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.Book;
+import com.a2m.library.service.admin.UserService;
 import com.a2m.library.service.book.BookService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 //@RequestMapping(value = "api/book")
 public class BookController {
 	@Autowired
 	BookService bookService;
+	private final ObjectMapper objectMapper;
+	
+	@Value("${file.upload-dir}")
+	private String uploadDir;
+	
+	public BookController(BookService bookService, ObjectMapper objectMapper) {
+		this.bookService = bookService;
+		this.objectMapper = objectMapper;
+	}
 	
 //	@GetMapping("/book/list")
 //	public ResponseEntity<?> bookGet() {
@@ -34,19 +53,32 @@ public class BookController {
 		return ResponseEntity.ok().body(books);
 	}
 	
-//	@PostMapping("/book/add")
-//	public ResponseEntity<?> bookAddPost(@RequestBody BookDTO bookDTO){
-//		try {
-//			bookService.save(bookDTO);
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-//		}
-//		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
-//	}
-	
 	@PostMapping("/book/add")
-	public ResponseEntity<?> studentAddList(@RequestBody Book book){
+	public ResponseEntity<?> studentAddList(@RequestParam("book") String bookJson,
+			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException{
+		Book book;
+		book = objectMapper.readValue(bookJson, Book.class);
+		if (file != null && !file.isEmpty()) {
+			try {
+				String originalFilename = file.getOriginalFilename();
+				String timestamp = String.valueOf(System.currentTimeMillis());
+				String newFilename = timestamp + "_" + originalFilename;
+
+				final Path directory = Paths.get(uploadDir);
+				final Path filePath = Paths.get(uploadDir + newFilename);
+				if (!Files.exists(directory)) {
+					Files.createDirectories(directory);
+				}
+				Files.write(filePath, file.getBytes());
+				book.setImage(newFilename);
+				System.out.println("đã lưu ảnh");
+			} catch (Exception e) {
+				System.out.println("Lỗi tải ảnh");
+				e.printStackTrace();
+				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
+			}
+		}
+		
 		try {
 			bookService.save(book);
 		} catch (Exception e) {
