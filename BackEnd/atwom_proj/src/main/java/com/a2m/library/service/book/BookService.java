@@ -20,7 +20,7 @@ public interface BookService {
     public Book convertToBook(BookDTO bookDTO);
     
     //---------------------------------------------
-	public Page<Book>findAll(String keySearch, int page, int size);
+	public Page<Book>findAll(String keySearch, int cateId, int page, int size);
 	void save(Book book);
 }
 

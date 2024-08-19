@@ -92,4 +92,10 @@ public class CategoryServiceImol implements CategoryService{
 		
 	}
 
+	@Override
+	public List<Category> findAllList() {
+		// TODO Auto-generated method stub
+		return categoryRepository.findAll();
+	}
+
 }

@@ -27,11 +27,11 @@ public class BookServiceImpl implements BookService{
 	}
 	
 	@Override
-	public Page<Book> findAll(String keySearch, int page, int size) {
+	public Page<Book> findAll(String keySearch, int cateId, int page, int size) {
 		// TODO Auto-generated method stub
 		Pageable pageable = PageRequest.of(page, size);
 		if(keySearch != null)
-			return bookRepository.findAllBook(keySearch, pageable);
+			return bookRepository.findAllBook(keySearch, cateId,  pageable);
 		return bookRepository.findAll(pageable);
 	}
 

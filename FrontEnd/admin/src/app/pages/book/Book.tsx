@@ -8,11 +8,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import Pagination from '../../comp/common/Pagination';
 import { format } from 'date-fns';
 import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
+import defaultPersonImage from "../../../assets/images/imagePerson.png"
 
 export default function Book() {
 
   const [searchDto, setSearchDto] = useState(new BookSearch('', 1, 0, new Date().getTime()))
   const [bookList, setBookList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -108,7 +110,7 @@ export default function Book() {
 
   //Lây du lieu
   useEffect(() => {
-    let url = `http://localhost:8080/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
+    let url = `http://localhost:8080/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
     axios.get(url).then((resp: any) => {
       // console.log(resp.data);
       if (resp.data) {
@@ -121,6 +123,18 @@ export default function Book() {
 
     })
   }, [searchDto.page, searchDto.timer])
+
+  useEffect(() => {
+    let url = `http://localhost:8080/category/list/all`;
+    axios.get(url).then((resp: any) => {
+      // console.log(resp.data.name);
+      if (resp.data) {
+        setCategoryList(resp.data);
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [])
 
   // Ẩn hiện form 
   const hideForm = (isCRUD: boolean) => {
@@ -146,13 +160,13 @@ export default function Book() {
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
-            <div className="mb-4">
+            <div className="">
               <div className="row g-3">
                 <div className="col-auto">
                   {/* Search input-------------------------------------------------------------------------------------------- */}
                   <div className="search-box d-flex">
                     {/* search input */}
-                    <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
+                    <input className="form-control search-input search" type="search" placeholder="Search book" name="keySearch" aria-label="Search"
                       value={searchDto.keySearch || ""}
                       onChange={handleChangeText}
                       onKeyUp={handleKeyUpSearch}
@@ -169,17 +183,34 @@ export default function Book() {
                 <div className="col-auto scrollbar overflow-hidden-y flex-grow-1">
                   <div className="btn-group position-static" role="group">
                     {/*------------------------Lọc theo category  */}
-                    <div className="btn-group position-static text-nowrap"><button className="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> Category<span className="fas fa-angle-down ms-2" /></button>
-                      <ul className="dropdown-menu">
-                        <li><a className="dropdown-item" href="customers.html#">US</a></li>
-                        <li><a className="dropdown-item" href="customers.html#">Uk</a></li>
-                        <li><a className="dropdown-item" href="customers.html#">Australia</a></li>
-                      </ul>
+                    <div>
+                      <select
+                        style={{
+                          backgroundColor: '#f0f0f0', /* Màu nền xám sáng */
+                        }}
+                        className="form-select"
+                        value={searchDto.cate_id}
+                        onChange={(e) => {
+                          setSearchDto({
+                            ...searchDto,
+                            cate_id: parseInt(e.target.value, 10),
+                            page: 1,
+                            timer: new Date().getTime(),
+                          });
+                        }}
+                      >
+                        <option value={0}>All</option>
+                        {categoryList.map((u: any, index: number) => (
+                          <option key={u.id} value={u.id}>
+                            {u.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
+
                   </div>
                 </div>
                 <div className="col-auto">
-                  {/* <button className="btn btn-link text-900 me-4 px-0"><span className="fa-solid fa-file-export fs--1 me-2" />Export</button> */}
                   <button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Add book</button>
                 </div>
               </div>
@@ -192,39 +223,47 @@ export default function Book() {
                       <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>TITLE</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>PUBLISHER</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>PUBLISH_YEAR</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>PUBLISH YEAR</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>QUANTITY</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>PRICE</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE AT</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>ACTION</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>ACTION</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
                     {bookList.map((u: any, index: number) => {
-                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id} >
-                        <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{index + 1}</td>
-                        <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
-                          {/* <div className="avatar avatar-m"><img className="rounded-circle" src={u.avatar ? `http://localhost:8080/files/${u.avatar}` : defaultPersonImage} alt="PersonAvatar" /></div> */}
-                          <p className="mb-0 ms-3 text-1100 fw-bold">{u.title}</p>
-                        </div></td>
-                        <td className="email align-middle white-space-nowrap ps-3">{u.publisher}</td>
-                        <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.publicationYear}</td>
-                        <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.quantity}</td>
-                        <td className="last-seen align-middle white-space-nowrap text-700 ps-3">{formatCurrency(u.price)}</td>
-                        <td className="total-spent align-middle white-space-nowrap fw-bold text-end ps-3 text-1100">{u.description}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.createdDate)}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.updatedDate)}</td>
-                        {/* <td className="last-order align-middle white-space-nowrap text-700 text-center"><span className={u.roles == 'STUDENT' ? 'badge badge-phoenix fs--2 badge-phoenix-secondary' : 'badge badge-phoenix fs--2 badge-phoenix-info'}><span className="badge-label">{u.roles}</span></span></td> */}
-                        <td className="last-order align-middle white-space-nowrap text-700 text-end">
-                          <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
+                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id}>
+                        <td className='align-middle text-center text-700'>{index + 1}</td>
+                        <td className="align-middle text-center">
+                          <div className="d-flex align-items-center">
+                            <div className="avatar avatar-m">
+                              <img className="rounded-circle" src={u.image ? `http://localhost:8080/files/${u.image}` : defaultPersonImage} alt="Book Image" />
+                            </div>
+                            <p className="mb-0 ms-3 text-1100 fw-bold">{u.title}</p>
+                          </div>
                         </td>
-                        <td className="last-order align-middle white-space-nowrap text-700 ps-5">
-                          {/* <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button> */}
-                          <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editBook(u)}><i className="fa-solid fa-pen"></i></button>
-                          <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delBook(u.id)}><i className="fa-solid fa-trash"></i></button>
+                        <td className="align-middle text-center">{u.publisher}</td>
+                        <td className="align-middle text-center text-1000">{u.publicationYear}</td>
+                        <td className="align-middle text-center text-1100">{u.quantity}</td>
+                        <td className="align-middle text-start text-700">{formatCurrency(u.price)}</td>
+                        <td className="align-middle text-center text-1100">{u.description}</td>
+                        <td className="align-middle text-center text-700">{formatDate(u.createdDate)}</td>
+                        <td className="align-middle text-center text-700">{formatDate(u.updatedDate)}</td>
+                        <td className="align-middle text-center">
+                          <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}>
+                            <span className="badge-label">{u.active ? "Active" : "Inactive"}</span>
+                          </span>
+                        </td>
+                        <td className="align-middle text-center">
+                          <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editBook(u)}>
+                            <i className="fa-solid fa-pen"></i>
+                          </button>
+                          <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delBook(u.id)}>
+                            <i className="fa-solid fa-trash"></i>
+                          </button>
                         </td>
                       </tr>
                     })}

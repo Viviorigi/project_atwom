@@ -27,6 +27,7 @@ export default function AddCategory(props: any) {
         } else {
             setCategory({
                 ...categoryDTO,
+                active:true,
                 createdDate: new Date().toISOString(),
                 updatedDate: new Date().toISOString()
             })

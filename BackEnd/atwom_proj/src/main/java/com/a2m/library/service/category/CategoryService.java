@@ -19,6 +19,7 @@ public interface CategoryService {
     public Category convertToCategory(CategoryDTO categoryDTO);
     
   //---------------------------------------------
+    List<Category> findAllList();
   	public Page<Category>findAll(String keySearch, int page, int size);
   	void save(Category category);
 }

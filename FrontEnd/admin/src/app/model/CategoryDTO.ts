@@ -6,7 +6,7 @@ export class  CategoryDTO {
   description?: string;
   createdDate?:string;
   updatedDate?:string;
-  deleted?: boolean;
+  active?:boolean;
   books?: BookDTO[]; 
   }
   

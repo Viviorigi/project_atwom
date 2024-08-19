@@ -30,6 +30,12 @@ public class CategoryController {
 		return ResponseEntity.ok().body(categoryDTO);
 	}
 	
+	@GetMapping("/category/list/all")
+	public ResponseEntity<?> categoryGetAll() {
+		List<Category>categories = categoryService.findAllList();
+		return ResponseEntity.ok().body(categories);
+	}
+	
 	@GetMapping("/category/list")
 	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,
 											@RequestParam("keySearch") String keySearch){

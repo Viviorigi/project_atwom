@@ -57,6 +57,7 @@ export default function AddBook(props: any) {
         } else {
             setBook({
                 ...bookDTO,
+                active:true,
                 createdDate: new Date().toISOString(),
                 updatedDate: new Date().toISOString()
             })

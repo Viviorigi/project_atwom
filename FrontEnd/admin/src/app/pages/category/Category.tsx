@@ -150,7 +150,7 @@ export default function Book() {
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
-            <div className="mb-4">
+            <div className="">
               <div className="row g-3">
                 <div className="col-auto">
                   {/* Search input-------------------------------------------------------------------------------------------- */}
@@ -173,8 +173,10 @@ export default function Book() {
                 <div className="col-auto scrollbar overflow-hidden-y flex-grow-1">
                   {/* .............................................................. */}
                 </div>
-                <div className="col-auto">
-                  <button className="btn btn-primary" onClick={addCategory}><span className="fas fa-plus me-2" />Add category</button>
+                <div className="col-auto scrollbar overflow-hidden-y flex-grow">
+                  <div className="col-auto">
+                    <button className="btn btn-primary" onClick={addCategory}><span className="fas fa-plus me-2" />Add category</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -186,31 +188,38 @@ export default function Book() {
                       <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>NAME</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>DESCRIPTION</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>NUM_OF_BOOKS</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>UPDATE_AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NUM OF BOOKS</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE AT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>UPDATE AT</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>ACTIVE</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>ACTION</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
                     {bookList.map((u: any, index: number) => {
-                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id} >
-                        <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{index + 1}</td>
-                        <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
-                          <p className="mb-0 ms-3 text-1100 fw-bold">{u.name}</p>
-                        </div></td>
-                        <td className="email align-middle white-space-nowrap ps-3">{u.description}</td>
-                        <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.books.length}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.createdDate)}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.updatedDate)}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-center">
-                          <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
+                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id}>
+                        <td className='align-middle text-center text-700'>{index + 1}</td>
+                        <td className="align-middle text-center">
+                          <div className="d-flex align-items-center">
+                            <p className="mb-0 ms-3 text-1100 fw-bold">{u.name}</p>
+                          </div>
                         </td>
-                        <td className="last-order align-middle white-space-nowrap text-700 text-center">
-                          {/* <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button> */}
-                          <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editCategory(u)}><i className="fa-solid fa-pen"></i></button>
-                          <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delCategory(u.id)}><i className="fa-solid fa-trash"></i></button>
+                        <td className="align-middle text-center">{u.description}</td>
+                        <td className="align-middle text-center text-1000">{u.books.length}</td>
+                        <td className="align-middle text-center text-700">{formatDate(u.createdDate)}</td>
+                        <td className="align-middle text-center text-700">{formatDate(u.updatedDate)}</td>
+                        <td className="align-middle text-center">
+                          <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}>
+                            <span className="badge-label">{u.active ? "Active" : "Inactive"}</span>
+                          </span>
+                        </td>
+                        <td className="align-middle text-center">
+                          <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editCategory(u)}>
+                            <i className="fa-solid fa-pen"></i>
+                          </button>
+                          <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delCategory(u.id)}>
+                            <i className="fa-solid fa-trash"></i>
+                          </button>
                         </td>
                       </tr>
                     })}
