@@ -8,9 +8,11 @@ import lombok.Setter;
 
 import java.time.Year;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "book")
@@ -68,4 +70,8 @@ public class Book {
         inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     private Set<Author> authors;
+  
+  @OneToMany(mappedBy = "book")
+  @JsonManagedReference
+  private List<ImagesBook> imagebooks;
 }

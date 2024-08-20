@@ -8,6 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import { log } from 'console';
 import { CategoryDTO } from '../../model/CategoryDTO';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // import './book-css.scss'
 
 
@@ -73,6 +74,48 @@ export default function AddBook(props: any) {
         }
     };
     const imageSource = image ? image : bookDTO !== null ? `http://localhost:8080/files/${bookDTO.image}` : defaultPersonImage;
+
+    const [imageSources, setImageSources] = useState<File[]>([]);
+
+    const [files, setFiles] = useState<File[]>([]);
+    // Xử lý thay đổi tệp
+    // const handleManyFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (event.target.files) {
+    //         const files = Array.from(event.target.files);
+    //         const newImageSources = files.map(file => URL.createObjectURL(file));
+    //         setImageSources(prevSources => [...prevSources, ...newImageSources]);
+    //     }
+    // };
+
+    const handleManyFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            const selectedFiles = Array.from(event.target.files);
+            setImageSources(prevFiles => [...prevFiles, ...selectedFiles]);
+        }
+    };
+
+    // Xoá URL đối tượng sau khi component unmount
+    // React.useEffect(() => {
+    //     return () => {
+    //         imageSources.forEach(src => URL.revokeObjectURL(src));
+    //     };
+    // }, [imageSources]);
+
+
+    // Xóa hình ảnh khỏi danh sách
+    const handleRemoveImage = (index: number) => {
+        setImageSources(prevFiles => prevFiles.filter((_, i) => i !== index));
+    };
+
+    const handleOnDragEnd = (result: any) => {
+        if (!result.destination) return;
+
+        const reorderedImages = Array.from(imageSources);
+        const [movedImage] = reorderedImages.splice(result.source.index, 1);
+        reorderedImages.splice(result.destination.index, 0, movedImage);
+
+        setImageSources(reorderedImages);
+    };
     //---------------------------------------------------------------------
 
     //xử lý edit
@@ -161,18 +204,89 @@ export default function AddBook(props: any) {
         })
     }
 
-    //Xử lý sự kiện save
+    // Xử lý sự kiện save
+    // const save = () => {
+    //     if (!chk()) {
+    //         return;
+    //     }
+    //     const formData = new FormData();
+    //     formData.append('book', JSON.stringify(book));
+    //     if (file) {
+    //         formData.append('file', file);
+    //     }
+
+    //     imageSources.forEach((src, index) => {
+    //         // Nếu bạn có các đối tượng File từ một nguồn khác, hãy thêm chúng trực tiếp vào FormData
+    //         // Đây là cách để đảm bảo các đối tượng là các tệp hợp lệ
+    //         const file = new File([src], `image${index}.jpg`, { type: 'image/jpeg' });
+    //         formData.append(`images[${index}]`, file);
+    //     });
+
+    //     Swal.fire({
+    //         title: `Xác nhận`,
+    //         text: `Bạn có muốn thực hiện ...`,
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#89B449',
+    //         cancelButtonColor: '#E68A8C',
+    //         confirmButtonText: `Yes`,
+    //         cancelButtonText: `No`
+    //     }).then((result) => {
+    //         if (result.value) {
+    //             // logic
+    //             let url = `http://localhost:8080/book/add`;
+    //             axios.post(url, formData, {
+    //                 headers: {
+    //                     'Content-Type': 'multipart/form-data'
+    //                 }
+    //             }).then((resp: any) => {
+    //                 if (resp.data === "success") {
+    //                     hideForm(true);
+    //                     toast.success("Lưu sách thành công");
+    //                     onSave()
+    //                 }
+    //             }).catch((err: any) => {
+    //                 console.log(err);
+    //                 toast.error("Không thể lưu sách");
+    //             })
+    //         }
+    //     })
+    // }
+
+    const logFormData = (formData: any) => {
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+    };
+
     const save = () => {
         if (!chk()) {
             return;
         }
-        // setVisible(false);
-        // hideForm(true);
         const formData = new FormData();
         formData.append('book', JSON.stringify(book));
         if (file) {
             formData.append('file', file);
         }
+
+        // console.log(imageSources);
+
+        // imageSources.forEach((imageFile, index) => {
+        //     formData.append(`images[${index}]`, imageFile);
+        // });
+        imageSources.forEach((imageFile) => {
+            formData.append('images[]', imageFile);
+        });
+        // logFormData(formData);
+        // const formDataEntries = Array.from(formData.entries());
+
+        // formDataEntries.forEach(([key, value]) => {
+        //     if (value instanceof File) {
+        //         console.log(`${key}: ${value.name}, Size - ${value.size} bytes`);
+        //     } else {
+        //         console.log(`${key}: ${value}`);
+        //     }
+        // });
 
         Swal.fire({
             title: `Xác nhận`,
@@ -204,7 +318,6 @@ export default function AddBook(props: any) {
             }
         })
     }
-
     const cancel = () => {
         hideForm(false);
     }
@@ -361,6 +474,7 @@ export default function AddBook(props: any) {
                             <div className={`invalid-feedback ${book.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
 
+                        {/* Lưu ảnh bìa-------------------------------------------------- */}
                         <div className="form-group">
                             <label>
                                 Avatar <span className="text-danger">(*)</span>
@@ -385,8 +499,50 @@ export default function AddBook(props: any) {
                                     <img
                                         src={imageSource}
                                         alt="Preview"
-                                        style={{ width: "200px", height: "200px" }}
+                                        style={{ width: "100px", height: "100px" }}
                                     />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Lưu ảnh description ---------------------------------------------------------------------- */}
+
+                        <div className="form-group">
+                            <label>
+                                Description image <span className="text-danger">(*)</span>
+                            </label>
+                            <br />
+                            <input
+                                name="multi-file"
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={handleManyFileChange}
+                            />
+                            {imageSources.length > 0 && (
+                                <div className="preview Image" style={{ marginTop: "10px", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
+                                    {imageSources.map((file, index) => (
+                                        <div key={index} style={{ position: 'relative', margin: '5px' }}>
+                                            <img src={URL.createObjectURL(file)} alt={`Preview ${index}`} style={{ width: "100px", height: "100px" }} />
+                                            <button
+                                                onClick={() => handleRemoveImage(index)}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '5px',
+                                                    right: '5px',
+                                                    background: 'red',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '50%',
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    cursor: 'pointer',
+                                                }}
+                                            >
+                                                &times;
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -403,3 +559,4 @@ export default function AddBook(props: any) {
         </div>
     )
 }
+

@@ -112,7 +112,7 @@ export default function Book() {
   useEffect(() => {
     let url = `http://localhost:8080/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
     axios.get(url).then((resp: any) => {
-      // console.log(resp.data);
+      console.log(resp.data);
       if (resp.data) {
         setBookList(resp.data.content);
         setTotalPages(resp.data.totalPages);
