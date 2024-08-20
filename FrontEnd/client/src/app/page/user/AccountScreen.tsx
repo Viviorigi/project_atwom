@@ -6,13 +6,14 @@ import Breadcrumb from "../../comp/common/Breadcrumb";
 import UserMenu from "../../comp/user/UserMenu";
 import Title from "../../comp/common/Title";
 import { UserContent, UserDashboardWrapper } from "../../styles/user";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UserDetail } from "../../model/auth/UserDetail";
 import { AuthService } from "../../services/AuthService";
 import defaultPerson from "../../../assets/images/imagePerson.png"
 import { format } from "date-fns";
 import { BaseLinkGreen } from "../../styles/button";
-
+import { Dialog } from 'primereact/dialog';
+import UserForm from "./UserForm";
 
 const AccountScreenWrapper = styled.main`
   .address-list {
@@ -64,6 +65,18 @@ const breadcrumbItems = [
 
 const AccountScreen = () => {
   const [userDetail, SetUserDetail] = useState<UserDetail>(new UserDetail());
+  const [open, setOpen] = useState(false);
+  const [saveTrigger, setSaveTrigger] = useState<number>(0);
+  const handleClickClose = () => {
+    setOpen(false);
+  };
+  const userRef = useRef<any>();
+
+  const editUser = (u: any) => {
+    userRef.current = u;
+    setOpen(true);
+  };
+
   useEffect(() => {
     AuthService.getInstance().getInfo().then((resp: any) => {
       if (resp) {
@@ -72,7 +85,7 @@ const AccountScreen = () => {
       }
     }
     ).catch()
-  }, [])
+  }, [saveTrigger])
   const formatDOB = (date: any) => {
     if (!date) {
       return "Date not provided";
@@ -91,11 +104,11 @@ const AccountScreen = () => {
               <h3 className="mt-2">Details Info</h3>
               <div>
               <BaseLinkGreen className="p-2 m-2" to="/change_password">Change Password</BaseLinkGreen>
-              <button className="btn btn-primary">Update info</button>
+              <button className="btn btn-primary" onClick={()=>editUser(userDetail)}>Update info</button>
               </div>
             </div>
 
-            <div className="form-wrapper">
+            <div className="form-wrapper "  style={{marginBottom:"50px"}}>
               <div className="form-group">
                 <label className="form-label font-semibold text-base" style={{ fontSize: "20px" }}>
                   Avatar
@@ -201,7 +214,7 @@ const AccountScreen = () => {
                   </h4>
                 </div>
               </FormElement>
-              <FormElement className="form-elem">
+              <FormElement className="form-elem ">
                 <label
                   htmlFor=""
                   className="form-label font-semibold text-base"
@@ -216,6 +229,20 @@ const AccountScreen = () => {
                 </div>
               </FormElement>
             </div>
+            <Dialog
+              baseZIndex={1000}
+              style={{ width: "1200px" }}
+              visible={open}
+              onHide={() => handleClickClose()}
+            >
+              <UserForm
+                user={userRef.current}
+                closeForm={handleClickClose}
+                onSave={() => {
+                  setSaveTrigger(new Date().getTime())
+                }}
+              />
+            </Dialog>
           </UserContent>
         </UserDashboardWrapper>
       </Container>

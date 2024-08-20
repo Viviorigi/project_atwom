@@ -51,4 +51,12 @@ export class AuthService {
       headers: HeadersUtil.getHeadersAuth()
     });
   }
+
+  public resetPass(email:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/auth/forgot-password`);
+    return axios.post(url,email, {
+      headers: HeadersUtil.getHeaders()
+    });
+  }
+  
 }

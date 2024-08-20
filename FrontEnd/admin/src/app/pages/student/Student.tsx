@@ -96,7 +96,7 @@ export default function Student() {
         console.error(err);
       })
   }, [userSearchParams.timer, userSearchParams.page]);
-
+  
   const addStudent = () => {
     userRef.current = null;
     setOpen(true);

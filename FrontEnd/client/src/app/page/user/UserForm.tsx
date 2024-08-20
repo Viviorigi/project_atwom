@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { UserDTORequest } from "../../model/auth/UserDTORequest";
-import { useAppDispatch } from "../../store/hook";
-import Swal from "sweetalert2";
-import { setLoading } from "../../reducers/spinnerSlice";
-import { AuthService } from "../../services/auth/AuthService";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react'
+import { UserDetail } from '../../model/auth/UserDetail';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
-export default function StudentForm(props: any) {
-  const { closeForm, onSave, user } = props;
-  const [userSave, setUserSave] = useState<UserDTORequest>(
-    new UserDTORequest()
-  );
-  const dispatch = useAppDispatch();
+import { AuthService } from '../../services/AuthService';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+
+export default function UserForm(props: any) {
+  const { closeForm, user, onSave } = props;
   console.log(user);
+  const [userSave, setUserSave] = useState<UserDetail>(
+    new UserDetail()
+  );
 
   useEffect(() => {
     if (user) {
@@ -20,8 +18,12 @@ export default function StudentForm(props: any) {
     }
   }, []);
 
+  const [image, setImage] = useState<string | undefined>(undefined);
+  const [file, setFile] = useState<File | null>(null);
+
+
   const handleChangeText = (event: any) => {
-    const { name, value } = event.target;
+    const { name, value, onSave } = event.target;
     setUserSave((prev) => ({
       ...prev,
       [name]: value,
@@ -34,36 +36,11 @@ export default function StudentForm(props: any) {
       [name]: value,
     }));
   };
-  const handleActiveChange = (e: any) => {
-    setUserSave({
-      ...userSave,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const [image, setImage] = useState<string | undefined>(undefined);
-  const [file, setFile] = useState<File | null>(null);
-
-  const handleFileChange = (event: any) => {
-    const filePreview = event.target.files[0];
-    setFile(filePreview);
-    if (filePreview && filePreview.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(filePreview);
-    } else {
-      alert("Please select a valid image file.");
-    }
-  };
 
   const setUserState = () => {
-    setUserSave((prev: UserDTORequest) => {
+    setUserSave((prev: UserDetail) => {
       return {
         ...prev,
-        username: prev.username || "",
-        password: prev.password || "",
         email: prev.email || "",
         fullName: prev.fullName || "",
         address: prev.address || "",
@@ -75,17 +52,6 @@ export default function StudentForm(props: any) {
   };
 
   const chk = () => {
-    if (userSave.username === undefined || userSave.username === "") {
-      setUserState();
-      return false;
-    }
-    if (
-      (user === null && userSave.password === undefined) ||
-      userSave.password === ""
-    ) {
-      setUserState();
-      return false;
-    }
     if (userSave.email === undefined || userSave.email === "") {
       setUserState();
       return false;
@@ -108,9 +74,21 @@ export default function StudentForm(props: any) {
     }
     return true;
   };
+  const imageSource = image ? image : user.avatar !== null ? `http://localhost:8080/files/${user.avatar}` : defaultPersonImage;
 
-
-  const imageSource = image ? image : user !== null ? `http://localhost:8080/files/${user.avatar}` : defaultPersonImage;
+  const handleFileChange = (event: any) => {
+    const filePreview = event.target.files[0];
+    setFile(filePreview);
+    if (filePreview && filePreview.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(filePreview);
+    } else {
+      alert("Please select a valid image file.");
+    }
+  };
 
   const save = () => {
     if (!chk()) {
@@ -124,10 +102,7 @@ export default function StudentForm(props: any) {
     }
     Swal.fire({
       title: `Confirm`,
-      text:
-        user === null
-          ? "Do you want to create a new student?"
-          : `Do you want to update the student?`,
+      text: "Do you want to update my info",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -136,51 +111,28 @@ export default function StudentForm(props: any) {
       cancelButtonText: `No`,
     }).then((result) => {
       if (result.value) {
-        if (user === null) {
-          dispatch(setLoading(true));
-          AuthService.getInstance()
-            .create(formData)
-            .then((resp: any) => {
-              if (resp) {
-                setTimeout(() => {
-                  dispatch(setLoading(false));
-                  toast.success(resp.data.message);
-                  closeForm();
-                  onSave();
-                }, 1000);
-              }
-            })
-            .catch((error: any) => {
-              dispatch(setLoading(false));
-              closeForm();
-              toast.error(error.message);
-            });
-        } else {
-          dispatch(setLoading(true));
-          AuthService.getInstance()
-            .update(formData)
-            .then((resp: any) => {
-              if (resp) {
-                setTimeout(() => {
-                  dispatch(setLoading(false));
-                  toast.success(resp.data.message);
-                  closeForm();
-                  onSave();
-                }, 1000);
-              }
-            })
-            .catch((error: any) => {
-              dispatch(setLoading(false));
-              closeForm();
-              toast.error(error.response.data.message);
-            });
-        }
+        AuthService.getInstance()
+          .update(formData)
+          .then((resp: any) => {
+            if (resp) {
+              setTimeout(() => {
+                toast.success(resp.data.message);
+                closeForm();
+                onSave();
+              }, 1000);
+            }
+          })
+          .catch((error: any) => {
+            closeForm();
+            toast.error(error.response.data.message);
+          });
       }
     });
   };
+
   return (
-    <div>
-      <h3>{user === null ? "Add User" : "Edit User"}</h3>
+    <div className='container'>
+      <h3>Update Info</h3>
       <div className="row">
         {/* Column 1 */}
         <div className="col-md-6 mb-5">
@@ -206,28 +158,6 @@ export default function StudentForm(props: any) {
               characters.
             </div>
           </div>
-          {user === null && (
-            <div className="form-group">
-              <label>
-                Password <span className="text-danger">(*)</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                className="form-control"
-                value={userSave?.password || ""}
-                onChange={handleChangeText}
-                placeholder="Enter Password"
-              />
-              <div
-                className={`invalid-feedback ${userSave?.password?.toString() === "" ? "d-block" : ""
-                  }`}
-                style={{ fontSize: "100%", color: "red" }}
-              >
-                Password must not be empty and must be at least 6 characters.
-              </div>
-            </div>
-          )}
 
           <div className="form-group">
             <label>
@@ -291,23 +221,6 @@ export default function StudentForm(props: any) {
               Phone must not be empty.
             </div>
           </div>
-          {user !== null && (
-            <div className="form-group">
-              <label>
-                Active <span className="text-danger"></span>
-              </label>
-              <select
-                className="form-select"
-                value={userSave.isActive ? "true" : "false"}
-                onChange={handleActiveChange}
-                name="isActive"
-              >
-                <option value="true">Active</option>
-                <option value="false">InActive</option>
-              </select>
-            </div>
-          )}
-
         </div>
         {/* Column 2 */}
         <div className="col-md-6">
@@ -404,9 +317,9 @@ export default function StudentForm(props: any) {
         </div>
       </div>
 
-      <button type="submit" className="btn btn-primary mt-5" onClick={save}>
-        {user ? "Update" : "Save"}
+      <button type="submit" className="btn btn-primary mb-5" onClick={save}>
+        Update Info
       </button>
     </div>
-  );
+  )
 }

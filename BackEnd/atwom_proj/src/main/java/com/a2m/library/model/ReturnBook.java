@@ -43,6 +43,6 @@ public class ReturnBook {
     @Column(name = "status")
     private CheckoutStatus status;
 
-    @Column(name = "fine", precision = 10, scale = 2)
+    @Column(name = "fine", precision = 10)
     private Double fine;
 }
