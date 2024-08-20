@@ -76,6 +76,16 @@ export const CheckoutService = {
     }
   },
 
+  expiredCheckout: async (id: number): Promise<CheckoutDTO> => {
+    try {
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/expired/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error borrowing checkout with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
   deleteById: async (id: number): Promise<void> => {
     try {
       await axios.delete(`${BASE_URL}/delete/${id}`);

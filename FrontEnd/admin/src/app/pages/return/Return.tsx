@@ -1,13 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { ReturnDTO } from '../../model/ReturnDTO';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-//import ReturnDetail from './ReturnDetail';
 import Pagination from '../../comp/common/Pagination';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import { useAppDispatch } from '../../store/hook';
 import { setLoading } from '../../reducers/spinnerSlice';
 import { ReturnService } from '../../services/return/ReturnService';
+import ReturnDetail from './ReturnDetail';
+import { Dialog } from 'primereact/dialog';
+import ReturnForm from './ReturnForm'; // Import the ReturnForm component
+import { ReturnDTO } from '../../model/ReturnDTO';
 
 const Return = () => {
   const [returns, setReturns] = useState<ReturnDTO[]>([]);
@@ -15,11 +17,18 @@ const Return = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [open, setOpen] = useState(false);
   const [returnDetailOpen, setReturnDetailOpen] = useState(false);
-  const [returnSearchParams, setReturnSearchParams] = useState({ keySearch: '', page: 1, limit: 5, timer: new Date().getTime() });
+  const [returnFormOpen, setReturnFormOpen] = useState(false); // State to manage ReturnForm visibility
+  const [selectedReturn, setSelectedReturn] = useState<ReturnDTO | null>(null); // State to hold the selected return for editing
+  const [selectedReturnId, setSelectedReturnId] = useState<number | null>(null);
+  const [returnSearchParams, setReturnSearchParams] = useState({
+    keySearch: '',
+    page: 1,
+    limit: 5,
+    timer: new Date().getTime(),
+  });
   const dispatch = useAppDispatch();
   const indexOfLastItem = returnSearchParams.page * returnSearchParams.limit;
   const indexOfFirstItem = indexOfLastItem - returnSearchParams.limit;
-  const returnRef = useRef<ReturnDTO | null>(null);
 
   useEffect(() => {
     fetchReturns();
@@ -27,7 +36,8 @@ const Return = () => {
 
   const fetchReturns = async () => {
     try {
-      const resp = await ReturnService.findAll();
+      dispatch(setLoading(true));
+      const resp = await ReturnService.findAllReturn();
       dispatch(setLoading(false));
       setReturns(resp);
       setTotalReturns(resp.length);
@@ -48,9 +58,25 @@ const Return = () => {
     }
   };
 
-  const viewReturnDetail = (returnItem: ReturnDTO) => {
-    returnRef.current = returnItem;
+  const viewReturnDetail = (returnId: number) => {
+    setSelectedReturnId(returnId);
     setReturnDetailOpen(true);
+  };
+
+  const editReturn = async (returnId: number) => {
+    try {
+      const returnData = await ReturnService.findReturnById(returnId);
+      setSelectedReturn(returnData);
+      setReturnFormOpen(true);
+    } catch (error) {
+      toast.error('Error fetching return details for editing');
+    }
+  };
+
+  const handleSave = (updatedReturn: ReturnDTO) => {
+    setReturns(returns.map(returnItem => returnItem.id === updatedReturn.id ? updatedReturn : returnItem));
+    setReturnFormOpen(false);
+    toast.success('Return status updated successfully');
   };
 
   const deleteReturn = (id: number) => {
@@ -64,16 +90,16 @@ const Return = () => {
       confirmButtonText: 'Yes',
       cancelButtonText: 'No',
     }).then(async (result) => {
-      if (result.value) {
+      if (result.isConfirmed) {
         dispatch(setLoading(true));
         try {
-          //await ReturnService.deleteById(id);
-          dispatch(setLoading(false));
+          await ReturnService.deleteReturnById(id);
           setReturnSearchParams({ ...returnSearchParams, timer: new Date().getTime() });
           toast.success('Return deleted successfully');
         } catch (error) {
-          dispatch(setLoading(false));
           toast.error('Error deleting return');
+        } finally {
+          dispatch(setLoading(false));
         }
       }
     });
@@ -101,7 +127,10 @@ const Return = () => {
                   onChange={handleChangeSearch}
                   onKeyUp={handleKeyUpSearch}
                 />
-                <button className="btn btn-primary" onClick={() => setReturnSearchParams({ ...returnSearchParams, timer: new Date().getTime() })}>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setReturnSearchParams({ ...returnSearchParams, timer: new Date().getTime() })}
+                >
                   <span className="fas fa-search" />
                 </button>
               </div>
@@ -115,22 +144,27 @@ const Return = () => {
                   <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
                   <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Student</th>
                   <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Status</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Fine</th>
                   <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Return Date</th>
                   <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Update Time</th>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>Action</th>
+                  <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {returns.map((returnItem, index) => (
                   <tr key={returnItem.id}>
                     <td className="align-middle text-end pe-3">{indexOfFirstItem + index + 1}</td>
-                    {/* <td className="align-middle">{returnItem.studentName || 'N/A'}</td> */}
+                    <td className="align-middle text-center">{returnItem.user.fullName}</td>
                     <td className="align-middle text-center">{returnItem.status}</td>
-                    <td className="align-middle text-center">{format(new Date(returnItem.returnDate), 'dd/MM/yyyy, hh:mm')}</td>
-                    {/* <td className="align-middle text-center">{format(new Date(returnItem.updateTime), 'dd/MM/yyyy, hh:mm')}</td> */}
+                    <td className="align-middle text-center">{returnItem.fine}</td>
+                    <td className="align-middle text-center">{format(new Date(returnItem.returnDate), 'dd/MM/yyyy, HH:mm')}</td>
+                    <td className="align-middle text-center">{format(new Date(returnItem.checkout.endTime), 'dd/MM/yyyy, HH:mm')}</td>
                     <td className="align-middle text-center">
-                      <button className="btn btn-info btn-sm" onClick={() => viewReturnDetail(returnItem)}>
+                      <button className="btn btn-info btn-sm" onClick={() => viewReturnDetail(returnItem.id)}>
                         <span className="fas fa-eye" />
+                      </button>
+                      <button className="btn btn-warning btn-sm ms-2" onClick={() => editReturn(returnItem.id)}>
+                        <i className="fa-solid fa-pencil-alt"></i>
                       </button>
                       <button className="btn btn-danger btn-sm ms-2" onClick={() => deleteReturn(returnItem.id)}>
                         <i className="fa-solid fa-trash"></i>
@@ -142,67 +176,32 @@ const Return = () => {
             </table>
           </div>
 
-          <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
-            <div className="col-auto d-flex">
-              <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info" />
-              <a className="fw-semi-bold" href="#" data-list-view="*">View all<span className="fas fa-angle-right ms-1" data-fa-transform="down-1" /></a>
-              <a className="fw-semi-bold d-none" href="#" data-list-view="less">View Less<span className="fas fa-angle-right ms-1" data-fa-transform="down-1" /></a>
-            </div>
-            <div className="col-auto d-flex">
-              <button className="page-link" data-list-pagination="prev"><span className="fas fa-chevron-left" /></button>
-              <ul className="mb-0 pagination" />
-              <button className="page-link pe-0" data-list-pagination="next"><span className="fas fa-chevron-right" /></button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={returnSearchParams.page}
+            totalPage={totalPage}
+            onPageChange={(page: number) => setReturnSearchParams({ ...returnSearchParams, page })}
+          />
         </div>
       </div>
 
-      {returnDetailOpen && (
-        <div className="modal" tabIndex={-1} role="dialog">
-          <div className="modal-dialog modal-lg" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Return Details</h5>
-                <button type="button" className="close" onClick={() => setReturnDetailOpen(false)}>
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className="search-box mb-3">
-                  <form className="position-relative" data-bs-toggle="search" data-bs-display="static">
-                    <input className="form-control search-input search" type="search" placeholder="Search books" aria-label="Search" />
-                    <span className="fas fa-search search-box-icon" />
-                  </form>
-                </div>
-                <div className="table-responsive scrollbar-overlay">
-                  <table className="table table-sm fs--1 mb-0">
-                    <thead>
-                      <tr>
-                        <th className="sort align-middle" scope="col" style={{width: '10%'}}>Book Code</th>
-                        <th className="sort align-middle" scope="col" style={{width: '30%'}}>Book Title</th>
-                        <th className="sort align-middle" scope="col" style={{width: '10%'}}>Quantity</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* {returnRef.current?.details?.map((detail, index) => (
-                        <tr key={index}>
-                          <td className="align-middle">{detail.bookCode}</td>
-                          <td className="align-middle">{detail.bookTitle}</td>
-                          <td className="align-middle text-center">{detail.quantity}</td>
-                        </tr>
-                      ))} */}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setReturnDetailOpen(false)}>Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {returnDetailOpen && selectedReturnId !== null && (
+        <Dialog
+          header="Return Details"
+          visible={returnDetailOpen}
+          onHide={() => setReturnDetailOpen(false)}
+          style={{ width: '80vw' }}
+        >
+          <ReturnDetail returnId={selectedReturnId} onHide={() => setReturnDetailOpen(false)} />
+        </Dialog>
       )}
-    
+
+      {returnFormOpen && (
+        <ReturnForm
+          returnData={selectedReturn}
+          onClose={() => setReturnFormOpen(false)}
+          onSave={handleSave}
+        />
+      )}
     </div>
   );
 };

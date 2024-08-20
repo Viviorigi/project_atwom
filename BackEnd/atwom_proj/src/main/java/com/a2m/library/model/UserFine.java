@@ -24,5 +24,5 @@ public class UserFine {
     private ReturnBook returnBook;
 
     @Column(name = "amount")
-    private Integer amount;
+    private Double amount;
 }

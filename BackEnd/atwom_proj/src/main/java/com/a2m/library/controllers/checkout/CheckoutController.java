@@ -2,8 +2,10 @@ package com.a2m.library.controllers.checkout;
 
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.CheckoutDTO;
+import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.service.checkout.CheckoutService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +63,18 @@ public class CheckoutController {
     public ResponseEntity<CheckoutDTO> borrowCheckout(@PathVariable Integer id) {
         CheckoutDTO updatedCheckout = checkoutService.borrowCheckout(id);
         return ResponseEntity.ok(updatedCheckout);
+    }
+
+    @PutMapping("/expired/{id}")
+    public ResponseEntity<CheckoutDTO> expiredCheckout(@PathVariable Integer id) {
+        try {
+            CheckoutDTO updatedCheckout = checkoutService.expiredCheckout(id);
+            return new ResponseEntity<>(updatedCheckout, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Scheduled(cron = "0 0 0 * * ?") // Run every day at midnight to check for expired checkouts

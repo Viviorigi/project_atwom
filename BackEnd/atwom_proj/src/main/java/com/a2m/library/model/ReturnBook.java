@@ -42,4 +42,7 @@ public class ReturnBook {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private CheckoutStatus status;
+
+    @Column(name = "fine", precision = 10, scale = 2)
+    private Double fine;
 }

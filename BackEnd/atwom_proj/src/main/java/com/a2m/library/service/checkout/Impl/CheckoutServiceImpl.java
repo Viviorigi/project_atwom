@@ -8,7 +8,9 @@ import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.model.Checkout;
 import com.a2m.library.model.CheckoutDetail;
 import com.a2m.library.model.User;
+import com.a2m.library.model.UserFine;
 import com.a2m.library.repository.CheckoutRepository;
+import com.a2m.library.repository.UserFineRepository;
 import com.a2m.library.repository.UserRepository;
 import com.a2m.library.service.checkout.CheckoutDetailService;
 import com.a2m.library.service.checkout.CheckoutService;
@@ -36,6 +38,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserFineRepository userFineRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -166,6 +171,25 @@ public class CheckoutServiceImpl implements CheckoutService {
         LocalDateTime endTime = now.plusDays(30);
         checkoutRepository.updateStatusToBorrowed(id, CheckoutStatus.BORROWED, now, endTime);
         return findById(id).orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+    }
+
+    @Override
+    @Transactional
+    public CheckoutDTO expiredCheckout(Integer id) {
+        // Tìm checkout theo ID
+        Checkout checkout = checkoutRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+        
+        // Kiểm tra trạng thái hiện tại của checkout
+        if (checkout.getStatus() == CheckoutStatus.BORROWED) {
+            // Cập nhật trạng thái thành EXPIRED
+            checkout.setStatus(CheckoutStatus.EXPIRED);
+            checkoutRepository.save(checkout);
+        } else {
+            throw new IllegalStateException("Only BORROWED checkouts can be marked as EXPIRED.");
+        }
+
+        return toDTO(checkout);
     }
 
     private CheckoutDTO toDTO(Checkout checkout) {

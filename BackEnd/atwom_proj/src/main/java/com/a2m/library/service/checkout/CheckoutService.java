@@ -26,4 +26,6 @@ public interface CheckoutService {
     CheckoutDTO rejectCheckout(Integer id);
 
     CheckoutDTO borrowCheckout(Integer id);
+
+    CheckoutDTO expiredCheckout(Integer id);
 }

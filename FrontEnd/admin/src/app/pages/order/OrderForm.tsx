@@ -79,9 +79,9 @@ export default function OrderForm({ order, users, onSave, hideForm }: OrderFormP
           case CheckoutStatus.BORROWED:
             updatedOrder = await CheckoutService.borrowCheckout(currentOrder.id);
             break;
-          // case CheckoutStatus.EXPIRED:
-          //   updatedOrder = await CheckoutService.expireCheckout(currentOrder.id);
-          //   break;
+          case CheckoutStatus.EXPIRED:
+            updatedOrder = await CheckoutService.expiredCheckout(currentOrder.id);
+            break;
           default:
             return;
         }

@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { ReturnDTO } from '../../model/ReturnDTO';
-import { CheckoutStatus } from '../../model/CheckoutStatus';
 
-const BASE_URL = '/api/returnbook';
+const BASE_URL = 'http://localhost:8080/api/return';
 
 export const ReturnService = {
   // Fetch all return books
-  findAll: async (): Promise<ReturnDTO[]> => {
+  findAllReturn: async (): Promise<ReturnDTO[]> => {
     try {
-      const response = await axios.get<ReturnDTO[]>(`${BASE_URL}/list`);
+      const response = await axios.get<ReturnDTO[]>(BASE_URL);
       return response.data;
     } catch (error) {
       console.error("Error fetching return books", error);
@@ -17,7 +16,7 @@ export const ReturnService = {
   },
 
   // Fetch a single return book by ID
-  findById: async (id: number): Promise<ReturnDTO> => {
+  findReturnById: async (id: number): Promise<ReturnDTO> => {
     try {
       const response = await axios.get<ReturnDTO>(`${BASE_URL}/${id}`);
       return response.data;
@@ -27,41 +26,48 @@ export const ReturnService = {
     }
   },
 
-  // Save a new return book
-  save: async (ReturnDTO: ReturnDTO): Promise<ReturnDTO> => {
+  // Delete a return book by ID
+  deleteReturnById: async (id: number): Promise<void> => {
     try {
-      const response = await axios.post<ReturnDTO>(`${BASE_URL}/add`, ReturnDTO);
+      await axios.delete(`${BASE_URL}/${id}`);
+    } catch (error) {
+      console.error(`Error deleting return book with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
+  // Create a new return book from a checkout ID
+  createReturn: async (checkoutId: number): Promise<ReturnDTO> => {
+    try {
+      const response = await axios.post<ReturnDTO>(`${BASE_URL}/from-checkout/${checkoutId}`);
       return response.data;
     } catch (error) {
-      console.error("Error saving return book", error);
+      console.error(`Error creating return book from checkout ID: ${checkoutId}`, error);
       throw error;
     }
   },
 
-  // Update the status of a return book
-  updateStatus: async (id: number, status: CheckoutStatus): Promise<ReturnDTO> => {
+  // Mark a return book as returned
+  markAsReturned: async (id: number): Promise<ReturnDTO> => {
     try {
-      if (status === CheckoutStatus.RETURNED || status === CheckoutStatus.PENALTY) {
-        const response = await axios.put<ReturnDTO>(`${BASE_URL}/update/${id}`, null, {
-          params: { status }
-        });
-        return response.data;
-      } else {
-        throw new Error("Invalid status update request");
-      }
+      const response = await axios.put<ReturnDTO>(`${BASE_URL}/returned/${id}`);
+      return response.data;
     } catch (error) {
-      console.error(`Error updating return book status for ID: ${id}`, error);
+      console.error(`Error marking return book as returned with ID: ${id}`, error);
       throw error;
     }
   },
 
-  // Apply penalty to a return book
-  applyPenalty: async (id: number): Promise<void> => {
+  // Mark a return book as penalty
+  markAsPenalty: async (id: number, fineAmount: number): Promise<ReturnDTO> => {
     try {
-      await axios.post(`${BASE_URL}/applyPenalty/${id}`);
+      const response = await axios.put<ReturnDTO>(`${BASE_URL}/penalty/${id}`, null, {
+        params: { fineAmount },
+      });
+      return response.data;
     } catch (error) {
-      console.error(`Error applying penalty for return book ID: ${id}`, error);
+      console.error(`Error marking return book as penalty with ID: ${id}`, error);
       throw error;
     }
-  }
+  },
 };
