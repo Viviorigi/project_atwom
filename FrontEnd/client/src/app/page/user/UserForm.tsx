@@ -114,12 +114,10 @@ export default function UserForm(props: any) {
         AuthService.getInstance()
           .update(formData)
           .then((resp: any) => {
-            if (resp) {
-              setTimeout(() => {
+            if (resp) {          
                 toast.success(resp.data.message);
                 closeForm();
-                onSave();
-              }, 1000);
+                onSave();  
             }
           })
           .catch((error: any) => {
