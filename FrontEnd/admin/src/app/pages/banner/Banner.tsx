@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import { BannerService } from '../../services/banner/BannerService';
 import BannerForm from './BannerForm';
+import BannerInfo from './BannerInfo';
 
 export default function Banner() {
   const [listBanner, setListListBanner] = useState([]);
@@ -196,7 +197,7 @@ export default function Banner() {
                   </thead>
                   <tbody className="list" id="customers-table-body">
                     {listBanner.map((u: any, index: number) => {
-                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.userUid} >
+                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id} >
                         <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{indexOfFirstItem + index + 1}</td>
                         <td className="customer align-middle white-space-nowrap ps-10"><div className="d-flex align-items-center text-1100">
                           <img style={{ width: "200px" }} src={`http://localhost:8080/files/${u.image}`} alt="" />
@@ -249,7 +250,7 @@ export default function Banner() {
               visible={openDetail}
               onHide={() => handleClickCloseDetail()}
             >
-              {/* <InfoBanner info={userRef.current} setUserSearchParams={setUserSearchParams} closeDetail={handleClickCloseDetail} /> */}
+              <BannerInfo info={bannerRef.current} setUserSearchParams={setUserSearchParams} closeDetail={handleClickCloseDetail} />
             </Dialog>
 
           </div>

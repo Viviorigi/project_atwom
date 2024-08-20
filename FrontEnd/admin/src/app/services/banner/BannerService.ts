@@ -36,9 +36,9 @@ export class BannerService {
     });
   }
   
-  public update(auth:any,id:any){
-    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/banner/update/${id}`);
-    return axios.post(url,auth, {
+  public update(data:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/banner/update`);
+    return axios.post(url,data, {
       headers: HeadersUtil.getHeadersAuthFormData()
     });
   }

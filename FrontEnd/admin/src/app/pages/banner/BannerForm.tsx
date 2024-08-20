@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { UserDTORequest } from "../../model/auth/UserDTORequest";
 import { useAppDispatch } from "../../store/hook";
 import Swal from "sweetalert2";
 import { setLoading } from "../../reducers/spinnerSlice";
-import { AuthService } from "../../services/auth/AuthService";
 import { toast } from "react-toastify";
 import defaultPersonImage from "../../../assets/images/imagePerson.png"   
 import { BannerDTO } from "../../model/BannerDTO";
@@ -47,7 +45,7 @@ export default function BannerForm(props: any) {
     }
   };
 
-  const setUserState = () => {
+  const setBannerState = () => {
     setBannerSave((prev: BannerDTO) => {
       return {
         ...prev,
@@ -60,27 +58,25 @@ export default function BannerForm(props: any) {
   };
 
   const chk = () => {
-    if (bannerSave.title === undefined || bannerSave.description === "") {
-      setUserState();
+    if (bannerSave.title === undefined || bannerSave.title === "") {
+      setBannerState();
+      return false;
+    }if (bannerSave.description === undefined || bannerSave.description === "") {
+      setBannerState();
       return false;
     }
-    if (
-      (banner === null && bannerSave.image === undefined) ||
-      bannerSave.image === ""
-    ) 
     return true;
   };
 
 
-  const imageSource = image? image : banner!==null ? `http://localhost:8080/files/${banner.avatar}`: defaultPersonImage;
+  const imageSource = image? image : banner!==null ? `http://localhost:8080/files/${banner.image}`: defaultPersonImage;
 
   const save = () => {
-
+    
     if (!chk()) {
       return;
     }
     const formData = new FormData();
-
     formData.append("bannerDTO", JSON.stringify(bannerSave));
     if (file) {
       formData.append("file", file);
@@ -119,9 +115,11 @@ export default function BannerForm(props: any) {
               toast.error(error.message);
             });
         } else {
+          console.log("updateeeeee");
+          
           dispatch(setLoading(true));
           BannerService.getInstance()
-            .update(formData,bannerSave.id)
+            .update(formData)
             .then((resp: any) => {
               if (resp) {
                 setTimeout(() => {
@@ -155,7 +153,7 @@ export default function BannerForm(props: any) {
               type="text"
               name="title"
               className="form-control"
-              value={bannerSave?.title || ""}
+              value={bannerSave.title || ""}
               onChange={handleChangeText}
               placeholder="Enter title"
               readOnly={banner !== null ? true : false}
@@ -177,12 +175,12 @@ export default function BannerForm(props: any) {
                 type="text"
                 name="description"
                 className="form-control"
-                value={bannerSave?.description || ""}
+                value={bannerSave.description || ""}
                 onChange={handleChangeText}
                 placeholder="Enter description"
               />
               <div
-                className={`invalid-feedback ${bannerSave?.description?.toString() === "" ? "d-block" : ""
+                className={`invalid-feedback ${bannerSave.description?.toString() === "" ? "d-block" : ""
                   }`}
                 style={{ fontSize: "100%", color: "red" }}
               >
