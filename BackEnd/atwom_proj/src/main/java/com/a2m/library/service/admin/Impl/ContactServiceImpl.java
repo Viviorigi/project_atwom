@@ -50,7 +50,7 @@ public class ContactServiceImpl implements ContactService {
 				.orElseThrow(() -> new BadRequestException("User not found"));
 		contact.setResponseDate(LocalDateTime.now());
 		contact.setResponse(contactDTO.getResponse());
-		emailService.sendEmailResponseContact(contact.getEmail(), "Response", "http://localhost:3333");
+		emailService.sendEmailResponseContact(contact.getEmail(), "Response",contact.getFirstName()+ contact.getLastName(), "http://localhost:3333");
 		contactRepository.save(contact);
 	}
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,10 +43,8 @@ public class ContactController {
 	
 	@PostMapping("/contact/update")
     public ResponseEntity<?> updateContact(
-    		@Valid @RequestPart("contactDTO") String contactJson) throws JsonMappingException, JsonProcessingException {
+    		@Valid @RequestBody ContactDTO contact) throws JsonMappingException, JsonProcessingException {
 
-		ContactDTO contact = new ContactDTO();
-		contact = objectMapper.readValue(contactJson, ContactDTO.class);
         if (contact == null) {
             return ResponseEntity.notFound().build();
         }
@@ -80,5 +79,16 @@ public class ContactController {
 		ContactListResponse response = ContactListResponse.builder().contacts(bannerPage.getContent())
 				.totalPages(bannerPage.getTotalPages()).totalBanners(bannerPage.getTotalElements()).build();
 		return ResponseEntity.ok(response);
+	}
+	
+	@DeleteMapping("/contact/delete")
+	public ResponseEntity<?> deleteContact(@RequestParam Long id) {
+		try {
+			contactService.deleteContact(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+		}
+		return ResponseEntity.ok().body(new MessageResponse("Delete successful"));
 	}
 }

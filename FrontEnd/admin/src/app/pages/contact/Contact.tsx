@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import { ContactService } from '../../services/contact/ContactService';
+import ContactForm from './ContactForm';
 
 export default function Contact() {
   const [listContact, setListContact] = useState([]);
@@ -23,7 +24,7 @@ export default function Contact() {
   const dispatch = useAppDispatch();
   const indexOfLastItem = userSearchParams.page * userSearchParams.limit;
   const indexOfFirstItem = indexOfLastItem - userSearchParams.limit;
-  const userRef = useRef<any>();
+  const contactRef = useRef<any>();
   const handleClickClose = () => {
     setOpen(false);
   };
@@ -97,20 +98,20 @@ export default function Contact() {
   }, [userSearchParams.timer, userSearchParams.page]);
   
   const addStudent = () => {
-    userRef.current = null;
+    contactRef.current = null;
     setOpen(true);
   };
 
   const editUser = (u: any) => {
-    userRef.current = u;
+    contactRef.current = u;
     setOpen(true);
   };
   const info = (u: any) => {
-    userRef.current = u;
+    contactRef.current = u;
     setOpenDetail(true);
   };
 
-  const deleteUser = (id: number) => {
+  const deleteUser = (c_id: number) => {
     Swal.fire({
       title: `Confirm`,
       text: `Do you want to Delete user`,
@@ -123,8 +124,8 @@ export default function Contact() {
     }).then((result) => {
       if (result.value) {
         dispatch(setLoading(true));
-        AuthService.getInstance()
-          .delete({ userUid: id })
+        ContactService.getInstance()
+          .delete({ id: c_id })
           .then((resp: any) => {
             dispatch(setLoading(false));
             setUserSearchParams({
@@ -183,7 +184,7 @@ export default function Contact() {
                 <table className="table table-bordered fs--1 mb-2 mt-5">
                   <thead>
                     <tr>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '2%' }}>#</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>EMAIL</th>
                       <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>FIRSTNAME</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>LASTNAME</th>
@@ -196,7 +197,7 @@ export default function Contact() {
                   </thead>
                   <tbody className="list" id="customers-table-body">
                     {listContact.map((u: any, index: number) => {
-                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id} >
+                      return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.contact_id} >
                         <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{indexOfFirstItem + index + 1}</td>
                         <td className="email align-middle white-space-nowrap ps-3">{u.email}</td>
                         <td className="total-orders align-middle white-space-nowrap fw-semi-bold text-end text-1000">{u.firstName}</td>
@@ -208,7 +209,7 @@ export default function Contact() {
                         <td className="last-order align-middle white-space-nowrap text-700 ">
                           <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button>
                           <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editUser(u)}><i className="fa-solid fa-pen"></i></button>
-                          <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteUser(u.userUid)}><i className="fa-solid fa-trash"></i></button>
+                          <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteUser(u.contact_id)}><i className="fa-solid fa-trash"></i></button>
                         </td>
                       </tr>
                     })}
@@ -231,8 +232,8 @@ export default function Contact() {
               visible={open}
               onHide={() => handleClickClose()}
             >
-              {/* <StudentForm
-                user={userRef.current}
+              <ContactForm
+                contact={contactRef.current}
                 closeForm={handleClickClose}
                 onSave={() => {
                   setUserSearchParams((prev) => ({
@@ -240,7 +241,7 @@ export default function Contact() {
                     timer: new Date().getTime(),
                   }));
                 }}
-              /> */}
+              />
             </Dialog>
             <Dialog
               baseZIndex={2000}

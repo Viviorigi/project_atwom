@@ -29,6 +29,19 @@ export class ContactService {
     });
   }
 
-  
+  public update(data:any){
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/contact/update`);
+    return axios.post(url,data, {
+      headers: HeadersUtil.getHeadersAuth()
+    });
+  }
+
+  public delete(id:any){
+    const params: RequestParam[] = ParamUtil.toRequestParams(id);
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/contact/delete`, params);
+    return axios.delete(url, {
+      headers: HeadersUtil.getHeadersAuth()
+    });
+  }
  
 }

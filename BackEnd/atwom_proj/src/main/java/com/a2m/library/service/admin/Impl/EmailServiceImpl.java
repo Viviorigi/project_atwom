@@ -99,7 +99,7 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
-	public void sendEmailResponseContact(String to, String subject, String url) throws MessagingException {
+	public void sendEmailResponseContact(String to, String subject,String fullName, String url) throws MessagingException {
 		// TODO Auto-generated method stub
 		String htmlContent = "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "<meta charset='UTF-8'>"
 				+ "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
@@ -113,10 +113,10 @@ public class EmailServiceImpl implements EmailService {
 				+ ".btn:hover { background-color: #007bff; color: #fff; }"
 				+ ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }"
 				+ "</style>" + "</head>" + "<body>" + "<div class='container'>" + "<div class='header'>"
-				+ "<h1>Account Verification</h1>" + "</div>" + "<div class='content'>" + "<p>Hello,</p>"
-				+ "<p>Thank you for leave us a message. Please click the link below to verify your email address and complete your registration:</p>"
+				+ "<h1>Response Form ATWOM Library</h1>" + "</div>" + "<div class='content'>" + "<p>Hello " +fullName.toUpperCase()+ "</p>"
+				+ "<p>Thank you for leave us a message. Please click the link below to visit our library:</p>"
 				+ "<a href='" + url + "' class='btn'>Continue Issue</a>"
-				+ "<p>If you did not register for this account, please ignore this email.</p>" + "</div>"
+				+ "<p>Have a good day.</p>" + "</div>"
 				+ "<div class='footer'>" + "<p>&copy; 2024 Atwom Library. All rights reserved.</p>" + "</div>"
 				+ "</div>" + "</body>" + "</html>";
 
