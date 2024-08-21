@@ -180,4 +180,5 @@ public class BannerController {
 				.totalPages(bannerPage.getTotalPages()).totalBanners(bannerPage.getTotalElements()).build();
 		return ResponseEntity.ok(response);
 	}
+
 }

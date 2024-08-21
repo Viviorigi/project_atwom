@@ -149,7 +149,7 @@ const UserMenu = () => {
                 <img src="./assets/icons/ac_heart.svg" alt="" />
               </span>
               <span className="text-base font-semibold nav-link-text no-wrap">
-                Wishlist
+                Account Fine
               </span>
             </Link>
           </li>

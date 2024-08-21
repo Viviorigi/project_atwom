@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BaseButtonGreen } from '../../styles/button';
+import { ContactDTO } from '../../model/ContactDTO';
+import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
+import { ContactService } from '../../services/ContactService';
 
 const ContactMapWrapper = styled.div`
     border: none;
@@ -13,6 +17,82 @@ const ContactMessage = styled.div`
 `;
 
 export default function Contact() {
+
+    const [contact, setContact] = useState<ContactDTO>(
+        new ContactDTO()
+    );
+
+    const handleChangeText = (event: any) => {
+        const { name, value } = event.target;
+        setContact((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const setContactState = () => {
+        setContact((prev: ContactDTO) => {
+            return {
+                ...prev,
+                email: prev.email || "",
+                firstName: prev.firstName || "",
+                lastName: prev.lastName || "",
+                question: prev.question || "",
+            };
+        });
+    };
+
+    const chk = () => {
+        if (contact.firstName === undefined || contact.firstName === "") {
+            setContactState();
+            return false;
+        }
+        if (contact.lastName === undefined || contact.lastName === "") {
+            setContactState();
+            return false;
+        }
+        if (contact.question === undefined || contact.question === "") {
+            setContactState();
+            return false;
+        }
+        if (contact.email === undefined || contact.email === "") {
+            setContactState();
+            return false;
+        }
+        return true;
+    };
+
+    const submit = () => {
+        if (!chk()) {
+            return;
+        }
+        Swal.fire({
+            title: `Confirm`,
+            text: "Do you want to submit",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#89B449",
+            cancelButtonColor: "#E68A8C",
+            confirmButtonText: `Yes`,
+            cancelButtonText: `No`,
+        }).then((result) => {
+            if (result.value) {
+                ContactService.getInstance()
+                    .create(contact)
+                    .then((resp: any) => {
+                        if (resp) {
+                            toast.success(resp.data.message);
+                        }
+                    })
+                    .catch((error: any) => {
+                        toast.error(error.response.data.message);
+                    });
+            }
+        });
+    };
+
+
+
     return (
         <>
             <ContactMapWrapper>
@@ -49,22 +129,51 @@ export default function Contact() {
                                     <div className=" d-flex align-items-center justify-content-center">
                                         <div className="row g-3">
                                             <div className="col-md-6">
-                                                <input type="text" className="form-control" placeholder="First name" aria-label="First name" />
+                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">FirstName</label>
+                                                <input type="text" className="form-control" name='firstName' value={contact.firstName || ""} onChange={handleChangeText} aria-label="First name" />
+                                                <div
+                                                    className={`invalid-feedback ${contact?.firstName?.toString() === "" ? "d-block" : ""
+                                                        }`}
+                                                    style={{ fontSize: "100%", color: "red" }}
+                                                >
+                                                    FirstName must not be empty.
+                                                </div>
                                             </div>
                                             <div className="col-md-6">
-                                                <input type="text" className="form-control" placeholder="Last name" aria-label="Last name" />
+                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">LastName</label>
+                                                <input type="text" className="form-control" name='lastName' value={contact.lastName || ""} onChange={handleChangeText} aria-label="Last name" />
+                                                <div
+                                                    className={`invalid-feedback ${contact?.lastName?.toString() === "" ? "d-block" : ""
+                                                        }`}
+                                                    style={{ fontSize: "100%", color: "red" }}
+                                                >
+                                                    LastName must not be empty.
+                                                </div>
                                             </div>
                                             <div className='col-12'>
                                                 <label htmlFor="exampleFormControlInput1" className="form-label mb-3">Enter Your Email address</label>
-                                                <input type="email" className="form-control" id="exampleFormControlInput1" placeholder="Email" />
-
+                                                <input type="email" className="form-control" name='email' value={contact?.email || ""} onChange={handleChangeText} id="exampleFormControlInput1" />
+                                                <div
+                                                    className={`invalid-feedback ${contact?.email?.toString() === "" ? "d-block" : ""
+                                                        }`}
+                                                    style={{ fontSize: "100%", color: "red" }}
+                                                >
+                                                    Email must not be empty.
+                                                </div>
                                             </div>
                                             <div className="col-12">
                                                 <label htmlFor="exampleFormControlTextarea1" className="form-label">Type in your message</label>
-                                                <textarea className="form-control" id="exampleFormControlTextarea1" rows={3}></textarea>
+                                                <textarea className="form-control" name='question' value={contact?.question || ""} onChange={handleChangeText} id="exampleFormControlTextarea1" rows={3}></textarea>
+                                                <div
+                                                    className={`invalid-feedback ${contact?.question?.toString() === "" ? "d-block" : ""
+                                                        }`}
+                                                    style={{ fontSize: "100%", color: "red" }}
+                                                >
+                                                    Message must not be empty.
+                                                </div>
                                             </div>
                                             <div className='col-12 text-center gap-2'>
-                                                <BaseButtonGreen type="submit">Submit</BaseButtonGreen>
+                                                <BaseButtonGreen type="submit" onClick={submit}>Submit</BaseButtonGreen>
                                             </div>
                                         </div>
                                     </div>

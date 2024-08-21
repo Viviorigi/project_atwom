@@ -24,11 +24,11 @@ export const indexRouter: any = {
     { path: 'about', element: <About /> },
     { path: 'book', element: <BookListItem /> },
     { path: 'book/details', element: <BookDetail /> },
-    { path: 'change_password', element: <AuthGuard><RoleGuard role={["ADMIN", "STUDENT"]}><ChangePassword /></RoleGuard></AuthGuard> },
+    { path: 'change_password', element: <AuthGuard><RoleGuard role={["ADMIN", "USER"]}><ChangePassword /></RoleGuard></AuthGuard> },
     { path: 'order', element: <OrderList /> },
     { path: 'cart', element: <CartScreen /> },
     { path: 'contact', element: <Contact /> },
     { path: 'order_detail', element: <OrderDetail /> },
-    { path: 'account', element: <AuthGuard><RoleGuard role={["ADMIN", "STUDENT"]}><AccountScreen /></RoleGuard></AuthGuard> },
+    { path: 'account', element: <AuthGuard><RoleGuard role={["ADMIN", "USER"]}><AccountScreen /></RoleGuard></AuthGuard> },
   ],
 };

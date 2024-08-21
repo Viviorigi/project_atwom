@@ -40,6 +40,10 @@ export default function SideBar() {
                                                 <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}><i className="fa-solid fa-mask"></i> Manage Banner</span></div>
                                             </Link>
                                             </li>
+                                            <li className="nav-item mb-2"><Link className={location.pathname === "/contact" ? "nav-link active" : "nav-link"} to="contact" >
+                                                <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}><i className="fa fa-commenting-o" aria-hidden="true"></i> Manage Contact</span></div>
+                                            </Link>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>

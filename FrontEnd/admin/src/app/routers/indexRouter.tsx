@@ -9,6 +9,7 @@ import Return from '../pages/return/Return';
 import AuthGuard from '../guard/AuthGuard';
 import RoleGuard from '../guard/roleGuard';
 import Banner from '../pages/banner/Banner';
+import Contact from '../pages/contact/Contact';
 export const indexRouter: any = {
     path: '',
     element: (
@@ -21,6 +22,7 @@ export const indexRouter: any = {
         { path: 'student', element: <RoleGuard role="ADMIN"><Student /> </RoleGuard> },
         { path: 'order', element: <RoleGuard role="ADMIN"><Order /></RoleGuard>  },
         { path: 'returnbook', element: <RoleGuard role="ADMIN"><Return /></RoleGuard> },
-        { path: 'banner', element: <RoleGuard role="ADMIN"><Banner /></RoleGuard> }
+        { path: 'banner', element: <RoleGuard role="ADMIN"><Banner /></RoleGuard> },
+        { path: 'contact', element: <RoleGuard role="ADMIN"><Contact /></RoleGuard> }
     ],
 };
