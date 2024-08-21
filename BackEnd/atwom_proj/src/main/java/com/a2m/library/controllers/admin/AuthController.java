@@ -1,5 +1,7 @@
 package com.a2m.library.controllers.admin;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.request.ForgotPasswordRequest;
 import com.a2m.library.dto.request.LoginRequest;
@@ -58,6 +61,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -79,6 +83,15 @@ public class AuthController {
 
 	@Autowired
 	private PasswordResetService passwordResetService;
+	
+	private final Path resourcePath;
+    private final Path resourcePathThumb;
+
+    @Autowired
+    public AuthController(FileUploadConfig fileUploadConfig) {
+        this.resourcePath = fileUploadConfig.getResourcePath();
+        this.resourcePathThumb = fileUploadConfig.getResourcePathThumb();
+    }
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -172,4 +185,27 @@ public class AuthController {
 			return modelAndView;
 		}
 	}
+	
+	@GetMapping("/getImage")
+	public void getImage(@RequestParam String atchFleSeqNm, 
+	                     HttpServletResponse httpServletResponse) {
+	    try {
+	        Path targetLocation = resourcePath.resolve(atchFleSeqNm);
+
+	        httpServletResponse.setContentType(Files.probeContentType(targetLocation));
+
+	        try (InputStream inputStream = Files.newInputStream(targetLocation);
+	             OutputStream outputStream = httpServletResponse.getOutputStream()) {
+	            byte[] buffer = new byte[8192];
+	            int bytesRead;
+	            while ((bytesRead = inputStream.read(buffer)) != -1) {
+	                outputStream.write(buffer, 0, bytesRead);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace(); // Consider replacing with proper logging
+	        httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	    }
+	}
+
 }

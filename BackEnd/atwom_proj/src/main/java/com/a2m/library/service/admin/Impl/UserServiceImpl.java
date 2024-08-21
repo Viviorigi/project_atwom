@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 		user.setDob(userDTO.getDob());
 		user.setCre_dt(LocalDateTime.now());
 		user.setUpd_dt(LocalDateTime.now());
-		user.setActive(false);
+		user.setActive(true);
 		userRepository.save(user);
 		UserRole userRole = new UserRole();
 		userRole.setRoleId(RoleEnum.STUDENT_USER.getValue());
@@ -84,17 +84,6 @@ public class UserServiceImpl implements UserService {
 
 		userRoleRepository.save(userRole);
 
-//		String token = UUID.randomUUID().toString();
-//		VerificationToken verificationToken = new VerificationToken();
-//		verificationToken.setToken(token);
-//		verificationToken.setUser(user);
-//		verificationToken.setExpiryDate(LocalDateTime.now().plusHours(24));
-//
-//		tokenRepository.save(verificationToken);
-//
-//		String verificationUrl = "http://localhost:8080/api/admin/verify?token=" + token;
-//		emailService.sendEmail(user.getEmail(), "Verify your email",
-//				"Click the link to verify your email: " + verificationUrl);
 	}
 
 	@Override

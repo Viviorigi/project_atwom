@@ -7,6 +7,8 @@ import { commonCardStyles } from "../../styles/card";
 import { breakpoints } from "../../styles/themes/default";
 import Title from "../common/Title";
 import { newArrivalData } from "../../data/data";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const ProductCardBoxWrapper = styled.div`
   ${commonCardStyles}
@@ -57,35 +59,54 @@ const Category = () => {
     variableWidth: true,
   };
 
+  const [bookList, setBookList] = useState([]);
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/new`;
+    axios.get(url).then((resp: any) => {
+      if (resp.data) {
+        setBookList(resp.data);
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [])
+
   return (
     <Section>
       <Container>
-        <Title titleText={"New Arrival"} />
+        <Title titleText={"New Book"} />
         <ArrivalSliderWrapper>
           <Slider
             nextArrow={<CustomNextArrow />}
             prevArrow={<CustomPrevArrow />}
             {...settings}
           >
-            {newArrivalData?.map((newArrival) => {
+
+            {bookList.map((u:any) => {
               return (
-                <ProductCardBoxWrapper key={newArrival.id}>
+                <ProductCardBoxWrapper key={u.id}>
                   <div className="product-img">
                     <img
                       className="object-fit-cover"
-                      src={newArrival.imgSource}
+                      src={`http://localhost:8080/files/${u.image}`}
                       alt=""
+                      width="100px"
+                      height="100px"
                     />
                   </div>
                   <div className="product-info">
-                    <p className="font-semibold text-xl">{newArrival.title}</p>
+                    <p className="font-semibold text-xl">{u.title}</p>
                   </div>
                 </ProductCardBoxWrapper>
               );
             })}
           </Slider>
+          
         </ArrivalSliderWrapper>
       </Container>
+
+      
     </Section>
   );
 };

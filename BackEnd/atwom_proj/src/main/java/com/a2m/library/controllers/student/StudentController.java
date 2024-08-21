@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.request.ChangePasswordRequest;
 import com.a2m.library.dto.request.ForgotPasswordRequest;
@@ -84,11 +85,15 @@ public class StudentController {
 	@Autowired
 	private PasswordResetService passwordResetService;
 	
+	private final Path resourcePath;
+	private final Path resourcePathThumb;
 	
 
-	public StudentController(UserService userService, ObjectMapper objectMapper) {
+	public StudentController(UserService userService, ObjectMapper objectMapper, FileUploadConfig fileUploadConfig) {
 		this.userService = userService;
 		this.objectMapper = objectMapper;
+		this.resourcePath = fileUploadConfig.getResourcePath();
+		this.resourcePathThumb = fileUploadConfig.getResourcePathThumb();
 	}
 
 	@Value("${file.upload-dir}")
@@ -117,11 +122,8 @@ public class StudentController {
 				String timestamp = String.valueOf(System.currentTimeMillis());
 				String newFilename = timestamp + "_" + originalFilename;
 
-				final Path directory = Paths.get(uploadDir);
-				final Path filePath = Paths.get(uploadDir + newFilename);
-				if (!Files.exists(directory)) {
-					Files.createDirectories(directory);
-				}
+				Path filePath = resourcePath.resolve(newFilename);
+
 				Files.write(filePath, file.getBytes());
 				userDTO.setAvatar(newFilename);
 			} catch (Exception e) {

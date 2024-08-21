@@ -34,6 +34,12 @@ public class BookServiceImpl implements BookService{
 			return bookRepository.findAllBook(keySearch, cateId,  pageable);
 		return bookRepository.findAll(pageable);
 	}
+	
+	@Override
+	public List<Book> findAllActive() {
+		List<Book>books = bookRepository.findAllActiveBooks();
+		return books;
+	}
 
 //	@Override
 //	public BookDTO findById(Integer id) {
@@ -87,9 +93,9 @@ public class BookServiceImpl implements BookService{
 	}
 
 	@Override
-	public List<BookDTO> findAllActive() {
-		List<Book>books = bookRepository.findAllActiveBooks();
-		return books.stream().map(book -> convertToBookDTO(book)).collect(Collectors.toList());
+	public List<Book> findAllActiveNew() {
+		// TODO Auto-generated method stub
+		return bookRepository.findAllActiveBooksSortedByCreatedDate();
 	}
 
 }

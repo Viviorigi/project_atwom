@@ -67,7 +67,7 @@ export default function InfoStudent(props: any) {
                 <div className="row align-items-center g-3 g-sm-5 text-center text-sm-start">
                   <div className="col-12 col-sm-auto">
                     <label className="cursor-pointer avatar avatar-5xl" htmlFor="avatarFile">
-                      <img className="rounded-circle" src={info.avatar ? `http://localhost:8080/files/${info.avatar}` : defaultPersonImage} alt="" /></label>
+                      <img className="rounded-circle" src={info.avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${info.avatar}` : defaultPersonImage} alt="" /></label>
                   </div>
                   <div className="col-12 col-sm-auto mb-3">
                     <h3>{info.fullName}</h3>
