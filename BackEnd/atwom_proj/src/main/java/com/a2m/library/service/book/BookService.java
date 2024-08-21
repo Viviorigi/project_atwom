@@ -10,7 +10,7 @@ import com.a2m.library.model.Book;
 
 public interface BookService {
     List<BookDTO> findAll();
-    List<BookDTO> findAllActive();
+    
 //    BookDTO findById(Integer id);
     void save(BookDTO bookDTO);
     BookDTO update(Integer id, BookDTO bookDTO);
@@ -23,6 +23,8 @@ public interface BookService {
     Book findById(Integer id);
 	public Page<Book>findAll(String keySearch, int cateId, int page, int size);
 	void save(Book book);
+	List<Book> findAllActive();
+	List<Book> findAllActiveNew();
 }
 
 

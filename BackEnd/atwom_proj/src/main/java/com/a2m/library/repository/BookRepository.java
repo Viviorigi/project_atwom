@@ -13,10 +13,12 @@ import com.a2m.library.model.Book;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
-	@Query("SELECT u FROM Book u WHERE u.active = false")
+	@Query("SELECT u FROM Book u WHERE u.active = true")
 	List<Book> findAllActiveBooks();
 	
 	@Query("SELECT u FROM Book u WHERE (u.title LIKE %:keySearch% OR u.publisher LIKE %:keySearch%) AND (:cateId = 0 OR u.category.id = :cateId)")
 	Page<Book> findAllBook(@Param("keySearch") String keySearch, @Param("cateId") int cateId, Pageable pageable);
 
+	@Query("SELECT b FROM Book b WHERE b.active = true ORDER BY b.createdDate DESC")
+    List<Book> findAllActiveBooksSortedByCreatedDate();
 }
