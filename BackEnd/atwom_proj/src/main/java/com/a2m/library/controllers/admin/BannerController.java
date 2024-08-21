@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.response.BannerListResponse;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.dto.response.UserListResponse;
@@ -43,6 +45,8 @@ import jakarta.validation.Valid;
 public class BannerController {
 	@Autowired
 	private BannerService bannerService;
+	@Autowired
+	private ObjectMapper objectMapper;
 	
 	@Value("${file.upload-dir}")
 	private String uploadDir;
@@ -95,21 +99,16 @@ public class BannerController {
 		return ResponseEntity.ok().body(new MessageResponse("Delete successful"));
 	}
 	
-	@PutMapping("/banner/update/{id}")
+	@PostMapping("/banner/update")
     public ResponseEntity<?> updateBanner(
-            @PathVariable("id") Long id,
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam(required = false) MultipartFile file) {
+    		@Valid @RequestPart("bannerDTO") String bannerJson,
+            @RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
 
-        Banner banner = bannerService.findById(id);
+        Banner banner = new Banner();
+        banner = objectMapper.readValue(bannerJson, Banner.class);
         if (banner == null) {
             return ResponseEntity.notFound().build();
         }
-
-        // Cập nhật thông tin banner
-        banner.setTitle(title);
-        banner.setDescription(description);
 
         if (file != null && !file.isEmpty()) {
             try {
@@ -144,7 +143,7 @@ public class BannerController {
 
         // Lưu thông tin banner đã cập nhật
         try {
-            bannerService.save(banner);
+            bannerService.update(banner);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));

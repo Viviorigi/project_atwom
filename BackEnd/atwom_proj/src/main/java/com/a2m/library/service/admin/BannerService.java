@@ -12,6 +12,7 @@ public interface BannerService {
 	public void deleteBanner(Long bannerId) throws Exception;
 	
 	public void save(Banner banner);
+	public void update(Banner banner) throws Exception;
 	
 	Banner findById(Long id);
 	

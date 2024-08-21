@@ -1,8 +1,10 @@
 package com.a2m.library.service.admin.Impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,6 +32,8 @@ public class BannerServiceImpl implements BannerService {
 	@Override
 	public void save(Banner banner) {
 		// TODO Auto-generated method stub
+		banner.setCre_dt(LocalDateTime.now());
+		banner.setUpd_dt(LocalDateTime.now());
 		bannerRepository.save(banner);
 	}
 
@@ -57,6 +61,18 @@ public class BannerServiceImpl implements BannerService {
                                       .collect(Collectors.toList());
 
         return new PageImpl<>(banner, pageRequest, banners.getTotalElements());
+	}
+
+	@Override
+	public void update(Banner bannerDTO) throws Exception {
+		// TODO Auto-generated method stub
+		Banner banner = bannerRepository.findById(bannerDTO.getId())
+				.orElseThrow(() -> new BadRequestException("User not found"));
+		banner.setUpd_dt(LocalDateTime.now());
+		banner.setTitle(bannerDTO.getTitle());
+		banner.setDescription(bannerDTO.getDescription());
+		banner.setImage(bannerDTO.getImage());
+		bannerRepository.save(banner);
 	}
 	
 }
