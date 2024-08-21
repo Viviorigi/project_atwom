@@ -10,6 +10,7 @@ import Pagination from '../../comp/common/Pagination';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 import InfoStudent from './InfoStudent';
 
 export default function Student() {
@@ -96,7 +97,7 @@ export default function Student() {
         console.error(err);
       })
   }, [userSearchParams.timer, userSearchParams.page]);
-  
+
   const addStudent = () => {
     userRef.current = null;
     setOpen(true);
@@ -203,7 +204,12 @@ export default function Student() {
                       return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.userUid} >
                         <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{indexOfFirstItem + index + 1}</td>
                         <td className="customer align-middle white-space-nowrap pe-5"><div className="d-flex align-items-center text-1100">
-                          <div className="avatar avatar-m"><img className="rounded-circle" src={u.avatar ? `http://localhost:8080/files/${u.avatar}` : defaultPersonImage} alt="PersonAvatar" /></div>
+                          <div className="avatar avatar-m">
+                            <img className="rounded-circle" src={u.avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${u.avatar}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                              target.src = noImageAvailable; // Set the fallback image
+                            }} /></div>
                           <p className="mb-0 ms-3 text-1100 fw-bold">{u.fullName}</p>
                         </div></td>
                         <td className="email align-middle white-space-nowrap ps-3">{u.email}</td>

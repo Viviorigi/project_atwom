@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.dto.response.UserListResponse;
@@ -53,15 +54,20 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
+	private final Path resourcePath;
+	private final Path resourcePathThumb;
+
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
-	public UserController(UserService userService, ObjectMapper objectMapper) {
+	public UserController(UserService userService, ObjectMapper objectMapper, FileUploadConfig fileUploadConfig) {
 		this.userService = userService;
 		this.objectMapper = objectMapper;
+		this.resourcePath = fileUploadConfig.getResourcePath();
+		this.resourcePathThumb = fileUploadConfig.getResourcePathThumb();
 	}
-	
+
 	@PostMapping("/create")
 	public ResponseEntity<?> createUser(@Valid @RequestPart("userDTO") String userDTOJson,
 			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
@@ -74,11 +80,9 @@ public class UserController {
 				String timestamp = String.valueOf(System.currentTimeMillis());
 				String newFilename = timestamp + "_" + originalFilename;
 
-				final Path directory = Paths.get(uploadDir);
-				final Path filePath = Paths.get(uploadDir + newFilename);
-				if (!Files.exists(directory)) {
-					Files.createDirectories(directory);
-				}
+
+				Path filePath = resourcePath.resolve(newFilename);
+
 				Files.write(filePath, file.getBytes());
 				userDTO.setAvatar(newFilename);
 			} catch (Exception e) {
@@ -96,13 +100,13 @@ public class UserController {
 		}
 		return ResponseEntity.ok().body(new MessageResponse("Create successful"));
 	}
-	
+
 	@GetMapping(value = "/getUserInfo")
 	public ResponseEntity<?> getUserInfo(@RequestParam Long userUid)
 			throws JsonMappingException, JsonProcessingException {
 		return ResponseEntity.ok(userService.getByUserUid(userUid));
 	}
-	
+
 	@PostMapping("/update")
 	public ResponseEntity<?> updateUser(@Valid @RequestPart("userDTO") String userDTOJson,
 			@RequestParam(required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
@@ -114,11 +118,8 @@ public class UserController {
 				String timestamp = String.valueOf(System.currentTimeMillis());
 				String newFilename = timestamp + "_" + originalFilename;
 
-				final Path directory = Paths.get(uploadDir);
-				final Path filePath = Paths.get(uploadDir + newFilename);
-				if (!Files.exists(directory)) {
-					Files.createDirectories(directory);
-				}
+				Path filePath = resourcePath.resolve(newFilename);
+				
 				Files.write(filePath, file.getBytes());
 				userDTO.setAvatar(newFilename);
 			} catch (Exception e) {
@@ -134,7 +135,7 @@ public class UserController {
 		}
 		return ResponseEntity.ok().body(new MessageResponse("Update successful"));
 	}
-	
+
 	@GetMapping(value = "/getAll")
 	public ResponseEntity<UserListResponse> getAll(@RequestParam(defaultValue = "") String keySearch,
 			@RequestParam("page") int page, @RequestParam("limit") int limit) {
@@ -145,7 +146,7 @@ public class UserController {
 				.totalPages(userPage.getTotalPages()).totalUsers(userPage.getTotalElements()).build();
 		return ResponseEntity.ok(response);
 	}
-	
+
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteUser(@RequestParam Long userUid) {
 		try {

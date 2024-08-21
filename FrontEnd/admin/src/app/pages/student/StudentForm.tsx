@@ -6,6 +6,7 @@ import { setLoading } from "../../reducers/spinnerSlice";
 import { AuthService } from "../../services/auth/AuthService";
 import { toast } from "react-toastify";
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 export default function StudentForm(props: any) {
   const { closeForm, onSave, user } = props;
   const [userSave, setUserSave] = useState<UserDTORequest>(
@@ -110,7 +111,7 @@ export default function StudentForm(props: any) {
   };
 
 
-  const imageSource = image ? image : user !== null ? `http://localhost:8080/files/${user.avatar}` : defaultPersonImage;
+  const imageSource = image ? image : user.avatar !== null ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${user.avatar}` : defaultPersonImage;
 
   const save = () => {
     if (!chk()) {
@@ -397,6 +398,11 @@ export default function StudentForm(props: any) {
                   src={imageSource}
                   alt="Preview"
                   style={{ width: "200px", height: "200px" }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                    target.src = noImageAvailable; // Set the fallback image
+                  }}
                 />
               </div>
             )}
