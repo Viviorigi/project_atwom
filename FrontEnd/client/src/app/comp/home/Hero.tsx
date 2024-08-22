@@ -169,6 +169,8 @@ const Hero = () => {
       page: 1,
     }).then((resp:any) => {
       setBanner(resp.data.banners);
+      console.log(resp.data.banners);
+      
     })
   },[])
   return (

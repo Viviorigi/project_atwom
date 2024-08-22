@@ -111,7 +111,7 @@ export default function StudentForm(props: any) {
   };
 
 
-  const imageSource = image ? image : user.avatar !== null ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${user.avatar}` : defaultPersonImage;
+  const imageSource = image ? image : (user && user.avatar) !== null ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${user.avatar}` : defaultPersonImage;
 
   const save = () => {
     if (!chk()) {
@@ -181,7 +181,7 @@ export default function StudentForm(props: any) {
   };
   return (
     <div>
-      <h3>{user === null ? "Add User" : "Edit User"}</h3>
+      <h3>{user === null ? "Add Student" : "Edit Student"}</h3>
       <div className="row">
         {/* Column 1 */}
         <div className="col-md-6 mb-5">
