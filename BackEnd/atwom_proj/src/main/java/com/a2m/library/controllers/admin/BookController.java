@@ -85,11 +85,11 @@ public class BookController {
 		return ResponseEntity.ok().body(book);
 	}
 
-	@GetMapping("/book/getCate")
-	public Category getCate(@RequestParam("id") Integer id) {
-		Book book = bookService.findById(id);
-		return book.getCategory();
-	}
+//	@GetMapping("/book/getCate")
+//	public Category getCate(@RequestParam("id") Integer id) {
+//		Book book = bookService.findById(id);
+//		return book.getCategory();
+//	}
 
 	@PostMapping("/book/add")
 	public ResponseEntity<?> studentAddList(@RequestParam("book") String bookJson,
@@ -98,25 +98,25 @@ public class BookController {
 			throws JsonMappingException, JsonProcessingException {
 		BookDTO book;
 		book = objectMapper.readValue(bookJson, BookDTO.class);
-//		if (file != null && !file.isEmpty()) {
-//			try {
-//				String originalFilename = file.getOriginalFilename();
-//				String timestamp = String.valueOf(System.currentTimeMillis());
-//				String newFilename = timestamp + "_" + originalFilename;
-//
-//
-//				Path filePath = resourcePath.resolve(newFilename);
-//
-//				Files.write(filePath, file.getBytes());
-//				
-//				book.setImage(newFilename);
-//				System.out.println("đã lưu ảnh");
-//			} catch (Exception e) {
-//				System.out.println("Lỗi tải ảnh");
-//				e.printStackTrace();
-//				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
-//			}
-//		}
+		if (file != null && !file.isEmpty()) {
+			try {
+				String originalFilename = file.getOriginalFilename();
+				String timestamp = String.valueOf(System.currentTimeMillis());
+				String newFilename = timestamp + "_" + originalFilename;
+
+
+				Path filePath = resourcePath.resolve(newFilename);
+
+				Files.write(filePath, file.getBytes());
+				
+				book.setImage(newFilename);
+				System.out.println("đã lưu ảnh");
+			} catch (Exception e) {
+				System.out.println("Lỗi tải ảnh");
+				e.printStackTrace();
+				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
+			}
+		}
 		
 //		List<String> imageName = new ArrayList<String>();
 //		if(images != null) {

@@ -14,5 +14,5 @@ export class BookDTO {
   cateId?:number;
   cateName?:string;
   createdDate?: string;
-  updatedDate?: string;
+  updatedDate?: string; 
 }

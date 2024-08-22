@@ -22,7 +22,7 @@ public interface BookService {
     public Book convertToBook(BookDTO bookDTO);
     
     //---------------------------------------------
-    Book findById(Integer id);
+    BookDTO findById(Integer id);
 	public Page<Book>findAll(String keySearch, int cateId, int page, int size);
 //	void save(Book book);
 	List<Book> findAllActive();

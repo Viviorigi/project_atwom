@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Hero from "../../comp/home/Hero";
 import Category from "../../comp/home/Category";
 import Feedback from "../../comp/home/Feedback";
-
+import imageBookDefault from "../../../assets/images/imageBookDefault.png"
 
 const HomeScreenWrapper = styled.main``;
 

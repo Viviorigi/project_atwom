@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import { product_one } from "../../data/data";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BaseLinkGreen } from "../../styles/button";
 import { currencyFormat } from "../../utils/helper";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
@@ -10,6 +10,12 @@ import BookPreview from "../../comp/book/BookPreview";
 import BookServices from "../../comp/book/BookService";
 import BookSimilar from "../../comp/book/BookSimilar";
 import BookDescriptionTab from "../../comp/book/BookDescriptionTab";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { BookDTO } from "../../model/BookDTO";
+import imageBookDefault from "../../../assets/images/imageBookDefault.png"
+import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
+
 
 
 const DetailsScreenWrapper = styled.main`
@@ -182,17 +188,38 @@ const BookColorWrapper = styled.div`
   }
 `;
 
-const BookDetail = () => {
+const BookDetail = (props: any) => {
+
+  const [book, setBook] = useState<BookDTO>();
+  // const {bookId} = props;
+  // console.log(bookId);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get('id');
+  // console.log(id);
+
+
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/detail?id=${id}`;
+    axios.get(url).then((resp: any) => {
+      if (resp.data) {
+        setBook(resp.data);
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [])
+
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
       key={index}
-      className={`text-yellow ${
-        index < Math.floor(product_one.rating)
-          ? "bi bi-star-fill"
-          : index + 0.5 === product_one.rating
+      className={`text-yellow ${index < Math.floor(product_one.rating)
+        ? "bi bi-star-fill"
+        : index + 0.5 === product_one.rating
           ? "bi bi-star-half"
           : "bi bi-star"
-      }`}
+        }`}
     ></span>
   ));
 
@@ -204,11 +231,77 @@ const BookDetail = () => {
 
   return (
     <DetailsScreenWrapper>
+      {/* <h2>Mô tả book</h2> */}
       <Container>
         <Breadcrumb items={breadcrumbItems} />
         <DetailsContent className="grid">
-          <BookPreview previewImages={product_one.previewImages} />
+          {/* <BookPreview previewImages={product_one.previewImages} /> */}
+          {/* <BookPreview previewImages={book?.image} /> */}
+          <img
+            // className="object-fit-cover"
+            src={book?.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book?.image}` : imageBookDefault} onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // Prevent infinite loop in case fallback image also fails
+              target.src = imageBookDefault; // Set the fallback image
+            }}
+            alt=""
+            width="500px"
+            height="600px"
+          />
           <BookDetailsWrapper>
+            <div className="container mt-4">
+              <h2 className="text-dark mb-4">{book?.title}</h2>
+              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
+                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+                  Loại tài liệu:
+                </p>
+                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                  {book?.cateName}
+                </p>
+              </div>
+              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
+                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+                  Tác giả:
+                </p>
+                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                  {book?.publisher}
+                </p>
+              </div>
+              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
+                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+                  Năm xuất bản:
+                </p>
+                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                  {book?.publicationYear}
+                </p>
+              </div>
+
+              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
+                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+                  Giá:
+                </p>
+                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                  {book?.price ? formatCurrency(book?.price) : 0}
+                </p>
+              </div>
+            </div>
+
+            {/* Giá tiền-------------------------------------------------- */}
+            <div className="btn-and-price flex items-center flex-wrap">
+              <BaseLinkGreen
+                to="/cart"
+                as={BaseLinkGreen}
+                className="prod-add-btn"
+              >
+                <span className="prod-add-btn-icon">
+                  <i className="bi bi-cart2"></i>
+                </span>
+                <span className="prod-add-btn-text">Mượn</span>
+              </BaseLinkGreen>
+            </div>
+            <BookServices />
+          </BookDetailsWrapper>
+          {/* <BookDetailsWrapper>
             <h2 className="prod-title">{product_one.title}</h2>
             <div className="flex items-center rating-and-comments flex-wrap">
               <div className="prod-rating flex items-center">
@@ -279,9 +372,10 @@ const BookDetail = () => {
               </span>
             </div>
             <BookServices />
-          </BookDetailsWrapper>
+          </BookDetailsWrapper> */}
         </DetailsContent>
-        <BookDescriptionTab />
+        <BookDescriptionTab book={book} />
+
         <BookSimilar />
       </Container>
     </DetailsScreenWrapper>

@@ -7,6 +7,10 @@ import Title from "../../comp/common/Title";
 import BookFilter from "../../comp/book/BookFilter";
 import BookList from "../../comp/book/BookList";
 import { books } from "../../data/data";
+import imageBookDefault from "../../../assets/images/imageBookDefault.png"
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 
 const ProductsContent = styled.div`
   grid-template-columns: 320px auto;
@@ -87,6 +91,22 @@ const DescriptionContent = styled.div`
 `;
 
 const BookListItem = () => {
+
+  const [bookList, setBookList] = useState([]);
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/list/all`;
+    axios.get(url).then((resp: any) => {
+      if (resp.data) {
+        setBookList(resp.data);
+        console.log(resp.data);
+        
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [])
+
   const breadcrumbItems = [
     { label: "Home", link: "/" },
     { label: "Products", link: "" },
@@ -101,7 +121,7 @@ const BookListItem = () => {
           </ProductsContentLeft>
           <ProductsContentRight>
             <div className="products-right-top flex items-center justify-between">
-              <h4 className="text-xxl">Women&apos;s Clothing</h4>
+              <h4 className="text-xxl">A2m&apos;s Libary</h4>
               <ul className="products-right-nav flex items-center justify-end flex-wrap">
                 <li>
                   <Link to="/" className="active text-lg font-semibold">
@@ -115,7 +135,31 @@ const BookListItem = () => {
                 </li>
               </ul>
             </div>
+
             <BookList products={books.slice(0, 12)} />
+            {/* {bookList.map((u:any) => {
+              return (
+                <div key={u.id}>
+                  <div className="product-img">
+                    <img
+                      className="object-fit-cover"
+                      src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault}  onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                        target.src = imageBookDefault; // Set the fallback image
+                      }}
+                      alt=""
+                      width="50px"
+                      height="50px"
+                    />
+                  </div>
+                  <div className="product-info">
+                    <p className="font-semibold text-xl">{u.title}</p>
+                  </div>
+                </div>
+              );
+            })} */}
+
           </ProductsContentRight>
         </ProductsContent>
       </Container>
