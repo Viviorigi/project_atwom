@@ -9,6 +9,7 @@ import Pagination from '../../comp/common/Pagination';
 import { format } from 'date-fns';
 import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 
 export default function Book() {
 
@@ -241,8 +242,11 @@ export default function Book() {
                         <td className="align-middle text-center">
                           <div className="d-flex align-items-center">
                             <div className="avatar avatar-m">
-                              <img className="rounded-circle" src={u.image ? `http://localhost:8080/files/${u.image}` : defaultPersonImage} alt="Book Image" />
-                            </div>
+                              <img className="rounded-circle" src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                                target.src = noImageAvailable; // Set the fallback image
+                              }} /></div>
                             <p className="mb-0 ms-3 text-1100 fw-bold">{u.title}</p>
                           </div>
                         </td>
@@ -250,9 +254,10 @@ export default function Book() {
                         <td className="align-middle text-center text-1000">{u.publicationYear}</td>
                         <td className="align-middle text-center text-1100">{u.quantity}</td>
                         <td className="align-middle text-start text-700">{formatCurrency(u.price)}</td>
-                        <td className="align-middle text-center text-1100">{u.description}</td>
-                        <td className="align-middle text-center text-700">{formatDate(u.createdDate)}</td>
-                        <td className="align-middle text-center text-700">{formatDate(u.updatedDate)}</td>
+                        <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }}/>
+                        {/* <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-start text-1000"  dangerouslySetInnerHTML={{ __html: u.description }}/> */}
+                        <td className="align-middle text-center text-700">{formatDate(u.cre_dt)}</td>
+                        <td className="align-middle text-center text-700">{formatDate(u.upd_dt)}</td>
                         <td className="align-middle text-center">
                           <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}>
                             <span className="badge-label">{u.active ? "Active" : "Inactive"}</span>
