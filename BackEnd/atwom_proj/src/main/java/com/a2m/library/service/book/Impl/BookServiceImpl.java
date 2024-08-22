@@ -66,9 +66,9 @@ public class BookServiceImpl implements BookService{
 //	}
 	
 	@Override
-	public Book findById(Integer id) {
+	public BookDTO findById(Integer id) {
 		// TODO Auto-generated method stub
-		Book book = bookRepository.findById(id).get();
+		BookDTO book = convertToBookDTO(bookRepository.findById(id).get());
 		return book;
 	}
 

@@ -93,7 +93,9 @@ export default function AddBook(props: any) {
         }
     };
 
-    const imageSource = image ? image : bookDTO.image !== null ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage;
+    // const imageSource = image ? image : bookDTO.image !== null ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage;
+    const imageSource = image || (bookDTO && bookDTO.image ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage);
+
 
     const [imageSources, setImageSources] = useState<File[]>([]);
 
@@ -119,7 +121,7 @@ export default function AddBook(props: any) {
         if (bookDTO != null) {
             setBook({
                 ...bookDTO,
-                updatedDate: new Date().toISOString()
+                upd_dt: new Date().toISOString()
             })
             setEditorContent(bookDTO.description || '');
         } else {
@@ -127,8 +129,8 @@ export default function AddBook(props: any) {
                 ...bookDTO,
                 description: '',
                 active: true,
-                createdDate: new Date().toISOString(),
-                updatedDate: new Date().toISOString()
+                cre_dt: new Date().toISOString(),
+                upd_dt: new Date().toISOString()
             })
         }
 
@@ -274,7 +276,7 @@ export default function AddBook(props: any) {
                     <div className="col-md-6 mb-5">
                         <div className="form-group">
                             <label>
-                                Title
+                                Title<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
@@ -287,7 +289,7 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Publisher
+                                Publisher<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
@@ -403,7 +405,7 @@ export default function AddBook(props: any) {
                         {/* Lưu ảnh bìa-------------------------------------------------- */}
                         <div className="form-group">
                             <label>
-                                Avatar <span className="text-danger">(*)</span>
+                                Avatar 
                             </label>
                             <br />
                             <input
@@ -440,7 +442,7 @@ export default function AddBook(props: any) {
 
                         <div className="form-group">
                             <label>
-                                Description image <span className="text-danger">(*)</span>
+                                Description image 
                             </label>
                             <br />
                             <input
@@ -455,23 +457,6 @@ export default function AddBook(props: any) {
                                     {imageSources.map((file, index) => (
                                         <div key={index} style={{ position: 'relative', margin: '5px' }}>
                                             <img src={URL.createObjectURL(file)} alt={`Preview ${index}`} style={{ width: "100px", height: "100px" }} />
-                                            {/* <button
-                                                onClick={() => handleRemoveImage(index)}
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: '5px',
-                                                    right: '5px',
-                                                    background: 'red',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '50%',
-                                                    width: '24px',
-                                                    height: '24px',
-                                                    cursor: 'pointer',
-                                                }}
-                                            >
-                                                &times;
-                                            </button> */}
                                         </div>
                                     ))}
                                 </div>

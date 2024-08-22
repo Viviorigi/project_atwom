@@ -9,6 +9,8 @@ import Title from "../common/Title";
 import { newArrivalData } from "../../data/data";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import imageBookDefault from "../../../assets/images/imageBookDefault.png"
+
 
 const ProductCardBoxWrapper = styled.div`
   ${commonCardStyles}
@@ -89,7 +91,11 @@ const Category = () => {
                   <div className="product-img">
                     <img
                       className="object-fit-cover"
-                      src={`http://localhost:8080/files/${u.image}`}
+                      src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault}  onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                        target.src = imageBookDefault; // Set the fallback image
+                      }}
                       alt=""
                       width="100px"
                       height="100px"

@@ -109,9 +109,10 @@ export default function StudentForm(props: any) {
     }
     return true;
   };
-
+  
 
   const imageSource = image ? image : user.avatar !== null ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${user.avatar}` : defaultPersonImage;
+  // const imageSource = image || (user && user.avatar ? `http://localhost:8080/getImage?atchFleSeqNm=${user.avatar}` : defaultPersonImage);
 
   const save = () => {
     if (!chk()) {
