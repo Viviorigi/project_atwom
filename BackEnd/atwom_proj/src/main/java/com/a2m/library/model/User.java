@@ -3,6 +3,7 @@ package com.a2m.library.model;
 import java.io.Serializable; 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -14,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -83,4 +85,6 @@ public class User implements Serializable {
 	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
 	private List<Role> roles;
 
+	@OneToMany(mappedBy = "user")
+    private List<WishList> wishlist = new ArrayList<>();
 }

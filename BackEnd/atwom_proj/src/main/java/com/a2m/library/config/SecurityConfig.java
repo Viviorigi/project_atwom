@@ -75,6 +75,7 @@ public class SecurityConfig {
 	                    .requestMatchers("/files/*").permitAll()
 	                    .requestMatchers("/api/admin/book/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/admin/category/**").hasRole("ADMIN")
+	                    .requestMatchers("/api/wishlist/**").permitAll()
 	                    .anyRequest().permitAll());
 //						.anyRequest().authenticated());
 		http.authenticationProvider(authenticationProvider());

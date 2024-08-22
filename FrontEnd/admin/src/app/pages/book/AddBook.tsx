@@ -93,9 +93,9 @@ export default function AddBook(props: any) {
         }
     };
 
+
     // const imageSource = image ? image : bookDTO.image !== null ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage;
     const imageSource = image || (bookDTO && bookDTO.image ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage);
-
 
     const [imageSources, setImageSources] = useState<File[]>([]);
 
