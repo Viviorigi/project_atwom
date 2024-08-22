@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.Year;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -73,4 +74,8 @@ public class Book {
   @OneToMany(mappedBy = "book")
   @JsonManagedReference
   private List<ImagesBook> imagebooks;
+  
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<WishList> wishlist = new ArrayList<>();
+  
 }
