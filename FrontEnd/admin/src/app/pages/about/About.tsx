@@ -200,7 +200,7 @@ export default function About() {
                         <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-end text-1000" dangerouslySetInnerHTML={{ __html: u.answer }}/>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.cre_dt)}</td>
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">{formatDate(u.upd_dt)}</td>
-                        <td className="last-order align-middle white-space-nowrap text-700 ">
+                        <td className="last-order align-middle white-space-nowrap text-700 text-center ">
                           <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button>
                           <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editUser(u)}><i className="fa-solid fa-pen"></i></button>
                           <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteUser(u.about_id)}><i className="fa-solid fa-trash"></i></button>

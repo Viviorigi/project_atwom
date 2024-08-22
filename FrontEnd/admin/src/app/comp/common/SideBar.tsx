@@ -33,7 +33,7 @@ export default function SideBar() {
                                             </Link>
                                             </li>
                                             <li className="nav-item mb-2"><Link className={location.pathname === "/returnbook" ? "nav-link active" : "nav-link"} to="returnbook" >
-                                                <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}>Manage Return Book</span></div>
+                                                <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}><i className="fa-solid fa-rotate-left"></i>Manage Return Book</span></div>
                                             </Link>
                                             </li>
                                             <li className="nav-item mb-2"><Link className={location.pathname === "/banner" ? "nav-link active" : "nav-link"} to="banner" >
