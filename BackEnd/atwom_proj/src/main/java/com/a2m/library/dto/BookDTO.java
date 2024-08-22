@@ -5,20 +5,25 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.Set;
 
+import jakarta.persistence.Column;
+
 @Data
 public class BookDTO{
     private Integer id;
     private String title;
-    private Year publicationYear;
+    private int publicationYear;
     private String publisher;
     private Integer quantity;
-    private Integer quantityPlaced;
-    private Integer status;
-    private String[] image;
-    private CategoryDTO category; 
+//    private Integer quantityPlaced;
+//    private Integer status;
+    private Double price;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    private String image;
+    private Boolean active;
 
-    private LocalDateTime creDt;
-    private LocalDateTime updDt;
-    private Boolean deleted;
-    private Set<AuthorDTO> authors;
+    private LocalDateTime cre_dt;
+    private LocalDateTime upd_dt;
+    private int cateId;
+    private String cateName;
 }

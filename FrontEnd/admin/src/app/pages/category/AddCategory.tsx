@@ -4,11 +4,23 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
+import JoditEditor, { Jodit } from "jodit-react";
+import DOMPurify from 'dompurify';
 
 export default function AddCategory(props: any) {
     const { hideForm, categoryDTO, onSave } = props;
     const [category, setCategory] = useState<CategoryDTO>(new CategoryDTO());
+    const [editorContent, setEditorContent] = useState('');
     const currentDate = new Date().toISOString();
+
+    //xử lý text-editor 
+    const handleContentChange = (newContent: any) => {
+        setEditorContent(newContent);
+        setCategory({
+            ...category,
+            description: newContent,
+        });
+    };
 
     // xử lý nhập ký tự không phải số
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -30,14 +42,16 @@ export default function AddCategory(props: any) {
         if (categoryDTO != null) {
             setCategory({
                 ...categoryDTO,
-                updatedDate: new Date().toISOString()
+                upd_dt: new Date().toISOString()
             })
+            setEditorContent(categoryDTO.description || '');
         } else {
             setCategory({
                 ...categoryDTO,
-                active:true,
-                createdDate: new Date().toISOString(),
-                updatedDate: new Date().toISOString()
+                active: true,
+                description:'',
+                cre_dt: new Date().toISOString(),
+                upd_dt: new Date().toISOString()
             })
         }
     }, [])
@@ -146,7 +160,7 @@ export default function AddCategory(props: any) {
                     <div className="col-md-6 mb-5">
                         <div className="form-group">
                             <label>
-                                Name
+                                Name<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
@@ -178,15 +192,22 @@ export default function AddCategory(props: any) {
 
                     <div className="col-md-6 mb-5">
                         <div className="form-group">
-                            <label>
-                                Description
+                            {/* <label>
+                                Description<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
                                 name="description"
                                 value={category.description || ""}
                                 onChange={handleChangeText}
-                                placeholder="Nhập tên danh mục" />
+                                placeholder="Nhập tên danh mục" /> */}
+                            <label>
+                                Description<span className="text-danger">(*)</span>
+                            </label>
+                            <JoditEditor
+                                value={editorContent}
+                                onChange={(newContent) => handleContentChange(newContent)}
+                            />
                             <div className={`invalid-feedback ${category.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
                     </div>

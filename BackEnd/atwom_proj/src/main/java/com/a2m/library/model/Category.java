@@ -27,17 +27,17 @@ public class Category {
     @Column(name = "name")
     private String name;
     
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
     @Column(name = "active")
 	private Boolean active = false;
     
     @Column(name = "cre_dt")
-    private LocalDateTime createdDate;
+    private LocalDateTime cre_dt;
 
     @Column(name = "upd_dt")
-    private LocalDateTime updatedDate;
+    private LocalDateTime upd_dt;
 
     @OneToMany(mappedBy = "category")
     @JsonManagedReference

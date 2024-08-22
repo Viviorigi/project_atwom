@@ -3,16 +3,13 @@ package com.a2m.library.service.category.Impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
-import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
 import com.a2m.library.repository.CategoryRepository;
 import com.a2m.library.service.category.CategoryService;
@@ -29,12 +26,13 @@ public class CategoryServiceImol implements CategoryService{
 	}
 	
 	@Override
-	public Page<Category> findAll(String keySearch, int page, int size) {
+	public Page<CategoryDTO> findByKeySearch(String keySearch, PageRequest pageRequest) {
 		// TODO Auto-generated method stub
-		Pageable pageable = PageRequest.of(page, size);
-		if(keySearch != null)
-			return categoryRepository.findAllCategory(keySearch, pageable);
-		return categoryRepository.findAll(pageable);
+		Page<Category>cate = categoryRepository.searchCategories(keySearch, pageRequest);
+		List<CategoryDTO> categoryDTOs = cate.stream()
+                .map(this::convertToCategoryDTO)
+                .collect(Collectors.toList());
+		return new PageImpl<>(categoryDTOs, pageRequest, cate.getTotalElements());
 	}
 
 	@Override
@@ -72,17 +70,29 @@ public class CategoryServiceImol implements CategoryService{
 	@Override
 	public CategoryDTO convertToCategoryDTO(Category category) {
 		// TODO Auto-generated method stub
-		ModelMapper modelMapper = new ModelMapper();
-
-		return modelMapper.map(category, CategoryDTO.class);
+		CategoryDTO categoryDTO = new CategoryDTO();
+		categoryDTO.setId(category.getId());
+		categoryDTO.setName(category.getName());
+		categoryDTO.setDescription(category.getDescription());
+		categoryDTO.setActive(category.getActive());
+		categoryDTO.setCre_dt(category.getCre_dt());
+		categoryDTO.setUpd_dt(category.getUpd_dt());
+		categoryDTO.setNumOfBook(category.getBooks().size());
+		return categoryDTO;
 	}
 
 	@Override
 	public Category convertToCategory(CategoryDTO categoryDTO) {
 		// TODO Auto-generated method stub
-		ModelMapper modelMapper = new ModelMapper();
+		Category category = new Category();
+		category.setId(categoryDTO.getId());
+		category.setName(categoryDTO.getName());
+		category.setDescription(categoryDTO.getDescription());
+		category.setActive(categoryDTO.getActive());
+		category.setCre_dt(categoryDTO.getCre_dt());
+		category.setUpd_dt(categoryDTO.getUpd_dt());
 
-		return modelMapper.map(categoryDTO, Category.class);
+		return category;
 	}
 
 	@Override

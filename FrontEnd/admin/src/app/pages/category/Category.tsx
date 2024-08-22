@@ -204,10 +204,11 @@ export default function Book() {
                             <p className="mb-0 ms-3 text-1100 fw-bold">{u.name}</p>
                           </div>
                         </td>
-                        <td className="align-middle text-center">{u.description}</td>
-                        <td className="align-middle text-center text-1000">{u.books.length}</td>
-                        <td className="align-middle text-center text-700">{formatDate(u.createdDate)}</td>
-                        <td className="align-middle text-center text-700">{formatDate(u.updatedDate)}</td>
+                        {/* <td className="align-middle text-center">{u.description}</td> */}
+                        <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-end text-1000" dangerouslySetInnerHTML={{ __html: u.description }}/>
+                        <td className="align-middle text-center text-1000">{u.numOfBook}</td>
+                        <td className="align-middle text-center text-700">{formatDate(u.cre_dt)}</td>
+                        <td className="align-middle text-center text-700">{formatDate(u.upd_dt)}</td>
                         <td className="align-middle text-center">
                           <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}>
                             <span className="badge-label">{u.active ? "Active" : "Inactive"}</span>
