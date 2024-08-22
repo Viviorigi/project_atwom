@@ -67,8 +67,8 @@ export default function AddBook(props: any) {
     // Xử lý thay đổi danh mục
     // Thay thế hàm handleActiveChange
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log("đây là cate");
-        console.log(categoryEdit);
+        // console.log("đây là cate");
+        // console.log(categoryEdit);
         const selectedCategoryId = parseInt(e.target.value, 10);
         const selectedCategory = categoryList.find((cat: any) => cat.id === selectedCategoryId);
 
@@ -124,6 +124,10 @@ export default function AddBook(props: any) {
                 upd_dt: new Date().toISOString()
             })
             setEditorContent(bookDTO.description || '');
+            console.log("Edittt");
+            console.log(bookDTO);
+
+
         } else {
             setBook({
                 ...bookDTO,
@@ -354,11 +358,17 @@ export default function AddBook(props: any) {
                                 className="form-select"
                                 onChange={handleCategoryChange}
                                 name='cateId'
-                                // value={book.cateId || 0}
+                            // value={book.cateId || 0}
                             >
-                                {bookDTO != null && (
+                                {/* {bookDTO != null && (
                                     <option value={categoryEdit?.id}>
                                         {categoryEdit?.name}
+                                    </option>
+                                )} */}
+
+                                {bookDTO != null && (
+                                    <option value={book?.cateId}>
+                                        {book?.cateName}
                                     </option>
                                 )}
                                 {categoryList.map((u: any, index: number) => (
@@ -405,7 +415,7 @@ export default function AddBook(props: any) {
                         {/* Lưu ảnh bìa-------------------------------------------------- */}
                         <div className="form-group">
                             <label>
-                                Avatar 
+                                Avatar
                             </label>
                             <br />
                             <input
@@ -442,7 +452,7 @@ export default function AddBook(props: any) {
 
                         <div className="form-group">
                             <label>
-                                Description image 
+                                Description image
                             </label>
                             <br />
                             <input
