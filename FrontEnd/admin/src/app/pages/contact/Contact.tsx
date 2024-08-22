@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import { ContactService } from '../../services/contact/ContactService';
 import ContactForm from './ContactForm';
+import JoditEditor from '../../comp/JoditEditor';
 
 export default function Contact() {
   const [listContact, setListContact] = useState([]);
@@ -149,7 +150,7 @@ export default function Contact() {
         <div className='card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white'>
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mt-4">List Contact</h2>
+              <h2 className="mt-4">List About</h2>
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
@@ -158,7 +159,7 @@ export default function Contact() {
                 <div className="col-auto">
                   <div className="search-box d-flex">
                     {/* search input */}
-                    <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
+                    <input className="form-control search-input search" type="search" placeholder="Search about" name="keySearch" aria-label="Search"
                       value={userSearchParams.keySearch || ""}
                       onChange={handleChangeSearch}
                       onKeyUp={handleKeyUpSearch} />
@@ -174,7 +175,7 @@ export default function Contact() {
                 <div className="col-auto scrollbar overflow-hidden-y flex-grow">
                   <div className="col-auto">
                     <button className="btn btn-primary" onClick={addStudent}>
-                      <span className="fas fa-plus me-2" />Create contact
+                      <span className="fas fa-plus me-2" />Create about
                     </button></div>
                 </div>
               </div>
@@ -219,7 +220,7 @@ export default function Contact() {
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total contact: </span>  {totalUsers} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total about: </span>  {totalUsers} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPage} currentPage={userSearchParams.page} handlePageClick={handlePageClick} prev={prev} next={next} />
@@ -254,6 +255,7 @@ export default function Contact() {
 
           </div>
         </div>
+        
         <footer className="footer position-absolute">
           <div className="row g-0 justify-content-between align-items-center h-100">
             <div className="col-12 col-sm-auto text-center">
@@ -264,6 +266,7 @@ export default function Contact() {
             </div>
           </div>
         </footer>
+
       </div>
 
     </div>

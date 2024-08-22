@@ -40,6 +40,7 @@ public class ContactServiceImpl implements ContactService {
 		Contact c = new Contact();
 		c = toEntity(contactDTO);
 		c.setCreatedDate(LocalDateTime.now());
+		c.setResponseDate(LocalDateTime.now());
 		contactRepository.save(c);
 	}
 

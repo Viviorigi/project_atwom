@@ -1,5 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { BaseButtonQa } from '../../styles/button';
+import { Collapse } from 'react-bootstrap';
+import CustomUpArrow from '../../comp/common/CustomeUpArrow';
+import CustomDownArrow from '../../comp/common/CustomeDownArrow';
+import { Container, ContainerAbout } from '../../styles/styles';
+import { AboutService } from '../../services/AboutService';
+import { AboutDTO } from '../../model/AboutDTO';
+
 
 const AboutScreenWrapper = styled.section`
   .about-wrapper {
@@ -81,8 +89,25 @@ const AboutScreenWrapper = styled.section`
 `;
 
 
-export default function About() {
 
+export default function About() {
+  const [open, setOpen] = useState(false);
+  const [about, setAbout] = useState<AboutDTO[]>([]);
+  const [openId, setOpenId] = useState<number | null>(null);
+
+  useEffect(() => {
+    AboutService.getInstance().getList({
+      keySearch: "",
+      limit: 5,
+      page: 1,
+    }).then((resp: any) => {
+      setAbout(resp.data.abouts);
+    })
+  }, [])
+
+  const handleToggle = (id: number) => {
+    setOpenId(openId === id ? null : id);
+  };
   return (
     <AboutScreenWrapper>
       <div className="about-wrapper p-5 d-flex justify-content-center align-items-center">
@@ -105,53 +130,35 @@ export default function About() {
         <h2 className="text-center mb-4">Our History</h2>
         <p>The library was founded with the initial goal of creating a place to preserve and share knowledge. Over the years, we have continuously expanded and updated our collection, becoming one of the leading information and cultural centers in the region.</p>
 
-        <h2 className="text-center mb-4">Services We Offer</h2>
-        <p>We provide a range of services to support learning and research, including:</p>
-        <ul>
-          <li>Access to thousands of books, journals, and electronic resources.</li>
-          <li>Book and material lending services.</li>
-          <li>Consultation and research guidance from experts.</li>
-          <li>Events and workshops on various topics.</li>
-        </ul>
-
-        <h2 className="text-center mb-4">Community and Sustainable Development</h2>
-        <p>We believe that a library is not just a place to store information but also the heart of the community. With social activities and sustainable development programs, we aim to build a connected and long-lasting community.</p>
-
         <h2 className="text-center mb-4">Privacy Policy</h2>
         <p>Your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your personal information when you visit our website or use our services.</p>
 
-        <h3 className="text-center mb-4">Information We Collect</h3>
-        <p>We may collect personal information that you voluntarily provide to us when you register on our site, subscribe to our newsletter, fill out a form, or interact with us in any other way. This may include your name, email address, phone number, and any other details you choose to share.</p>
-
-        <h3 className="text-center mb-4">How We Use Your Information</h3>
-        <p>Your personal information may be used in the following ways:</p>
-        <ul>
-          <li>To personalize your experience and ensure we deliver content relevant to your interests.</li>
-          <li>To improve our website and services based on the feedback we receive from you.</li>
-          <li>To manage and administer contests, promotions, surveys, or other site features.</li>
-          <li>To send periodic communications regarding updates, services, or promotions.</li>
-        </ul>
-
-        <h3 className="text-center mb-4">Protecting Your Information</h3>
-        <p>We implement a variety of security measures to ensure the safety of your personal information. Your data is stored on secure servers, and only authorized personnel have access to it.</p>
-
-        <h3 className="text-center mb-4">Cookies</h3>
-        <p>Our website may use cookies to enhance your experience. Cookies are small files that a site or its service provider transfers to your computer's hard drive through your web browser (if you allow) that enable the site's or service provider's systems to recognize your browser and capture and remember certain information.</p>
-
-        <h3 className="text-center mb-4">Third-Party Disclosure</h3>
-        <p>We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information unless we provide users with advance notice. This does not include website hosting partners and other parties who assist us in operating our website, conducting our business, or serving our users, so long as those parties agree to keep this information confidential.</p>
-
-        <h3 className="text-center mb-4">Third-Party Links</h3>
-        <p>Occasionally, at our discretion, we may include or offer third-party products or services on our website. These third-party sites have separate and independent privacy policies. We, therefore, have no responsibility or liability for the content and activities of these linked sites.</p>
-
-        <h3 className="text-center mb-4">Children's Privacy</h3>
-        <p>We do not knowingly collect or solicit personal information from children under the age of 13. If we discover that we have collected personal information from a child under 13 without parental consent, we will delete that information as quickly as possible.</p>
-
-        <h3 className="text-center mb-4">Changes to This Privacy Policy</h3>
-        <p>We may update our Privacy Policy from time to time to reflect changes to our practices or for other operational, legal, or regulatory reasons. We will notify you of any changes by posting the new policy on this page.</p>
+        <h2 className="text-center mb-4">Question</h2>
+        {about?.map((a: any) => (
+          <>
+            <ContainerAbout>
+              <BaseButtonQa onClick={() => handleToggle(a.about_id)}
+            aria-controls={`about-${a.id}`}
+            aria-expanded={openId === a.about_id}
+              >{a.question}
+                {openId === a.about_id ? <CustomDownArrow /> : <CustomUpArrow />}
+              </BaseButtonQa>
+            </ContainerAbout>
+            <Collapse in={openId === a.about_id}>
+              <div id={`about-${a.about_id}`} className='justify-content-center align-content-center' 
+              dangerouslySetInnerHTML={{ __html: a.answer }}
+              />
+              
+            </Collapse>
+          </>
+        ))}
 
       </div>
     </AboutScreenWrapper>
 
   )
 }
+
+
+
+

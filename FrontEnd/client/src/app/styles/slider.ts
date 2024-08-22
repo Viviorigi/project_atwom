@@ -28,3 +28,8 @@ export const CustomPrevArrowWrapper = styled.button`
   ${commonArrowStyles}
   left: 0;
 `;
+
+export const CustomUpArrowWrapper = styled.button`
+  ${commonArrowStyles}
+  right: 0;
+`;

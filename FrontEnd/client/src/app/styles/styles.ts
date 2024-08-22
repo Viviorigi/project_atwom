@@ -14,6 +14,14 @@ export const Container = styled.div`
   width: 100%;
 `;
 
+export const ContainerAbout = styled.div`
+  max-width: 1320px;
+  padding: 0 16px !important;
+  margin: 0 auto;
+  width: 100%;
+  border: 1px solid #000;
+`;
+
 export const Section = styled.section`
   padding: 40px 0;
 
