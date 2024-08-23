@@ -33,11 +33,19 @@ export default function SideBar() {
                                             </Link>
                                             </li>
                                             <li className="nav-item mb-2"><Link className={location.pathname === "/returnbook" ? "nav-link active" : "nav-link"} to="returnbook" >
-                                                <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}>Manage Return Book</span></div>
+                                                <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}><i className="fa-solid fa-rotate-left"></i>Manage Return Book</span></div>
                                             </Link>
                                             </li>
                                             <li className="nav-item mb-2"><Link className={location.pathname === "/banner" ? "nav-link active" : "nav-link"} to="banner" >
                                                 <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}><i className="fa-solid fa-mask"></i> Manage Banner</span></div>
+                                            </Link>
+                                            </li>
+                                            <li className="nav-item mb-2"><Link className={location.pathname === "/contact" ? "nav-link active" : "nav-link"} to="contact" >
+                                                <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}><i className="fa fa-commenting-o" aria-hidden="true"></i> Manage Contact</span></div>
+                                            </Link>
+                                            </li>
+                                            <li className="nav-item mb-2"><Link className={location.pathname === "/about" ? "nav-link active" : "nav-link"} to="about" >
+                                                <div className="d-flex align-items-center"><span className="nav-link-text" style={{fontSize:"16px",paddingLeft:"0"}}><i className="fa-solid fa-boxes-stacked"></i> Manage About</span></div>
                                             </Link>
                                             </li>
                                         </ul>

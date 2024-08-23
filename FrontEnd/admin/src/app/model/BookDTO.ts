@@ -6,16 +6,13 @@ export class BookDTO {
   title?: string;
   publisher?:string;
   publicationYear?: number;
-  quantityPlaced?: number;
   description?:string;
   price?: number;
   image?: string; 
-  deleted?: number;
   quantity?: number;
-  status?: number;
   active?:boolean;
+  cateId?:number;
+  cateName?:string;
   createdDate?: string;
-  updatedDate?: string;
-  category?: CategoryDTO;
-  authors?: AuthorDTO[];  
+  updatedDate?: string; 
 }

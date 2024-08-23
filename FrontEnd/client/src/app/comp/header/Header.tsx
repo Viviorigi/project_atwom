@@ -227,20 +227,19 @@ const Header = () => {
             >
               <span>Contact</span>
             </Link>
-            
-          </IconLinksWrapper>
-          
-          <IconLinksWrapper className="flex items-center">
-            {isLoggedIn && 
-              <>
-                <Link
+            <Link
               to="/wishlist"
               className={`icon-link ${location.pathname === "/wishlist" ? "active" : ""
                 } inline-flex items-center justify-center`}
             >
               <img src={staticImages.heart} alt="" />
+              
             </Link>
-
+          </IconLinksWrapper>
+          
+          <IconLinksWrapper className="flex items-center">
+            {isLoggedIn && 
+              <>
             <Link
               to="/account"
               className={` ${location.pathname === "/account" ||

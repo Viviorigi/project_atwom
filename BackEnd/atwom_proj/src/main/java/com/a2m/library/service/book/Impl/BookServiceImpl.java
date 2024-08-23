@@ -7,19 +7,26 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.a2m.library.dto.BookDTO;
+import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.model.Book;
+import com.a2m.library.model.Category;
 import com.a2m.library.repository.BookRepository;
 import com.a2m.library.service.book.BookService;
+import com.a2m.library.service.category.CategoryService;
 
 @Service
 public class BookServiceImpl implements BookService{
 	@Autowired
 	BookRepository bookRepository;
+	
+	@Autowired
+	CategoryService categoryService;
 
 	@Override
 	public List<BookDTO> findAll() {
@@ -34,6 +41,16 @@ public class BookServiceImpl implements BookService{
 		if(keySearch != null)
 			return bookRepository.findAllBook(keySearch, cateId,  pageable);
 		return bookRepository.findAll(pageable);
+	}
+	
+	@Override
+	public Page<BookDTO> findByKeySearch(String keySearch, PageRequest pageRequest) {
+		// TODO Auto-generated method stub
+		Page<Book>book = bookRepository.searchBook(keySearch, pageRequest);
+		List<BookDTO> bookDTOs = book.stream()
+                .map(this::convertToBookDTO)
+                .collect(Collectors.toList());
+		return new PageImpl<>(bookDTOs, pageRequest, book.getTotalElements());
 	}
 	
 	@Override
@@ -54,22 +71,22 @@ public class BookServiceImpl implements BookService{
     }
 	
 	@Override
-	public Book findById(Integer id) {
+	public BookDTO findById(Integer id) {
 		// TODO Auto-generated method stub
-		Book book = bookRepository.findById(id).get();
+		BookDTO book = convertToBookDTO(bookRepository.findById(id).get());
 		return book;
 	}
 
 	@Override
-	public void save(BookDTO bookDTO) {
-		bookRepository.save(convertToBook(bookDTO));
+	public Book save(BookDTO bookDTO) {
+		return bookRepository.save(convertToBook(bookDTO));
 	}
 	
-	@Override
-	public void save(Book book) {
-		// TODO Auto-generated method stub
-		bookRepository.save(book);
-	}
+//	@Override
+//	public void save(Book book) {
+//		// TODO Auto-generated method stub
+//		bookRepository.save(book);
+//	}
 
 	@Override
 	public BookDTO update(Integer id, BookDTO bookDTO) {
@@ -85,16 +102,61 @@ public class BookServiceImpl implements BookService{
 
 	@Override
 	public BookDTO convertToBookDTO(Book book) {
-		ModelMapper modelMapper = new ModelMapper();
+		BookDTO bookDTO = new BookDTO();
+		bookDTO.setId(book.getId());
+		bookDTO.setTitle(book.getTitle());
+		bookDTO.setPublisher(book.getPublisher());
+		bookDTO.setPublicationYear(book.getPublicationYear());
+		bookDTO.setQuantity(book.getQuantity());
+		bookDTO.setPrice(book.getPrice());
+		bookDTO.setDescription(book.getDescription());
+		bookDTO.setImage(book.getImage());
+		bookDTO.setActive(book.getActive());
+		bookDTO.setUpd_dt(book.getUpd_dt());
+		bookDTO.setCre_dt(book.getCre_dt());
+		if (book.getCategory() != null) {
+	        bookDTO.setCateId(book.getCategory().getId());
+	        bookDTO.setCateName(book.getCategory().getName());
+	    } else {
+	        // Nếu category là null, bạn có thể thiết lập giá trị mặc định hoặc để trống
+	        bookDTO.setCateId(0);
+	        bookDTO.setCateName("Unknown");
+	    }
+		bookDTO.setImagebooks(book.getImagebooks());
 
-		return modelMapper.map(book, BookDTO.class);
+		return bookDTO;
 	}
 
+	public Category convertToCategory(CategoryDTO categoryDTO) {
+		// TODO Auto-generated method stub
+		Category category = new Category();
+		category.setId(categoryDTO.getId());
+		category.setName(categoryDTO.getName());
+		category.setDescription(categoryDTO.getDescription());
+		category.setActive(categoryDTO.getActive());
+		category.setCre_dt(categoryDTO.getCre_dt());
+		category.setUpd_dt(categoryDTO.getUpd_dt());
+
+		return category;
+	}
+	
 	@Override
 	public Book convertToBook(BookDTO bookDTO) {
-		ModelMapper modelMapper = new ModelMapper();
-
-		return modelMapper.map(bookDTO, Book.class);
+		CategoryDTO category = categoryService.findById(bookDTO.getCateId());
+		Book book = new Book();
+		book.setId(bookDTO.getId());
+		book.setTitle(bookDTO.getTitle());
+		book.setPublisher(bookDTO.getPublisher());
+		book.setPublicationYear(bookDTO.getPublicationYear());
+		book.setQuantity(bookDTO.getQuantity());
+		book.setPrice(bookDTO.getPrice());
+		book.setDescription(bookDTO.getDescription());
+		book.setImage(bookDTO.getImage());
+		book.setActive(bookDTO.getActive());
+		book.setUpd_dt(bookDTO.getUpd_dt());
+		book.setCre_dt(bookDTO.getCre_dt());
+		book.setCategory(convertToCategory(category));
+		return book;
 	}
 
 	@Override
@@ -102,5 +164,7 @@ public class BookServiceImpl implements BookService{
 		// TODO Auto-generated method stub
 		return bookRepository.findAllActiveBooksSortedByCreatedDate();
 	}
+
+	
 
 }

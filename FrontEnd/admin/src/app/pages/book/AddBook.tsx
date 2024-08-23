@@ -9,6 +9,12 @@ import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import { log } from 'console';
 import { CategoryDTO } from '../../model/CategoryDTO';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
+import JoditEditor, { Jodit } from "jodit-react";
+import DOMPurify from 'dompurify';
+
+
+
 // import './book-css.scss'
 
 
@@ -17,6 +23,8 @@ export default function AddBook(props: any) {
     const [book, setBook] = useState<BookDTO>(new BookDTO());
     const [categoryList, setCategoryList] = useState([]);
     const [categoryEdit, setCategoryEdit] = useState<CategoryDTO>();
+    const [categoryEditId, setCategoryListId] = useState(0);
+
     useEffect(() => {
         let url = `http://localhost:8080/category/list/all`;
         axios.get(url).then((resp: any) => {
@@ -30,6 +38,16 @@ export default function AddBook(props: any) {
     }, [])
     const [image, setImage] = useState<string | undefined>(undefined);
     const [file, setFile] = useState<File | null>(null);
+    const [editorContent, setEditorContent] = useState('');
+
+    //xử lý text-editor 
+    const handleContentChange = (newContent: any) => {
+        setEditorContent(newContent);
+        setBook({
+            ...book,
+            description: newContent,
+        });
+    };
 
     // xử lý nhập ký tự không phải số
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -49,13 +67,14 @@ export default function AddBook(props: any) {
     // Xử lý thay đổi danh mục
     // Thay thế hàm handleActiveChange
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        // console.log("đây là cate");
+        // console.log(categoryEdit);
         const selectedCategoryId = parseInt(e.target.value, 10);
         const selectedCategory = categoryList.find((cat: any) => cat.id === selectedCategoryId);
-        console.log("đây là cate");
-        console.log(selectedCategory);
+
         setBook(prev => ({
             ...prev,
-            category: selectedCategory || undefined
+            cateId: selectedCategoryId
         }));
     };
 
@@ -73,65 +92,56 @@ export default function AddBook(props: any) {
             alert("Please select a valid image file.");
         }
     };
-    const imageSource = image ? image : bookDTO !== null ? `http://localhost:8080/files/${bookDTO.image}` : defaultPersonImage;
 
-    const [imageSources, setImageSources] = useState<File[]>([]);
+
+    // const imageSource = image ? image : bookDTO.image !== null ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage;
+    const imageSource = image || (bookDTO && bookDTO.image ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage);
+
+    const [imageSources, setImageSources] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (bookDTO && bookDTO.imagebooks.length > 0) {
+            setImageSources(bookDTO.imagebooks.map((image:any) => `http://localhost:8080/getImage?atchFleSeqNm=${image.filename}`));
+        }
+    }, [bookDTO])
 
     const [files, setFiles] = useState<File[]>([]);
-    // Xử lý thay đổi tệp
-    // const handleManyFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (event.target.files) {
-    //         const files = Array.from(event.target.files);
-    //         const newImageSources = files.map(file => URL.createObjectURL(file));
-    //         setImageSources(prevSources => [...prevSources, ...newImageSources]);
-    //     }
-    // };
 
     const handleManyFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const selectedFiles = Array.from(event.target.files);
-            setImageSources(prevFiles => [...prevFiles, ...selectedFiles]);
+            const newImageSources = selectedFiles.map(file => URL.createObjectURL(file));
+            setImageSources([...newImageSources]); // Replace with new selections
         }
     };
 
-    // Xoá URL đối tượng sau khi component unmount
-    // React.useEffect(() => {
-    //     return () => {
-    //         imageSources.forEach(src => URL.revokeObjectURL(src));
-    //     };
-    // }, [imageSources]);
-
-
     // Xóa hình ảnh khỏi danh sách
+
     const handleRemoveImage = (index: number) => {
         setImageSources(prevFiles => prevFiles.filter((_, i) => i !== index));
     };
 
-    const handleOnDragEnd = (result: any) => {
-        if (!result.destination) return;
-
-        const reorderedImages = Array.from(imageSources);
-        const [movedImage] = reorderedImages.splice(result.source.index, 1);
-        reorderedImages.splice(result.destination.index, 0, movedImage);
-
-        setImageSources(reorderedImages);
-    };
     //---------------------------------------------------------------------
 
     //xử lý edit
     useEffect(() => {
-
         if (bookDTO != null) {
             setBook({
                 ...bookDTO,
-                updatedDate: new Date().toISOString()
+                upd_dt: new Date().toISOString()
             })
+            setEditorContent(bookDTO.description || '');
+            console.log("Edittt");
+            console.log(bookDTO);
+
+
         } else {
             setBook({
                 ...bookDTO,
+                description: '',
                 active: true,
-                createdDate: new Date().toISOString(),
-                updatedDate: new Date().toISOString()
+                cre_dt: new Date().toISOString(),
+                upd_dt: new Date().toISOString()
             })
         }
 
@@ -141,8 +151,6 @@ export default function AddBook(props: any) {
         if (bookDTO != null) {
             let url = `http://localhost:8080/book/getCate?id=${bookDTO.id}`;
             axios.get(url).then((resp: any) => {
-                // console.log("dữ liệu");
-                // console.log(resp.data);
                 if (resp.data) {
                     setCategoryEdit(resp.data);
                 }
@@ -199,65 +207,10 @@ export default function AddBook(props: any) {
                 publicationYear: prev.publicationYear || 0,
                 quantity: prev.quantity || 0,
                 price: prev.price || 0,
-                category: prev.category || undefined
+                // category: prev.category || undefined
             }
         })
     }
-
-    // Xử lý sự kiện save
-    // const save = () => {
-    //     if (!chk()) {
-    //         return;
-    //     }
-    //     const formData = new FormData();
-    //     formData.append('book', JSON.stringify(book));
-    //     if (file) {
-    //         formData.append('file', file);
-    //     }
-
-    //     imageSources.forEach((src, index) => {
-    //         // Nếu bạn có các đối tượng File từ một nguồn khác, hãy thêm chúng trực tiếp vào FormData
-    //         // Đây là cách để đảm bảo các đối tượng là các tệp hợp lệ
-    //         const file = new File([src], `image${index}.jpg`, { type: 'image/jpeg' });
-    //         formData.append(`images[${index}]`, file);
-    //     });
-
-    //     Swal.fire({
-    //         title: `Xác nhận`,
-    //         text: `Bạn có muốn thực hiện ...`,
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#89B449',
-    //         cancelButtonColor: '#E68A8C',
-    //         confirmButtonText: `Yes`,
-    //         cancelButtonText: `No`
-    //     }).then((result) => {
-    //         if (result.value) {
-    //             // logic
-    //             let url = `http://localhost:8080/book/add`;
-    //             axios.post(url, formData, {
-    //                 headers: {
-    //                     'Content-Type': 'multipart/form-data'
-    //                 }
-    //             }).then((resp: any) => {
-    //                 if (resp.data === "success") {
-    //                     hideForm(true);
-    //                     toast.success("Lưu sách thành công");
-    //                     onSave()
-    //                 }
-    //             }).catch((err: any) => {
-    //                 console.log(err);
-    //                 toast.error("Không thể lưu sách");
-    //             })
-    //         }
-    //     })
-    // }
-
-    const logFormData = (formData: any) => {
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-    };
 
     const save = () => {
         if (!chk()) {
@@ -265,28 +218,15 @@ export default function AddBook(props: any) {
         }
         const formData = new FormData();
         formData.append('book', JSON.stringify(book));
+        console.log("book trc khi save", book);
+
         if (file) {
             formData.append('file', file);
         }
 
-        // console.log(imageSources);
-
-        // imageSources.forEach((imageFile, index) => {
-        //     formData.append(`images[${index}]`, imageFile);
-        // });
         imageSources.forEach((imageFile) => {
             formData.append('images[]', imageFile);
         });
-        // logFormData(formData);
-        // const formDataEntries = Array.from(formData.entries());
-
-        // formDataEntries.forEach(([key, value]) => {
-        //     if (value instanceof File) {
-        //         console.log(`${key}: ${value.name}, Size - ${value.size} bytes`);
-        //     } else {
-        //         console.log(`${key}: ${value}`);
-        //     }
-        // });
 
         Swal.fire({
             title: `Xác nhận`,
@@ -347,7 +287,7 @@ export default function AddBook(props: any) {
                     <div className="col-md-6 mb-5">
                         <div className="form-group">
                             <label>
-                                Title
+                                Title<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
@@ -360,7 +300,7 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Publisher
+                                Publisher<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
@@ -424,11 +364,13 @@ export default function AddBook(props: any) {
                                 }}
                                 className="form-select"
                                 onChange={handleCategoryChange}
-                                value={book.category?.id || 0}
+                                name='cateId'
+                            // value={book.cateId || 0}
                             >
+
                                 {bookDTO != null && (
-                                    <option value={categoryEdit?.id}>
-                                        {categoryEdit?.name}
+                                    <option value={book?.cateId}>
+                                        {book?.cateName}
                                     </option>
                                 )}
                                 {categoryList.map((u: any, index: number) => (
@@ -437,6 +379,7 @@ export default function AddBook(props: any) {
                                     </option>
                                 ))}
                             </select>
+                            {/* <div className={`invalid-feedback ${book.category?.id == null ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div> */}
                         </div>
 
                     </div>
@@ -462,22 +405,19 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Placed
+                                Description
                             </label>
-                            <textarea
-                                name="description"
-                                rows={3}
-                                className="form-control"
-                                value={book.description || ''}
-                                onChange={handleChangeNumber}
-                                placeholder="Description" />
+                            <JoditEditor
+                                value={editorContent}
+                                onChange={(newContent) => handleContentChange(newContent)}
+                            />
                             <div className={`invalid-feedback ${book.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
 
                         {/* Lưu ảnh bìa-------------------------------------------------- */}
                         <div className="form-group">
                             <label>
-                                Avatar <span className="text-danger">(*)</span>
+                                Avatar
                             </label>
                             <br />
                             <input
@@ -500,6 +440,11 @@ export default function AddBook(props: any) {
                                         src={imageSource}
                                         alt="Preview"
                                         style={{ width: "100px", height: "100px" }}
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                                            target.src = noImageAvailable; // Set the fallback image
+                                        }}
                                     />
                                 </div>
                             )}
@@ -509,7 +454,7 @@ export default function AddBook(props: any) {
 
                         <div className="form-group">
                             <label>
-                                Description image <span className="text-danger">(*)</span>
+                                Description image
                             </label>
                             <br />
                             <input
@@ -523,24 +468,7 @@ export default function AddBook(props: any) {
                                 <div className="preview Image" style={{ marginTop: "10px", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
                                     {imageSources.map((file, index) => (
                                         <div key={index} style={{ position: 'relative', margin: '5px' }}>
-                                            <img src={URL.createObjectURL(file)} alt={`Preview ${index}`} style={{ width: "100px", height: "100px" }} />
-                                            <button
-                                                onClick={() => handleRemoveImage(index)}
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: '5px',
-                                                    right: '5px',
-                                                    background: 'red',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '50%',
-                                                    width: '24px',
-                                                    height: '24px',
-                                                    cursor: 'pointer',
-                                                }}
-                                            >
-                                                &times;
-                                            </button>
+                                            <img src={file} alt={`Preview ${index}`} style={{ width: "100px", height: "100px" }} />
                                         </div>
                                     ))}
                                 </div>

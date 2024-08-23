@@ -9,7 +9,7 @@ import Title from "../common/Title";
 import { newArrivalData } from "../../data/data";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import imageBookDefault from "../../../assets/images/t.png"
+import imageBookDefault from "../../../assets/images/imageBookDefault.png"
 import { Link } from "react-router-dom";
 
 
@@ -95,8 +95,8 @@ const Category = () => {
                         className="object-fit-cover"
                         src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.onerror = null;
-                          target.src = imageBookDefault;
+                          target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                          target.src = imageBookDefault; // Set the fallback image
                         }}
                         alt=""
                         width="100px"

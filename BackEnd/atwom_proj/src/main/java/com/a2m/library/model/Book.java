@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.Year;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,8 +28,7 @@ public class Book {
   private Integer id;
 
   private String title;
-  private Year publicationYear;
-  private Integer quantityPlaced;
+  private int publicationYear;
   private double price;
 
   @Column(name = "image")
@@ -37,7 +37,7 @@ public class Book {
   @Column(name = "active")
 	private Boolean active = false;
   
-  @Column(name = "description")
+  @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
   @Column(name = "publisher")
@@ -58,10 +58,10 @@ public class Book {
   private Category category;
 
   @Column(name = "cre_dt")
-  private LocalDateTime createdDate;
+  private LocalDateTime cre_dt;
 
   @Column(name = "upd_dt")
-  private LocalDateTime updatedDate;
+  private LocalDateTime upd_dt;
 
   @ManyToMany
     @JoinTable(
@@ -74,4 +74,8 @@ public class Book {
   @OneToMany(mappedBy = "book")
   @JsonManagedReference
   private List<ImagesBook> imagebooks;
+  
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<WishList> wishlist = new ArrayList<>();
+  
 }

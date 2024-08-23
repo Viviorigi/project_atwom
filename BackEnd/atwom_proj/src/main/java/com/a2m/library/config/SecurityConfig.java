@@ -68,11 +68,15 @@ public class SecurityConfig {
 						.requestMatchers("/api/auth/signup").permitAll()
 						.requestMatchers("/api/auth/forgot-password").permitAll()
 						.requestMatchers("/api/auth/verify**").permitAll()
+						.requestMatchers("/api/admin/contact/create").permitAll()
+						.requestMatchers("/api/admin/banner/getAll").permitAll()
+						.requestMatchers("/api/admin/about/**").permitAll()
 	                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/student/*").permitAll()
 	                    .requestMatchers("/files/*").permitAll()
 	                    .requestMatchers("/api/admin/book/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/admin/category/**").hasRole("ADMIN")
+	                    .requestMatchers("/api/wishlist/**").permitAll()
 	                    .anyRequest().permitAll());
 //						.anyRequest().authenticated());
 		http.authenticationProvider(authenticationProvider());

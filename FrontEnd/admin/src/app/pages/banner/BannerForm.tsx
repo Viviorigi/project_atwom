@@ -156,7 +156,7 @@ export default function BannerForm(props: any) {
               value={bannerSave.title || ""}
               onChange={handleChangeText}
               placeholder="Enter title"
-              readOnly={banner !== null ? true : false}
+              
             />
             <div
               className={`invalid-feedback ${bannerSave?.title?.toString() === "" ? "d-block" : ""

@@ -8,6 +8,9 @@ import { BaseLinkWhite } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import CustomNextArrow from "../common/CustomNextArrow";
 import CustomPrevArrow from "../common/CustomPrevArrow";
+import { useEffect, useState } from "react";
+import { BannerService } from "../../services/BannerService";
+import noImageAvailable from "../../../assets/images/noimg.jpg";
 
 const SectionHeroWrapper = styled.section`
   background-color: #f2f2f2;
@@ -159,6 +162,18 @@ const Hero = () => {
     ],
   };
 
+  const [banner, setBanner] = useState([])
+  useEffect(() => {
+    BannerService.getInstance().getList({
+      keySearch: "",
+      limit: 5,
+      page: 1,
+    }).then((resp: any) => {
+      setBanner(resp.data.banners);
+      console.log(resp.data.banners);
+
+    })
+  }, [])
   return (
     <SectionHeroWrapper>
       <HeroSliderWrapper>
@@ -167,23 +182,32 @@ const Hero = () => {
           prevArrow={<CustomPrevArrow />}
           {...settings}
         >
-          {bannerData?.map((banner) => {
+          {banner?.map((b: any) => {
             return (
-              <HeroSliderItemWrapper key={banner.id}>
-                <img src={banner.imgSource} className="object-fit-cover" alt=""/>
+              <HeroSliderItemWrapper key={b.id}>
+                <img src={`http://localhost:8080/files/${b.image}`} className="object-fit-cover" alt="" onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                  target.src = noImageAvailable; // Set the fallback image
+                }} style={{
+                  width: "100%",
+                  height: "auto",
+                  maxWidth: "40%",
+                  objectFit: "cover",
+                }} />
                 <HeroSlideContent className="flex items-center w-full h-full">
                   <Container className="container text-white">
                     <p className="hero-text-top font-bold italic">
-                      {banner.topText}
+                      {b.title}
                     </p>
                     <h2 className="hero-text-large font-extrabold">
-                      {banner.titleText}
+                      {b.title}
                     </h2>
                     <p className="hero-text-bottom font-semibold uppercase">
-                      {banner.bottomText}
+                      {b.description}
                     </p>
-                    <BaseLinkWhite to={banner.buttonLink} className="hero-btn">
-                      {banner.buttonText}
+                    <BaseLinkWhite to={b.title} className="hero-btn">
+                      {b.description}
                     </BaseLinkWhite>
                   </Container>
                 </HeroSlideContent>

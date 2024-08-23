@@ -186,7 +186,7 @@ export default function Banner() {
                 <table className="table table-bordered fs--1 mb-2 mt-5">
                   <thead>
                     <tr>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>#</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Banner</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>TITLE</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '25%' }}>DESCRIPTION</th>
