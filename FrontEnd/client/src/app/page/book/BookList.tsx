@@ -140,7 +140,7 @@ const BookListItem = () => {
   const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
+    let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
         setBookList(resp.data.content);
