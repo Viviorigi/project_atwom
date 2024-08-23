@@ -1,11 +1,14 @@
 import React from 'react';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 const Pagination = (props: any) => {
     const { totalPage, currentPage, handlePageClick, prev, next } = props;
+
     return (
         <>
             <button className="page-link" data-list-pagination="prev" onClick={prev}>
-                <span className="fas fa-chevron-left" />
+                <span className="fas fa-chevron-left" /> 
             </button>
             <ul className="mb-0 pagination mx-2">
                 {[...Array(totalPage)].map((_, index) => (

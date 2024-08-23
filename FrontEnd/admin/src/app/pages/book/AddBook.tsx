@@ -360,11 +360,6 @@ export default function AddBook(props: any) {
                                 name='cateId'
                             // value={book.cateId || 0}
                             >
-                                {/* {bookDTO != null && (
-                                    <option value={categoryEdit?.id}>
-                                        {categoryEdit?.name}
-                                    </option>
-                                )} */}
 
                                 {bookDTO != null && (
                                     <option value={book?.cateId}>

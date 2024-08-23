@@ -195,10 +195,13 @@ const BookDetail = (props: any) => {
   // console.log(bookId);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const id = queryParams.get('id');
+  const id = queryParams.get('bookId');
   // console.log(id);
 
-
+  useEffect(() => {
+    // Cuộn lên đầu trang mỗi khi component được render
+    window.scrollTo(0, 0);
+  }, [book]);
 
   useEffect(() => {
     let url = `http://localhost:8080/book/detail?id=${id}`;
@@ -209,7 +212,7 @@ const BookDetail = (props: any) => {
     }).catch((err: any) => {
 
     })
-  }, [])
+  }, [id])
 
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
