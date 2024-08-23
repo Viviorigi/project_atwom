@@ -197,7 +197,10 @@ const BookDetail = (props: any) => {
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get('bookId');
   // console.log(id);
-
+  useEffect(() => {
+    // Cuộn lên đầu trang mỗi khi component được render
+    window.scrollTo(0, 0);
+  }, [book]);
 
   useEffect(() => {
     let url = `http://localhost:8080/book/detail?id=${id}`;
