@@ -17,6 +17,7 @@ public interface BookService {
     Book save(BookDTO bookDTO);
     BookDTO update(Integer id, BookDTO bookDTO);
     void delete(Integer id);
+    BookDTO getBookById(Integer id);
     
     public BookDTO convertToBookDTO(Book book);
     public Book convertToBook(BookDTO bookDTO);

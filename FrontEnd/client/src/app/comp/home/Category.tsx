@@ -65,14 +65,14 @@ const Category = () => {
   const [bookList, setBookList] = useState([]);
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/new`;
-    axios.get(url).then((resp: any) => {
-      if (resp.data) {
-        setBookList(resp.data);
-      }
-    }).catch((err: any) => {
+    // let url = `http://localhost:8080/book/new`;
+    // axios.get(url).then((resp: any) => {
+    //   if (resp.data) {
+    //     setBookList(resp.data);
+    //   }
+    // }).catch((err: any) => {
 
-    })
+    // })
   }, [])
 
   return (

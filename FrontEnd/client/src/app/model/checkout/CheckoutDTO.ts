@@ -1,10 +1,10 @@
-import { UserDTO } from './UserDTO';
+import { UserDetail } from '../auth/UserDetail';
 import { CheckoutStatus } from './CheckoutStatus';
 import { CheckoutDetailDTO } from './CheckoutDetailDTO';
 
 export interface CheckoutDTO {
   id: number;
-  user: UserDTO;
+  user: UserDetail;
   userUid: number;
   userFullName: string;
   startTime: string;
@@ -15,4 +15,5 @@ export interface CheckoutDTO {
   checkoutDetails: CheckoutDetailDTO[];
 }
 
-export { CheckoutStatus };
+export { CheckoutStatus };  export type { CheckoutDetailDTO };
+

@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
+import com.a2m.library.dto.CheckoutDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
@@ -66,6 +69,12 @@ public class BookController {
 		this.resourcePath = fileUploadConfig.getResourcePath();
 		this.resourcePathThumb = fileUploadConfig.getResourcePathThumb();
 	}
+
+	@GetMapping("/book/{id}")
+    public ResponseEntity<BookDTO> findBookById(@PathVariable Integer id) {
+        BookDTO book = bookService.getBookById(id);
+        return ResponseEntity.ok(book);
+    }
 
 //	@GetMapping("/book/list")
 //	public ResponseEntity<?> bookGet() {

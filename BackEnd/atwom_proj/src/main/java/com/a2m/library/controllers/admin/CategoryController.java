@@ -10,11 +10,13 @@ import org.springframework.data.domain.jaxb.SpringDataJaxb.PageDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.Book;
@@ -32,9 +34,29 @@ public class CategoryController {
 		List<CategoryDTO>categoryDTO = categoryService.findAll();
 		return ResponseEntity.ok().body(categoryDTO);
 	}
+
+	@GetMapping("/category/{id}")
+    public ResponseEntity<?> getBookById(@PathVariable Integer id) {
+        try {
+            CategoryDTO categoryDTO = categoryService.findById(id);
+            return ResponseEntity.ok(categoryDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+	@GetMapping("/category/book/{bookId}")
+    public ResponseEntity<CategoryDTO> getCategoryByBookId(@PathVariable Integer bookId) {
+        CategoryDTO categoryDTO = categoryService.getCategoryByBookId(bookId);
+        if (categoryDTO != null) {
+            return ResponseEntity.ok(categoryDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 	
 	@GetMapping("/category/list/all")
-	public ResponseEntity<?> categoryGetAll() {
+	public ResponseEntity<List<Category>> categoryGetAll() {
 		List<Category>categories = categoryService.findAllList();
 		return ResponseEntity.ok().body(categories);
 	}
