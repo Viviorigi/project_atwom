@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ColorsFilter,
   FilterTitle,
@@ -10,24 +10,118 @@ import {
 } from "../../styles/filter";
 import { staticImages } from "../../utils/images";
 import { ProductFilterList, StyleFilterList } from "../../data/data";
+import { BookSearch } from "./book-search";
+import axios from "axios";
 
 interface BookFilterProps {
-  onFilterChange?: (filterSelect: any) => void; // onFilterChange là một hàm không nhận tham số và không trả giá trị
+  searchDto: BookSearch; // Prop nhận đối tượng BookSearch
+  setSearchDto: React.Dispatch<React.SetStateAction<BookSearch>>;
 }
 
 // const BookFilter = ({ onFilterChange }) => {
-const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
+const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
   const [isProductFilterOpen, setProductFilterOpen] = useState(true);
   const [isPriceFilterOpen, setPriceFilterOpen] = useState(true);
   const [isColorFilterOpen, setColorFilterOpen] = useState(true);
   const [isSizeFilterOpen, setSizeFilterOpen] = useState(true);
   const [isStyleFilterOpen, setStyleFilterOpen] = useState(true);
 
-  const handleButtonClick = () => {
-    if (onFilterChange) {
-      onFilterChange(10001); // Truyền giá trị vào hàm
-    }
-  };
+  //---------------------------------------------------------------------
+  const [bookList, setBookList] = useState([]);
+  const [publisherList, setPublisherList] = useState([]);
+  const [publishYearList, setPublishTearList] = useState([]);
+  const [cateNameList, setCateNameList] = useState([]);
+  const [nxbList, setNxbList] = useState([]);
+
+  useEffect(() => {
+    setSearchDto({
+      ...searchDto,
+      cate_name:'',
+      nxb: '',
+      public_year:0
+      // timer:new Date().getTime()
+    })
+  }, [searchDto.keySearch])
+
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/list/all/filter?keySearch=${searchDto.keySearch}`;
+    axios.get(url).then((resp: any) => {
+      if (resp.data) {
+        setBookList(resp.data);;
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [searchDto.keySearch])
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/filter/publisher`;
+    axios.post(url, bookList).then((resp: any) => {
+      if (resp.data) {
+        if (searchDto.keySearch == '') {
+          setPublisherList([]);
+        } else {
+          setPublisherList(resp.data);
+        }
+        // console.log("Tác giả là: ");
+        // console.log(resp.data);
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [searchDto.timer])
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/filter/publishYear`;
+    axios.post(url, bookList).then((resp: any) => {
+      if (resp.data) {
+        if (searchDto.keySearch == '') {
+          setPublishTearList([]);
+        } else {
+          // console.log("Năm xuất bản: ");
+          // console.log(resp.data);
+          setPublishTearList(resp.data);
+        }
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [searchDto.timer])
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/filter/cateName`;
+    axios.post(url, bookList).then((resp: any) => {
+      if (resp.data) {
+        if (searchDto.keySearch == '') {
+          setCateNameList([]);
+        } else {
+          // console.log("Tên danh mục: ");
+          // console.log(resp.data);
+          setCateNameList(resp.data);
+        }
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [searchDto.timer])
+
+  useEffect(() => {
+    let url = `http://localhost:8080/book/filter/nxb`;
+    axios.post(url, bookList).then((resp: any) => {
+      if (resp.data) {
+        if (searchDto.keySearch == '') {
+          setNxbList([]);
+        } else {
+          // console.log("Tên danh mục: ");
+          // console.log(resp.data);
+          setNxbList(resp.data);
+        }
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [searchDto.timer])
 
   const toggleFilter = (filter: any) => {
     switch (filter) {
@@ -79,13 +173,13 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
   return (
     <>
       <ProductCategoryFilter>
-        <button onClick={handleButtonClick}>Nhấn vào đây</button>
+        {/* ----------------------------------------Lọc theo nhà xuất bản  --------------------*/}
         <FilterTitle
           className="filter-title flex items-center justify-between"
           onClick={() => toggleFilter("product")}
         >
           <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Filter nek
+            Lọc theo nhà xuất bản
           </p>
           <span
             className={`text-gray text-xxl filter-title-icon ${!isProductFilterOpen ? "rotate" : ""
@@ -95,16 +189,25 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isProductFilterOpen ? "hide" : "show"}`}>
-          {ProductFilterList?.map((productFilter) => {
+          {nxbList?.map((data, index) => {
             return (
-              <div className="product-filter-item" key={productFilter.id}>
+              <div className="product-filter-item" key={index}>
                 <button
                   type="button"
                   className="filter-item-head w-full flex items-center justify-between"
+                  onClick={() => {
+                    setSearchDto({
+                      ...searchDto,
+                      nxb: data,
+                      timer: new Date().getTime()
+                    })
+                  }}
                 >
-                  <span className="filter-head-title text-base text-gray font-semibold">
-                    {productFilter.title}
-                  </span>
+                  <div style={{ textAlign: 'left' }}>
+                    <span className="filter-head-title text-base text-gray font-semibold">
+                      {data}
+                    </span>
+                  </div>
                   <span className="filter-head-icon text-gray">
                     <i className="bi bi-chevron-right"></i>
                   </span>
@@ -113,15 +216,16 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
             );
           })}
         </FilterWrap>
-      </ProductCategoryFilter>
+      </ProductCategoryFilter >
 
+      {/* ----------------------------------------Lọc theo năm xuất bản --------------------*/}
       <PriceFilter>
         <FilterTitle
           className="filter-title flex items-center justify-between"
           onClick={() => toggleFilter("price")}
         >
           <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Price
+            Lọc theo năm xuất bản
           </p>
           <span
             className={`text-gray text-xl filter-title-icon ${!isPriceFilterOpen ? "rotate" : ""
@@ -130,61 +234,38 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
             <i className="bi bi-chevron-up"></i>
           </span>
         </FilterTitle>
+
         <FilterWrap
-          className={`range filter-wrap ${!isPriceFilterOpen ? "hide" : "show"
-            }`}
-        >
-          <div className="range-slider">
-            <span
-              className="range-selected h-full bg-sea-green"
-              style={{
-                left: calculateRangePosition(minRange, 1000),
-                right: calculateRangePosition(1000 - maxRange, 1000),
-              }}
-            ></span>
-          </div>
-          <div className="range-input">
-            <input
-              type="range"
-              className="min w-full"
-              min="0"
-              max="1000"
-              value={minRange}
-              step="10"
-              name="min"
-              onChange={handleInputChange}
-              aria-label="d"
-            />
-            <input
-              type="range"
-              className="min w-full"
-              min="0"
-              max="1000"
-              value={maxRange}
-              step="10"
-              name="max"
-              onChange={handleInputChange}
-              aria-label="d"
-            />
-          </div>
-          <div className="range-price w-full flex items-center">
-            <input
-              type="number"
-              className="text-center"
-              name="min"
-              value={minRange}
-              onChange={handleInputChange}
-              aria-label="d"
-            />
-            <input
-              type="number"
-              className="text-center"
-              name="max"
-              value={maxRange}
-              onChange={handleInputChange}
-              aria-label="d"
-            />
-          </div>
+          className={`range filter-wrap ${!isPriceFilterOpen ? "hide" : "show"}`}>
+          {publishYearList?.map((data, index) => {
+            return (
+              <div className="product-filter-item" key={index}>
+                <button
+                  type="button"
+                  className="filter-item-head w-full flex items-center justify-between"
+                  onClick={() => {
+                    setSearchDto({
+                      ...searchDto,
+                      public_year: data,
+                      timer: new Date().getTime()
+                    })
+                  }}
+                >
+                  {/* <span className="filter-head-title text-base text-gray font-semibold">
+                    {data}
+                  </span> */}
+                  <div style={{ textAlign: 'left' }}>
+                    <span className="filter-head-title text-base text-gray font-semibold">
+                      {data}
+                    </span>
+                  </div>
+                  <span className="filter-head-icon text-gray">
+                    <i className="bi bi-chevron-right"></i>
+                  </span>
+                </button>
+              </div>
+            );
+          })}
         </FilterWrap>
       </PriceFilter>
 
@@ -194,7 +275,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
           onClick={() => toggleFilter("color")}
         >
           <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Colors
+            Lọc theo nhà xuất bản
           </p>
           <span
             className={`text-gray text-xl filter-title-icon ${!isColorFilterOpen ? "rotate" : ""
@@ -204,65 +285,17 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isColorFilterOpen ? "hide" : "show"}`}>
-          <div className="colors-list grid">
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color1} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color2} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color3} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color4} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color5} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color6} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color7} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color8} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color9} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color10} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color11} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d" />
-              <img src={staticImages.color12} alt="" />
-            </div>
-          </div>
         </FilterWrap>
       </ColorsFilter>
+
+      {/* -----------------------------------Lọc theo tên danh mục---------------------------- */}
       <SizesFilter>
         <FilterTitle
           className="flex items-center justify-between"
           onClick={() => toggleFilter("size")}
         >
           <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Size
+            Lọc theo loại tài liệu
           </p>
           <span
             className={`text-gray text-xl filter-title-icon ${!isSizeFilterOpen ? "rotate" : ""
@@ -272,62 +305,43 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isSizeFilterOpen ? "hide" : "show"}`}>
-          <div className="sizes-list grid text-center justify-center">
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                xxs
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                xs
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                s
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                m
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                l
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                xxl
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                3xl
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d" />
-              <span className="flex items-center justify-center uppercase">
-                4xl
-              </span>
-            </div>
-          </div>
+          {cateNameList?.map((data, index) => {
+            return (
+              <div className="product-filter-item" key={index}>
+                <button
+                  type="button"
+                  className="filter-item-head w-full flex items-center justify-between"
+                  onClick={() => {
+                    setSearchDto({
+                      ...searchDto,
+                      cate_name: data,
+                      timer: new Date().getTime()
+                    })
+                  }}
+                >
+                  {/* <span className="filter-head-title text-base text-gray font-semibold">
+                    {data}
+                  </span> */}
+                  <div style={{ textAlign: 'left' }}>
+                    <span className="filter-head-title text-base text-gray font-semibold">
+                      {data}
+                    </span>
+                  </div>
+                  <span className="filter-head-icon text-gray">
+                    <i className="bi bi-chevron-right"></i>
+                  </span>
+                </button>
+              </div>
+            );
+          })}
         </FilterWrap>
       </SizesFilter>
+
+      {/* -----------------------------------Lọc theo đánh giá---------------------------- */}
       <StyleFilter onClick={() => toggleFilter("style")}>
         <FilterTitle className="flex items-center justify-between">
           <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Dress Style
+            Lọc theo đánh giá
           </p>
           <span
             className={`text-gray text-xl filter-title-icon ${!isStyleFilterOpen ? "rotate" : ""
@@ -337,7 +351,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isStyleFilterOpen ? "hide" : "show"}`}>
-          {StyleFilterList?.map((styleFilter) => {
+          {/* {StyleFilterList?.map((styleFilter) => {
             return (
               <div className="style-filter-item" key={styleFilter.id}>
                 <button
@@ -353,7 +367,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
                 </button>
               </div>
             );
-          })}
+          })} */}
         </FilterWrap>
       </StyleFilter>
     </>

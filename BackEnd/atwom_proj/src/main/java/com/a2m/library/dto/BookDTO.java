@@ -23,6 +23,7 @@ public class BookDTO{
     @Column(columnDefinition = "TEXT")
     private String description;
     private String image;
+    private String nxb;
     private Boolean active;
 
     private LocalDateTime cre_dt;

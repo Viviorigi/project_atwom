@@ -45,6 +45,9 @@ public class Book {
 
   @Column(name = "quantity")
   private Integer quantity;
+  
+  @Column(name = "nxb")
+  private String nxb;
 
   @OneToMany(mappedBy = "book")
   private Set<CheckoutDetail> checkoutDetails;
