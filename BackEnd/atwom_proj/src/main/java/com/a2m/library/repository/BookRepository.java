@@ -9,10 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.a2m.library.dto.BookDTO;
 import com.a2m.library.model.Book;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
+
+	BookDTO getBookById(Integer id);
+	
 	@Query("SELECT u FROM Book u WHERE u.active = true")
 	List<Book> findAllActiveBooks();
 	

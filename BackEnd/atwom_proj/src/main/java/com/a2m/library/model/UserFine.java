@@ -20,8 +20,8 @@ public class UserFine {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "returnbook_id")
-    private ReturnBook returnBook;
+    @JoinColumn(name = "checkout_id")
+    private Checkout checkout;
 
     @Column(name = "amount")
     private Double amount;

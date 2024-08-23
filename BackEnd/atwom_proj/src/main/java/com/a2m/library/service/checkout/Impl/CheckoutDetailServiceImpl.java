@@ -100,6 +100,7 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
     private CheckoutDetailDTO mapToDTO(CheckoutDetail checkoutDetail) {
         CheckoutDetailDTO dto = new CheckoutDetailDTO();
         dto.setId(checkoutDetail.getId());
+        dto.setCheckoutId(checkoutDetail.getCheckout().getId());
         dto.setBookId(checkoutDetail.getBook().getId());
         dto.setBookTitle(checkoutDetail.getBook().getTitle());
         dto.setCategoryId(checkoutDetail.getBook().getCategory().getId());

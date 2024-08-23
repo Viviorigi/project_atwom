@@ -1,18 +1,34 @@
+import React from 'react';
 import OrderItem from "./OrderItem";
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import { CheckoutDTO } from '../../model/checkout/CheckoutDTO';
 
-const OrderItemList = ({ orders }:any) => {
+interface OrderItemListProps {
+  orders: CheckoutDTO[];
+  filterStatus?: string;
+}
+
+const OrderItemList: React.FC<OrderItemListProps> = ({ orders, filterStatus }) => {
+  const filteredOrders = filterStatus
+    ? orders.filter(order => order.status === filterStatus)
+    : orders;
+
   return (
     <div>
-      {orders?.map((order:any) => (
-        <OrderItem key={order.id} order={order} />
-      ))}
+      {filteredOrders.length > 0 ? (
+        filteredOrders.map(order => (
+          <OrderItem key={order.id} checkout={order} />
+        ))
+      ) : (
+        <p>No orders available</p>
+      )}
     </div>
   );
 };
 
-export default OrderItemList;
-
 OrderItemList.propTypes = {
-  orders: PropTypes.array,
+  orders: PropTypes.array.isRequired,
+  filterStatus: PropTypes.string,
 };
+
+export default OrderItemList;

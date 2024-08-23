@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.model.Category;
 
 @Repository
@@ -18,4 +19,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>{
 	
 	@Query("SELECT u FROM Category u WHERE u.name like %:keySearch%")
 	Page<Category> findAllCategory(@Param("keySearch") String keySearch, Pageable pageable);
+
+    Category findCategoryByBookId(Integer bookId);
 }

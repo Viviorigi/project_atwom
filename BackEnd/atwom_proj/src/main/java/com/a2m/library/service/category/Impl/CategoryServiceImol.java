@@ -1,6 +1,7 @@
 package com.a2m.library.service.category.Impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -42,6 +43,12 @@ public class CategoryServiceImol implements CategoryService{
 		List<Category>categories = categoryRepository.findAllActiveCategories();
 		return categories.stream().map(category -> convertToCategoryDTO(category)).collect(Collectors.toList());
 	}
+
+	@Override
+    public CategoryDTO getCategoryByBookId(Integer bookId) {
+        Category category = categoryRepository.findCategoryByBookId(bookId);
+        return category != null ? convertToCategoryDTO(category) : null;
+    }
 
 	@Override
 	public CategoryDTO findById(Integer id) {

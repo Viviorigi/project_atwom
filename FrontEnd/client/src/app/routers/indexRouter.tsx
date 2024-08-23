@@ -25,7 +25,7 @@ export const indexRouter: any = {
     { path: 'book', element: <BookListItem /> },
     { path: 'book/details', element: <BookDetail /> },
     { path: 'change_password', element: <AuthGuard><RoleGuard role={["ADMIN", "STUDENT"]}><ChangePassword /></RoleGuard></AuthGuard> },
-    { path: 'order', element: <OrderList /> },
+    { path: 'order', element: <OrderList orders={[]} /> },
     { path: 'cart', element: <CartScreen /> },
     { path: 'contact', element: <Contact /> },
     { path: 'order_detail', element: <OrderDetail /> },

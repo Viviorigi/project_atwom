@@ -14,7 +14,6 @@ export const CheckoutService = {
       throw error;
     }
   },
-  
 
   findById: async (id: number): Promise<CheckoutDTO> => {
     try {
@@ -36,12 +35,12 @@ export const CheckoutService = {
     }
   },
 
-  updateStatus: async (id: number, status: CheckoutStatus): Promise<CheckoutDTO> => {
+  update: async (id: number, checkoutDTO: CheckoutDTO): Promise<CheckoutDTO> => {
     try {
-      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/status/${id}`, { status });
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/${id}/update`, checkoutDTO);
       return response.data;
     } catch (error) {
-      console.error(`Error updating status for checkout with ID: ${id}`, error);
+      console.error(`Error updating checkout with ID: ${id}`, error);
       throw error;
     }
   },
@@ -81,7 +80,27 @@ export const CheckoutService = {
       const response = await axios.put<CheckoutDTO>(`${BASE_URL}/expired/${id}`);
       return response.data;
     } catch (error) {
-      console.error(`Error borrowing checkout with ID: ${id}`, error);
+      console.error(`Error marking checkout as expired with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
+  returnedCheckout: async (id: number): Promise<CheckoutDTO> => {
+    try {
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/${id}/returned`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error marking checkout as returned with ID: ${id}`, error);
+      throw error;
+    }
+  },
+
+  penaltyCheckout: async (id: number): Promise<CheckoutDTO> => {
+    try {
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/${id}/penalty`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error marking checkout as penalty with ID: ${id}`, error);
       throw error;
     }
   },
@@ -96,7 +115,6 @@ export const CheckoutService = {
   },
 
   checkExpiredCheckouts: async (): Promise<void> => {
-    // This is likely managed by the backend with a scheduled task.
     console.log('Checking expired checkouts (this should run on the server side).');
   },
 };

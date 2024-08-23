@@ -1,6 +1,7 @@
 package com.a2m.library.service.book.Impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -41,12 +42,16 @@ public class BookServiceImpl implements BookService{
 		return books;
 	}
 
-//	@Override
-//	public BookDTO findById(Integer id) {
-//		// TODO Auto-generated method stub
-//		Book book = bookRepository.findById(id).get();
-//		return convertToBookDTO(book);
-//	}
+	@Override
+    public BookDTO getBookById(Integer id) {
+        Optional<Book> optionalBook = bookRepository.findById(id);
+        if (optionalBook.isPresent()) {
+            Book book = optionalBook.get();
+            return convertToBookDTO(book);
+        } else {
+            throw new RuntimeException("Book not found with id: " + id);
+        }
+    }
 	
 	@Override
 	public Book findById(Integer id) {

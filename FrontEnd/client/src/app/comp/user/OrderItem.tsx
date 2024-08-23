@@ -1,8 +1,14 @@
-import styled from "styled-components";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { BaseLinkGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { currencyFormat } from "../../utils/helper";
+import { CheckoutDTO } from '../../model/checkout/CheckoutDTO';
+import { CheckoutDetailDTO } from '../../model/checkout/CheckoutDTO';
+import { BookDTO } from '../../model/book/BookDTO';
+import { CategoryDTO } from '../../model/book/CategoryDTO';
+import { getBookById, getCategoryByBookId } from '../../services/BookService';
+import { getUserInfo } from '../../services/UserService';
 
 const OrderItemWrapper = styled.div`
   margin: 30px 0;
@@ -27,6 +33,9 @@ const OrderItemWrapper = styled.div`
   }
 
   .order-info-group {
+    display: flex;
+    flex-wrap: wrap;
+    
     @media (max-width: ${breakpoints.sm}) {
       flex-direction: column;
     }
@@ -43,6 +52,7 @@ const OrderItemWrapper = styled.div`
 
     &:nth-child(even) {
       text-align: right;
+
       @media (max-width: ${breakpoints.lg}) {
         text-align: left;
       }
@@ -55,6 +65,8 @@ const OrderItemWrapper = styled.div`
   }
 
   .order-overview {
+    display: flex;
+    justify-content: space-between;
     margin: 28px 0;
     gap: 12px;
 
@@ -74,6 +86,7 @@ const OrderItemWrapper = styled.div`
     }
 
     &-content {
+      display: grid;
       grid-template-columns: 100px auto;
       gap: 18px;
     }
@@ -90,69 +103,80 @@ const OrderItemWrapper = styled.div`
   }
 `;
 
-const OrderItem = ({ order }:any) => {
+interface OrderItemProps {
+  checkout: CheckoutDTO;
+}
+
+const OrderItem: React.FC<OrderItemProps> = ({ checkout }) => {
+  const { id, startTime, status, checkoutDetails } = checkout;
+
+  const [book, setBook] = useState<BookDTO | null>(null);
+  const [category, setCategory] = useState<CategoryDTO | null>(null);
+
+  useEffect(() => {
+    if (checkoutDetails && checkoutDetails.length > 0) {
+      const checkoutDetail = checkoutDetails[0] as CheckoutDetailDTO;
+      const { bookId } = checkoutDetail;
+
+      getBookById(bookId).then(bookData => setBook(bookData));
+
+      if (bookId) {
+        getCategoryByBookId(bookId).then(categoryData => setCategory(categoryData));
+      }
+    }
+  }, [checkoutDetails]);
+
+  if (!checkoutDetails || checkoutDetails.length === 0 || !book || !category) {
+    return <p>No details available</p>;
+  }
+
+  const checkoutDetail = checkoutDetails[0] as CheckoutDetailDTO;
+  const { quantity } = checkoutDetail;
+
+  const totalPrice = quantity * (book.price || 0);
+
   return (
     <OrderItemWrapper>
       <div className="order-item-details">
-        <h3 className="text-x order-item-title">Order no: {order.order_no}</h3>
-        <div className="order-info-group flex flex-wrap">
+        <h3 className="text-x order-item-title">Order no: {id}</h3>
+        <div className="order-info-group">
           <div className="order-info-item">
             <span className="text-gray font-semibold">Order Date:</span>
-            <span className="text-silver">{order.order_date}</span>
+            <span className="text-silver">{new Date(startTime).toLocaleDateString()}</span>
           </div>
           <div className="order-info-item">
             <span className="text-gray font-semibold">Order Status:</span>
-            <span className="text-silver">{order.status}</span>
-          </div>
-          <div className="order-info-item">
-            <span className="text-gray font-semibold">
-              Estimated Delivery Date:
-            </span>
-            <span className="text-silver">{order.delivery_date}</span>
-          </div>
-          <div className="order-info-item">
-            <span className="text-gray font-semibold">Method:</span>
-            <span className="text-silver">{order.payment_method}</span>
+            <span className="text-silver">{status}</span>
           </div>
         </div>
       </div>
-      <div className="order-overview flex justify-between">
-        <div className="order-overview-content grid">
+      <div className="order-overview">
+        <div className="order-overview-content">
           <div className="order-overview-img">
-            <img
-              src={order.items[0].imgSource}
-              alt=""
-              className="object-fit-cover"
-            />
+            <img src={book.image || 'http://example.com/image.jpg'} alt={book.title} className="object-fit-cover" />
           </div>
           <div className="order-overview-info">
-            <h4 className="text-xl">{order.items[0].name}</h4>
+            <h4 className="text-xl">{book.title}</h4>
             <ul>
               <li className="font-semibold text-base">
-                <span>Colour:</span>
-                <span className="text-silver">{order.items[0].color}</span>
+                <span>Category:</span>
+                <span className="text-silver">{category.name}</span>
               </li>
               <li className="font-semibold text-base">
                 <span>Qty:</span>
-                <span className="text-silver">{order.items[0].quantity}</span>
+                <span className="text-silver">{quantity}</span>
               </li>
               <li className="font-semibold text-base">
                 <span>Total:</span>
-                <span className="text-silver">
-                  {currencyFormat(order.items[0].price)}
-                </span>
+                <span className="text-silver">{currencyFormat(totalPrice)}</span>
               </li>
             </ul>
           </div>
         </div>
-        <BaseLinkGreen to="/order_detail">View Detail</BaseLinkGreen>
+        <BaseLinkGreen to={`/order_detail/${id}`}>View Detail</BaseLinkGreen>
       </div>
     </OrderItemWrapper>
   );
 };
 
 export default OrderItem;
-
-OrderItem.propTypes = {
-  order: PropTypes.object,
-};
