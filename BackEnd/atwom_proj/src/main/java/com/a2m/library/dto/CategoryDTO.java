@@ -1,6 +1,7 @@
 package com.a2m.library.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Data;
 
@@ -14,5 +15,6 @@ public class CategoryDTO {
 	private LocalDateTime upd_dt;
 //	private List<BookDTO>books;
 	private Integer numOfBook;
+	private List<BookDTO> books;
 }
 
