@@ -5,7 +5,7 @@ import { CheckoutDetailDTO } from '../model/checkout/CheckoutDTO';
 const BASE_URL = 'http://localhost:8080/api';
 
 export const getAllCheckouts = async (keySearch: string, limit: number, page: number): Promise<CheckoutDTO[]> => {
-    const response = await axios.get(`${BASE_URL}/checkout`, {
+    const response = await axios.get(`${BASE_URL}/checkout/list`, {
         params: { keySearch, limit, page }
     });
     return response.data;
@@ -31,9 +31,7 @@ export const deleteCheckout = async (id: number): Promise<void> => {
 };
 
 export const getCheckoutDetailsByCheckoutId = async (checkoutId: number): Promise<CheckoutDetailDTO[]> => {
-    const response = await axios.get(`${BASE_URL}/checkoutdt/`, {
-        params: { checkoutId }
-    });
+    const response = await axios.get(`${BASE_URL}/checkoutdt/${checkoutId}`);
     return response.data;
 };
 

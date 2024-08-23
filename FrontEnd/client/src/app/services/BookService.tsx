@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { BookDTO } from '../model/book/BookDTO';
 
-const API_URL = 'http://localhost:8080/book/';
+const API_URL = 'http://localhost:8080/';
 
 export const getBooks = async (page: number, keySearch: string, cateId: number) => {
-  const response = await axios.get(`${API_URL}/list`, {
+  const response = await axios.get(`${API_URL}book/list`, {
     params: {
       page,
       keySearch,
@@ -15,12 +15,12 @@ export const getBooks = async (page: number, keySearch: string, cateId: number) 
 };
 
 export const getBookById = async (id: number): Promise<BookDTO> => {
-    const response = await axios.get(`${API_URL}/${id}`);
+    const response = await axios.get(`${API_URL}book/${id}`);
     return response.data;
 };
 
 export const getCategoryByBookId = async (id: number) => {
-  const response = await axios.get(`${API_URL}/category/book/${id}`);
+  const response = await axios.get(`${API_URL}category/book/${id}`);
   return response.data;
 };
 
@@ -36,7 +36,7 @@ export const addBook = async (book: any, file?: File, images?: File[]) => {
     });
   }
 
-  const response = await axios.post(`${API_URL}/add`, formData, {
+  const response = await axios.post(`${API_URL}book/add`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -45,12 +45,12 @@ export const addBook = async (book: any, file?: File, images?: File[]) => {
 };
 
 export const editBook = async (bookDTO: any) => {
-  const response = await axios.post(`${API_URL}/edit`, bookDTO);
+  const response = await axios.post(`${API_URL}book/edit`, bookDTO);
   return response.data;
 };
 
 export const deleteBook = async (id: number) => {
-  const response = await axios.delete(`${API_URL}/delete`, {
+  const response = await axios.delete(`${API_URL}book/delete`, {
     params: { id },
   });
   return response.data;

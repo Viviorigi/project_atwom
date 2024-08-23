@@ -13,13 +13,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.a2m.library.dto.BookDTO;
+import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.model.Book;
 import com.a2m.library.service.book.BookService;
+import com.a2m.library.service.category.CategoryService;
 
 @RestController
 public class BookClientController {
 	@Autowired
 	BookService bookService;
+	@Autowired
+	CategoryService categoryService;
 	
 	@GetMapping("/book/new")
 	public ResponseEntity<?> bookGet() {
@@ -44,9 +48,10 @@ public class BookClientController {
 	@GetMapping("/book/list/all")
 	public ResponseEntity<?> bookGetList(
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
-            @RequestParam(value = "keySearch", defaultValue = "") String keySearch) {
+            @RequestParam(value = "keySearch", defaultValue = "") String keySearch,
+            @RequestParam("cateId") Integer cateId) {
 		PageRequest pageRequest = PageRequest.of(page - 1, 9, Sort.by("upd_dt").descending());
-		Page<BookDTO> book = bookService.findByKeySearch(keySearch, pageRequest);
+		Page<BookDTO> book = bookService.findByKeySearch(keySearch,cateId, pageRequest);
 		return ResponseEntity.ok().body(book);
 	}
 	
@@ -54,5 +59,19 @@ public class BookClientController {
 	public ResponseEntity<?> bookDetail(@RequestParam("id") Integer id) {
 		BookDTO books = bookService.findById(id);
 		return ResponseEntity.ok().body(books);
+	}
+	
+	@GetMapping("/book/similar")
+	public ResponseEntity<?> bookSimilar(@RequestParam("id") Integer id) {
+		BookDTO books = bookService.findById(id);
+		CategoryDTO categoryDTO = categoryService.findById(books.getCateId());
+		List<BookDTO> bookSimilar = new ArrayList<BookDTO>();
+		bookSimilar = categoryDTO.getBooks();
+		if(categoryDTO.getNumOfBook() < 6)
+			return ResponseEntity.ok().body(bookSimilar);
+		else
+			bookSimilar = bookSimilar.subList(0, 5);
+		
+		return ResponseEntity.ok().body(bookSimilar);
 	}
 }

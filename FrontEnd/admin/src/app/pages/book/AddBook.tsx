@@ -147,18 +147,7 @@ export default function AddBook(props: any) {
 
     }, [])
 
-    useEffect(() => {
-        if (bookDTO != null) {
-            let url = `http://localhost:8080/book/getCate?id=${bookDTO.id}`;
-            axios.get(url).then((resp: any) => {
-                if (resp.data) {
-                    setCategoryEdit(resp.data);
-                }
-            }).catch((err: any) => {
 
-            })
-        }
-    }, [])
 
     //lấy dữ liệu từ ô input
     const handleChangeText = (event: any) => {

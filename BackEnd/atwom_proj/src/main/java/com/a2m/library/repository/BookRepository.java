@@ -30,6 +30,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 	@Query("SELECT u FROM Book u WHERE " +
 		       "(u.title LIKE %:keyword% OR " +
 		       "u.description LIKE %:keyword%) AND " +
-		       "u.active = true")
-	    Page<Book> searchBook(@Param("keyword") String keyword, Pageable pageable);
+		       "u.active = true AND " +
+		       "(:cateId = 0 OR u.category.id = :cateId)")
+		Page<Book> searchBook(@Param("keyword") String keyword, @Param("cateId") int cateId, Pageable pageable);
+
 }

@@ -137,7 +137,7 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
                 ))}
               </select>
             </div>
-            {status === CheckoutStatus.PENALTY && (
+            {/* {status === CheckoutStatus.PENALTY && (
               <div className="mb-3">
                 <label className="form-label" hidden>Fine</label>
                 <input
@@ -160,7 +160,7 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
                   hidden
                 />
               </div>
-            )}
+            )} */}
           </div>
           <div className="modal-footer">
             <button

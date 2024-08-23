@@ -10,7 +10,10 @@ import { books } from "../../data/data";
 import imageBookDefault from "../../../assets/images/imageBookDefault.png"
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import { Input, InputGroupWrapper } from "../../styles/form";
+import { Form, InputGroup, FormControl, Modal, Button } from 'react-bootstrap';
+import { BookSearch } from "../../comp/book/book-search";
+import Pagination from "../../comp/common/Pagination"
 
 const ProductsContent = styled.div`
   grid-template-columns: 320px auto;
@@ -90,29 +93,148 @@ const DescriptionContent = styled.div`
   }
 `;
 
+const ModalHeader = styled(Modal.Header)`
+  border-bottom: 0;
+`;
+
+const ModalBody = styled(Modal.Body)`
+  background-color: #f8f9fa;
+  padding: 2rem;
+`;
+
+const CustomSelect = styled(Form.Control)`
+  border-radius: 0;
+  box-shadow: none;
+`;
+
+const BookListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .book-grid {
+    display: grid;
+    column-gap: 20px;
+    row-gap: 40px;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    margin-bottom: 20px; /* Đảm bảo khoảng cách với phân trang */
+    
+    @media (max-width: 576px) {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+`;
+
+
 const BookListItem = () => {
 
   const [bookList, setBookList] = useState([]);
+  const [searchDto, setSearchDto] = useState(new BookSearch('', 1, 0, new Date().getTime()))
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/list/all`;
+    let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
-        setBookList(resp.data);
-        console.log(resp.data);
-        
+        setBookList(resp.data.content);
+        setTotalPages(resp.data.totalPages);
+        setTotalItems(resp.data.totalElements);
+
       }
     }).catch((err: any) => {
 
     })
-  }, [])
+  }, [searchDto.page, searchDto.timer])
+
+  // xử lý khi chữ thay đổi
+  const handleChangeText = (event: any) => {
+    setSearchDto({
+      ...searchDto,
+      [event.target.name]: event.target.value
+    });
+  }
+
+  //
+  const handleKeyUpSearch = (e: any) => {
+    if (e.key === "Enter") {
+      setSearchDto({
+        ...searchDto,
+        page:1,
+        timer: new Date().getTime(),
+      });
+    }
+  };
+
+  //Phân trang
+  const handlePageClick = (pageNumber: any) => {
+    setSearchDto(() => ({
+      ...searchDto,
+      page: pageNumber,
+    }));
+  };
+
+  const prev = () => {
+    if (searchDto.page > 1) {
+      setSearchDto(() => ({
+        ...searchDto,
+        page: searchDto.page - 1,
+      }));
+    }
+  };
+  const next = () => {
+    if (searchDto.page < totalPages) {
+      setSearchDto(() => ({
+        ...searchDto,
+        page: searchDto.page + 1,
+      }));
+    }
+  };
 
   const breadcrumbItems = [
     { label: "Home", link: "/" },
     { label: "Products", link: "" },
   ];
   return (
+
     <main className="page-py-spacing">
+
+      <div className="col-auto" style={{ display: 'flex', justifyContent: 'center' }}>
+        {/* Search input */}
+        <div className="search-box" style={{ display: 'flex', width: '50%' }}>
+          {/* search input */}
+          <input
+            className="form-control search-input"
+            type="search"
+            placeholder="Search book"
+            name="keySearch"
+            aria-label="Search"
+            value={searchDto.keySearch || ""}
+            onChange={handleChangeText}
+            onKeyUp={handleKeyUpSearch}
+            style={{ flex: 1, marginRight: '0.5rem' }} // Chiếm hết không gian còn lại
+          />
+          <button
+            className='btn btn-primary'
+            onClick={() => {
+              setSearchDto({
+                ...searchDto,
+                page: 1,
+                timer: new Date().getTime(),
+              });
+            }}
+            style={{ whiteSpace: 'nowrap' }} // Đảm bảo text không bị cắt
+          >
+            <span className="fas fa-search" />
+          </button>
+        </div>
+      </div>
       <Container>
         <Breadcrumb items={breadcrumbItems} />
         <ProductsContent className="grid items-start">
@@ -136,29 +258,48 @@ const BookListItem = () => {
               </ul>
             </div>
 
-            <BookList products={books.slice(0, 12)} />
-            {/* {bookList.map((u:any) => {
-              return (
-                <div key={u.id}>
-                  <div className="product-img">
-                    <img
-                      className="object-fit-cover"
-                      src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault}  onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.onerror = null; // Prevent infinite loop in case fallback image also fails
-                        target.src = imageBookDefault; // Set the fallback image
-                      }}
-                      alt=""
-                      width="50px"
-                      height="50px"
-                    />
+            {/* đổ dữ liệu ở đây  */}
+            {/* <BookList products={books.slice(0, 12)} /> */}
+            <BookListWrapper className="grid">
+              <div className="book-grid">
+                {bookList.map((book: any) => (
+                  <div key={book.id}> {/* Đặt `key` trên phần tử chính */}
+                    <div className="product-img">
+                      {/* <Link to={`/book/details?id=${book.id}`}> */}
+                      <Link to={`/book/details/?bookId=${book.id}`}>
+
+                        <img
+                          // className="object-fit-cover"
+                          src={book.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book.image}` : imageBookDefault} onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                            target.src = imageBookDefault; // Set the fallback image
+                          }}
+                          alt={book.title || 'Image not available'}
+                          width="288px"
+                          height="399px"
+                        />
+                      </Link>
+                    </div>
+                    <div className="product-info">
+                      <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#4a4e52', margin: '0' }}>{book.title}</p>
+                      <p style={{ fontSize: '16px', fontWeight: 'normal', color: '#4a4e52', margin: '5px 0 0 0' }}>{book.publisher}</p>
+                    </div>
                   </div>
-                  <div className="product-info">
-                    <p className="font-semibold text-xl">{u.title}</p>
-                  </div>
+                ))}
+
+              </div>
+              <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
+                <div className="col-auto d-flex">
+                  {/* <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total books: </span>  {totalItems} </p> */}
                 </div>
-              );
-            })} */}
+                <div className="col-auto d-flex pagination-container">
+                  <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={prev} next={next} />
+                </div>
+              </div>
+
+
+            </BookListWrapper>
 
           </ProductsContentRight>
         </ProductsContent>

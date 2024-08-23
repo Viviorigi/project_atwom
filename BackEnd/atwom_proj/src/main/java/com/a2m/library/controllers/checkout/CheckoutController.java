@@ -40,6 +40,12 @@ public class CheckoutController {
         return ResponseEntity.ok(checkouts);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<CheckoutDTO>> findCheckoutById(@PathVariable Integer id) {
+        Optional<CheckoutDTO> checkout = checkoutService.findById(id);
+        return ResponseEntity.ok(checkout);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<CheckoutDTO> createCheckout(@RequestBody CheckoutDTO checkoutDTO) {
         checkoutDTO.setStatus(CheckoutStatus.REQUESTED);

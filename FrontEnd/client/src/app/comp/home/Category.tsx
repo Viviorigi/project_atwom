@@ -65,14 +65,14 @@ const Category = () => {
   const [bookList, setBookList] = useState([]);
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/new`;
-    axios.get(url).then((resp: any) => {
-      if (resp.data) {
-        setBookList(resp.data);
-      }
-    }).catch((err: any) => {
+    // let url = `http://localhost:8080/book/new`;
+    // axios.get(url).then((resp: any) => {
+    //   if (resp.data) {
+    //     setBookList(resp.data);
+    //   }
+    // }).catch((err: any) => {
 
-    })
+    // })
   }, [])
 
   return (
@@ -88,9 +88,10 @@ const Category = () => {
 
             {bookList.map((u: any) => {
               return (
-                <ProductCardBoxWrapper key={u.id}>
+                <ProductCardBoxWrapper key={u.id}> 
                   <div className="product-img">
-                    <Link to={`/book/details/?id=${u.id}`}>
+                    {/* <Link to={`/book/details/?id=${u.id}`}> */}
+                    <Link to={`/book/details/?bookId=${u.id}`}>
                       <img
                         className="object-fit-cover"
                         src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {

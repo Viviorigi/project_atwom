@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
+import com.a2m.library.dto.CheckoutDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
@@ -66,14 +68,16 @@ public class BookController {
 	}
 
 	@GetMapping("/book/{id}")
-    public ResponseEntity<?> getBookById(@PathVariable Integer id) {
-        try {
-            BookDTO bookDTO = bookService.getBookById(id);
-            return ResponseEntity.ok(bookDTO);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<BookDTO> findBookById(@PathVariable Integer id) {
+        BookDTO book = bookService.getBookById(id);
+        return ResponseEntity.ok(book);
     }
+
+//	@GetMapping("/book/list")
+//	public ResponseEntity<?> bookGet() {
+//		List<BookDTO>books = bookService.findAllActive();
+//		return ResponseEntity.ok().body(books);
+//	}
 
 //	@GetMapping("/book/list")
 //	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,
@@ -84,9 +88,9 @@ public class BookController {
 	
 	@GetMapping("/book/list")
 	public ResponseEntity<?> bookGetList(@RequestParam("page") Integer page,
-											@RequestParam("keySearch") String keySearch){
+											@RequestParam("keySearch") String keySearch,@RequestParam("cateId") Integer cateId){
 		PageRequest pageRequest = PageRequest.of(page - 1, 5, Sort.by("upd_dt").descending());
-		Page<BookDTO> book = bookService.findByKeySearch(keySearch, pageRequest);
+		Page<BookDTO> book = bookService.findByKeySearch(keySearch,cateId, pageRequest);
 		return ResponseEntity.ok().body(book);
 	}
 
