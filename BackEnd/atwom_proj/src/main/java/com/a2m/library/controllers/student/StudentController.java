@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.UserDTO;
@@ -48,6 +49,8 @@ import com.a2m.library.repository.UserRepository;
 import com.a2m.library.repository.VerificationTokenRepository;
 import com.a2m.library.security.CustomUserDetails;
 import com.a2m.library.service.admin.UserService;
+import com.a2m.library.service.notification.SeeEmitterService;
+import com.a2m.library.service.notification.SeeNotificationService;
 import com.a2m.library.service.student.PasswordResetService;
 import com.a2m.library.service.student.StudentService;
 import com.a2m.library.util.JwtUtil;
@@ -209,6 +212,5 @@ public class StudentController {
 	    modelAndView.setViewName("account-verification-success");
 	    return modelAndView;
 	}
-
 	
 }

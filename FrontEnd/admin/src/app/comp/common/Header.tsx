@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Cookies from 'universal-cookie';
 import { AuthConstant } from '../../constants/AuthConstant';
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import { NotificationService } from '../../services/notification/NotificationService';
+import { NotificationDTO } from '../../model/NotificationDTO';
 export default function Header() {
-
+    const [notifications, setNotifications] = useState<NotificationDTO[]>([]);
     const cookie = new Cookies();
     const [fullName,setFullName] = useState("");
     const [avatar,setAvatar] = useState("")
+
+    const isDataFetched = useRef(false);
+
     useEffect(()=>{
         const storedFullName = cookie.get("fullName");
         const storedAvatar = cookie.get("avatar");
@@ -17,6 +22,40 @@ export default function Header() {
         if(storedAvatar){
             setAvatar(storedAvatar);
         }
+
+        if (!isDataFetched.current) {
+            NotificationService.getInstance()
+                .getNewest({
+                    keySearch: '',
+                    limit: 5,
+                    page: 1,
+                }).then((resp) => {
+                    const reversedNotifications = [...resp.data.notis].reverse();
+                    setNotifications(reversedNotifications);
+                    console.log(resp.data.notis);
+                    
+                    isDataFetched.current = true;
+                }).catch(error => {
+                    console.error("Error fetching notifications:", error);
+                  });
+          }
+
+        const events = new EventSource('http://localhost:8080/api/public/subscribe/admin');  
+        events.onmessage = event => {
+            const newNotification = new NotificationDTO(event.data);
+            console.log(event.data);
+            setNotifications(prevNotifications => {
+                const updatedNotifications = [...prevNotifications, newNotification];
+                
+                if (updatedNotifications.length > 5) {
+                    updatedNotifications.shift(); 
+                }
+                
+                return updatedNotifications;
+            });
+      }
+      console.log(notifications);
+      
       },[])
     const logout = ()=>{
         cookie.remove(AuthConstant.ACCESS_TOKEN);
@@ -162,79 +201,35 @@ export default function Header() {
                                             <h5 className="text-black mb-0">Notificatons</h5><button className="btn btn-link p-0 fs--1 fw-normal" type="button">Mark all as read</button>
                                         </div>
                                     </div>
-                                    <div className="card-body p-0">
+                                        <div className="card-body p-0">
                                         <div className="scrollbar-overlay" style={{ height: '27rem' }}>
                                             <div className="border-300">
+                                            {notifications.slice().reverse().map((n:any) => (
                                                 <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative read border-bottom">
-                                                    <div className="d-flex align-items-center justify-content-between position-relative">
-                                                        <div className="d-flex">
-                                                            <div className="avatar avatar-m status-online me-3"><img className="rounded-circle" src="assets/img/team/40x40/30.webp" alt="" /></div>
-                                                            <div className="flex-1 me-sm-3">
-                                                                <h4 className="fs--1 text-black">Jessie Samson</h4>
-                                                                <p className="fs--1 text-1000 mb-2 mb-sm-3 fw-normal"><span className="me-1 fs--2">💬</span>Mentioned you in a comment.<span className="ms-2 text-400 fw-bold fs--2">10m</span></p>
-                                                                <p className="text-800 fs--1 mb-0"><span className="me-1 fas fa-clock" /><span className="fw-bold">10:41 AM </span>August 7,2021</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
-                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as unread</a></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative unread border-bottom">
-                                                    <div className="d-flex align-items-center justify-content-between position-relative">
-                                                        <div className="d-flex">
-                                                            <div className="avatar avatar-m status-online me-3">
-                                                                <div className="avatar-name rounded-circle"><span>J</span></div>
-                                                            </div>
-                                                            <div className="flex-1 me-sm-3">
-                                                                <h4 className="fs--1 text-black">Jane Foster</h4>
-                                                                <p className="fs--1 text-1000 mb-2 mb-sm-3 fw-normal"><span className="me-1 fs--2">📅</span>Created an event.<span className="ms-2 text-400 fw-bold fs--2">20m</span></p>
-                                                                <p className="text-800 fs--1 mb-0"><span className="me-1 fas fa-clock" /><span className="fw-bold">10:20 AM </span>August 7,2021</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
-                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as unread</a></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative unread border-bottom">
-                                                    <div className="d-flex align-items-center justify-content-between position-relative">
-                                                        <div className="d-flex">
-                                                            <div className="avatar avatar-m status-online me-3"><img className="rounded-circle avatar-placeholder" src="assets/img/team/40x40/avatar.webp" alt="" /></div>
-                                                            <div className="flex-1 me-sm-3">
-                                                                <h4 className="fs--1 text-black">Jessie Samson</h4>
-                                                                <p className="fs--1 text-1000 mb-2 mb-sm-3 fw-normal"><span className="me-1 fs--2">👍</span>Liked your comment.<span className="ms-2 text-400 fw-bold fs--2">1h</span></p>
-                                                                <p className="text-800 fs--1 mb-0"><span className="me-1 fas fa-clock" /><span className="fw-bold">9:30 AM </span>August 7,2021</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
-                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as unread</a></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="border-300">
-                                                <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative unread border-bottom">
-                                                    <div className="d-flex align-items-center justify-content-between position-relative">
-                                                        <div className="d-flex">
-                                                            <div className="avatar avatar-m status-online me-3"><img className="rounded-circle" src="assets/img/team/40x40/57.webp" alt="" /></div>
-                                                            <div className="flex-1 me-sm-3">
-                                                                <h4 className="fs--1 text-black">Kiera Anderson</h4>
-                                                                <p className="fs--1 text-1000 mb-2 mb-sm-3 fw-normal"><span className="me-1 fs--2">💬</span>Mentioned you in a comment.<span className="ms-2 text-400 fw-bold fs--2" /></p>
-                                                                <p className="text-800 fs--1 mb-0"><span className="me-1 fas fa-clock" /><span className="fw-bold">9:11 AM </span>August 7,2021</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
-                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as unread</a></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 
+                                                    <div className="d-flex align-items-center justify-content-between position-relative">
+
+                                                        <div className="d-flex">
+                                                            <div className="avatar avatar-m status-online me-3"></div>
+                                                            <div className="flex-1 me-sm-3">
+                                                                <h4 className="fs--1 text-black">{n.message}</h4>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
+                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as read</a></div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                ))}
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    
                                     <div className="card-footer p-0 border-top border-0">
-                                        <div className="my-2 text-center fw-bold fs--2 text-600"><a className="fw-bolder" href="pages/notifications.html">Notification history</a></div>
+                                        <div className="my-2 text-center fw-bold fs--2 text-600"><Link className="fw-bolder" to="/notification">Notification history</Link></div>
                                     </div>
                                 </div>
                             </div>

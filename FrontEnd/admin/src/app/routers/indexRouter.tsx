@@ -11,6 +11,7 @@ import RoleGuard from '../guard/roleGuard';
 import Banner from '../pages/banner/Banner';
 import Contact from '../pages/contact/Contact';
 import About from '../pages/about/About';
+import Notification from '../pages/notification/Notification';
 export const indexRouter: any = {
     path: '',
     element: (
@@ -25,6 +26,7 @@ export const indexRouter: any = {
         { path: 'returnbook', element: <RoleGuard role="ADMIN"><Return /></RoleGuard> },
         { path: 'banner', element: <RoleGuard role="ADMIN"><Banner /></RoleGuard> },
         { path: 'contact', element: <RoleGuard role="ADMIN"><Contact /></RoleGuard> },
-        { path: 'about', element: <RoleGuard role="ADMIN"><About /></RoleGuard> }
+        { path: 'about', element: <RoleGuard role="ADMIN"><About /></RoleGuard> },
+        { path: 'notification', element: <RoleGuard role="ADMIN"><Notification /></RoleGuard> }
     ],
 };

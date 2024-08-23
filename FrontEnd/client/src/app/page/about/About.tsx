@@ -91,7 +91,6 @@ const AboutScreenWrapper = styled.section`
 
 
 export default function About() {
-  const [open, setOpen] = useState(false);
   const [about, setAbout] = useState<AboutDTO[]>([]);
   const [openId, setOpenId] = useState<number | null>(null);
 
@@ -138,7 +137,7 @@ export default function About() {
           <>
             <ContainerAbout>
               <BaseButtonQa onClick={() => handleToggle(a.about_id)}
-            aria-controls={`about-${a.id}`}
+            aria-controls={`about-${a.about_id}`}
             aria-expanded={openId === a.about_id}
               >{a.question}
                 {openId === a.about_id ? <CustomDownArrow /> : <CustomUpArrow />}
@@ -154,6 +153,7 @@ export default function About() {
         ))}
 
       </div>
+      <CustomDownArrow />
     </AboutScreenWrapper>
 
   )

@@ -21,6 +21,8 @@ import com.a2m.library.repository.UserRoleRepository;
 import com.a2m.library.repository.VerificationTokenRepository;
 import com.a2m.library.service.admin.EmailService;
 import com.a2m.library.service.admin.Impl.UserServiceImpl;
+import com.a2m.library.service.notification.SeeNotificationService;
+import com.a2m.library.service.notification.impl.SseNotificationServiceImpl;
 
 @Service
 public class StudentService {
@@ -38,6 +40,12 @@ public class StudentService {
 
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+    private SeeNotificationService seeNotificationService;
+	
+	
+	
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void register(UserDTO userDTO) throws Exception {
@@ -69,7 +77,7 @@ public class StudentService {
 		userRole.setUserUid(user.getUserUid());
 
 		userRoleRepository.save(userRole);
-
+		
 		String token = UUID.randomUUID().toString();
 		VerificationToken verificationToken = new VerificationToken();
 		verificationToken.setToken(token);
@@ -81,5 +89,8 @@ public class StudentService {
 		String verificationUrl = "http://localhost:8080/api/student/verify?token=" + token;
 		
 		emailService.SendEmailVerificationUrl(user.getEmail(), "Verify your email", verificationUrl);
+		
+		seeNotificationService.sendSseNotification_Account("admin", "User with username: "+user.getUsername()+" and email: "
+				+user.getEmail()+" has registered account");
 	}
 }
