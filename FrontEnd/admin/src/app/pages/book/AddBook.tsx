@@ -97,14 +97,21 @@ export default function AddBook(props: any) {
     // const imageSource = image ? image : bookDTO.image !== null ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage;
     const imageSource = image || (bookDTO && bookDTO.image ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage);
 
-    const [imageSources, setImageSources] = useState<File[]>([]);
+    const [imageSources, setImageSources] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (bookDTO && bookDTO.imagebooks.length > 0) {
+            setImageSources(bookDTO.imagebooks.map((image:any) => `http://localhost:8080/getImage?atchFleSeqNm=${image.filename}`));
+        }
+    }, [bookDTO])
 
     const [files, setFiles] = useState<File[]>([]);
 
     const handleManyFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const selectedFiles = Array.from(event.target.files);
-            setImageSources(prevFiles => [...prevFiles, ...selectedFiles]);
+            const newImageSources = selectedFiles.map(file => URL.createObjectURL(file));
+            setImageSources([...newImageSources]); // Replace with new selections
         }
     };
 
@@ -466,7 +473,7 @@ export default function AddBook(props: any) {
                                 <div className="preview Image" style={{ marginTop: "10px", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
                                     {imageSources.map((file, index) => (
                                         <div key={index} style={{ position: 'relative', margin: '5px' }}>
-                                            <img src={URL.createObjectURL(file)} alt={`Preview ${index}`} style={{ width: "100px", height: "100px" }} />
+                                            <img src={file} alt={`Preview ${index}`} style={{ width: "100px", height: "100px" }} />
                                         </div>
                                     ))}
                                 </div>

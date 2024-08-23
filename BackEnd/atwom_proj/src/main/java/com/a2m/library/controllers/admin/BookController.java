@@ -118,56 +118,51 @@ public class BookController {
 			}
 		}
 		
-//		List<String> imageName = new ArrayList<String>();
-//		if(images != null) {
-//			System.err.println("đã nhận");
-//		}else {
-//			System.err.println("chưa nhận");
-//		}
-//		//lưu ảnh phụ
-//		if (images != null && images.length > 0) {
-//	        for (MultipartFile image : images) {
-//	            if (!image.isEmpty()) {
-//	                try {
-//	                    String originalFilename = image.getOriginalFilename();
-//	                    String timestamp = String.valueOf(System.currentTimeMillis());
-//	                    String newFilename = timestamp + "_" + originalFilename;
-//
-//	                    final Path directory = Paths.get(uploadDir);
-//	                    final Path filePath = Paths.get(uploadDir + newFilename);
-//	                    if (!Files.exists(directory)) {
-//	                        Files.createDirectories(directory);
-//	                    }
-//	                    Files.write(filePath, image.getBytes());
-//	                    imageName.add(newFilename);
-//	                    System.out.println("Đã lưu ảnh phụ: " + newFilename);
-//
-//	                    // Nếu bạn cần lưu thông tin về ảnh phụ vào `book` hoặc một cấu trúc khác
-//	                    // bạn có thể thêm mã ở đây để lưu trữ thông tin về ảnh phụ
-//
-//	                } catch (Exception e) {
-//	                    System.out.println("Lỗi tải ảnh phụ");
-//	                    e.printStackTrace();
-//	                    return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
-//	                }
-//	            }
-//	        }
-//	    }
-//		
-//		try {
-//			bookService.save(book);
-//			for(String it: imageName) {
-//				ImagesBook imagesBook = new ImagesBook();
-//				imagesBook.setFilename(it);
-////				imagesBook.setBook(book);
-//				imageBookService.save(imagesBook);
-//			}
-//			
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//			return ResponseEntity.badRequest().body(e.getMessage());
-//		}
-		bookService.save(book);
+		List<String> imageName = new ArrayList<String>();
+		if(images != null) {
+			System.err.println("đã nhận");
+		}else {
+			System.err.println("chưa nhận");
+		}
+		//lưu ảnh phụ
+		if (images != null && images.length > 0) {
+	        for (MultipartFile image : images) {
+	            if (!image.isEmpty()) {
+	                try {
+	                    String originalFilename = image.getOriginalFilename();
+	                    String timestamp = String.valueOf(System.currentTimeMillis());
+	                    String newFilename = timestamp + "_" + originalFilename;
+	                    Path filePath = resourcePath.resolve(newFilename);                    
+	                    Files.write(filePath, image.getBytes());
+	                    imageName.add(newFilename);
+	                    System.out.println("Đã lưu ảnh phụ: " + newFilename);
+
+	                    // Nếu bạn cần lưu thông tin về ảnh phụ vào `book` hoặc một cấu trúc khác
+	                    // bạn có thể thêm mã ở đây để lưu trữ thông tin về ảnh phụ
+
+	                } catch (Exception e) {
+	                    System.out.println("Lỗi tải ảnh phụ");
+	                    e.printStackTrace();
+	                    return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
+	                }
+	            }
+	        }
+	    }
+		
+		try {
+			 Book booksave =  bookService.save(book);
+			for(String it: imageName) {
+				ImagesBook imagesBook = new ImagesBook();
+				imagesBook.setFilename(it);
+				imagesBook.setBook(booksave);
+				imageBookService.save(imagesBook);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+
 		return ResponseEntity.ok().body("success");
 	}
 	
