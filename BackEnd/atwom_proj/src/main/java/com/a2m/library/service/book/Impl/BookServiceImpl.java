@@ -43,9 +43,9 @@ public class BookServiceImpl implements BookService{
 	}
 	
 	@Override
-	public Page<BookDTO> findByKeySearch(String keySearch, PageRequest pageRequest) {
+	public Page<BookDTO> findByKeySearch(String keySearch,int cateId,  PageRequest pageRequest) {
 		// TODO Auto-generated method stub
-		Page<Book>book = bookRepository.searchBook(keySearch, pageRequest);
+		Page<Book>book = bookRepository.searchBook(keySearch,cateId, pageRequest);
 		List<BookDTO> bookDTOs = book.stream()
                 .map(this::convertToBookDTO)
                 .collect(Collectors.toList());
