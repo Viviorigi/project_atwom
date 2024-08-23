@@ -1,5 +1,6 @@
 package com.a2m.library.service.category.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
+import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
 import com.a2m.library.repository.CategoryRepository;
 import com.a2m.library.service.category.CategoryService;
@@ -78,6 +81,7 @@ public class CategoryServiceImol implements CategoryService{
 		categoryDTO.setCre_dt(category.getCre_dt());
 		categoryDTO.setUpd_dt(category.getUpd_dt());
 		categoryDTO.setNumOfBook(category.getBooks().size());
+		categoryDTO.setBooks(convertToListBookDTO(category.getBooks()));
 		return categoryDTO;
 	}
 
@@ -106,6 +110,39 @@ public class CategoryServiceImol implements CategoryService{
 	public List<Category> findAllList() {
 		// TODO Auto-generated method stub
 		return categoryRepository.findAll();
+	}
+	
+	public BookDTO convertToBookDTO(Book book) {
+		BookDTO bookDTO = new BookDTO();
+		bookDTO.setId(book.getId());
+		bookDTO.setTitle(book.getTitle());
+		bookDTO.setPublisher(book.getPublisher());
+		bookDTO.setPublicationYear(book.getPublicationYear());
+		bookDTO.setQuantity(book.getQuantity());
+		bookDTO.setPrice(book.getPrice());
+		bookDTO.setDescription(book.getDescription());
+		bookDTO.setImage(book.getImage());
+		bookDTO.setActive(book.getActive());
+		bookDTO.setUpd_dt(book.getUpd_dt());
+		bookDTO.setCre_dt(book.getCre_dt());
+		if (book.getCategory() != null) {
+	        bookDTO.setCateId(book.getCategory().getId());
+	        bookDTO.setCateName(book.getCategory().getName());
+	    } else {
+	        bookDTO.setCateId(0);
+	        bookDTO.setCateName("Unknown");
+	    }
+		bookDTO.setImagebooks(book.getImagebooks());
+
+		return bookDTO;
+	}
+	
+	public List<BookDTO> convertToListBookDTO(List<Book>book){
+		List<BookDTO> bookDTOs = new ArrayList<BookDTO>();
+		for(Book it: book) {
+			bookDTOs.add(convertToBookDTO(it));
+		}
+		return bookDTOs;
 	}
 
 }
