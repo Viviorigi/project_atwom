@@ -3,7 +3,10 @@ package com.a2m.library.dto;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.List;
 import java.util.Set;
+
+import com.a2m.library.model.ImagesBook;
 
 import jakarta.persistence.Column;
 
@@ -26,4 +29,5 @@ public class BookDTO{
     private LocalDateTime upd_dt;
     private int cateId;
     private String cateName;
+    private List<ImagesBook> imagebooks;
 }

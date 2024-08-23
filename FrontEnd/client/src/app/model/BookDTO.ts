@@ -12,5 +12,6 @@ export class BookDTO {
     cateName?:string;
     createdDate?: string;
     updatedDate?: string;
+    imagebooks?:[];
   }
   

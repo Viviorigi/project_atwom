@@ -4,7 +4,7 @@ import { productDescriptionTabHeads } from "../../data/data";
 import Title from "../common/Title";
 import { ContentStylings } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import BookDescriptionMedia from "./BookDescriptionMedia";
+
 import { BookDTO } from "../../model/BookDTO";
 
 const DetailsContent = styled.div`
@@ -13,18 +13,18 @@ const DetailsContent = styled.div`
     margin-top: 40px;
   }
 
-  .details-content-wrapper {
-    grid-template-columns: auto 500px;
-    gap: 40px;
+  // .details-content-wrapper {
+  //   grid-template-columns: auto 500px;
+  //   gap: 40px;
 
-    @media (max-width: ${breakpoints.xl}) {
-      grid-template-columns: auto 400px;
-    }
+  //   @media (max-width: ${breakpoints.xl}) {
+  //     grid-template-columns: auto 400px;
+  //   }
 
-    @media (max-width: ${breakpoints.lg}) {
-      grid-template-columns: 100%;
-      gap: 24px;
-    }
+  //   @media (max-width: ${breakpoints.lg}) {
+  //     grid-template-columns: 100%;
+  //     gap: 24px;
+  //   }
   }
 `;
 
@@ -131,7 +131,7 @@ const BookDescriptionTab = (props: any) => {
   };
   return (
     <DetailsContent>
-      <Title titleText={"Product Description"} />
+      <Title titleText={"Book Description"} />
 
       <div className="details-content-wrapper grid">
         <DescriptionTabsWrapper>
@@ -187,7 +187,6 @@ const BookDescriptionTab = (props: any) => {
             </div>
           </div>
         </DescriptionTabsWrapper>
-        <BookDescriptionMedia />
       </div>
     </DetailsContent>
   );

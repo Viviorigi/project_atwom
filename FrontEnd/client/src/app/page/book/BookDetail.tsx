@@ -198,10 +198,6 @@ const BookDetail = (props: any) => {
   const id = queryParams.get('bookId');
   // console.log(id);
 
-  useEffect(() => {
-    // Cuộn lên đầu trang mỗi khi component được render
-    window.scrollTo(0, 0);
-  }, [book]);
 
   useEffect(() => {
     let url = `http://localhost:8080/book/detail?id=${id}`;
@@ -227,9 +223,9 @@ const BookDetail = (props: any) => {
   ));
 
   const breadcrumbItems = [
-    { label: "Book", link: "" },
-    { label: "Book", link: "" },
-    { label: "Book", link: "" },
+    { label: "Home", link: "/home" },
+    { label: "ListBook", link: "/book" },
+    { label: "Book", link: `${location.pathname}?id=${id}` }
   ];
 
   return (
@@ -238,9 +234,9 @@ const BookDetail = (props: any) => {
       <Container>
         <Breadcrumb items={breadcrumbItems} />
         <DetailsContent className="grid">
-          {/* <BookPreview previewImages={product_one.previewImages} /> */}
+          <BookPreview previewImages={book?.imagebooks} image={book?.image} />
           {/* <BookPreview previewImages={book?.image} /> */}
-          <img
+          {/* <img
             // className="object-fit-cover"
             src={book?.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book?.image}` : imageBookDefault} onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -250,7 +246,7 @@ const BookDetail = (props: any) => {
             alt=""
             width="500px"
             height="600px"
-          />
+          /> */}
           <BookDetailsWrapper>
             <div className="container mt-4">
               <h2 className="text-dark mb-4">{book?.title}</h2>

@@ -10,6 +10,7 @@ import CustomNextArrow from "../common/CustomNextArrow";
 import CustomPrevArrow from "../common/CustomPrevArrow";
 import { useEffect, useState } from "react";
 import { BannerService } from "../../services/BannerService";
+import noImageAvailable from "../../../assets/images/noimg.jpg";
 
 const SectionHeroWrapper = styled.section`
   background-color: #f2f2f2;
@@ -167,12 +168,12 @@ const Hero = () => {
       keySearch: "",
       limit: 5,
       page: 1,
-    }).then((resp:any) => {
+    }).then((resp: any) => {
       setBanner(resp.data.banners);
       console.log(resp.data.banners);
-      
+
     })
-  },[])
+  }, [])
   return (
     <SectionHeroWrapper>
       <HeroSliderWrapper>
@@ -181,10 +182,19 @@ const Hero = () => {
           prevArrow={<CustomPrevArrow />}
           {...settings}
         >
-          {banner?.map((b:any) => {
+          {banner?.map((b: any) => {
             return (
               <HeroSliderItemWrapper key={b.id}>
-                <img src={`http://localhost:8080/files/${b.image}`} className="object-fit-cover" alt=""/>
+                <img src={`http://localhost:8080/files/${b.image}`} className="object-fit-cover" alt="" onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                  target.src = noImageAvailable; // Set the fallback image
+                }} style={{
+                  width: "100%",
+                  height: "auto",
+                  maxWidth: "40%",
+                  objectFit: "cover",
+                }} />
                 <HeroSlideContent className="flex items-center w-full h-full">
                   <Container className="container text-white">
                     <p className="hero-text-top font-bold italic">

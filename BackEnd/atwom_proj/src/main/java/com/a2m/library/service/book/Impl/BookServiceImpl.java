@@ -73,8 +73,8 @@ public class BookServiceImpl implements BookService{
 	}
 
 	@Override
-	public void save(BookDTO bookDTO) {
-		bookRepository.save(convertToBook(bookDTO));
+	public Book save(BookDTO bookDTO) {
+		return bookRepository.save(convertToBook(bookDTO));
 	}
 	
 //	@Override
@@ -117,6 +117,7 @@ public class BookServiceImpl implements BookService{
 	        bookDTO.setCateId(0);
 	        bookDTO.setCateName("Unknown");
 	    }
+		bookDTO.setImagebooks(book.getImagebooks());
 
 		return bookDTO;
 	}
