@@ -27,7 +27,7 @@ public interface BookService {
 //	void save(Book book);
 	List<Book> findAllActive();
 	List<Book> findAllActiveNew();
-	public Page<BookDTO>findByKeySearch(String keySearch, PageRequest pageRequest);
+	public Page<BookDTO>findByKeySearch(String keySearch,int cateId, PageRequest pageRequest);
 }
 
 

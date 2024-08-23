@@ -79,9 +79,9 @@ public class BookController {
 	
 	@GetMapping("/book/list")
 	public ResponseEntity<?> bookGetList(@RequestParam("page") Integer page,
-											@RequestParam("keySearch") String keySearch){
+											@RequestParam("keySearch") String keySearch,@RequestParam("cateId") Integer cateId){
 		PageRequest pageRequest = PageRequest.of(page - 1, 5, Sort.by("upd_dt").descending());
-		Page<BookDTO> book = bookService.findByKeySearch(keySearch, pageRequest);
+		Page<BookDTO> book = bookService.findByKeySearch(keySearch,cateId, pageRequest);
 		return ResponseEntity.ok().body(book);
 	}
 
