@@ -184,7 +184,7 @@ const Header = () => {
               <span className="site-brand-text text-outerspace">ATWOM BOOK</span>
             </SiteBrandWrapper>
           </div>
-          <NavigationAndSearchWrapper className="flex items-center">
+          {/* <NavigationAndSearchWrapper className="flex items-center">
             <NavigationMenuWrapper>
               <ul className="nav-menu-list flex items-center">
 
@@ -202,7 +202,7 @@ const Header = () => {
                 />
               </InputGroupWrapper>
             </form>
-          </NavigationAndSearchWrapper>
+          </NavigationAndSearchWrapper> */}
 
           <IconLinksWrapper className="flex items-center">
           <Link

@@ -138,6 +138,14 @@ const BookListItem = () => {
   const [searchDto, setSearchDto] = useState(new BookSearch('', 1, 0, new Date().getTime()))
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [selectedFilter, setSelectedFilter] = useState(0);
+
+  // Hàm xử lý dữ liệu từ BookFilter
+  const handleFilterChange = (filterSelect: any) => {
+    console.log("đã truyền thành công");
+    console.log(filterSelect);
+    
+  };
 
   useEffect(() => {
     let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
@@ -166,7 +174,7 @@ const BookListItem = () => {
     if (e.key === "Enter") {
       setSearchDto({
         ...searchDto,
-        page:1,
+        page: 1,
         timer: new Date().getTime(),
       });
     }
@@ -239,7 +247,8 @@ const BookListItem = () => {
         <Breadcrumb items={breadcrumbItems} />
         <ProductsContent className="grid items-start">
           <ProductsContentLeft>
-            <BookFilter />
+            <BookFilter onFilterChange={handleFilterChange}/>
+            <p>Filter là {selectedFilter}</p>
           </ProductsContentLeft>
           <ProductsContentRight>
             <div className="products-right-top flex items-center justify-between">

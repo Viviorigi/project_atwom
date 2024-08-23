@@ -11,14 +11,25 @@ import {
 import { staticImages } from "../../utils/images";
 import { ProductFilterList, StyleFilterList } from "../../data/data";
 
-const BookFilter = () => {
+interface BookFilterProps {
+  onFilterChange?: (filterSelect: any) => void; // onFilterChange là một hàm không nhận tham số và không trả giá trị
+}
+
+// const BookFilter = ({ onFilterChange }) => {
+const BookFilter: React.FC<BookFilterProps> = ({ onFilterChange }) => {
   const [isProductFilterOpen, setProductFilterOpen] = useState(true);
   const [isPriceFilterOpen, setPriceFilterOpen] = useState(true);
   const [isColorFilterOpen, setColorFilterOpen] = useState(true);
   const [isSizeFilterOpen, setSizeFilterOpen] = useState(true);
   const [isStyleFilterOpen, setStyleFilterOpen] = useState(true);
 
-  const toggleFilter = (filter:any) => {
+  const handleButtonClick = () => {
+    if (onFilterChange) {
+      onFilterChange(10001); // Truyền giá trị vào hàm
+    }
+  };
+
+  const toggleFilter = (filter: any) => {
     switch (filter) {
       case "product":
         setProductFilterOpen(!isProductFilterOpen);
@@ -44,7 +55,7 @@ const BookFilter = () => {
   const [minRange, setMinRange] = useState(300);
   const [maxRange, setMaxRange] = useState(700);
 
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (e: any) => {
     const inputName = e.target.name;
     const inputValue = parseInt(e.target.value);
 
@@ -61,24 +72,24 @@ const BookFilter = () => {
     }
   };
 
-  const calculateRangePosition = (value:any, max:any) => {
+  const calculateRangePosition = (value: any, max: any) => {
     return (value / max) * 100 + "%";
   };
 
   return (
     <>
       <ProductCategoryFilter>
+        <button onClick={handleButtonClick}>Nhấn vào đây</button>
         <FilterTitle
           className="filter-title flex items-center justify-between"
           onClick={() => toggleFilter("product")}
         >
           <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Filter
+            Filter nek
           </p>
           <span
-            className={`text-gray text-xxl filter-title-icon ${
-              !isProductFilterOpen ? "rotate" : ""
-            }`}
+            className={`text-gray text-xxl filter-title-icon ${!isProductFilterOpen ? "rotate" : ""
+              }`}
           >
             <i className="bi bi-filter"></i>
           </span>
@@ -113,17 +124,15 @@ const BookFilter = () => {
             Price
           </p>
           <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isPriceFilterOpen ? "rotate" : ""
-            }`}
+            className={`text-gray text-xl filter-title-icon ${!isPriceFilterOpen ? "rotate" : ""
+              }`}
           >
             <i className="bi bi-chevron-up"></i>
           </span>
         </FilterTitle>
         <FilterWrap
-          className={`range filter-wrap ${
-            !isPriceFilterOpen ? "hide" : "show"
-          }`}
+          className={`range filter-wrap ${!isPriceFilterOpen ? "hide" : "show"
+            }`}
         >
           <div className="range-slider">
             <span
@@ -188,9 +197,8 @@ const BookFilter = () => {
             Colors
           </p>
           <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isColorFilterOpen ? "rotate" : ""
-            }`}
+            className={`text-gray text-xl filter-title-icon ${!isColorFilterOpen ? "rotate" : ""
+              }`}
           >
             <i className="bi bi-chevron-up"></i>
           </span>
@@ -198,51 +206,51 @@ const BookFilter = () => {
         <FilterWrap className={`${!isColorFilterOpen ? "hide" : "show"}`}>
           <div className="colors-list grid">
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color1} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color2} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color3} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color4} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color5} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color6} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color7} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color8} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color9} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color10} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color11} alt="" />
             </div>
             <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <img src={staticImages.color12} alt="" />
             </div>
           </div>
@@ -257,9 +265,8 @@ const BookFilter = () => {
             Size
           </p>
           <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isSizeFilterOpen ? "rotate" : ""
-            }`}
+            className={`text-gray text-xl filter-title-icon ${!isSizeFilterOpen ? "rotate" : ""
+              }`}
           >
             <i className="bi bi-chevron-up"></i>
           </span>
@@ -267,49 +274,49 @@ const BookFilter = () => {
         <FilterWrap className={`${!isSizeFilterOpen ? "hide" : "show"}`}>
           <div className="sizes-list grid text-center justify-center">
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 xxs
               </span>
             </div>
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 xs
               </span>
             </div>
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 s
               </span>
             </div>
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 m
               </span>
             </div>
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 l
               </span>
             </div>
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 xxl
               </span>
             </div>
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 3xl
               </span>
             </div>
             <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" aria-label="d"/>
+              <input type="checkbox" aria-label="d" />
               <span className="flex items-center justify-center uppercase">
                 4xl
               </span>
@@ -323,9 +330,8 @@ const BookFilter = () => {
             Dress Style
           </p>
           <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isStyleFilterOpen ? "rotate" : ""
-            }`}
+            className={`text-gray text-xl filter-title-icon ${!isStyleFilterOpen ? "rotate" : ""
+              }`}
           >
             <i className="bi bi-chevron-up"></i>
           </span>
