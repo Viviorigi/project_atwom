@@ -70,6 +70,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/auth/verify**").permitAll()
 						.requestMatchers("/api/admin/contact/create").permitAll()
 						.requestMatchers("/api/admin/banner/getAll").permitAll()
+						.requestMatchers("/api/admin/about/**").permitAll()
 	                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/student/*").permitAll()
 	                    .requestMatchers("/files/*").permitAll()

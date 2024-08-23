@@ -10,6 +10,7 @@ import { newArrivalData } from "../../data/data";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import imageBookDefault from "../../../assets/images/imageBookDefault.png"
+import { Link } from "react-router-dom";
 
 
 const ProductCardBoxWrapper = styled.div`
@@ -85,21 +86,23 @@ const Category = () => {
             {...settings}
           >
 
-            {bookList.map((u:any) => {
+            {bookList.map((u: any) => {
               return (
                 <ProductCardBoxWrapper key={u.id}>
                   <div className="product-img">
-                    <img
-                      className="object-fit-cover"
-                      src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault}  onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.onerror = null; // Prevent infinite loop in case fallback image also fails
-                        target.src = imageBookDefault; // Set the fallback image
-                      }}
-                      alt=""
-                      width="100px"
-                      height="100px"
-                    />
+                    <Link to={`/book/details/?id=${u.id}`}>
+                      <img
+                        className="object-fit-cover"
+                        src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                          target.src = imageBookDefault; // Set the fallback image
+                        }}
+                        alt=""
+                        width="100px"
+                        height="100px"
+                      />
+                    </Link>
                   </div>
                   <div className="product-info">
                     <p className="font-semibold text-xl">{u.title}</p>
@@ -108,11 +111,11 @@ const Category = () => {
               );
             })}
           </Slider>
-          
+
         </ArrivalSliderWrapper>
       </Container>
 
-      
+
     </Section>
   );
 };

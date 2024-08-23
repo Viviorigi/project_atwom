@@ -1,3 +1,4 @@
+import path from "path";
 import BaseLayout from "../comp/layout/BaseLayout";
 import AuthGuard from "../guard/authGuard";
 import RoleGuard from "../guard/roleGuard";
@@ -11,6 +12,7 @@ import Home from "../page/home/Home";
 import AccountScreen from "../page/user/AccountScreen";
 import OrderDetail from "../page/user/OrderDetail";
 import OrderList from "../page/user/OrderList";
+import Wishlist from "../comp/wishlist/Wishlist";
 
 
 
@@ -29,6 +31,7 @@ export const indexRouter: any = {
     { path: 'cart', element: <CartScreen /> },
     { path: 'contact', element: <Contact /> },
     { path: 'order_detail', element: <OrderDetail /> },
+    { path: 'wishlist', element: <Wishlist /> },
     { path: 'account', element: <AuthGuard><RoleGuard role={["ADMIN", "USER"]}><AccountScreen /></RoleGuard></AuthGuard> },
   ],
 };

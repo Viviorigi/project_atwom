@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import  PropTypes  from "prop-types";
-import { useState } from "react";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-
+import imageBookDefault from "../../../assets/images/imageBookDefault.png"
 const ProductPreviewWrapper = styled.div`
   grid-template-columns: 72px auto;
   gap: 24px;
@@ -80,28 +80,44 @@ const ProductPreviewWrapper = styled.div`
   }
 `;
 
-const BookPreview = ({ previewImages }:any) => {
-  const [activePreviewImage, setActivePreviewImage] = useState(
-    previewImages[0].imgSource
-  );
+interface BookPreviewProps {
+  previewImages?: any[]; // Adjust type as needed
+  image?: string;
+}
 
-  const handlePreviewImageChange = (previewImage:any) => {
-    setActivePreviewImage(previewImage);
+const BookPreview: React.FC<BookPreviewProps> = ({ previewImages, image }) => {
+
+  const [imagePre, setImagePre] = useState<string | undefined>(undefined);
+
+  const [activePreviewImage, setActivePreviewImage] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (previewImages && previewImages.length > 0) {
+      setActivePreviewImage(`http://localhost:8080/getImage?atchFleSeqNm=${previewImages[0].filename}`);
+    }
+    if (image != undefined) {
+      setImagePre(`http://localhost:8080/getImage?atchFleSeqNm=${image}`);
+    }
+  }, [previewImages, image]);
+
+
+  const handlePreviewImageChange = (previewImage: any) => {
+    setActivePreviewImage(`http://localhost:8080/getImage?atchFleSeqNm=${previewImage.filename}`);
   };
 
   return (
     <ProductPreviewWrapper className="grid items-center">
       <div className="preview-items w-full">
-        {previewImages.map((previewImage:any) => {
+        {previewImages && previewImages.map((previewImage: any) => {
           return (
             <div
               className="preview-item-wrapper"
               key={previewImage.id}
-              onClick={() => handlePreviewImageChange(previewImage.imgSource)}
+              onClick={() => handlePreviewImageChange(previewImage)}
             >
               <div className="preview-item">
                 <img
-                  src={previewImage.imgSource}
+                  src={`http://localhost:8080/getImage?atchFleSeqNm=${previewImage.filename}`}
                   alt=""
                   className="object-fit-cover"
                 />
@@ -111,7 +127,31 @@ const BookPreview = ({ previewImages }:any) => {
         })}
       </div>
       <div className="preview-display">
-        <img src={activePreviewImage} className="object-fit-cover" alt="" />
+        {previewImages && previewImages.length>0 &&
+          <img src={activePreviewImage} className="object-fit-cover" alt=""
+            width="500px"
+            height="600px"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // Prevent infinite loop in case fallback image also fails
+              target.src = imageBookDefault; // Set the fallback image
+            }}
+          />
+        }
+        {
+          image &&
+          <img src={image ? imagePre : imageBookDefault} className="object-fit-cover" alt=""
+            width="500px"
+            height="600px"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // Prevent infinite loop in case fallback image also fails
+              target.src = imageBookDefault; // Set the fallback image
+            }}
+          />
+        }
+
+
       </div>
     </ProductPreviewWrapper>
   );
