@@ -41,10 +41,10 @@ public class UserFineServiceImpl implements UserFineService {
     public UserFineDTO save(UserFineDTO userFineDTO) {
         UserFine userFine = new UserFine();
 
-        ReturnBook returnBook = returnBookRepository.findById(userFineDTO.getReturnBookId())
-                .orElseThrow(() -> new ResourceNotFoundException("ReturnBook not found with id " + userFineDTO.getReturnBookId()));
+        // ReturnBook returnBook = returnBookRepository.findById(userFineDTO.getReturnBookId())
+        //         .orElseThrow(() -> new ResourceNotFoundException("ReturnBook not found with id " + userFineDTO.getReturnBookId()));
 
-        userFine.setReturnBook(returnBook);
+        //userFine.setReturnBook(returnBook);
         userFine.setAmount(userFineDTO.getAmount());
 
         userFine = userFineRepository.save(userFine);
@@ -55,7 +55,7 @@ public class UserFineServiceImpl implements UserFineService {
     private UserFineDTO toDTO(UserFine userFine) {
         UserFineDTO dto = new UserFineDTO();
         dto.setId(userFine.getId());
-        dto.setReturnBookId(userFine.getReturnBook().getId());
+        //dto.setReturnBookId(userFine.getReturnBook().getId());
         dto.setAmount(userFine.getAmount());
         return dto;
     }

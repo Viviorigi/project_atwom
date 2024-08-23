@@ -1,109 +1,139 @@
-import React, { useEffect, useState } from 'react';
-import { format } from 'date-fns';
-import Pagination from '../../comp/common/Pagination';
-import Swal from 'sweetalert2';
-import { toast } from 'react-toastify';
-import { useAppDispatch } from '../../store/hook';
-import { setLoading } from '../../reducers/spinnerSlice';
-import { ReturnService } from '../../services/return/ReturnService';
-import ReturnDetail from './ReturnDetail';
-import { Dialog } from 'primereact/dialog';
-import ReturnForm from './ReturnForm'; // Import the ReturnForm component
-import { ReturnDTO } from '../../model/ReturnDTO';
+import React, { useEffect, useState, useRef } from "react";
+import { CheckoutDTO } from "../../model/CheckoutDTO";
+import { format } from "date-fns";
+import ReturnForm from "./ReturnForm";
+import Pagination from "../../comp/common/Pagination";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { useAppDispatch } from "../../store/hook";
+import { setLoading } from "../../reducers/spinnerSlice";
+import { CheckoutService } from "../../services/checkout/CheckoutService";
+import OrderDetail from "../order/OrderDetail";
+import { Dialog } from "primereact/dialog";
+import { AuthService } from "../../services/auth/AuthService";
+import { UserDTO } from "../../model/UserDTO";
 
 const Return = () => {
-  const [returns, setReturns] = useState<ReturnDTO[]>([]);
-  const [totalReturns, setTotalReturns] = useState(0);
+  const [orders, setOrders] = useState<CheckoutDTO[]>([]);
+  const [totalOrders, setTotalOrders] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [open, setOpen] = useState(false);
-  const [returnDetailOpen, setReturnDetailOpen] = useState(false);
-  const [returnFormOpen, setReturnFormOpen] = useState(false); // State to manage ReturnForm visibility
-  const [selectedReturn, setSelectedReturn] = useState<ReturnDTO | null>(null); // State to hold the selected return for editing
-  const [selectedReturnId, setSelectedReturnId] = useState<number | null>(null);
-  const [returnSearchParams, setReturnSearchParams] = useState({
-    keySearch: '',
+  const [orderDetailOpen, setOrderDetailOpen] = useState(false);
+  const [orderSearchParams, setOrderSearchParams] = useState({
+    keySearch: "",
     page: 1,
-    limit: 5,
+    limit: 10,
     timer: new Date().getTime(),
   });
+  const [users, setUsers] = useState<UserDTO[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const orderRef = useRef<CheckoutDTO | null>(null);
   const dispatch = useAppDispatch();
-  const indexOfLastItem = returnSearchParams.page * returnSearchParams.limit;
-  const indexOfFirstItem = indexOfLastItem - returnSearchParams.limit;
+  const indexOfLastItem = orderSearchParams.page * orderSearchParams.limit;
+  const indexOfFirstItem = indexOfLastItem - orderSearchParams.limit;
 
   useEffect(() => {
-    fetchReturns();
-  }, [returnSearchParams.timer, returnSearchParams.page]);
+    fetchOrders();
+    fetchAllUsers();
+  }, [orderSearchParams.timer, orderSearchParams.page]);
 
-  const fetchReturns = async () => {
+  const fetchOrders = async () => {
     try {
-      dispatch(setLoading(true));
-      const resp = await ReturnService.findAllReturn();
+      const resp = await CheckoutService.findAll({
+        keySearch: orderSearchParams.keySearch,
+        limit: orderSearchParams.limit,
+        page: orderSearchParams.page,
+      });
+
+      const filteredOrders = resp.filter((order) =>
+        ["BORROWED", "EXPIRED", "RETURNED", "PENALTY"].includes(order.status)
+      );
+
       dispatch(setLoading(false));
-      setReturns(resp);
-      setTotalReturns(resp.length);
-      setTotalPage(Math.ceil(resp.length / returnSearchParams.limit));
+      setOrders(filteredOrders);
+      setTotalOrders(filteredOrders.length);
+      setTotalPage(Math.ceil(filteredOrders.length / orderSearchParams.limit));
     } catch (error) {
-      console.error('Error fetching returns', error);
+      console.error("Error fetching orders", error);
       dispatch(setLoading(false));
+    }
+  };
+
+  const fetchAllUsers = async () => {
+    try {
+      const modelSearch = {
+        keySearch: orderSearchParams.keySearch,
+        page: orderSearchParams.page,
+        limit: orderSearchParams.limit,
+      };
+
+      const response = await AuthService.getInstance().getList(modelSearch);
+      const { users, totalPages, totalUsers } = response.data;
+
+      setUsers(users);
+      setTotalPages(totalPages);
+      setTotalUsers(totalUsers);
+    } catch (error) {
+      console.error("Error fetching all users", error);
     }
   };
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setReturnSearchParams({ ...returnSearchParams, [event.target.name]: event.target.value, page: 1 });
+    setOrderSearchParams({
+      ...orderSearchParams,
+      [event.target.name]: event.target.value,
+      page: 1,
+    });
   };
 
   const handleKeyUpSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      setReturnSearchParams({ ...returnSearchParams, timer: new Date().getTime() });
+    if (e.key === "Enter") {
+      setOrderSearchParams({
+        ...orderSearchParams,
+        timer: new Date().getTime(),
+      });
     }
   };
 
-  const viewReturnDetail = (returnId: number) => {
-    setSelectedReturnId(returnId);
-    setReturnDetailOpen(true);
+  const viewOrderDetail = (order: CheckoutDTO) => {
+    orderRef.current = order;
+    setOrderDetailOpen(true);
   };
 
-  const editReturn = async (returnId: number) => {
-    try {
-      const returnData = await ReturnService.findReturnById(returnId);
-      setSelectedReturn(returnData);
-      setReturnFormOpen(true);
-    } catch (error) {
-      toast.error('Error fetching return details for editing');
-    }
-  };
-
-  const handleSave = (updatedReturn: ReturnDTO) => {
-    setReturns(returns.map(returnItem => returnItem.id === updatedReturn.id ? updatedReturn : returnItem));
-    setReturnFormOpen(false);
-    toast.success('Return status updated successfully');
-  };
-
-  const deleteReturn = (id: number) => {
+  const deleteOrder = (id: number) => {
     Swal.fire({
-      title: 'Confirm',
-      text: 'Do you want to delete this return?',
-      icon: 'warning',
+      title: "Confirm",
+      text: "Do you want to delete this return?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#89B449',
-      cancelButtonColor: '#E68A8C',
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No',
+      confirmButtonColor: "#89B449",
+      cancelButtonColor: "#E68A8C",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
     }).then(async (result) => {
-      if (result.isConfirmed) {
+      if (result.value) {
         dispatch(setLoading(true));
         try {
-          await ReturnService.deleteReturnById(id);
-          setReturnSearchParams({ ...returnSearchParams, timer: new Date().getTime() });
-          toast.success('Return deleted successfully');
-        } catch (error) {
-          toast.error('Error deleting return');
-        } finally {
+          await CheckoutService.deleteById(id);
           dispatch(setLoading(false));
+          setOrderSearchParams({
+            ...orderSearchParams,
+            timer: new Date().getTime(),
+          });
+          toast.success("Return deleted successfully");
+        } catch (error) {
+          dispatch(setLoading(false));
+          toast.error("Error deleting return");
         }
       }
     });
   };
+
+  function editOrder(order: CheckoutDTO): void {
+    orderRef.current = order;
+    setOpen(true);
+  }
 
   return (
     <div>
@@ -120,16 +150,21 @@ const Return = () => {
                 <input
                   className="form-control search-input search"
                   type="search"
-                  placeholder="Search returns"
+                  placeholder="Search returns by Student"
                   name="keySearch"
                   aria-label="Search"
-                  value={returnSearchParams.keySearch || ''}
+                  value={orderSearchParams.keySearch || ""}
                   onChange={handleChangeSearch}
                   onKeyUp={handleKeyUpSearch}
                 />
                 <button
                   className="btn btn-primary"
-                  onClick={() => setReturnSearchParams({ ...returnSearchParams, timer: new Date().getTime() })}
+                  onClick={() =>
+                    setOrderSearchParams({
+                      ...orderSearchParams,
+                      timer: new Date().getTime(),
+                    })
+                  }
                 >
                   <span className="fas fa-search" />
                 </button>
@@ -141,33 +176,122 @@ const Return = () => {
             <table className="table table-bordered fs--1 mb-2">
               <thead>
                 <tr>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Student</th>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Status</th>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Fine</th>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Return Date</th>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Update Time</th>
-                  <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Action</th>
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "3%" }}
+                  >
+                    #
+                  </th>
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "20%" }}
+                  >
+                    Student
+                  </th>
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "10%" }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "15%" }}
+                  >
+                    Start Time
+                  </th>
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "15%" }}
+                  >
+                    Update Time
+                  </th>
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "15%" }}
+                  >
+                    Expired Date
+                  </th>
+                  {/* <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "10%" }}
+                  >
+                    Fine
+                  </th> */}
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "10%" }}
+                  >
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {returns.map((returnItem, index) => (
-                  <tr key={returnItem.id}>
-                    <td className="align-middle text-end pe-3">{indexOfFirstItem + index + 1}</td>
-                    <td className="align-middle text-center">{returnItem.user.fullName}</td>
-                    <td className="align-middle text-center">{returnItem.status}</td>
-                    <td className="align-middle text-center">{returnItem.fine}</td>
-                    <td className="align-middle text-center">{format(new Date(returnItem.returnDate), 'dd/MM/yyyy, HH:mm')}</td>
-                    <td className="align-middle text-center">{format(new Date(returnItem.checkout.endTime), 'dd/MM/yyyy, HH:mm')}</td>
-                    <td className="align-middle text-center">
-                      <button className="btn btn-info btn-sm" onClick={() => viewReturnDetail(returnItem.id)}>
-                        <span className="fas fa-eye" />
+                {orders.map((order, index) => (
+                  <tr key={order.id}>
+                    <td className="align-middle text-end pe-3">
+                      {indexOfFirstItem + index + 1}
+                    </td>
+                    <td className="align-middle">
+                      {order.user ? order.user.fullName : "N/A"}
+                    </td>
+                    <td className="text-center align-middle">
+                      <span
+                        className={`${
+                          order.status === "EXPIRED"
+                            ? "badge badge-phoenix fs--2 badge-phoenix-secondary"
+                            : order.status === "RETURNED" || order.status === "BORROWED"
+                            ? "badge badge-phoenix fs--2 badge-phoenix-success"
+                            : "badge badge-phoenix fs--2 badge-phoenix-danger"
+                        }`}
+                      >
+                        <span className="badge-label">{order.status}</span>
+                      </span>
+                    </td>
+                    <td className="align-middle text-center text-900">
+                      {order.startTime
+                        ? format(new Date(order.startTime), "dd/MM/yyyy, hh:mm")
+                        : "N/A"}
+                    </td>
+                    <td className="align-middle text-center text-900">
+                      {order.endTime
+                        ? format(new Date(order.endTime), "dd/MM/yyyy, hh:mm")
+                        : "N/A"}
+                    </td>
+                    <td className="align-middle text-center text-900">
+                      {order.expiredTime
+                        ? format(new Date(order.expiredTime), "dd/MM/yyyy")
+                        : "N/A"}
+                    </td>
+                    {/* <td className="align-middle text-center text-900">
+                      {order.fine ? `$${order.fine}` : "N/A"}
+                    </td> */}
+                    <td className="text-center align-middle">
+                    <button
+                        className="btn btn-warning btn-sm me-2"
+                        onClick={() => editOrder(order)}
+                      >
+                        <i className="fa-solid fa-pen"></i>
                       </button>
-                      <button className="btn btn-warning btn-sm ms-2" onClick={() => editReturn(returnItem.id)}>
-                        <i className="fa-solid fa-pencil-alt"></i>
-                      </button>
-                      <button className="btn btn-danger btn-sm ms-2" onClick={() => deleteReturn(returnItem.id)}>
+                      <button
+                        className="btn btn-danger btn-sm me-2"
+                        onClick={() => deleteOrder(order.id)}
+                      >
                         <i className="fa-solid fa-trash"></i>
+                      </button>
+                      <button
+                        className="btn btn-info btn-sm"
+                        onClick={() => viewOrderDetail(order)}
+                      >
+                        <span className="fas fa-eye" />
                       </button>
                     </td>
                   </tr>
@@ -175,33 +299,55 @@ const Return = () => {
               </tbody>
             </table>
           </div>
-
-          <Pagination
-            currentPage={returnSearchParams.page}
-            totalPage={totalPage}
-            onPageChange={(page: number) => setReturnSearchParams({ ...returnSearchParams, page })}
-          />
+          <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
+            <div className="col-auto d-flex">
+              <p className="mb-0">
+                Total orders: <strong>{totalOrders}</strong>
+              </p>
+            </div>
+            <div className="col-auto d-flex">
+              <Pagination
+                currentPage={orderSearchParams.page}
+                totalPages={totalPage}
+                onPageChange={(page: any) =>
+                  setOrderSearchParams({ ...orderSearchParams, page })
+                }
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      {returnDetailOpen && selectedReturnId !== null && (
-        <Dialog
-          header="Return Details"
-          visible={returnDetailOpen}
-          onHide={() => setReturnDetailOpen(false)}
-          style={{ width: '80vw' }}
-        >
-          <ReturnDetail returnId={selectedReturnId} onHide={() => setReturnDetailOpen(false)} />
-        </Dialog>
-      )}
-
-      {returnFormOpen && (
+      <Dialog
+        visible={open}
+        style={{ width: "10vw" }}
+        onHide={() => setOpen(false)}
+      >
         <ReturnForm
-          returnData={selectedReturn}
-          onClose={() => setReturnFormOpen(false)}
-          onSave={handleSave}
+          returnData={orderRef.current}
+          onClose={() => {
+            setOpen(false);
+            fetchOrders();
+            fetchAllUsers();
+          }}
+          onSave={() => {
+            setOpen(false);
+            fetchOrders();
+          }}
         />
-      )}
+      </Dialog>
+
+      <Dialog
+        header="Return Detail"
+        visible={orderDetailOpen}
+        style={{ width: "80vw" }}
+        onHide={() => setOrderDetailOpen(false)}
+      >
+        <OrderDetail
+          orderId={orderRef.current ? orderRef.current.id : 0}
+          onHide={() => setOrderDetailOpen(false)}
+        />
+      </Dialog>
     </div>
   );
 };

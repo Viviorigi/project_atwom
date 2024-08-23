@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,10 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
+import com.a2m.library.dto.CheckoutDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
 import com.a2m.library.model.ImagesBook;
+import com.a2m.library.repository.ImagesBookRepository;
 import com.a2m.library.service.admin.UserService;
 import com.a2m.library.service.book.BookService;
 import com.a2m.library.service.book.Impl.ImageBookService;
@@ -45,14 +49,16 @@ import jakarta.servlet.http.HttpServletResponse;
 public class BookController {
 	@Autowired
 	BookService bookService;
-	
+
 	@Autowired
 	ImageBookService imageBookService;
-	
+
+	@Autowired
+	ImagesBookRepository imagesBookRepository;
+
 	private final ObjectMapper objectMapper;
 	private final Path resourcePath;
 	private final Path resourcePathThumb;
-
 
 	@Value("${file.upload-dir}")
 	private String uploadDir;
@@ -63,6 +69,12 @@ public class BookController {
 		this.resourcePath = fileUploadConfig.getResourcePath();
 		this.resourcePathThumb = fileUploadConfig.getResourcePathThumb();
 	}
+
+	@GetMapping("/book/{id}")
+    public ResponseEntity<BookDTO> findBookById(@PathVariable Integer id) {
+        BookDTO book = bookService.getBookById(id);
+        return ResponseEntity.ok(book);
+    }
 
 //	@GetMapping("/book/list")
 //	public ResponseEntity<?> bookGet() {
@@ -76,12 +88,12 @@ public class BookController {
 //		Page<Book> books = bookService.findAll(keySearch, cateId, page - 1, 5);
 //		return ResponseEntity.ok().body(books);
 //	}
-	
+
 	@GetMapping("/book/list")
 	public ResponseEntity<?> bookGetList(@RequestParam("page") Integer page,
-											@RequestParam("keySearch") String keySearch,@RequestParam("cateId") Integer cateId){
+			@RequestParam("keySearch") String keySearch, @RequestParam("cateId") Integer cateId) {
 		PageRequest pageRequest = PageRequest.of(page - 1, 5, Sort.by("upd_dt").descending());
-		Page<BookDTO> book = bookService.findByKeySearch(keySearch,cateId, pageRequest);
+		Page<BookDTO> book = bookService.findByKeySearch(keySearch, cateId, pageRequest);
 		return ResponseEntity.ok().body(book);
 	}
 
@@ -104,11 +116,10 @@ public class BookController {
 				String timestamp = String.valueOf(System.currentTimeMillis());
 				String newFilename = timestamp + "_" + originalFilename;
 
-
 				Path filePath = resourcePath.resolve(newFilename);
 
 				Files.write(filePath, file.getBytes());
-				
+
 				book.setImage(newFilename);
 				System.out.println("đã lưu ảnh");
 			} catch (Exception e) {
@@ -117,47 +128,47 @@ public class BookController {
 				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
 			}
 		}
-		
+
 		List<String> imageName = new ArrayList<String>();
-		if(images != null) {
-			System.err.println("đã nhận");
-		}else {
-			System.err.println("chưa nhận");
-		}
-		//lưu ảnh phụ
+		System.out.println(images);
+
+		// lưu ảnh phụ
 		if (images != null && images.length > 0) {
-	        for (MultipartFile image : images) {
-	            if (!image.isEmpty()) {
-	                try {
-	                    String originalFilename = image.getOriginalFilename();
-	                    String timestamp = String.valueOf(System.currentTimeMillis());
-	                    String newFilename = timestamp + "_" + originalFilename;
-	                    Path filePath = resourcePath.resolve(newFilename);                    
-	                    Files.write(filePath, image.getBytes());
-	                    imageName.add(newFilename);
-	                    System.out.println("Đã lưu ảnh phụ: " + newFilename);
+			for (MultipartFile image : images) {
+				if (!image.isEmpty()) {
+					try {
+						String originalFilename = image.getOriginalFilename();
+						String timestamp = String.valueOf(System.currentTimeMillis());
+						String newFilename = timestamp + "_" + originalFilename;
+						Path filePath = resourcePath.resolve(newFilename);
+						Files.write(filePath, image.getBytes());
+						imageName.add(newFilename);
+						System.out.println("Đã lưu ảnh phụ: " + newFilename);
 
-	                    // Nếu bạn cần lưu thông tin về ảnh phụ vào `book` hoặc một cấu trúc khác
-	                    // bạn có thể thêm mã ở đây để lưu trữ thông tin về ảnh phụ
+						// Nếu bạn cần lưu thông tin về ảnh phụ vào `book` hoặc một cấu trúc khác
+						// bạn có thể thêm mã ở đây để lưu trữ thông tin về ảnh phụ
 
-	                } catch (Exception e) {
-	                    System.out.println("Lỗi tải ảnh phụ");
-	                    e.printStackTrace();
-	                    return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
-	                }
-	            }
-	        }
-	    }
-		
+					} catch (Exception e) {
+						System.out.println("Lỗi tải ảnh phụ");
+						e.printStackTrace();
+						return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
+					}
+				}
+			}
+		}
+
 		try {
-			 Book booksave =  bookService.save(book);
-			for(String it: imageName) {
+			Book booksave = bookService.save(book);
+
+			imagesBookRepository.deleteByBookId(booksave.getId());
+
+			for (String it : imageName) {
 				ImagesBook imagesBook = new ImagesBook();
 				imagesBook.setFilename(it);
 				imagesBook.setBook(booksave);
 				imageBookService.save(imagesBook);
 			}
-			
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -165,27 +176,26 @@ public class BookController {
 
 		return ResponseEntity.ok().body("success");
 	}
-	
+
 	@GetMapping("/getImage")
-	public void getImage(@RequestParam String atchFleSeqNm, 
-	                     HttpServletResponse httpServletResponse) {
-	    try {
-	        Path targetLocation = resourcePath.resolve(atchFleSeqNm);
+	public void getImage(@RequestParam String atchFleSeqNm, HttpServletResponse httpServletResponse) {
+		try {
+			Path targetLocation = resourcePath.resolve(atchFleSeqNm);
 
-	        httpServletResponse.setContentType(Files.probeContentType(targetLocation));
+			httpServletResponse.setContentType(Files.probeContentType(targetLocation));
 
-	        try (InputStream inputStream = Files.newInputStream(targetLocation);
-	             OutputStream outputStream = httpServletResponse.getOutputStream()) {
-	            byte[] buffer = new byte[8192];
-	            int bytesRead;
-	            while ((bytesRead = inputStream.read(buffer)) != -1) {
-	                outputStream.write(buffer, 0, bytesRead);
-	            }
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace(); // Consider replacing with proper logging
-	        httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-	    }
+			try (InputStream inputStream = Files.newInputStream(targetLocation);
+					OutputStream outputStream = httpServletResponse.getOutputStream()) {
+				byte[] buffer = new byte[8192];
+				int bytesRead;
+				while ((bytesRead = inputStream.read(buffer)) != -1) {
+					outputStream.write(buffer, 0, bytesRead);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); // Consider replacing with proper logging
+			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		}
 	}
 
 	@PostMapping("/book/edit")

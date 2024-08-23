@@ -15,6 +15,7 @@ public interface CategoryService {
     void save(CategoryDTO categoryDTO);
     CategoryDTO update(Integer id, CategoryDTO categoryDTO);
     void delete(Integer id);
+    CategoryDTO getCategoryByBookId(Integer bookId);
     
     public CategoryDTO convertToCategoryDTO(Category category);
     public Category convertToCategory(CategoryDTO categoryDTO);

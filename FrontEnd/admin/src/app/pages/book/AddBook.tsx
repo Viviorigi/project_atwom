@@ -105,13 +105,14 @@ export default function AddBook(props: any) {
         }
     }, [bookDTO])
 
-    const [files, setFiles] = useState<File[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
 
     const handleManyFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const selectedFiles = Array.from(event.target.files);
             const newImageSources = selectedFiles.map(file => URL.createObjectURL(file));
             setImageSources([...newImageSources]); // Replace with new selections
+            setImageFiles([...imageFiles, ...Array.from(event.target.files)]);
         }
     };
 
@@ -213,8 +214,8 @@ export default function AddBook(props: any) {
             formData.append('file', file);
         }
 
-        imageSources.forEach((imageFile) => {
-            formData.append('images[]', imageFile);
+        imageFiles.forEach((file) => {
+            formData.append('images[]', file);
         });
 
         Swal.fire({

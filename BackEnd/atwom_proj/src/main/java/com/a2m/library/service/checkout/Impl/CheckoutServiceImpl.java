@@ -15,7 +15,11 @@ import com.a2m.library.repository.UserRepository;
 import com.a2m.library.service.checkout.CheckoutDetailService;
 import com.a2m.library.service.checkout.CheckoutService;
 import com.a2m.library.util.JwtUtil;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,11 +49,21 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Override
-    public List<CheckoutDTO> findAll() {
-        return checkoutRepository.findAll().stream()
+    public List<CheckoutDTO> findAll(String keySearch, int limit, int page) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Checkout> checkoutPage;
+
+        if (keySearch == null || keySearch.isEmpty()) {
+            checkoutPage = checkoutRepository.findAll(pageable);
+        } else {
+            checkoutPage = checkoutRepository.findByKeySearch(keySearch, pageable);
+        }
+
+        List<CheckoutDTO> checkouts = checkoutPage.stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+
+        return checkouts;
     }
 
     @Override
@@ -62,21 +76,40 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Transactional
     public CheckoutDTO add(CheckoutDTO checkoutDTO) {
         User user = userRepository.findById(checkoutDTO.getUserUid())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + checkoutDTO.getUserUid()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + checkoutDTO.getUserUid()));
+
         Checkout checkout = toEntity(checkoutDTO);
         checkout.setUser(user);
-
         checkout.setStatus(CheckoutStatus.REQUESTED);
-
         checkout = checkoutRepository.save(checkout);
 
         if (checkoutDTO.getCheckoutDetails() != null) {
             for (CheckoutDetailDTO detailDTO : checkoutDTO.getCheckoutDetails()) {
+                detailDTO.setId(null);
                 detailDTO.setCheckoutId(checkout.getId());
                 checkoutDetailService.save(detailDTO);
             }
         }
+        return toDTO(checkout);
+    }
 
+    @Override
+    @Transactional
+    public CheckoutDTO update(Integer id, CheckoutDTO checkoutDTO) {
+        Checkout checkout = checkoutRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+
+        if (checkoutDTO.getStartTime() != null) {
+            checkout.setStartTime(checkoutDTO.getStartTime());
+        }
+        if (checkoutDTO.getEndTime() != null) {
+            checkout.setEndTime(checkoutDTO.getEndTime());
+        }
+        if (checkoutDTO.getStatus() != null) {
+            checkout.setStatus(checkoutDTO.getStatus());
+        }
+
+        checkout = checkoutRepository.save(checkout);
         return toDTO(checkout);
     }
 
@@ -86,24 +119,19 @@ public class CheckoutServiceImpl implements CheckoutService {
         Checkout checkout = checkoutRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
 
-        // Check role
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
-        if (status == CheckoutStatus.APPROVED || status == CheckoutStatus.REJECTED || status == CheckoutStatus.BORROWED) {
+        if (status == CheckoutStatus.APPROVED || status == CheckoutStatus.REJECTED
+                || status == CheckoutStatus.BORROWED) {
             if (!isAdmin) {
                 throw new SecurityException("Only admins can update to APPROVED, REJECTED, or BORROWED status");
             }
         }
 
         checkout.setStatus(status);
-
-        if (status == CheckoutStatus.BORROWED) {
-            checkout.setStartTime(LocalDateTime.now());
-            checkout.setEndTime(LocalDateTime.now().plusDays(30)); // Default duration
-        }
-
+        checkout.setEndTime(LocalDateTime.now());
         checkout = checkoutRepository.save(checkout);
         return toDTO(checkout);
     }
@@ -119,9 +147,11 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     @Transactional
     public void checkExpiredCheckouts() {
-        List<Checkout> expiredCheckouts = checkoutRepository.findByEndTimeBeforeAndStatus(LocalDateTime.now(), CheckoutStatus.BORROWED);
+        List<Checkout> expiredCheckouts = checkoutRepository.findByEndTimeBeforeAndStatus(LocalDateTime.now(),
+                CheckoutStatus.BORROWED);
         expiredCheckouts.forEach(checkout -> {
             checkout.setStatus(CheckoutStatus.EXPIRED);
+            checkout.setEndTime(LocalDateTime.now());
             checkoutRepository.save(checkout);
         });
     }
@@ -134,55 +164,57 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     @Transactional
     public CheckoutDTO approveCheckout(Integer id) {
-        Optional<Checkout> optionalCheckout = checkoutRepository.findById(id);
-        if (optionalCheckout.isPresent()) {
-            Checkout checkout = optionalCheckout.get();
-            if (checkout.getStatus() == CheckoutStatus.REQUESTED) {
-                checkoutRepository.updateStatusToApproved(id, CheckoutStatus.APPROVED);
-                return toDTO(checkoutRepository.findById(id).orElseThrow(() -> new IllegalStateException("Checkout not found")));
-            } else {
-                throw new IllegalStateException("Checkout must be in REQUESTED status to be approved.");
-            }
+        Checkout checkout = checkoutRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+
+        if (checkout.getStatus() == CheckoutStatus.REQUESTED) {
+            checkout.setStatus(CheckoutStatus.APPROVED);
+            checkout.setEndTime(LocalDateTime.now());
+            checkoutRepository.save(checkout);
+            return toDTO(checkout);
         } else {
-            throw new IllegalStateException("Checkout not found with id: " + id);
+            throw new IllegalStateException("Checkout must be in REQUESTED status to be approved.");
         }
     }
 
     @Override
     @Transactional
     public CheckoutDTO rejectCheckout(Integer id) {
-        Optional<Checkout> optionalCheckout = checkoutRepository.findById(id);
-        if (optionalCheckout.isPresent()) {
-            Checkout checkout = optionalCheckout.get();
-            if (checkout.getStatus() == CheckoutStatus.REQUESTED) {
-                checkoutRepository.updateStatusToRejected(id, CheckoutStatus.REJECTED);
-                return toDTO(checkoutRepository.findById(id).orElseThrow(() -> new IllegalStateException("Checkout not found")));
-            } else {
-                throw new IllegalStateException("Checkout must be in REQUESTED status to be rejected.");
-            }
+        Checkout checkout = checkoutRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+
+        if (checkout.getStatus() == CheckoutStatus.REQUESTED) {
+            checkout.setStatus(CheckoutStatus.REJECTED);
+            checkout.setEndTime(LocalDateTime.now());
+            checkoutRepository.save(checkout);
+            return toDTO(checkout);
         } else {
-            throw new IllegalStateException("Checkout not found with id: " + id);
+            throw new IllegalStateException("Checkout must be in REQUESTED status to be rejected.");
         }
     }
 
     @Override
     public CheckoutDTO borrowCheckout(Integer id) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime endTime = now.plusDays(30);
-        checkoutRepository.updateStatusToBorrowed(id, CheckoutStatus.BORROWED, now, endTime);
-        return findById(id).orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+        Checkout checkout = checkoutRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+        if (checkout.getStatus() == CheckoutStatus.REJECTED || checkout.getStatus() == CheckoutStatus.APPROVED) {
+            checkout.setStatus(CheckoutStatus.BORROWED);
+            checkout.setEndTime(LocalDateTime.now());
+            checkout.setExpiredTime(LocalDateTime.now().plusDays(30));
+            checkoutRepository.save(checkout);
+            return toDTO(checkout);
+        } else {
+            throw new IllegalStateException("Checkout must be in REQUESTED status to be rejected.");
+        }
     }
 
     @Override
     @Transactional
     public CheckoutDTO expiredCheckout(Integer id) {
-        // Tìm checkout theo ID
         Checkout checkout = checkoutRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
-        
-        // Kiểm tra trạng thái hiện tại của checkout
         if (checkout.getStatus() == CheckoutStatus.BORROWED) {
-            // Cập nhật trạng thái thành EXPIRED
+            checkout.setEndTime(LocalDateTime.now());
             checkout.setStatus(CheckoutStatus.EXPIRED);
             checkoutRepository.save(checkout);
         } else {
@@ -192,9 +224,52 @@ public class CheckoutServiceImpl implements CheckoutService {
         return toDTO(checkout);
     }
 
+    @Override
+    @Transactional
+    public CheckoutDTO returnedCheckout(Integer id) {
+        Checkout checkout = checkoutRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+
+        if (checkout.getStatus() == CheckoutStatus.BORROWED || checkout.getStatus() == CheckoutStatus.EXPIRED) {
+            checkout.setEndTime(LocalDateTime.now());
+            checkout.setStatus(CheckoutStatus.RETURNED);
+            checkoutRepository.save(checkout);
+            return toDTO(checkout);
+        } else {
+            throw new IllegalStateException("Only BORROWED or EXPIRED checkouts can be marked as RETURNED.");
+        }
+    }
+
+    @Override
+    @Transactional
+    public CheckoutDTO penaltyCheckout(Integer id) {
+        Checkout checkout = checkoutRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with ID: " + id));
+        checkout.setStatus(CheckoutStatus.PENALTY);
+        Double fineAmount = calculateFine(checkout);
+        checkout.setFine(fineAmount);
+
+        checkoutRepository.save(checkout);
+
+        UserFine userFine = new UserFine();
+        userFine.setCheckout(checkout);
+        userFine.setAmount(fineAmount);
+        userFineRepository.save(userFine);
+
+        return toDTO(checkout);
+    }
+
+    private Double calculateFine(Checkout checkout) {
+        long daysOverdue = LocalDateTime.now().minusDays(checkout.getEndTime().toLocalDate().toEpochDay()).toLocalDate()
+                .toEpochDay();
+        return daysOverdue > 0 ? daysOverdue * 20000.0 : 0.0;
+    }
+
     private CheckoutDTO toDTO(Checkout checkout) {
         CheckoutDTO dto = new CheckoutDTO();
         dto.setId(checkout.getId());
+        dto.setStatus(checkout.getStatus());
+        // dto.setFine(checkout.getFine());
 
         UserDTO userDTO = new UserDTO();
         userDTO.setUserUid(checkout.getUser().getUserUid());
@@ -203,6 +278,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         dto.setStatus(checkout.getStatus());
         dto.setStartTime(checkout.getStartTime());
+        dto.setExpiredTime(checkout.getExpiredTime());
         dto.setEndTime(checkout.getEndTime());
         return dto;
     }
@@ -214,12 +290,16 @@ public class CheckoutServiceImpl implements CheckoutService {
         return dto;
     }
 
-    private Checkout toEntity(CheckoutDTO dto) {
+    public Checkout toEntity(CheckoutDTO checkoutDTO) {
         Checkout checkout = new Checkout();
-        checkout.setId(dto.getId());
-        checkout.setStatus(dto.getStatus());
-        checkout.setStartTime(dto.getStartTime());
-        checkout.setEndTime(dto.getEndTime());
+        if (checkoutDTO.getId() != null && checkoutDTO.getId() > 0) {
+            checkout.setId(checkoutDTO.getId());
+        }
+        checkout.setStatus(checkoutDTO.getStatus());
+        checkout.setStartTime(checkoutDTO.getStartTime());
+        checkout.setEndTime(checkoutDTO.getEndTime());
+        checkout.setExpiredTime(checkoutDTO.getExpiredTime());
+        checkout.setFine(checkoutDTO.getFine());
         return checkout;
     }
 }

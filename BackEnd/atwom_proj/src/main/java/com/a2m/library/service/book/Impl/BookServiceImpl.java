@@ -1,12 +1,11 @@
 package com.a2m.library.service.book.Impl;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -68,12 +67,25 @@ public class BookServiceImpl implements BookService {
 		return books.stream().map(book -> convertToBookDTO(book)).collect(Collectors.toList());
 	}
 
+
 //	@Override
 //	public BookDTO findById(Integer id) {
 //		// TODO Auto-generated method stub
 //		Book book = bookRepository.findById(id).get();
 //		return convertToBookDTO(book);
 //	}
+
+	@Override
+    public BookDTO getBookById(Integer id) {
+        Optional<Book> optionalBook = bookRepository.findById(id);
+        if (optionalBook.isPresent()) {
+            Book book = optionalBook.get();
+            return convertToBookDTO(book);
+        } else {
+            throw new RuntimeException("Book not found with id: " + id);
+        }
+    }
+	
 
 	@Override
 	public BookDTO findById(Integer id) {
