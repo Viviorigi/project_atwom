@@ -4,14 +4,19 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.jaxb.SpringDataJaxb.PageDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.model.Book;
@@ -29,9 +34,29 @@ public class CategoryController {
 		List<CategoryDTO>categoryDTO = categoryService.findAll();
 		return ResponseEntity.ok().body(categoryDTO);
 	}
+
+	@GetMapping("/category/{id}")
+    public ResponseEntity<?> getBookById(@PathVariable Integer id) {
+        try {
+            CategoryDTO categoryDTO = categoryService.findById(id);
+            return ResponseEntity.ok(categoryDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+	@GetMapping("/category/book/{bookId}")
+    public ResponseEntity<CategoryDTO> getCategoryByBookId(@PathVariable Integer bookId) {
+        CategoryDTO categoryDTO = categoryService.getCategoryByBookId(bookId);
+        if (categoryDTO != null) {
+            return ResponseEntity.ok(categoryDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 	
 	@GetMapping("/category/list/all")
-	public ResponseEntity<?> categoryGetAll() {
+	public ResponseEntity<List<Category>> categoryGetAll() {
 		List<Category>categories = categoryService.findAllList();
 		return ResponseEntity.ok().body(categories);
 	}
@@ -39,7 +64,8 @@ public class CategoryController {
 	@GetMapping("/category/list")
 	public ResponseEntity<?> studentGetList(@RequestParam("page") Integer page,
 											@RequestParam("keySearch") String keySearch){
-		Page<Category>categories = categoryService.findAll(keySearch, page-1 , 5);
+		PageRequest pageRequest = PageRequest.of(page - 1, 5, Sort.by("upd_dt").descending());
+		Page<CategoryDTO> categories = categoryService.findByKeySearch(keySearch, pageRequest);
 		return ResponseEntity.ok().body(categories);
 	}
 	
@@ -74,32 +100,6 @@ public class CategoryController {
 			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
 		return ResponseEntity.ok().body(new MessageResponse("Add ok"));
-	}
-	
-	@PostMapping("/category/hidden")
-	public ResponseEntity<?> categoryHiddenPost(@RequestParam Integer id){
-		try {
-			CategoryDTO categoryDTO = categoryService.findById(id);
-			categoryDTO.setDeleted(true);
-			categoryService.save(categoryDTO);
-		} catch (Exception e) {
-			// TODO: handle exception
-			return ResponseEntity.badRequest().body(new MessageResponse("Hidden failed"));
-		}
-		return ResponseEntity.ok().body(new MessageResponse("Hidden ok"));
-	}
-	
-	@PostMapping("/category/active")
-	public ResponseEntity<?> categoryActivePost(@RequestParam Integer id){
-		try {
-			CategoryDTO categoryDTO = categoryService.findById(id);
-			categoryDTO.setDeleted(false);
-			categoryService.save(categoryDTO);
-		} catch (Exception e) {
-			// TODO: handle exception
-			return ResponseEntity.badRequest().body(new MessageResponse("Active failed"));
-		}
-		return ResponseEntity.ok().body(new MessageResponse("Active ok"));
 	}
 	
 	@DeleteMapping("/category/delete")

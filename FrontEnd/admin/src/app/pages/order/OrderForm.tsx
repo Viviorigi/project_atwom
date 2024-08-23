@@ -4,35 +4,50 @@ import { CheckoutStatus } from "../../model/CheckoutStatus";
 import { UserDTO } from "../../model/UserDTO";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { Dialog } from "primereact/dialog";
 import { CheckoutService } from "../../services/checkout/CheckoutService";
 
 interface OrderFormProps {
   order: CheckoutDTO | null;
   users: UserDTO[];
   onSave: (order: CheckoutDTO) => void;
-  hideForm: (status: boolean) => void;
+  onClose: (status: boolean) => void;
+  mode: string;
 }
 
 const defaultCheckout: CheckoutDTO = {
   id: 0,
   user: { userUid: 0, username: "", fullName: "", password: "", email: "", dob: "", className: "", phone: "", address: "", avatar: "", cre_dt: "", upd_dt: "", deleted: false, isActive: true, resetPasswordToken: "", tokenExpirationDate: "", roles: [] },
+  userUid: 0,
+  userFullName: "",
   startTime: "",
   endTime: "",
   status: CheckoutStatus.REQUESTED,
   checkoutDetails: [],
+  expiredTime: "",
+  fine: 0
 };
 
-export default function OrderForm({ order, users, onSave, hideForm }: OrderFormProps) {
+export default function OrderForm({ order, users, onSave, onClose }: OrderFormProps) {
   const [currentOrder, setCurrentOrder] = useState<CheckoutDTO>(defaultCheckout);
   const [statusOptions, setStatusOptions] = useState<CheckoutStatus[]>([]);
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
+  const [startTime, setStartTime] = useState<Date>(
+    order?.startTime ? new Date(order.startTime) : new Date()
+  );
+  const [endTime, setEndTime] = useState<Date>(
+    order?.endTime ? new Date(order.endTime) : new Date()
+  );
+  const [newStatus, setNewStatus] = useState<CheckoutStatus>(CheckoutStatus.REQUESTED);
+  const [errors, setErrors] = useState({ user: '', status: '' });
 
   useEffect(() => {
     if (order != null) {
       setCurrentOrder({ ...order });
-      setSelectedUser(order.user.userUid);
+      setSelectedUser(order.userUid);
+      setStartTime(order.startTime ? new Date(order.startTime) : new Date());
+      setEndTime(order.endTime ? new Date(order.endTime) : new Date());
       updateStatusOptions(order.status);
+      setNewStatus(order.status);
     } else {
       setCurrentOrder(defaultCheckout);
     }
@@ -42,20 +57,24 @@ export default function OrderForm({ order, users, onSave, hideForm }: OrderFormP
     switch (status) {
       case CheckoutStatus.REQUESTED:
         setStatusOptions([
+          CheckoutStatus.REQUESTED,
           CheckoutStatus.APPROVED,
-          CheckoutStatus.REJECTED,
-          CheckoutStatus.EXPIRED
+          CheckoutStatus.REJECTED
         ]);
         break;
       case CheckoutStatus.APPROVED:
       case CheckoutStatus.REJECTED:
         setStatusOptions([
-          CheckoutStatus.BORROWED,
-          CheckoutStatus.REJECTED
+          CheckoutStatus.APPROVED,
+          CheckoutStatus.REJECTED,
+          CheckoutStatus.BORROWED
         ]);
         break;
       case CheckoutStatus.BORROWED:
-        setStatusOptions([CheckoutStatus.EXPIRED]);
+        setStatusOptions([
+          CheckoutStatus.BORROWED,
+          CheckoutStatus.EXPIRED
+        ]);
         break;
       default:
         setStatusOptions([]);
@@ -63,64 +82,131 @@ export default function OrderForm({ order, users, onSave, hideForm }: OrderFormP
     }
   };
 
-  const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatus = e.target.value as CheckoutStatus;
+  const validateForm = () => {
+    let valid = true;
+    let errors = { user: '', status: '' };
 
-    if (newStatus !== currentOrder.status) {
-      try {
-        let updatedOrder;
-        switch (newStatus) {
-          case CheckoutStatus.APPROVED:
-            updatedOrder = await CheckoutService.approveCheckout(currentOrder.id);
-            break;
-          case CheckoutStatus.REJECTED:
-            updatedOrder = await CheckoutService.rejectCheckout(currentOrder.id);
-            break;
-          case CheckoutStatus.BORROWED:
-            updatedOrder = await CheckoutService.borrowCheckout(currentOrder.id);
-            break;
-          case CheckoutStatus.EXPIRED:
-            updatedOrder = await CheckoutService.expiredCheckout(currentOrder.id);
-            break;
-          default:
-            return;
-        }
-        setCurrentOrder(updatedOrder);
-        updateStatusOptions(newStatus);
-        toast.success(`Order status updated to ${newStatus}`);
-      } catch (error) {
-        toast.error("Failed to update order status");
-      }
+    if (isAddMode && !selectedUser) {
+      errors.user = 'User is required';
+      valid = false;
     }
+
+    if (!currentOrder.status) {
+      errors.status = 'Status is required';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
   };
 
-  const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const userUid = parseInt(e.target.value, 10);
-    setSelectedUser(userUid);
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setNewStatus(e.target.value as CheckoutStatus);
   };
 
-  const save = () => {
+  const handleAdd = async () => {
+    if (!validateForm()) return;
+
     Swal.fire({
       title: "Confirm",
-      text: "Do you want to proceed?",
+      text: "Do you want to add this order?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
       cancelButtonColor: "#E68A8C",
       confirmButtonText: "Yes",
       cancelButtonText: "No",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const updatedOrder = { ...currentOrder, user: users.find(user => user.userUid === selectedUser) || defaultCheckout.user };
-        onSave(updatedOrder);
-        hideForm(true);
-        toast.success("Order saved successfully");
+        const selectedUserObj = users.find(user => user.userUid === selectedUser);
+
+        const newOrder: CheckoutDTO = {
+          id: 0,
+          user: { userUid: 0, username: "", fullName: "", password: "", email: "", dob: "", className: "", phone: "", address: "", avatar: "", cre_dt: "", upd_dt: "", deleted: false, isActive: true, resetPasswordToken: "", tokenExpirationDate: "", roles: [] },
+          userUid: selectedUser || 0,
+          userFullName: selectedUserObj?.fullName || "",
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+          status: CheckoutStatus.REQUESTED,
+          checkoutDetails: [],
+          expiredTime: "",
+          fine: 0
+        };
+
+        try {
+          await CheckoutService.save(newOrder);
+          toast.success("Order added successfully");
+          onClose(true);
+        } catch (error) {
+          toast.error("Failed to add order");
+        }
       }
     });
   };
 
-  const cancel = () => {
-    hideForm(false);
+  const handleEdit = async () => {
+    if (!validateForm()) return;
+
+    Swal.fire({
+      title: "Confirm",
+      text: "Do you want to save changes?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#89B449",
+      cancelButtonColor: "#E68A8C",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const updatedOrder: CheckoutDTO = {
+          ...currentOrder,
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+        };
+
+        try {
+          if (newStatus !== currentOrder.status) {
+            switch (newStatus) {
+              case CheckoutStatus.APPROVED:
+                await CheckoutService.approveCheckout(currentOrder.id);
+                break;
+              case CheckoutStatus.REJECTED:
+                await CheckoutService.rejectCheckout(currentOrder.id);
+                break;
+              case CheckoutStatus.BORROWED:
+                await CheckoutService.borrowCheckout(currentOrder.id);
+                break;
+              case CheckoutStatus.EXPIRED:
+                await CheckoutService.expiredCheckout(currentOrder.id);
+                break;
+              default:
+                break;
+            }
+            updatedOrder.status = newStatus;
+          } else {
+            updatedOrder.status = currentOrder.status;
+          }
+
+          onSave(updatedOrder);
+          onClose(true);
+          toast.success("Order saved successfully");
+        } catch (error) {
+          toast.error("Failed to update order");
+        }
+      }
+    });
+  };
+
+  const handleSave = async () => {
+    if (isAddMode) {
+      await handleAdd();
+    } else {
+      await handleEdit();
+    }
+  };
+
+  const handleCancel = () => {
+    onClose(false);
   };
 
   const isAddMode = order === null;
@@ -135,7 +221,7 @@ export default function OrderForm({ order, users, onSave, hideForm }: OrderFormP
               className="form-control"
               name="user"
               value={selectedUser || ''}
-              onChange={handleUserChange}
+              onChange={e => setSelectedUser(parseInt(e.target.value, 10))}
               required
             >
               <option value="">Select User</option>
@@ -145,33 +231,37 @@ export default function OrderForm({ order, users, onSave, hideForm }: OrderFormP
                 </option>
               ))}
             </select>
+            {errors.user && <div className="text-danger">{errors.user}</div>}
           </div>
         </div>
       )}
-      <div className="row mb-3">
-        <div className="col-2">Status</div>
-        <div className="col-9">
-          <label className="me-2">Current Status: {currentOrder.status}</label>
-          <select
-            className="form-control"
-            name="status"
-            value={currentOrder.status}
-            onChange={handleChange}
-            required
-          >
-            {statusOptions.map(status => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
+      {!isAddMode && (
+        <div className="row mb-3">
+          <div className="col-2">Status</div>
+          <div className="col-9">
+            <label className="me-2">Current Status: {currentOrder.status}</label>
+            <select
+              className="form-control"
+              name="status"
+              value={newStatus}
+              onChange={handleChange}
+              required
+            >
+              {statusOptions.map(status => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+            {errors.status && <div className="text-danger">{errors.status}</div>}
+          </div>
         </div>
-      </div>
+      )}
       <div className="text-center mt-3">
-        <button onClick={save} className="btn btn-primary btn-sm me-2">
-          Save
+        <button onClick={handleSave} className="btn btn-primary btn-sm me-2">
+          {isAddMode ? 'Save' : 'Update'}
         </button>
-        <button onClick={cancel} className="btn btn-danger btn-sm">
+        <button onClick={handleCancel} className="btn btn-secondary btn-sm">
           Cancel
         </button>
       </div>

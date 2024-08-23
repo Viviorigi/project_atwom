@@ -1,43 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { ReturnDTO } from '../../model/ReturnDTO';
+import React, { useState, useEffect } from "react";
+import { CheckoutDTO } from "../../model/CheckoutDTO";
+import { CheckoutStatus } from "../../model/CheckoutStatus";
+import { toast } from "react-toastify";
+import { CheckoutService } from "../../services/checkout/CheckoutService";
 
 interface ReturnFormProps {
-  returnData?: ReturnDTO | null;
-  onClose: () => void;
-  onSave: (updatedReturn: ReturnDTO) => void; // Pass the updated return data to the onSave callback
+  returnData: CheckoutDTO | null;
+  onClose: (status: boolean) => void;
+  onSave: (updatedReturn: CheckoutDTO) => void;
 }
 
-const ReturnForm: React.FC<ReturnFormProps> = ({ returnData, onClose, onSave }) => {
-  const [formData, setFormData] = useState<ReturnDTO | null>(returnData || null);
+const ReturnForm: React.FC<ReturnFormProps> = ({
+  returnData,
+  onClose,
+  onSave,
+}) => {
+  const [currentReturn, setCurrentReturn] = useState<CheckoutDTO | null>(
+    returnData
+  );
+  const [status, setStatus] = useState<CheckoutStatus>(
+    CheckoutStatus.REQUESTED
+  );
+  const [fine, setFine] = useState<number>(0);
+  const [returnDate, setReturnDate] = useState<string>("");
 
   useEffect(() => {
     if (returnData) {
-      setFormData(returnData);
+      setCurrentReturn(returnData);
+      setStatus(returnData.status);
+      setFine(returnData.fine || 0);
+      setReturnDate(returnData.expiredTime || "");
     }
   }, [returnData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (formData) {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+  const validate = (): boolean => {
+    if (!currentReturn) return false;
+
+    if (
+      status !== CheckoutStatus.RETURNED &&
+      status !== CheckoutStatus.PENALTY
+    ) {
+      toast.error("Status must be either RETURNED or PENALTY.");
+      return false;
+    }
+
+    if (status === CheckoutStatus.PENALTY && fine <= 0) {
+      toast.error("Fine must be greater than 0 for PENALTY status.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleConfirm = async () => {
+    if (!currentReturn) return;
+
+    if (!validate()) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to save the changes?"
+    );
+    if (!confirmed) return;
+
+    const updatedReturn: CheckoutDTO = {
+      ...currentReturn,
+      status,
+      fine,
+      expiredTime: returnDate,
+      id: currentReturn.id!,
+    };
+
+    try {
+      if (status === CheckoutStatus.RETURNED) {
+        await CheckoutService.returnedCheckout(updatedReturn.id);
+      } else if (status === CheckoutStatus.PENALTY) {
+        await CheckoutService.penaltyCheckout(updatedReturn.id);
+      } else {
+        await CheckoutService.update(updatedReturn.id, updatedReturn);
+      }
+      toast.success("Return saved successfully");
+      onSave(updatedReturn);
+      onClose(true);
+    } catch (error) {
+      toast.error("Failed to save return");
     }
   };
 
-  const handleSubmit = () => {
-    if (formData) {
-      onSave(formData); // Pass the updated return data to the onSave callback
-      onClose();
+  const handleStatusOptions = (currentStatus: CheckoutStatus): CheckoutStatus[] => {
+    switch (currentStatus) {
+      case CheckoutStatus.EXPIRED:
+        return [CheckoutStatus.RETURNED, CheckoutStatus.PENALTY];
+      case CheckoutStatus.RETURNED:
+        return [CheckoutStatus.RETURNED];
+      case CheckoutStatus.PENALTY:
+        return [CheckoutStatus.PENALTY];
+      default:
+        return [];
     }
   };
 
-  if (!formData) return null;
+  const statusOptions = handleStatusOptions(status);
 
   return (
-    <div className="modal show" style={{ display: 'block' }}>
+    <div className="modal show" style={{ display: "block" }}>
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">{returnData ? 'Edit Return Status' : 'Create Return'}</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+            <h5 className="modal-title">Edit Return</h5>
+            <button
+              type="button"
+              className="btn-close"
+              onClick={() => onClose(false)}
+            ></button>
           </div>
           <div className="modal-body">
             <div className="mb-3">
@@ -45,45 +119,64 @@ const ReturnForm: React.FC<ReturnFormProps> = ({ returnData, onClose, onSave }) 
               <input
                 type="text"
                 className="form-control"
-                name="studentName"
-                value={formData.user.fullName}
+                value={currentReturn?.user.fullName || ""}
                 disabled
               />
             </div>
             <div className="mb-3">
               <label className="form-label">Status</label>
-              <input
-                type="text"
+              <select
                 className="form-control"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-              />
+                value={status}
+                onChange={(e) => setStatus(e.target.value as CheckoutStatus)}
+              >
+                {statusOptions.map((statusOption) => (
+                  <option key={statusOption} value={statusOption}>
+                    {statusOption}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Fine</label>
-              <input
-                type="number"
-                className="form-control"
-                name="fine"
-                value={formData.fine}
-                disabled
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Return Date</label>
-              <input
-                type="date"
-                className="form-control"
-                name="returnDate"
-                value={formData.returnDate}
-                disabled
-              />
-            </div>
+            {/* {status === CheckoutStatus.PENALTY && (
+              <div className="mb-3">
+                <label className="form-label" hidden>Fine</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={fine}
+                  onChange={(e) => setFine(parseFloat(e.target.value))}
+                  hidden
+                />
+              </div>
+            )}
+            {status === CheckoutStatus.RETURNED && (
+              <div className="mb-3">
+                <label className="form-label" hidden>Return Date</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={returnDate}
+                  onChange={(e) => setReturnDate(e.target.value)}
+                  hidden
+                />
+              </div>
+            )} */}
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
-            <button type="button" className="btn btn-primary" onClick={handleSubmit}>Save changes</button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => onClose(false)}
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleConfirm}
+            >
+              Save changes
+            </button>
           </div>
         </div>
       </div>

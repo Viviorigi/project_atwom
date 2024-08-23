@@ -30,7 +30,7 @@ public class Checkout {
     private User user;
 
     @Column(name = "expried_dt")
-    private LocalDateTime  ExpiredCheckouts;
+    private LocalDateTime  expiredTime;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -44,4 +44,7 @@ public class Checkout {
 
     @OneToMany(mappedBy = "checkout", cascade = CascadeType.ALL)
     private Set<CheckoutDetail> checkoutDetails;
+
+    @Column(name = "fine", precision = 10)
+    private Double fine = 0.00;
 }

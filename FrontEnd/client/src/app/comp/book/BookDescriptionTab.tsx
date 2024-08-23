@@ -4,7 +4,8 @@ import { productDescriptionTabHeads } from "../../data/data";
 import Title from "../common/Title";
 import { ContentStylings } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import BookDescriptionMedia from "./BookDescriptionMedia";
+
+import { BookDTO } from "../../model/BookDTO";
 
 const DetailsContent = styled.div`
   margin-top: 60px;
@@ -12,18 +13,18 @@ const DetailsContent = styled.div`
     margin-top: 40px;
   }
 
-  .details-content-wrapper {
-    grid-template-columns: auto 500px;
-    gap: 40px;
+  // .details-content-wrapper {
+  //   grid-template-columns: auto 500px;
+  //   gap: 40px;
 
-    @media (max-width: ${breakpoints.xl}) {
-      grid-template-columns: auto 400px;
-    }
+  //   @media (max-width: ${breakpoints.xl}) {
+  //     grid-template-columns: auto 400px;
+  //   }
 
-    @media (max-width: ${breakpoints.lg}) {
-      grid-template-columns: 100%;
-      gap: 24px;
-    }
+  //   @media (max-width: ${breakpoints.lg}) {
+  //     grid-template-columns: 100%;
+  //     gap: 24px;
+  //   }
   }
 `;
 
@@ -116,21 +117,27 @@ const DescriptionTabsWrapper = styled.div`
   }
 `;
 
-const BookDescriptionTab = () => {
+const BookDescriptionTab = (props: any) => {
+  // const [book, setBook] = useState<BookDTO>(new BookDTO());
+  const { book } = props;
+  console.log(book);
+
   const [activeDesTab, setActiveDesTab] = useState(
     productDescriptionTabHeads[0].tabHead
   );
 
-  const handleTabChange = (tabHead:any) => {
+  const handleTabChange = (tabHead: any) => {
     setActiveDesTab(tabHead);
   };
   return (
     <DetailsContent>
-      <Title titleText={"Product Description"} />
+      <Title titleText={"Book Description"} />
+
       <div className="details-content-wrapper grid">
         <DescriptionTabsWrapper>
+
           <div className="tabs-heads flex items-center flex-wrap">
-            {productDescriptionTabHeads.map((tab:any) => {
+            {productDescriptionTabHeads.map((tab: any) => {
               return (
                 <button
                   key={tab.id}
@@ -139,9 +146,8 @@ const BookDescriptionTab = () => {
                   onClick={() => handleTabChange(tab.tabHead)}
                 >
                   <span
-                    className={`${
-                      tab.tabHead === activeDesTab ? "text-sea-green" : ""
-                    }`}
+                    className={`${tab.tabHead === activeDesTab ? "text-sea-green" : ""
+                      }`}
                   >
                     {tab.tabText}
                   </span>
@@ -158,66 +164,29 @@ const BookDescriptionTab = () => {
           </div>
           <div className="tabs-contents">
             <div
-              className={`tabs-content ${
-                activeDesTab === "tabDescription" ? "show" : ""
-              }`}
+              className={`tabs-content ${activeDesTab === "tabDescription" ? "show" : ""
+                }`}
             >
               <ContentStylings>
-                <p>
-                  100% Bio-washed Cotton makes the fabric extra soft & silky.
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Consectetur, odio. Infinite range of matte-finish HD prints.
-                </p>
-                <h4>Specifications:</h4>
-                <ul>
-                  <li>Fabric: Bio-washed Cotton</li>
-                  <li>Pattern: Printed</li>
-                  <li>Fit: Regular-fit</li>
-                  <li>Nect: Round Neck</li>
-                  <li>Sleeve: Half-sleeves</li>
-                  <li>Style: Casual Wear</li>
-                </ul>
-                <p>
-                  *Important: Please make sure that the mobile number is filled
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Provident, blanditiis.
-                </p>
-                <h4>Why should you shop at Outfit store?</h4>
-                <ul>
-                  <li>Guranteed Good material quality</li>
-                  <li>Rate convection stitsching.</li>
-                </ul>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Beatae ipsam nostrum praesentium nulla deleniti, facere
-                  mollitia dolore laboriosam, non iure deserunt alias repellat
-                  perspiciatis asperiores ab quia nam tenetur voluptate sint
-                  animi! Vitae aliquam cupiditate iste fuga expedita? Odio,
-                  impedit?
-                </p>
-                <p>
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Pariatur, fugiat.
-                </p>
+                {book?.description && <div className="align-middle text-start text-1100"
+                  dangerouslySetInnerHTML={{ __html: book?.description }} />}
+                
               </ContentStylings>
             </div>
             <div
-              className={`tabs-content content-stylings ${
-                activeDesTab === "tabComments" ? "show" : ""
-              }`}
+              className={`tabs-content content-stylings ${activeDesTab === "tabComments" ? "show" : ""
+                }`}
             >
               User comments here.
             </div>
             <div
-              className={`tabs-content content-stylings ${
-                activeDesTab === "tabQNA" ? "show" : ""
-              }`}
+              className={`tabs-content content-stylings ${activeDesTab === "tabQNA" ? "show" : ""
+                }`}
             >
               Question & Answers
             </div>
           </div>
         </DescriptionTabsWrapper>
-        <BookDescriptionMedia />
       </div>
     </DetailsContent>
   );

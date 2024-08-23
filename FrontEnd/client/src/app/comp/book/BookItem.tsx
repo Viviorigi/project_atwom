@@ -38,6 +38,7 @@ const BookCardWrapper = styled(Link)`
 const BookItem = ({ product }:any) => {
   return (
     <BookCardWrapper key={product.id} to="/book/details">
+      <h2>Chi tiết sách </h2>
       <div className="product-img">
         <img className="object-fit-cover" src={product.imgSource} alt=""/>
         <button

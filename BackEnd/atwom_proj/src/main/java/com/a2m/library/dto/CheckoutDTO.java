@@ -13,6 +13,9 @@ public class CheckoutDTO{
     private UserDTO user;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private LocalDateTime expiredTime;
     private CheckoutStatus status;
     private List<CheckoutDetailDTO> checkoutDetails;
+
+    private double fine;
 }

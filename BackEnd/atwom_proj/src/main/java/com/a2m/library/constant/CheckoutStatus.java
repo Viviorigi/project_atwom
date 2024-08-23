@@ -7,5 +7,5 @@ public enum CheckoutStatus {
     BORROWED,//Người dùng đã lấy sách
     EXPIRED,//Sách hết hạn
     RETURNED,//Sách đã được trả thành công
-    PENALTY//Sách quá hạn 2 tuần hoặc không trả được sách
+    PENALTY//Sách quá hạn 1 tháng hoặc không trả được sách
 }

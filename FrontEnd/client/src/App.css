@@ -2,6 +2,8 @@
 
 @import "primereact/resources/themes/lara-light-cyan/theme.css";
 @import 'primereact/resources/primereact.min.css';
+
+
 .swal2-container {
   z-index: 1500;
 }
