@@ -50,7 +50,7 @@ public class BookClientController {
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "keySearch", defaultValue = "") String keySearch) {
 		PageRequest pageRequest = PageRequest.of(page - 1, 9, Sort.by("upd_dt").descending());
-		Page<BookDTO> book = bookService.findByKeySearch(keySearch, pageRequest);
+		Page<BookDTO> book = bookService.findByKeySearch(keySearch,0, pageRequest);
 		return ResponseEntity.ok().body(book);
 	}
 	

@@ -166,6 +166,7 @@ const BookListItem = () => {
     if (e.key === "Enter") {
       setSearchDto({
         ...searchDto,
+        page:1,
         timer: new Date().getTime(),
       });
     }
