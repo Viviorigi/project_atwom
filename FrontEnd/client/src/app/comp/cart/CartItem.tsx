@@ -109,7 +109,7 @@ const CartItem = ({ cartItem }:any) => {
       <td>
         <div className="cart-tbl-actions flex justify-center">
           <Link to="/" className="tbl-del-action text-red">
-            <i className="bi bi-trash3"></i>
+          <i className="fa fa-trash" ></i>
           </Link>
         </div>
       </td>
