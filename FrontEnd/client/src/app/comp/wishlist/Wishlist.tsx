@@ -149,41 +149,39 @@ export default function Wishlist() {
   useEffect(() => {
     const syncWishlist = async () => {
       if (!isLoggedIn) {
+        // For not logged in users, just get the local wishlist
         const savedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
         setWishlistItems(savedWishlist);
       } else {
         const savedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-
+  
         try {
           // Fetch existing wishlist from the server
           const serverWishlistResponse = await WishService.getInstance().getWishlist();
-          const serverWishlist = new Set(serverWishlistResponse.data.map((item: any) => item.bookId));
-
+          const serverWishlistSet = new Set(serverWishlistResponse.data.map((item: any) => item.bookId));
+  
           // Determine which items need to be added
           const itemsToAdd = await Promise.all(
             savedWishlist.map(async (item: WishListBook) => {
-              const isInWishlist = await WishService.getInstance().check(item.id);
-              if (!isInWishlist.data) {
-                return item; // Return item if it is not in the server's wishlist
-              }
-              return null; // Return null if item is already in the wishlist
+              const isInWishlistResponse = await WishService.getInstance().check(item.id);
+              return !isInWishlistResponse.data ? item : null; // Return item if not already on server wishlist
             })
           );
-
-          // Filter out null values and add items that are not already on the server
+  
+          // Filter out null values
           const filteredItemsToAdd = itemsToAdd.filter((item: WishListBook | null) => item !== null) as WishListBook[];
-
-          // Add items that are not already on the server
+  
+          // Add items to the server that are not already in the server's wishlist
           await Promise.all(
             filteredItemsToAdd.map((item: WishListBook) =>
               WishService.getInstance().add(item.id)
             )
           );
-
+  
           // Fetch the updated wishlist from the server
           const updatedWishlistResponse = await WishService.getInstance().getWishlist();
           setWishlistItems(updatedWishlistResponse.data);
-
+  
           // Clear local storage
           localStorage.removeItem('wishlist');
         } catch (err: any) {
@@ -191,9 +189,10 @@ export default function Wishlist() {
         }
       }
     };
-
+  
     syncWishlist();
   }, [isLoggedIn]);
+  
 
   const handleRemoveItem = (id: number) => {
     if (!isLoggedIn) {
@@ -203,7 +202,7 @@ export default function Wishlist() {
     } else {
       Swal.fire({
         title: `Confirm`,
-        text: `Do you want to Delete user`,
+        text: `Bạn muốn xóa khỏi danh sách yêu thích`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#89B449",
