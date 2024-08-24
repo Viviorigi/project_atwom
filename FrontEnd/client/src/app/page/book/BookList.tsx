@@ -135,14 +135,27 @@ const BookListWrapper = styled.div`
 const BookListItem = () => {
 
   const [bookList, setBookList] = useState([]);
-  const [searchDto, setSearchDto] = useState(new BookSearch('', 1, 0, new Date().getTime()))
+  // constructor(keySearch: string, cate_name: string, public_year: number, nxb: string, page: number, cate_id: number, timer: number)
+  const [searchDto, setSearchDto] = useState(new BookSearch('', '', 0, '', 1, 0, new Date().getTime()))
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [selectedFilter, setSelectedFilter] = useState(0);
+
+  // Hàm xử lý dữ liệu từ BookFilter
+  const handleFilterChange = (filterSelect: any) => {
+    console.log("đã truyền thành công");
+    console.log(filterSelect);
+    
+  };
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
+    let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}&cateName=${searchDto.cate_name}&publicYear=${searchDto.public_year}&nxb=${searchDto.nxb}`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
+        console.log("Test dữ liệu");
+        console.log(resp.data);
+        
+        
         setBookList(resp.data.content);
         setTotalPages(resp.data.totalPages);
         setTotalItems(resp.data.totalElements);
@@ -166,7 +179,7 @@ const BookListItem = () => {
     if (e.key === "Enter") {
       setSearchDto({
         ...searchDto,
-        page:1,
+        page: 1,
         timer: new Date().getTime(),
       });
     }
@@ -239,7 +252,8 @@ const BookListItem = () => {
         <Breadcrumb items={breadcrumbItems} />
         <ProductsContent className="grid items-start">
           <ProductsContentLeft>
-            <BookFilter />
+            <BookFilter searchDto={searchDto} setSearchDto={setSearchDto}/>
+            {/* <p>Filter là {selectedFilter}</p> */}
           </ProductsContentLeft>
           <ProductsContentRight>
             <div className="products-right-top flex items-center justify-between">

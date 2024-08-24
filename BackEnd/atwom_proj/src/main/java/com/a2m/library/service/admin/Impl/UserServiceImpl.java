@@ -32,6 +32,7 @@ import com.a2m.library.repository.UserRoleRepository;
 import com.a2m.library.repository.VerificationTokenRepository;
 import com.a2m.library.service.admin.EmailService;
 import com.a2m.library.service.admin.UserService;
+import com.a2m.library.service.notification.impl.SseNotificationServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 

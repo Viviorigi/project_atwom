@@ -53,4 +53,8 @@ public class WishlistService {
 
 	        wishlistRepository.delete(wishList);
 	    }
+	 
+	  public boolean isBookInWishlist(Long userId, Integer bookId) {
+	        return wishlistRepository.existsByUserUserUidAndBookId(userId, bookId);
+	    }
 }

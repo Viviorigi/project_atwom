@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 public class WishListResponse {
 
 	private Long user_uid;
-	private Integer bookId;
-	private String bookTitle; // Optional: if you want to include book title
-	private String bookImage; // Optional: if you want to include book image
+	private Integer id;
+	private String title; 
+	private String image; 
+	private String publisher;
+	private int publicationYear;
+	
 }

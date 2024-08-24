@@ -45,7 +45,7 @@ const BookListWrapper = styled.div`
 
 const BookList = () => {
 
-  const [searchDto, setSearchDto] = useState(new BookSearch('', 1, 0, new Date().getTime()))
+  const [searchDto, setSearchDto] = useState(new BookSearch('', '', 0, '', 1, 0, new Date().getTime()))
   const [bookList, setBookList] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);

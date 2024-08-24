@@ -15,6 +15,10 @@ import axios from "axios";
 import { BookDTO } from "../../model/BookDTO";
 import imageBookDefault from "../../../assets/images/imageBookDefault.png"
 import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
+import Cookies from "universal-cookie";
+import { AuthConstant } from "../../constants/authConstant";
+import { WishService } from "../../services/WishListService";
+import { toast } from "react-toastify";
 
 
 
@@ -213,6 +217,76 @@ const BookDetail = (props: any) => {
     })
   }, [id])
 
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLoggedIn,setIsLoggedIn]=useState(false);
+  const cookie = new Cookies();
+
+  useEffect(()=>{
+    if(cookie.get(AuthConstant.ACCESS_TOKEN)){
+      setIsLoggedIn(true);
+    }
+  },[])
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      const savedFavorites = JSON.parse(localStorage.getItem('wishtlist') || '[]');
+        if (savedFavorites.includes(book?.id)) {
+            setIsFavorited(true);
+        }
+    }else{
+      WishService.getInstance().check(book?.id).then((resp)=>{
+        setIsFavorited(resp.data);
+      }).catch((err: any) => {
+        console.error("Error checking wishlist status", err);
+      });
+    }
+}, [book, isLoggedIn]);
+
+
+const handleFavoriteClick = async () => {
+    try {
+        if (isLoggedIn) {
+            // Handle favorite logic for logged-in users
+            if (isFavorited) {
+              WishService.getInstance().remove(book?.id)
+              .then((resp:any)=>{
+                toast.success("Remove from wishlist successfully");
+                setIsFavorited(false);
+              })
+            } else {
+                WishService.getInstance().add(book?.id)
+                .then((resp:any)=>{
+                  toast.success("add to wishlist successfully");
+                  setIsFavorited(true);
+                })
+            }
+            setIsFavorited(!isFavorited);
+          } else {
+            const savedFavorites = JSON.parse(localStorage.getItem('wishlist') || '[]');
+            if (isFavorited) {
+                const updatedFavorites = savedFavorites.filter((item:any) => item.id !== book?.id);
+                localStorage.setItem('wishlist', JSON.stringify(updatedFavorites));
+                toast.success("Remove from wishlist successfully");
+                setIsFavorited(false);
+            } else {
+                const bookDetails = {
+                    id: book?.id,
+                    title: book?.title,
+                    publisher: book?.publisher,
+                    publicationYear: book?.publicationYear,
+                    image: book?.image,
+                };
+                savedFavorites.push(bookDetails);
+                toast.success("add to wishlist successfully");
+                localStorage.setItem('wishlist', JSON.stringify(savedFavorites));
+                setIsFavorited(true);
+            }
+        }
+    } catch (error) {
+        console.error("There was an error updating the favorite status!", error);
+    }
+};
+
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
       key={index}
@@ -300,6 +374,13 @@ const BookDetail = (props: any) => {
                 </span>
                 <span className="prod-add-btn-text">Mượn</span>
               </BaseLinkGreen>
+              <button
+                className={`btn ${isFavorited ? 'btn-danger' : 'btn-success'}`}
+                onClick={handleFavoriteClick}
+              >
+                {isFavorited ? 'Remove from Wishtlist ' : 'Add to Wishlist '}
+                {isFavorited ? <i className="fa-solid fa-heart"></i> : <i className="fa-regular fa-heart"></i>}
+              </button>
             </div>
             <BookServices />
           </BookDetailsWrapper>

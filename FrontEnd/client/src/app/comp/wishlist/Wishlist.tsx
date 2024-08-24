@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { breakpoints, defaultTheme } from '../../styles/themes/default';
 import { Link } from 'react-router-dom';
+import Cookies from 'universal-cookie';
+import { AuthConstant } from '../../constants/authConstant';
+import { WishService } from '../../services/WishListService';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const ScrollbarXWrapper = styled.div`
   overflow-x: scroll;
@@ -114,6 +119,14 @@ const WishlistTableRowWrapper = styled.tr`
   }
 `;
 
+interface WishListBook {
+  id: number;
+  title: string;
+  publisher: string;
+  publicationYear: number;
+  image: string;
+}
+
 export default function Wishlist() {
 
   const WISHLIST_TABLE_HEADS = [
@@ -122,6 +135,95 @@ export default function Wishlist() {
     "Năm xuất bản",
     "Xóa",
   ];
+
+  const [wishlistItems, setWishlistItems] = useState<WishListBook[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const cookie = new Cookies();
+
+  useEffect(() => {
+    if (cookie.get(AuthConstant.ACCESS_TOKEN)) {
+      setIsLoggedIn(true);
+    }
+  }, [])
+
+  useEffect(() => {
+    const syncWishlist = async () => {
+      if (!isLoggedIn) {
+        const savedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setWishlistItems(savedWishlist);
+      } else {
+        const savedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+
+        try {
+          // Fetch existing wishlist from the server
+          const serverWishlistResponse = await WishService.getInstance().getWishlist();
+          const serverWishlist = new Set(serverWishlistResponse.data.map((item: any) => item.bookId));
+
+          // Determine which items need to be added
+          const itemsToAdd = await Promise.all(
+            savedWishlist.map(async (item: WishListBook) => {
+              const isInWishlist = await WishService.getInstance().check(item.id);
+              if (!isInWishlist.data) {
+                return item; // Return item if it is not in the server's wishlist
+              }
+              return null; // Return null if item is already in the wishlist
+            })
+          );
+
+          // Filter out null values and add items that are not already on the server
+          const filteredItemsToAdd = itemsToAdd.filter((item: WishListBook | null) => item !== null) as WishListBook[];
+
+          // Add items that are not already on the server
+          await Promise.all(
+            filteredItemsToAdd.map((item: WishListBook) =>
+              WishService.getInstance().add(item.id)
+            )
+          );
+
+          // Fetch the updated wishlist from the server
+          const updatedWishlistResponse = await WishService.getInstance().getWishlist();
+          setWishlistItems(updatedWishlistResponse.data);
+
+          // Clear local storage
+          localStorage.removeItem('wishlist');
+        } catch (err: any) {
+          console.error("Error syncing wishlist with server", err);
+        }
+      }
+    };
+
+    syncWishlist();
+  }, [isLoggedIn]);
+
+  const handleRemoveItem = (id: number) => {
+    if (!isLoggedIn) {
+      const updatedWishlist = wishlistItems.filter(item => item.id !== id);
+      setWishlistItems(updatedWishlist);
+      localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+    } else {
+      Swal.fire({
+        title: `Confirm`,
+        text: `Do you want to Delete user`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#89B449",
+        cancelButtonColor: "#E68A8C",
+        confirmButtonText: `Yes`,
+        cancelButtonText: `No`,
+      }).then((result) => {
+        if (result.value) {
+          WishService.getInstance().remove(id).then(() => {
+            const updatedWishlist = wishlistItems.filter(item => item.id !== id);
+            setWishlistItems(updatedWishlist);
+            toast.success("remove successfully!")
+          }).catch((err: any) => {
+            console.error("Error removing item from wishlist", err);
+          });
+        }
+      });
+    }
+  };
+
   return (
     <div className='container'>
       <h1 className='p-4'>My wishlist</h1>
@@ -141,39 +243,51 @@ export default function Wishlist() {
             </tr>
           </thead>
           <tbody style={{ backgroundColor: '#f9f9f9' }}>
-            <tr>
-              <td style={{ padding: '10px', verticalAlign: 'middle' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div style={{ marginRight: '10px' }}>
-                    <img
-                      src="http://localhost:8080/getImage?atchFleSeqNm=1724421205101_FB_IMG_1723707894984.jpg"
-                      style={{ width: '250px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <h4 style={{ margin: '0', fontSize: '16px', color: '#333' }}>sach 4</h4>
-                  </div>
-                </div>
-              </td>
-              <td style={{ padding: '10px', verticalAlign: 'middle' }}>
-                <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2c3e50' }}>
-                  Tac gia
-                </span>
-              </td>
-              <td style={{ padding: '10px', verticalAlign: 'middle' }}>
-                <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2c3e50' }}>
-                  năm xuất bản
-                </span>
-              </td>
-              <td style={{ padding: '10px', verticalAlign: 'middle', textAlign: 'center' }}>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Link to="/" style={{ color: '#e74c3c', cursor: 'pointer', transition: 'color 0.3s' }}>
-                    <i className="fa fa-trash"></i>
-                  </Link>
-                </div>
-              </td>
-            </tr>
+            {wishlistItems.length > 0 ? (
+              wishlistItems.map((book) => (
+                <tr key={book.id}>
+                  <td style={{ padding: '10px', verticalAlign: 'middle' }}>
+                    <Link to={`/book/details/?bookId=${book.id}`}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ marginRight: '10px' }}>
+                          <img
+                            src={`http://localhost:8080/getImage?atchFleSeqNm=${book.image}`}
+                            style={{ width: '120px', height: '120px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
+                            alt={book.title}
+                          />
+                        </div>
+                        <div>
+                          <h4 style={{ margin: '0', fontSize: '16px', color: '#333' }}>{book.title}</h4>
+                        </div>
+                      </div>
+                    </Link>
+                  </td>
+                  <td style={{ padding: '10px', verticalAlign: 'middle' }}>
+                    <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2c3e50' }}>
+                      {book.publisher}
+                    </span>
+                  </td>
+                  <td style={{ padding: '10px', verticalAlign: 'middle' }}>
+                    <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2c3e50' }}>
+                      {book.publicationYear}
+                    </span>
+                  </td>
+                  <td style={{ padding: '10px', verticalAlign: 'middle', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Link to="#" onClick={() => handleRemoveItem(book.id)} style={{ color: '#e74c3c', cursor: 'pointer', transition: 'color 0.3s' }}>
+                        <i className="fa fa-trash"></i>
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '20px' }}>
+                  Your wishlist is empty.
+                </td>
+              </tr>
+            )}
           </tbody>
 
         </WishlistTableWrapper>

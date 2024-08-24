@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -45,8 +46,12 @@ public class Book {
 
   @Column(name = "quantity")
   private Integer quantity;
+  
+  @Column(name = "nxb")
+  private String nxb;
 
   @OneToMany(mappedBy = "book")
+  @JsonIgnore
   private Set<CheckoutDetail> checkoutDetails;
 
 //  @Column(name = "status_id")

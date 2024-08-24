@@ -1,5 +1,7 @@
 package com.a2m.library.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +25,7 @@ public class CheckoutDetail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
+    @JsonManagedReference
     private Book book;
 
     @ManyToOne(fetch = FetchType.LAZY)
