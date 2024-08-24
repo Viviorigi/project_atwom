@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.a2m.library.constant.CheckoutStatus;
+import com.a2m.library.model.UserFine;
 
 @Data
 public class CheckoutDTO{
@@ -16,6 +17,5 @@ public class CheckoutDTO{
     private LocalDateTime expiredTime;
     private CheckoutStatus status;
     private List<CheckoutDetailDTO> checkoutDetails;
-
-    private double fine;
+    private UserFine userFine;
 }

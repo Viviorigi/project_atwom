@@ -45,6 +45,6 @@ public class Checkout {
     @OneToMany(mappedBy = "checkout", cascade = CascadeType.ALL)
     private Set<CheckoutDetail> checkoutDetails;
 
-    @Column(name = "fine", precision = 10)
-    private Double fine = 0.00;
+    @OneToOne(mappedBy = "checkout", cascade = CascadeType.ALL)
+    private UserFine userFine;
 }

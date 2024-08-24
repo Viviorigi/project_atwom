@@ -3,9 +3,9 @@ package com.a2m.library.service.status.Impl;
 import com.a2m.library.dto.UserFineDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.model.UserFine;
-import com.a2m.library.model.ReturnBook;
+import com.a2m.library.model.Checkout;
 import com.a2m.library.repository.UserFineRepository;
-import com.a2m.library.repository.ReturnBookRepository;
+import com.a2m.library.repository.CheckoutRepository;
 import com.a2m.library.service.status.UserFineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class UserFineServiceImpl implements UserFineService {
     private UserFineRepository userFineRepository;
 
     @Autowired
-    private ReturnBookRepository returnBookRepository;
+    private CheckoutRepository CheckoutRepository;
 
     @Override
     public Set<UserFineDTO> findAll() {
@@ -41,21 +41,43 @@ public class UserFineServiceImpl implements UserFineService {
     public UserFineDTO save(UserFineDTO userFineDTO) {
         UserFine userFine = new UserFine();
 
-        // ReturnBook returnBook = returnBookRepository.findById(userFineDTO.getReturnBookId())
-        //         .orElseThrow(() -> new ResourceNotFoundException("ReturnBook not found with id " + userFineDTO.getReturnBookId()));
+        Checkout Checkout = CheckoutRepository.findById(userFineDTO.getCheckoutId())
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + userFineDTO.getCheckoutId()));
 
-        //userFine.setReturnBook(returnBook);
+        userFine.setCheckout(Checkout);
         userFine.setAmount(userFineDTO.getAmount());
 
         userFine = userFineRepository.save(userFine);
         return toDTO(userFine);
     }
 
-    // Manual mapping methods
+    @Override
+    public UserFineDTO getUserFineByCheckoutId(Integer checkoutId) {
+        Checkout checkout = CheckoutRepository.findById(checkoutId)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + checkoutId));
+
+        UserFine userFine = userFineRepository.findByCheckout(checkout)
+                .orElseThrow(() -> new ResourceNotFoundException("UserFine not found for checkout id " + checkoutId));
+
+        return toDTO(userFine);
+    }
+
+    @Override
+    @Transactional
+    public UserFineDTO updateAmount(Integer id, Double amount) {
+        UserFine userFine = userFineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserFine not found with id " + id));
+
+        userFine.setAmount(amount);
+        userFine = userFineRepository.save(userFine);
+
+        return toDTO(userFine);
+    }
+
     private UserFineDTO toDTO(UserFine userFine) {
         UserFineDTO dto = new UserFineDTO();
         dto.setId(userFine.getId());
-        //dto.setReturnBookId(userFine.getReturnBook().getId());
+        dto.setCheckoutId(userFine.getCheckout().getId());
         dto.setAmount(userFine.getAmount());
         return dto;
     }

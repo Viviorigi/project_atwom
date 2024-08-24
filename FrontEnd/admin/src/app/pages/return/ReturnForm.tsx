@@ -3,17 +3,20 @@ import { CheckoutDTO } from "../../model/CheckoutDTO";
 import { CheckoutStatus } from "../../model/CheckoutStatus";
 import { toast } from "react-toastify";
 import { CheckoutService } from "../../services/checkout/CheckoutService";
+import axios from "axios";
 
 interface ReturnFormProps {
   returnData: CheckoutDTO | null;
   onClose: (status: boolean) => void;
   onSave: (updatedReturn: CheckoutDTO) => void;
+  fines: Map<number, number>;
 }
 
 const ReturnForm: React.FC<ReturnFormProps> = ({
   returnData,
   onClose,
   onSave,
+  fines, // Add this line
 }) => {
   const [currentReturn, setCurrentReturn] = useState<CheckoutDTO | null>(
     returnData
@@ -28,10 +31,10 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
     if (returnData) {
       setCurrentReturn(returnData);
       setStatus(returnData.status);
-      setFine(returnData.fine || 0);
+      setFine(fines.get(returnData.id!) || 0); // Use fines prop
       setReturnDate(returnData.expiredTime || "");
     }
-  }, [returnData]);
+  }, [returnData, fines]);
 
   const validate = (): boolean => {
     if (!currentReturn) return false;
@@ -78,6 +81,14 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
       } else {
         await CheckoutService.update(updatedReturn.id, updatedReturn);
       }
+
+      // Update fine
+      if (status === CheckoutStatus.PENALTY) {
+        await axios.put(`http://localhost:8080/api/userfine/update/${currentReturn.id}`, {
+          amount: fine,
+        });
+      }
+
       toast.success("Return saved successfully");
       onSave(updatedReturn);
       onClose(true);
@@ -137,30 +148,28 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
                 ))}
               </select>
             </div>
-            {/* {status === CheckoutStatus.PENALTY && (
+            {status === CheckoutStatus.PENALTY && (
               <div className="mb-3">
-                <label className="form-label" hidden>Fine</label>
+                <label className="form-label">Fine</label>
                 <input
                   type="number"
                   className="form-control"
                   value={fine}
                   onChange={(e) => setFine(parseFloat(e.target.value))}
-                  hidden
                 />
               </div>
             )}
             {status === CheckoutStatus.RETURNED && (
               <div className="mb-3">
-                <label className="form-label" hidden>Return Date</label>
+                <label className="form-label">Return Date</label>
                 <input
                   type="date"
                   className="form-control"
                   value={returnDate}
                   onChange={(e) => setReturnDate(e.target.value)}
-                  hidden
                 />
               </div>
-            )} */}
+            )}
           </div>
           <div className="modal-footer">
             <button

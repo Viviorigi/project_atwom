@@ -12,6 +12,8 @@ import OrderDetail from "../order/OrderDetail";
 import { Dialog } from "primereact/dialog";
 import { AuthService } from "../../services/auth/AuthService";
 import { UserDTO } from "../../model/UserDTO";
+import axios from "axios";
+import { UserFineDTO } from "../../model/UserFineDTO";
 
 const Return = () => {
   const [orders, setOrders] = useState<CheckoutDTO[]>([]);
@@ -28,6 +30,7 @@ const Return = () => {
   const [users, setUsers] = useState<UserDTO[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [fines, setFines] = useState<Map<number, number>>(new Map());
   const orderRef = useRef<CheckoutDTO | null>(null);
   const dispatch = useAppDispatch();
   const indexOfLastItem = orderSearchParams.page * orderSearchParams.limit;
@@ -37,6 +40,12 @@ const Return = () => {
     fetchOrders();
     fetchAllUsers();
   }, [orderSearchParams.timer, orderSearchParams.page]);
+
+  useEffect(() => {
+    if (orders.length > 0) {
+      fetchFinesForOrders();
+    }
+  }, [orders]);
 
   const fetchOrders = async () => {
     try {
@@ -76,6 +85,23 @@ const Return = () => {
       setTotalUsers(totalUsers);
     } catch (error) {
       console.error("Error fetching all users", error);
+    }
+  };
+
+  const fetchFinesForOrders = async () => {
+    try {
+      const finesMap = new Map<number, number>();
+      const penaltyOrders = orders.filter(order => order.status === "PENALTY");
+      
+      for (const order of penaltyOrders) {
+        const response = await axios.get<UserFineDTO>(`http://localhost:8080/api/userfine/checkout/${order.id}`);
+        if (response.data) {
+          finesMap.set(order.id, response.data.amount);
+        }
+      }
+      setFines(finesMap);
+    } catch (error) {
+      console.error("Error fetching fines", error);
     }
   };
 
@@ -218,13 +244,13 @@ const Return = () => {
                   >
                     Expired Date
                   </th>
-                  {/* <th
+                  <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
                     Fine
-                  </th> */}
+                  </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
@@ -243,18 +269,11 @@ const Return = () => {
                     <td className="align-middle">
                       {order.user ? order.user.fullName : "N/A"}
                     </td>
-                    <td className="text-center align-middle">
-                      <span
-                        className={`${
-                          order.status === "EXPIRED"
-                            ? "badge badge-phoenix fs--2 badge-phoenix-secondary"
-                            : order.status === "RETURNED" || order.status === "BORROWED"
-                            ? "badge badge-phoenix fs--2 badge-phoenix-success"
-                            : "badge badge-phoenix fs--2 badge-phoenix-danger"
-                        }`}
-                      >
-                        <span className="badge-label">{order.status}</span>
-                      </span>
+                    <td className="align-middle text-center">
+                      {order.status}
+                    </td>
+                    <td className="align-middle text-center">
+                      {format(new Date(order.startTime), "dd-MM-yyyy")}
                     </td>
                     <td className="align-middle text-center text-900">
                       {order.startTime
@@ -266,15 +285,12 @@ const Return = () => {
                         ? format(new Date(order.endTime), "dd/MM/yyyy, hh:mm")
                         : "N/A"}
                     </td>
-                    <td className="align-middle text-center text-900">
-                      {order.expiredTime
-                        ? format(new Date(order.expiredTime), "dd/MM/yyyy")
+                    <td className="align-middle text-center">
+                      {order.status === "PENALTY" && fines.has(order.id)
+                        ? fines.get(order.id)?.toFixed(2) + " VNĐ"
                         : "N/A"}
                     </td>
-                    {/* <td className="align-middle text-center text-900">
-                      {order.fine ? `$${order.fine}` : "N/A"}
-                    </td> */}
-                    <td className="text-center align-middle">
+                    <td className="align-middle text-center">
                     <button
                         className="btn btn-warning btn-sm me-2"
                         onClick={() => editOrder(order)}
@@ -299,25 +315,19 @@ const Return = () => {
               </tbody>
             </table>
           </div>
-          <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
-            <div className="col-auto d-flex">
-              <p className="mb-0">
-                Total orders: <strong>{totalOrders}</strong>
-              </p>
-            </div>
-            <div className="col-auto d-flex">
-              <Pagination
-                currentPage={orderSearchParams.page}
-                totalPages={totalPage}
-                onPageChange={(page: any) =>
-                  setOrderSearchParams({ ...orderSearchParams, page })
-                }
-              />
-            </div>
-          </div>
+          <Pagination
+            currentPage={orderSearchParams.page}
+            totalPages={totalPage}
+            onPageChange={(page: any) =>
+              setOrderSearchParams({
+                ...orderSearchParams,
+                page,
+                timer: new Date().getTime(),
+              })
+            }
+          />
         </div>
       </div>
-
       <Dialog
         visible={open}
         style={{ width: "10vw" }}
@@ -334,6 +344,7 @@ const Return = () => {
             setOpen(false);
             fetchOrders();
           }}
+          fines = {fines}
         />
       </Dialog>
 

@@ -43,6 +43,8 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Autowired
     private UserRepository userRepository;
 
+    
+
     @Autowired
     private UserFineRepository userFineRepository;
 
@@ -247,7 +249,6 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with ID: " + id));
         checkout.setStatus(CheckoutStatus.PENALTY);
         Double fineAmount = calculateFine(checkout);
-        checkout.setFine(fineAmount);
 
         checkoutRepository.save(checkout);
 
@@ -299,7 +300,6 @@ public class CheckoutServiceImpl implements CheckoutService {
         checkout.setStartTime(checkoutDTO.getStartTime());
         checkout.setEndTime(checkoutDTO.getEndTime());
         checkout.setExpiredTime(checkoutDTO.getExpiredTime());
-        checkout.setFine(checkoutDTO.getFine());
         return checkout;
     }
 }

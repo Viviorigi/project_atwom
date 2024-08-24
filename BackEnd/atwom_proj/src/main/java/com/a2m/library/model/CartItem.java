@@ -7,22 +7,27 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_fine")
+@Table(name = "cart_item")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserFine {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "checkout_id", unique = true)
-    private Checkout checkout;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private Book book;
 
-    @Column(name = "amount")
-    private Double amount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
+
+    @Column(name = "quantity")
+    private int quantity;
 }
+
