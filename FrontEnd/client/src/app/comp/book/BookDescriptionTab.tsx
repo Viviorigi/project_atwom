@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { productDescriptionTabHeads } from "../../data/data";
 import Title from "../common/Title";
@@ -6,6 +6,8 @@ import { ContentStylings } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 
 import { BookDTO } from "../../model/BookDTO";
+import { FeedBackDTO } from "../../model/feedback/FeedBackDTO";
+import StarRatings from 'react-star-ratings';
 
 const DetailsContent = styled.div`
   margin-top: 60px;
@@ -120,7 +122,40 @@ const DescriptionTabsWrapper = styled.div`
 const BookDescriptionTab = (props: any) => {
   // const [book, setBook] = useState<BookDTO>(new BookDTO());
   const { book } = props;
-  console.log(book);
+  // console.log(book);
+  const [feedBack, setFeedBack] = useState<FeedBackDTO>(new FeedBackDTO());
+  const [rating, setRating] = React.useState(0);
+  const [comment, setComment] = useState("");
+
+  //Xử lý feedBack-----------------------------------------------------------
+  const changeRating = (newRating: any) => {
+    setRating(newRating);
+    setFeedBack((prevFeedBack) => ({
+      ...prevFeedBack,
+      rating: newRating,
+    }));
+  };
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value);
+    setFeedBack((prevFeedBack) => ({
+      ...prevFeedBack,
+      feedbackText: event.target.value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    // In thông tin feedback để kiểm tra
+
+    // Reset trạng thái sau khi gửi nếu cần
+    setRating(0);
+    setComment("");
+    setFeedBack(new FeedBackDTO());
+  };
+
+  //End ---------Xử lý feedBack-----------------------------------------------------------
+
+
 
   const [activeDesTab, setActiveDesTab] = useState(
     productDescriptionTabHeads[0].tabHead
@@ -170,14 +205,48 @@ const BookDescriptionTab = (props: any) => {
               <ContentStylings>
                 {book?.description && <div className="align-middle text-start text-1100"
                   dangerouslySetInnerHTML={{ __html: book?.description }} />}
-                
+
               </ContentStylings>
             </div>
             <div
               className={`tabs-content content-stylings ${activeDesTab === "tabComments" ? "show" : ""
                 }`}
             >
-              User comments here.
+              <div className="container mt-4">
+                <div className="row">
+                  <div className="col-md-6 offset-md-3">
+                    <div className="card p-3">
+                      <h4 className="card-title">Đánh giá của bạn</h4>
+
+                      {/* StarRatings component */}
+                      <div className="d-flex justify-content-center mb-3">
+                        <StarRatings
+                          rating={rating}
+                          starRatedColor="yellow"
+                          changeRating={changeRating}
+                          numberOfStars={5}
+                          name='rating'
+                        />
+                      </div>
+
+                      {/* Comment input */}
+                      <div className="form-group">
+                        <label htmlFor="comment">Bình luận:</label>
+                        <textarea
+                          id="comment"
+                          className="form-control"
+                          rows={4}
+                          placeholder="Nhập bình luận của bạn"
+                          value={comment}
+                          onChange={handleCommentChange}
+                        />
+                      </div>
+
+                      <button className="btn btn-primary" onClick={handleSubmit}>Gửi</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               className={`tabs-content content-stylings ${activeDesTab === "tabQNA" ? "show" : ""

@@ -128,7 +128,8 @@ export default function Book() {
   useEffect(() => {
     let url = `http://localhost:8080/category/list/all`;
     axios.get(url).then((resp: any) => {
-      // console.log(resp.data.name);
+      console.log("Test cate");
+      console.log(resp.data);
       if (resp.data) {
         setCategoryList(resp.data);
       }

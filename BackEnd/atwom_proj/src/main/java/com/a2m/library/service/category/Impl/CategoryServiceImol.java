@@ -30,6 +30,12 @@ public class CategoryServiceImol implements CategoryService{
 	}
 	
 	@Override
+	public List<Category> findAllList() {
+		// TODO Auto-generated method stub
+		return categoryRepository.findAll();
+	}
+	
+	@Override
 	public Page<CategoryDTO> findByKeySearch(String keySearch, PageRequest pageRequest) {
 		// TODO Auto-generated method stub
 		Page<Category>cate = categoryRepository.searchCategories(keySearch, pageRequest);
@@ -111,12 +117,6 @@ public class CategoryServiceImol implements CategoryService{
 		// TODO Auto-generated method stub
 		categoryRepository.save(category);
 		
-	}
-
-	@Override
-	public List<Category> findAllList() {
-		// TODO Auto-generated method stub
-		return categoryRepository.findAll();
 	}
 	
 	public BookDTO convertToBookDTO(Book book) {

@@ -363,6 +363,9 @@ export default function AddBook(props: any) {
                                         {book?.cateName}
                                     </option>
                                 )}
+                                {bookDTO == null && (
+                                    <option value={0}>All</option>
+                                )}
                                 {categoryList.map((u: any, index: number) => (
                                     <option key={u.id} value={u.id}>
                                         {u.name}

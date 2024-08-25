@@ -29,6 +29,7 @@
     "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
+    "react-star-ratings": "^2.3.0",
     "react-toastify": "^10.0.5",
     "sass": "^1.77.8",
     "slick-carousel": "^1.8.1",
@@ -67,6 +68,7 @@
     "@types/crypto-js": "^4.2.2",
     "@types/draft-js": "^0.11.18",
     "@types/react-slick": "^0.23.13",
+    "@types/react-star-ratings": "^2.3.3",
     "crypto-js": "^4.2.0"
   }
 }
