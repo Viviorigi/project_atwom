@@ -77,6 +77,10 @@ public class SecurityConfig {
 	                    .requestMatchers("/api/admin/book/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/admin/category/**").hasRole("ADMIN")
 	                    .requestMatchers("/api/wishlist/**").permitAll()
+						.requestMatchers("/api/checkout/**").permitAll()
+						.requestMatchers("/api/checkoutdt/**").permitAll()
+						.requestMatchers("/api/userfine/**").permitAll()
+						.requestMatchers("/api/cart/**").permitAll()
 	                    .anyRequest().permitAll());
 //						.anyRequest().authenticated());
 		http.authenticationProvider(authenticationProvider());

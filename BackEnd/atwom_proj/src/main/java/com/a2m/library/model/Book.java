@@ -82,5 +82,8 @@ public class Book {
   
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<WishList> wishlist = new ArrayList<>();
+
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Cart> cart = new ArrayList<>();
   
 }

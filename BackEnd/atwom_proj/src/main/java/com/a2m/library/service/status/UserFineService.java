@@ -9,4 +9,6 @@ public interface UserFineService {
     Set<UserFineDTO> findAll();
     Optional<UserFineDTO> findById(Integer id);
     UserFineDTO save(UserFineDTO userFineDTO);
+    UserFineDTO getUserFineByCheckoutId(Integer checkoutId);
+    UserFineDTO updateAmountByCheckoutId(Integer checkoutId, Double amount);
 }
