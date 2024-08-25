@@ -10,5 +10,5 @@ public interface UserFineService {
     Optional<UserFineDTO> findById(Integer id);
     UserFineDTO save(UserFineDTO userFineDTO);
     UserFineDTO getUserFineByCheckoutId(Integer checkoutId);
-    UserFineDTO updateAmount(Integer id, Double amount);
+    UserFineDTO updateAmountByCheckoutId(Integer checkoutId, Double amount);
 }

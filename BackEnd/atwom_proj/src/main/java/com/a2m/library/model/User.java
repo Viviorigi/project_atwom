@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -87,4 +88,7 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy = "user")
     private List<WishList> wishlist = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user")
+    private List<Cart> cart = new ArrayList<>();
 }

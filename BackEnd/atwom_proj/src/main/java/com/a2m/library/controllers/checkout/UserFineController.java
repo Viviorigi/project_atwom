@@ -3,6 +3,8 @@ package com.a2m.library.controllers.checkout;
 import com.a2m.library.dto.UserFineDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.service.status.UserFineService;
+
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +38,9 @@ public class UserFineController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<UserFineDTO> updateAmount(@PathVariable Integer id, @RequestParam Double amount) {
-        UserFineDTO updatedUserFine = userFineService.updateAmount(id, amount);
+    @PutMapping("/update/{checkoutId}")
+    public ResponseEntity<UserFineDTO> updateAmountByCheckoutId(@PathVariable Integer checkoutId, @RequestParam Double amount) {
+        UserFineDTO updatedUserFine = userFineService.updateAmountByCheckoutId(checkoutId, amount);
         return ResponseEntity.ok(updatedUserFine);
     }
 

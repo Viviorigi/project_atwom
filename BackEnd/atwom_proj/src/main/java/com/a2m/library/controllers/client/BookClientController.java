@@ -30,12 +30,12 @@ public class BookClientController {
 	
 	@GetMapping("/book/new")
 	public ResponseEntity<?> bookGet() {
-		List<Book>books = bookService.findAllActiveNew();
+		List<BookDTO>books = bookService.findAll();
 		
 		if(books.size() < 5)
 			return ResponseEntity.ok().body(books);
 		else {
-			List<Book> res = new ArrayList<Book>();
+			List<BookDTO> res = new ArrayList<BookDTO>();
 			for(int i = 0; i < 5; i++)
 				res.add(books.get(i));
 			return ResponseEntity.ok().body(res);

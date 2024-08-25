@@ -16,7 +16,7 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
   returnData,
   onClose,
   onSave,
-  fines, // Add this line
+  fines,
 }) => {
   const [currentReturn, setCurrentReturn] = useState<CheckoutDTO | null>(
     returnData
@@ -31,7 +31,7 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
     if (returnData) {
       setCurrentReturn(returnData);
       setStatus(returnData.status);
-      setFine(fines.get(returnData.id!) || 0); // Use fines prop
+      setFine(fines.get(returnData.id!) || 0);
       setReturnDate(returnData.expiredTime || "");
     }
   }, [returnData, fines]);
@@ -83,17 +83,22 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
       }
 
       // Update fine
-      if (status === CheckoutStatus.PENALTY) {
-        await axios.put(`http://localhost:8080/api/userfine/update/${currentReturn.id}`, {
+      await axios.put(`http://localhost:8080/api/userfine/update/${currentReturn.id}`, null, {
+        params: {
           amount: fine,
-        });
-      }
+        },
+      });
 
       toast.success("Return saved successfully");
       onSave(updatedReturn);
       onClose(true);
     } catch (error) {
-      toast.error("Failed to save return");
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data?.message || "Failed to save return";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Failed to save return");
+      }
     }
   };
 

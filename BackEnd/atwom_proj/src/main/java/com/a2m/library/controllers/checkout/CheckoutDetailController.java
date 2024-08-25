@@ -25,6 +25,12 @@ public class CheckoutDetailController {
         return ResponseEntity.ok(checkoutDetailService.findByCheckoutId(id));
     }
 
+    @GetMapping("/details/{checkoutId}")
+    public ResponseEntity<List<CheckoutDetailDTO>> getCheckoutDetails(@PathVariable("checkoutId") int checkoutId) {
+        List<CheckoutDetailDTO> details = checkoutDetailService.findByCheckoutId(checkoutId);
+        return ResponseEntity.ok(details);
+    }
+
     @PostMapping("/add/{checkoutId}")
     public ResponseEntity<CheckoutDetailDTO> addDetailToCheckout(
             @PathVariable Integer checkoutId,
@@ -33,7 +39,8 @@ public class CheckoutDetailController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CheckoutDetailDTO> updateDetail(@PathVariable Integer id, @RequestBody CheckoutDetailDTO checkoutDetailDTO) {
+    public ResponseEntity<CheckoutDetailDTO> updateDetail(@PathVariable Integer id,
+            @RequestBody CheckoutDetailDTO checkoutDetailDTO) {
         return ResponseEntity.ok(checkoutDetailService.update(id, checkoutDetailDTO));
     }
 
@@ -43,4 +50,3 @@ public class CheckoutDetailController {
         return ResponseEntity.noContent().build();
     }
 }
-

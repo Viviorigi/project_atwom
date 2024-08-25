@@ -1,103 +1,94 @@
-import styled from "styled-components";
-import CartItem from "./CartItem";
-import  PropTypes  from "prop-types";
-import { breakpoints } from "../../styles/themes/default";
+import React from 'react';
+import styled from 'styled-components';
+import CartItem from './CartItem';
 
-const ScrollbarXWrapper = styled.div`
-  overflow-x: scroll;
-  max-height: 800px;
-  overflow-y: auto;
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: grey;
-  }
+const TableWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px; /* Margin for spacing */
 `;
 
-const CartTableWrapper = styled.table`
+const Table = styled.table`
+  width: 100%;
   border-collapse: collapse;
-  min-width: 680px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+`;
 
-  thead {
-    th {
-      height: 48px;
-      padding-left: 16px;
-      padding-right: 16px;
-      letter-spacing: 0.03em;
+const TableHeader = styled.thead`
+  background-color: #f2f2f2;
+  font-weight: bold;
+`;
 
-      @media (max-width: ${breakpoints.lg}) {
-        padding: 16px 12px;
-      }
+const TableHeaderCell = styled.th`
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+`;
 
-      @media (max-width: ${breakpoints.xs}) {
-        padding: 10px;
-      }
-    }
-  }
-
-  tbody {
-    td {
-      padding: 24px 16px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-
-      @media (max-width: ${breakpoints.lg}) {
-        padding: 16px 12px;
-      }
-
-      @media (max-width: ${breakpoints.xs}) {
-        padding: 10px 6px;
-      }
-    }
+const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: #f2f2f2;
   }
 `;
 
-const CartTable = ({ cartItems }:any) => {
-  const CART_TABLE_HEADS = [
-    "Product details",
-    "Price",
-    "Quantity",
-    "Shipping",
-    "Subtotal",
-    "Action",
-  ];
+const NoItemsMessage = styled.tr`
+  td {
+    padding: 20px;
+    text-align: center;
+    color: #555;
+    font-size: 16px;
+    border: none;
+    font-weight: bold;
+  }
+`;
 
+const CartTable = ({
+  cartItems,
+  onUpdateQuantity,
+  onRemoveItem,
+}: {
+  cartItems: Array<{ id: number, bookTitle: string, bookPrice: number, quantity: number, categoryName: string }>;
+  onUpdateQuantity: (id: number, quantity: number) => void;
+  onRemoveItem: (id: number) => void;
+}) => {
   return (
-    <ScrollbarXWrapper>
-      <CartTableWrapper className="w-full">
+    <TableWrapper>
+      <Table>
         <thead>
-          <tr className="text-start">
-            {CART_TABLE_HEADS?.map((column, index) => (
-              <th
-                key={index}
-                className={`bg-outerspace text-white font-semibold capitalize text-base ${
-                  index === CART_TABLE_HEADS.length - 1 ? " text-center" : ""
-                }`}
-              >
-                {column}
-              </th>
-            ))}
-          </tr>
+          <TableRow>
+            <TableHeaderCell>Chi tiết sản phẩm</TableHeaderCell>
+            <TableHeaderCell>Giá tiền</TableHeaderCell>
+            <TableHeaderCell>Số lượng</TableHeaderCell>
+            <TableHeaderCell>Tạm tính</TableHeaderCell>
+            <TableHeaderCell>|</TableHeaderCell>
+          </TableRow>
         </thead>
         <tbody>
-          {cartItems.map((cartItem:any) => {
-            return <CartItem key={cartItem.id} cartItem={cartItem} />;
-          })}
+          {cartItems.length === 0 ? (
+            <NoItemsMessage>
+              <td colSpan={5}>Chưa có sản phẩm nào trong giỏ hàng.</td>
+            </NoItemsMessage>
+          ) : (
+            cartItems.map((item) => (
+              <CartItem
+                key={item.id}
+                cartItem={{
+                  id: item.id,
+                  title: item.bookTitle,
+                  category: item.categoryName,
+                  price: item.bookPrice,
+                  quantity: item.quantity,
+                  onIncreaseQuantity: (id) => onUpdateQuantity(id, item.quantity + 1),
+                  onDecreaseQuantity: (id) => onUpdateQuantity(id, item.quantity - 1),
+                  onRemove: (id) => onRemoveItem(id),
+                }}
+              />
+            ))
+          )}
         </tbody>
-      </CartTableWrapper>
-    </ScrollbarXWrapper>
+      </Table>
+    </TableWrapper>
   );
 };
 
 export default CartTable;
-
-CartTable.propTypes = {
-  cartItems: PropTypes.array,
-};

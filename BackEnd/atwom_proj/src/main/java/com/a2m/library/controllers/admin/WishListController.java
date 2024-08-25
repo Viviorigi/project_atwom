@@ -33,7 +33,7 @@ public class WishListController {
 	@Autowired
 	private UserService userService; //
 
-	@GetMapping
+	@GetMapping("/lst")
 	public ResponseEntity<?> getUserWishList(@RequestHeader("Authorization") String jwt) {
 	    try {
 	        // Remove "Bearer " prefix from the JWT token
@@ -56,7 +56,9 @@ public class WishListController {
 	                                wl.getUser().getUserUid(),
 	                                wl.getBook().getId(),
 	                                wl.getBook().getTitle(),
-	                                wl.getBook().getImage()
+	                                wl.getBook().getImage(),
+	                                wl.getBook().getPublisher(),
+	                                wl.getBook().getPublicationYear()
 	                        ))
 	                        .collect(Collectors.toList());
 
@@ -92,10 +94,12 @@ public class WishListController {
 					// Create WishListResponse
 					WishListResponse response = new WishListResponse();
 					response.setUser_uid(userId);
-					response.setBookId(bookId);
+					response.setId(bookId);
 					// Optional: Set book details if needed
-					response.setBookTitle(wishList.getBook().getTitle());
-					response.setBookImage(wishList.getBook().getImage());
+					response.setTitle(wishList.getBook().getTitle());
+					response.setImage(wishList.getBook().getImage());
+					response.setPublisher(wishList.getBook().getPublisher());
+					response.setPublicationYear(wishList.getBook().getPublicationYear());
 					return ResponseEntity.ok(response);
 				} else {
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -128,7 +132,7 @@ public class WishListController {
                     // Create WishListResponse
                     WishListResponse response = new WishListResponse();
                     response.setUser_uid(userId); 
-                    response.setBookId(bookId);
+                    response.setId(bookId);
                    
                     return ResponseEntity.ok(response);
                 } else {
@@ -142,5 +146,42 @@ public class WishListController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+	
+	@GetMapping("/check")
+	public ResponseEntity<?> isBookInWishlist(@RequestParam Integer bookId,
+	                                          @RequestHeader("Authorization") String jwt) {
+	    try {
+	        // Remove "Bearer " prefix from the JWT token
+	        if (jwt.startsWith("Bearer ")) {
+	            jwt = jwt.substring(7);
+	        }
+
+	        // Validate the JWT token
+	        if (jwtUtil.validateJwtToken(jwt)) {
+	            String username = jwtUtil.getUserNameFromJwtToken(jwt);
+	            Optional<UserResponse> userOptional = userService.findUserByName(username);
+
+	            if (userOptional.isPresent()) {
+	                Long userId = userOptional.get().getUserUid();
+	                boolean isInWishlist = wishListService.isBookInWishlist(userId, bookId);
+
+	                // Return appropriate response based on whether the book is in the wishlist
+	                if (isInWishlist) {
+	                    return ResponseEntity.ok(true);
+	                } else {
+	                    return ResponseEntity.ok(false);
+	                }
+	            } else {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+	            }
+	        } else {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+	    }
+	}
+
 
 }

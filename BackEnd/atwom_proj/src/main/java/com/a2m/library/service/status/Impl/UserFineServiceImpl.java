@@ -64,9 +64,12 @@ public class UserFineServiceImpl implements UserFineService {
 
     @Override
     @Transactional
-    public UserFineDTO updateAmount(Integer id, Double amount) {
-        UserFine userFine = userFineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("UserFine not found with id " + id));
+    public UserFineDTO updateAmountByCheckoutId(Integer checkoutId, Double amount) {
+        Checkout checkout = CheckoutRepository.findById(checkoutId)
+                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + checkoutId));
+
+        UserFine userFine = userFineRepository.findByCheckout(checkout)
+                .orElseThrow(() -> new ResourceNotFoundException("UserFine not found for checkout id " + checkoutId));
 
         userFine.setAmount(amount);
         userFine = userFineRepository.save(userFine);

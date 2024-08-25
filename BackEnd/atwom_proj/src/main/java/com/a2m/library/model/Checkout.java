@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.a2m.library.constant.CheckoutStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "checkout")
@@ -27,6 +30,7 @@ public class Checkout {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_uid", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private User user;
 
     @Column(name = "expried_dt")
@@ -43,6 +47,7 @@ public class Checkout {
     private CheckoutStatus status;
 
     @OneToMany(mappedBy = "checkout", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<CheckoutDetail> checkoutDetails;
 
     @OneToOne(mappedBy = "checkout", cascade = CascadeType.ALL)

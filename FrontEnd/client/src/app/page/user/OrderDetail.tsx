@@ -1,13 +1,26 @@
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useParams } from "react-router-dom";
 import { Container } from "../../styles/styles";
 import { UserContent, UserDashboardWrapper } from "../../styles/user";
-import { Link } from "react-router-dom";
-import { orderData } from "../../data/data";
-import { currencyFormat } from "../../utils/helper";
-import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import Breadcrumb from "../../comp/common/Breadcrumb";
 import UserMenu from "../../comp/user/UserMenu";
 import Title from "../../comp/common/Title";
+import {
+  getCheckoutById,
+  getCheckoutDetailsByCheckoutId,
+} from "../../services/CheckoutService";
+import { getBookById, getCategoryByBookId } from "../../services/BookService";
+import {
+  CheckoutDTO,
+  CheckoutDetailDTO,
+} from "../../model/checkout/CheckoutDTO";
+import { BookDTO } from "../../model/book/BookDTO";
+import { CategoryDTO } from "../../model/book/CategoryDTO";
+import { currencyFormat } from "../../utils/helper";
+import defaultimage from "../../../assets/images/imageBookDefault.png";
+import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { Link } from "react-router-dom";
 
 const OrderDetailScreenWrapper = styled.main`
   .btn-and-title-wrapper {
@@ -254,6 +267,81 @@ const breadcrumbItems = [
 ];
 
 const OrderDetail = () => {
+  const { orderdetailId } = useParams<{ orderdetailId: string }>();
+  const [checkout, setCheckout] = useState<CheckoutDTO | null>(null);
+  const [details, setDetails] = useState<CheckoutDetailDTO[]>([]);
+  const [books, setBooks] = useState<Map<number, BookDTO>>(new Map());
+  const [categories, setCategories] = useState<
+    Map<number | undefined, CategoryDTO>
+  >(new Map());
+
+  useEffect(() => {
+    if (orderdetailId) {
+      const fetchOrderDetailData = async () => {
+        try {
+          const checkoutData = await getCheckoutById(parseInt(orderdetailId));
+          setCheckout(checkoutData);
+
+          const detailsData = await getCheckoutDetailsByCheckoutId(
+            parseInt(orderdetailId)
+          );
+          setDetails(detailsData);
+
+          const bookPromises = detailsData.map(async (detail) => {
+            if (detail.bookId !== undefined) {
+              try {
+                const bookData = await getBookById(detail.bookId);
+                setBooks((prev) => new Map(prev).set(detail.bookId, bookData));
+                return bookData;
+              } catch (error) {
+                console.error(
+                  `Error fetching book for book ID ${detail.bookId}:`,
+                  error
+                );
+                return null; // Handle error or return a default value
+              }
+            } else {
+              console.warn("Detail book ID is undefined.");
+              return null;
+            }
+          });
+
+          const booksData = await Promise.all(bookPromises);
+
+          const categoryPromises = booksData.map(async (book) => {
+            if (book && book.id !== undefined) {
+              try {
+                const category = await getCategoryByBookId(book.id);
+                setCategories((prev) => new Map(prev).set(book.id, category));
+                return category;
+              } catch (error) {
+                console.error(
+                  `Error fetching category for book ID ${book.id}:`,
+                  error
+                );
+                return null;
+              }
+            } else {
+              console.warn("Book ID is undefined, skipping category fetch.");
+              return null;
+            }
+          });
+
+          await Promise.all(categoryPromises);
+        } catch (error) {
+          console.error("Error fetching order details:", error);
+        }
+      };
+
+      fetchOrderDetailData();
+    }
+  }, [orderdetailId]);
+
+  const total = details.reduce((sum, item) => {
+    const book = books.get(item.bookId);
+    return sum + (book?.price || 0) * item.quantity;
+  }, 0);
+
   return (
     <OrderDetailScreenWrapper className="page-py-spacing">
       <Container>
@@ -275,67 +363,45 @@ const OrderDetail = () => {
               <div className="order-d-top flex justify-between items-start">
                 <div className="order-d-top-l">
                   <h4 className="text-3xl order-d-no">
-                    Order no: #47770098867
+                    Order no: #{checkout?.id ?? "N/A"}
                   </h4>
                   <p className="text-lg font-medium text-gray">
-                    Placed On 2 June 2023 2:40 PM
+                    Placed On {checkout?.endTime ?? "N/A"}
                   </p>
                 </div>
                 <div className="order-d-top-r text-xxl text-gray font-semibold">
-                  Total: <span className="text-outerspace">$143.00</span>
+                  Total:{" "}
+                  <span className="text-outerspace">
+                    {currencyFormat(total)}
+                  </span>
                 </div>
               </div>
 
               <OrderDetailStatusWrapper className="order-d-status">
-                <div className="order-status bg-silver">
-                  <div className="order-status-dot status-done bg-silver">
-                    <span className="order-status-text font-semibold text-center no-wrap text-silver">
-                      Order Placed
-                    </span>
-                  </div>
-                  <div className="order-status-dot status-current bg-silver">
-                    <span className="order-status-text font-semibold text-center no-wrap text-silver">
-                      In Progress
-                    </span>
-                  </div>
-                  <div className="order-status-dot bg-silver">
-                    <span className="order-status-text font-semibold text-center no-wrap text-silver">
-                      Shipped
-                    </span>
-                  </div>
-                  <div className="order-status-dot bg-silver">
-                    <span className="order-status-text font-semibold text-center no-wrap text-silver">
-                      Delivered
-                    </span>
-                  </div>
-                </div>
+                {/* Update status dots here */}
               </OrderDetailStatusWrapper>
-              <OrderDetailMessageWrapper className="order-message flex items-center justify-start">
-                <p className="font-semibold text-gray">
-                  8 June 2023 3:40 PM &nbsp;
-                  <span className="text-outerspace">
-                    Your order has been successfully verified.
-                  </span>
-                </p>
-              </OrderDetailMessageWrapper>
 
               <OrderDetailListWrapper className="order-d-list">
-                {orderData[0].items?.map((item) => {
+                {details.map((item) => {
+                  const book = books.get(item.bookId);
+                  const category = categories.get(item.bookId);
                   return (
                     <div className="order-d-item grid" key={item.id}>
                       <div className="order-d-item-img">
                         <img
-                          src={item.imgSource}
+                          src={book?.image ?? defaultimage}
                           alt=""
                           className="object-fit-cover"
                         />
                       </div>
                       <div className="order-d-item-info">
-                        <p className="text-xl font-bold">{item.name}</p>
+                        <p className="text-xl font-bold">
+                          {book?.title ?? "N/A"}
+                        </p>
                         <p className="text-md font-bold">
-                          Color: &nbsp;
+                          Category: &nbsp;
                           <span className="font-medium text-gray">
-                            {item.color}
+                            {category?.name ?? "N/A"}
                           </span>
                         </p>
                       </div>
@@ -347,7 +413,7 @@ const OrderDetail = () => {
                         <p className="font-bold text-lg">
                           Price: &nbsp;
                           <span className="text-gray">
-                            {currencyFormat(item.price)}
+                            {currencyFormat(book?.price)}
                           </span>
                         </p>
                       </div>

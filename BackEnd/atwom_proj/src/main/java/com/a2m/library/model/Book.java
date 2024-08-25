@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -50,6 +51,7 @@ public class Book {
   private String nxb;
 
   @OneToMany(mappedBy = "book")
+  @JsonIgnore
   private Set<CheckoutDetail> checkoutDetails;
 
 //  @Column(name = "status_id")
@@ -80,5 +82,8 @@ public class Book {
   
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<WishList> wishlist = new ArrayList<>();
+
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Cart> cart = new ArrayList<>();
   
 }

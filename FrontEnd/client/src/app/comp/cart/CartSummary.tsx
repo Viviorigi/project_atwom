@@ -1,59 +1,86 @@
-import styled from "styled-components";
-import { BaseButtonGreen } from "../../styles/button";
-import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import React from 'react';
+import styled from 'styled-components';
+import { breakpoints, defaultTheme } from '../../styles/themes/default';
 
-const CartSummaryWrapper = styled.div`
-  background-color: ${defaultTheme.color_flash_white};
-  padding: 16px;
+const SummaryWrapper = styled.div`
+  border: 1px solid ${defaultTheme.color_platinum};
+  padding: 20px;
+  background: ${defaultTheme.color_white};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  flex: 1;
+  position: sticky;
+  top: 20px;
 
-  .checkout-btn {
-    min-width: 100%;
-  }
-
-  .summary-list {
-    padding: 20px;
-
-    @media (max-width: ${breakpoints.xs}) {
-      padding-top: 0;
-      padding-right: 0;
-      padding-left: 0;
-    }
-
-    .summary-item {
-      margin: 6px 0;
-
-      &:last-child {
-        margin-top: 20px;
-        border-top: 1px dashed ${defaultTheme.color_sea_green};
-        padding-top: 10px;
-      }
-    }
+  @media (max-width: ${breakpoints.md}) {
+    max-width: 100%;
   }
 `;
 
-const CartSummary = () => {
+const SummaryContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const SummaryItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+`;
+
+const SummaryLabel = styled.span`
+  font-weight: bold;
+`;
+
+const SummaryValue = styled.span`
+  font-weight: normal;
+`;
+
+const OrderButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end; /* Align button to the right */
+  margin-top: 20px;
+`;
+
+const OrderButton = styled.button`
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const CartSummary = ({
+  totalProducts,
+  totalPrice,
+  onOrder,
+}: {
+  totalProducts: number;
+  totalPrice: number;
+  onOrder: () => void;
+}) => {
   return (
-    <CartSummaryWrapper>
-      <ul className="summary-list">
-        <li className="summary-item flex justify-between">
-          <span className="font-medium text-outerspace">Sub Total</span>
-          <span className="font-medium text-outerspace">$513.00</span>
-        </li>
-        <li className="summary-item flex justify-between">
-          <span className="font-medium text-outerspace">Shipping</span>
-          <span className="font-medium text-outerspace">$5.00</span>
-        </li>
-        <li className="summary-item flex justify-between">
-          <span className="font-medium text-outerspace">Grand Total</span>
-          <span className="summary-item-value font-bold text-outerspace">
-            $518.00
-          </span>
-        </li>
-      </ul>
-      <BaseButtonGreen type="submit" className="checkout-btn">
-        Proceed To Checkout
-      </BaseButtonGreen>
-    </CartSummaryWrapper>
+    <SummaryWrapper>
+      <SummaryContent>
+        <SummaryItem>
+          <SummaryLabel>Tổng số sản phẩm:</SummaryLabel>
+          <SummaryValue>{totalProducts}</SummaryValue>
+        </SummaryItem>
+        <SummaryItem>
+          <SummaryLabel>Tổng tiền đơn hàng:</SummaryLabel>
+          <SummaryValue>{totalPrice.toFixed(2)}đ</SummaryValue>
+        </SummaryItem>
+      </SummaryContent>
+      <OrderButtonWrapper>
+        <OrderButton onClick={onOrder}>Đặt hàng</OrderButton>
+      </OrderButtonWrapper>
+    </SummaryWrapper>
   );
 };
 

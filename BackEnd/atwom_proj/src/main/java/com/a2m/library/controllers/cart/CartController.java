@@ -1,16 +1,19 @@
 package com.a2m.library.controllers.cart;
 
+import com.a2m.library.dto.response.CartResponse;
+import com.a2m.library.dto.response.UserResponse;
 import com.a2m.library.model.Cart;
-import com.a2m.library.model.CartItem;
-import com.a2m.library.model.User;
 import com.a2m.library.service.cart.CartService;
+import com.a2m.library.service.admin.UserService;
+import com.a2m.library.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -19,56 +22,153 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping("/add")
-    public ResponseEntity<Cart> addBookToCart(@AuthenticationPrincipal UserDetails userDetails,
-                                              @RequestParam Integer bookId,
-                                              @RequestParam int quantity) {
-        User user = getCurrentUser(userDetails);
-        Cart cart = cartService.addBookToCart(user, bookId, quantity);
-        return ResponseEntity.ok(cart);
-    }
+    @Autowired
+    private UserService userService;
 
-    @GetMapping("/items")
-    public ResponseEntity<List<CartItem>> getCartItems(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = getCurrentUser(userDetails);
-        List<CartItem> items = cartService.getCartItems(user);
-        return ResponseEntity.ok(items);
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @PostMapping("/add")
+    public ResponseEntity<?> addBookToCart(@RequestParam Integer bookId,
+            @RequestParam int quantity,
+            @RequestHeader("Authorization") String jwt) {
+        try {
+            String username = extractUsernameFromJwt(jwt);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+            }
+
+            Optional<UserResponse> userOptional = userService.findUserByName(username);
+            if (userOptional.isPresent()) {
+                UserResponse user = userOptional.get();
+                Cart cart = cartService.addBookToCart(user, bookId, quantity);
+                return ResponseEntity.ok(cart);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
     }
 
     @DeleteMapping("/remove")
-    public ResponseEntity<Void> removeBookFromCart(@AuthenticationPrincipal UserDetails userDetails,
-                                                   @RequestParam Integer bookId) {
-        User user = getCurrentUser(userDetails);
-        cartService.removeBookFromCart(user, bookId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> removeBookFromCart(@RequestParam Integer bookId,
+            @RequestHeader("Authorization") String jwt) {
+        try {
+            String username = extractUsernameFromJwt(jwt);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+            }
+
+            Optional<UserResponse> userOptional = userService.findUserByName(username);
+            if (userOptional.isPresent()) {
+                UserResponse user = userOptional.get();
+                cartService.removeBookFromCart(user, bookId);
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Cart> updateBookQuantity(@AuthenticationPrincipal UserDetails userDetails,
-                                                   @RequestParam Integer bookId,
-                                                   @RequestParam int quantity) {
-        User user = getCurrentUser(userDetails);
-        Cart cart = cartService.updateBookQuantity(user, bookId, quantity);
-        return ResponseEntity.ok(cart);
+    public ResponseEntity<?> updateBookQuantity(@RequestParam Integer bookId,
+            @RequestParam int quantity,
+            @RequestHeader("Authorization") String jwt) {
+        try {
+            String username = extractUsernameFromJwt(jwt);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+            }
+
+            Optional<UserResponse> userOptional = userService.findUserByName(username);
+            if (userOptional.isPresent()) {
+                UserResponse user = userOptional.get();
+                Cart cart = cartService.updateBookQuantity(user, bookId, quantity);
+                return ResponseEntity.ok(cart);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
     }
 
     @DeleteMapping("/clear")
-    public ResponseEntity<Void> clearCart(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = getCurrentUser(userDetails);
-        cartService.clearCart(user);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> clearCart(@RequestHeader("Authorization") String jwt) {
+        try {
+            String username = extractUsernameFromJwt(jwt);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+            }
+
+            Optional<UserResponse> userOptional = userService.findUserByName(username);
+            if (userOptional.isPresent()) {
+                UserResponse user = userOptional.get();
+                cartService.clearCart(user);
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
     }
 
-    @GetMapping
-    public ResponseEntity<Cart> getCartByUser(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = getCurrentUser(userDetails);
-        Cart cart = cartService.getCartByUser(user);
-        return ResponseEntity.ok(cart);
-    }
+    @GetMapping()
+public ResponseEntity<?> getCartByUserUid(@RequestHeader("Authorization") String jwt) {
+    try {
+        if (jwt.startsWith("Bearer ")) {
+            jwt = jwt.substring(7);
+        }
 
-    private User getCurrentUser(UserDetails userDetails) {
-        //Lấy user từ token
-        return null; // Thay đổi
+        if (jwtUtil.validateJwtToken(jwt)) {
+            String username = jwtUtil.getUserNameFromJwtToken(jwt);
+            Optional<UserResponse> userOptional = userService.findUserByName(username);
+
+            if (userOptional.isPresent()) {
+                Long userId = userOptional.get().getUserUid();
+                List<Cart> carts = cartService.getCartByUserUid(userId);
+
+                List<CartResponse> response = carts.stream()
+                        .map(cart -> new CartResponse(
+                                cart.getId(),
+                                cart.getUser().getUserUid(),
+                                cart.getBook().getId(),
+                                cart.getQuantity(),
+                                cart.getBook().getTitle(),
+                                cart.getBook().getPrice(),
+                                cart.getBook().getCategory().getName()
+                        ))
+                        .collect(Collectors.toList());
+
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
     }
 }
 
+    private String extractUsernameFromJwt(String jwt) {
+        if (jwt.startsWith("Bearer ")) {
+            jwt = jwt.substring(7);
+        }
+
+        if (jwtUtil.validateJwtToken(jwt)) {
+            return jwtUtil.getUserNameFromJwtToken(jwt);
+        }
+        return null;
+    }
+}

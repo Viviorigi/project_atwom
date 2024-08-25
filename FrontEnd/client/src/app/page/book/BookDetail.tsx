@@ -13,10 +13,13 @@ import BookDescriptionTab from "../../comp/book/BookDescriptionTab";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BookDTO } from "../../model/BookDTO";
-import imageBookDefault from "../../../assets/images/imageBookDefault.png"
+import imageBookDefault from "../../../assets/images/imageBookDefault.png";
 import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
-
-
+import Cookies from "universal-cookie";
+import { AuthConstant } from "../../constants/authConstant";
+import { WishService } from "../../services/WishListService";
+import { toast } from "react-toastify";
+import { CartService } from "../../services/CartService";
 
 const DetailsScreenWrapper = styled.main`
   margin: 40px 0;
@@ -189,13 +192,12 @@ const BookColorWrapper = styled.div`
 `;
 
 const BookDetail = (props: any) => {
-
   const [book, setBook] = useState<BookDTO>();
   // const {bookId} = props;
   // console.log(bookId);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const id = queryParams.get('bookId');
+  const id = queryParams.get("bookId");
   // console.log(id);
   useEffect(() => {
     // Cuộn lên đầu trang mỗi khi component được render
@@ -204,31 +206,137 @@ const BookDetail = (props: any) => {
 
   useEffect(() => {
     let url = `http://localhost:8080/book/detail?id=${id}`;
-    axios.get(url).then((resp: any) => {
-      if (resp.data) {
-        setBook(resp.data);
-      }
-    }).catch((err: any) => {
+    axios
+      .get(url)
+      .then((resp: any) => {
+        if (resp.data) {
+          setBook(resp.data);
+        }
+      })
+      .catch((err: any) => {});
+  }, [id]);
 
-    })
-  }, [id])
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const cookie = new Cookies();
+
+  useEffect(() => {
+    if (cookie.get(AuthConstant.ACCESS_TOKEN)) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      const savedFavorites = JSON.parse(
+        localStorage.getItem("wishtlist") || "[]"
+      );
+      if (savedFavorites.includes(book?.id)) {
+        setIsFavorited(true);
+      }
+    } else {
+      WishService.getInstance()
+        .check(book?.id)
+        .then((resp) => {
+          setIsFavorited(resp.data);
+        })
+        .catch((err: any) => {
+          console.error("Error checking wishlist status", err);
+        });
+    }
+  }, [book, isLoggedIn]);
+
+  const handleFavoriteClick = async () => {
+    try {
+      if (isLoggedIn) {
+        // Handle favorite logic for logged-in users
+        if (isFavorited) {
+          WishService.getInstance()
+            .remove(book?.id)
+            .then((resp: any) => {
+              toast.success("Remove from wishlist successfully");
+              setIsFavorited(false);
+            });
+        } else {
+          WishService.getInstance()
+            .add(book?.id)
+            .then((resp: any) => {
+              toast.success("add to wishlist successfully");
+              setIsFavorited(true);
+            });
+        }
+        setIsFavorited(!isFavorited);
+      } else {
+        const savedFavorites = JSON.parse(
+          localStorage.getItem("wishlist") || "[]"
+        );
+        if (isFavorited) {
+          const updatedFavorites = savedFavorites.filter(
+            (item: any) => item.id !== book?.id
+          );
+          localStorage.setItem("wishlist", JSON.stringify(updatedFavorites));
+          toast.success("Remove from wishlist successfully");
+          setIsFavorited(false);
+        } else {
+          const bookDetails = {
+            id: book?.id,
+            title: book?.title,
+            publisher: book?.publisher,
+            publicationYear: book?.publicationYear,
+            image: book?.image,
+          };
+          savedFavorites.push(bookDetails);
+          toast.success("add to wishlist successfully");
+          localStorage.setItem("wishlist", JSON.stringify(savedFavorites));
+          setIsFavorited(true);
+        }
+      }
+    } catch (error) {
+      console.error("There was an error updating the favorite status!", error);
+    }
+  };
+
+  const handleBorrowClick = async () => {
+    if (!book || book.id === undefined) return;
+    
+    try {
+      const quantity = 1;
+  
+      const cartResponse = await CartService.getInstance().getCart();
+
+      const cartItems = cartResponse.data || [];
+  
+      const itemExists = cartItems.some((item: any) => item.bookId === book.id);
+  
+      if (itemExists) {
+        toast.error("This book is already in your cart");
+      } else {
+        await CartService.getInstance().addBookToCart(book.id, quantity);
+        toast.success("Added to cart successfully");
+      }
+    } catch (error) {
+      console.error("Error adding book to cart", error);
+      toast.error("An error occurred while adding the book to the cart");
+    }
+  };
 
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
       key={index}
-      className={`text-yellow ${index < Math.floor(product_one.rating)
-        ? "bi bi-star-fill"
-        : index + 0.5 === product_one.rating
+      className={`text-yellow ${
+        index < Math.floor(product_one.rating)
+          ? "bi bi-star-fill"
+          : index + 0.5 === product_one.rating
           ? "bi bi-star-half"
           : "bi bi-star"
-        }`}
+      }`}
     ></span>
   ));
 
   const breadcrumbItems = [
     { label: "Home", link: "/home" },
     { label: "ListBook", link: "/book" },
-    { label: "Book", link: `${location.pathname}?id=${id}` }
+    { label: "Book", link: `${location.pathname}?id=${id}` },
   ];
 
   return (
@@ -253,36 +361,108 @@ const BookDetail = (props: any) => {
           <BookDetailsWrapper>
             <div className="container mt-4">
               <h2 className="text-dark mb-4">{book?.title}</h2>
-              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
-                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+              <div
+                className="mb-3"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    marginRight: "1rem",
+                    color: "#4A4E52",
+                    fontWeight: "normal",
+                  }}
+                >
                   Loại tài liệu:
                 </p>
-                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                    color: "#4A4E52",
+                  }}
+                >
                   {book?.cateName}
                 </p>
               </div>
-              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
-                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+              <div
+                className="mb-3"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    marginRight: "1rem",
+                    color: "#4A4E52",
+                    fontWeight: "normal",
+                  }}
+                >
                   Tác giả:
                 </p>
-                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                    color: "#4A4E52",
+                  }}
+                >
                   {book?.publisher}
                 </p>
               </div>
-              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
-                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+              <div
+                className="mb-3"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    marginRight: "1rem",
+                    color: "#4A4E52",
+                    fontWeight: "normal",
+                  }}
+                >
                   Năm xuất bản:
                 </p>
-                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                    color: "#4A4E52",
+                  }}
+                >
                   {book?.publicationYear}
                 </p>
               </div>
 
-              <div className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>
-                <p style={{ margin: '0', fontSize: '15px', marginRight: '1rem', color: '#4A4E52', fontWeight: 'normal' }}>
+              <div
+                className="mb-3"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    marginRight: "1rem",
+                    color: "#4A4E52",
+                    fontWeight: "normal",
+                  }}
+                >
                   Giá:
                 </p>
-                <p style={{ margin: '0', fontSize: '15px', fontWeight: 'bold', color: '#4A4E52' }}>
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                    color: "#4A4E52",
+                  }}
+                >
                   {book?.price ? formatCurrency(book?.price) : 0}
                 </p>
               </div>
@@ -290,16 +470,23 @@ const BookDetail = (props: any) => {
 
             {/* Giá tiền-------------------------------------------------- */}
             <div className="btn-and-price flex items-center flex-wrap">
-              <BaseLinkGreen
-                to="/cart"
-                as={BaseLinkGreen}
+              <button
+                onClick={handleBorrowClick}
                 className="prod-add-btn"
               >
-                <span className="prod-add-btn-icon">
-                  <i className="bi bi-cart2"></i>
-                </span>
-                <span className="prod-add-btn-text">Mượn</span>
-              </BaseLinkGreen>
+                Borrow
+              </button>
+              <button
+                className={`btn ${isFavorited ? "btn-danger" : "btn-success"}`}
+                onClick={handleFavoriteClick}
+              >
+                {isFavorited ? "Remove from Wishtlist " : "Add to Wishlist "}
+                {isFavorited ? (
+                  <i className="fa-solid fa-heart"></i>
+                ) : (
+                  <i className="fa-regular fa-heart"></i>
+                )}
+              </button>
             </div>
             <BookServices />
           </BookDetailsWrapper>

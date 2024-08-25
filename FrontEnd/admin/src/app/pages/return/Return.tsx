@@ -315,17 +315,22 @@ const Return = () => {
               </tbody>
             </table>
           </div>
-          <Pagination
-            currentPage={orderSearchParams.page}
-            totalPages={totalPage}
-            onPageChange={(page: any) =>
-              setOrderSearchParams({
-                ...orderSearchParams,
-                page,
-                timer: new Date().getTime(),
-              })
-            }
-          />
+          <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
+            <div className="col-auto d-flex">
+              <p className="mb-0">
+                Total orders: <strong>{totalOrders}</strong>
+              </p>
+            </div>
+            <div className="col-auto d-flex">
+              <Pagination
+                currentPage={orderSearchParams.page}
+                totalPages={totalPage}
+                onPageChange={(page: any) =>
+                  setOrderSearchParams({ ...orderSearchParams, page })
+                }
+              />
+            </div>
+          </div>
         </div>
       </div>
       <Dialog

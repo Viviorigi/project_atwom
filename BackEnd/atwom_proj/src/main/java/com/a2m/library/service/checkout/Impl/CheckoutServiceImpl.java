@@ -248,14 +248,6 @@ public class CheckoutServiceImpl implements CheckoutService {
         Checkout checkout = checkoutRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with ID: " + id));
         checkout.setStatus(CheckoutStatus.PENALTY);
-        Double fineAmount = calculateFine(checkout);
-
-        checkoutRepository.save(checkout);
-
-        UserFine userFine = new UserFine();
-        userFine.setCheckout(checkout);
-        userFine.setAmount(fineAmount);
-        userFineRepository.save(userFine);
 
         return toDTO(checkout);
     }
@@ -281,13 +273,6 @@ public class CheckoutServiceImpl implements CheckoutService {
         dto.setStartTime(checkout.getStartTime());
         dto.setExpiredTime(checkout.getExpiredTime());
         dto.setEndTime(checkout.getEndTime());
-        return dto;
-    }
-
-    private UserDTO createUserDTO(User user) {
-        UserDTO dto = new UserDTO();
-        dto.setUserUid(user.getUserUid());
-        dto.setFullName(user.getFullName());
         return dto;
     }
 
