@@ -80,6 +80,10 @@ public class Book {
   @JsonManagedReference
   private List<ImagesBook> imagebooks;
   
+  @OneToMany
+  @JsonManagedReference
+  private List<FeedBack> feedBacks;
+  
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<WishList> wishlist = new ArrayList<>();
 

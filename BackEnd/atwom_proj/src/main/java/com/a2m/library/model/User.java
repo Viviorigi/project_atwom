@@ -88,6 +88,9 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy = "user")
     private List<WishList> wishlist = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user")
+    private List<FeedBack> feedBack = new ArrayList<FeedBack>();
 
 	@OneToMany(mappedBy = "user")
     private List<Cart> cart = new ArrayList<>();

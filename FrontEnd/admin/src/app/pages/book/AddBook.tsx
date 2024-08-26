@@ -208,7 +208,7 @@ export default function AddBook(props: any) {
         }
         const formData = new FormData();
         formData.append('book', JSON.stringify(book));
-        console.log("book trc khi save", book);
+        // console.log("book trc khi save", book);
 
         if (file) {
             formData.append('file', file);
@@ -362,6 +362,9 @@ export default function AddBook(props: any) {
                                     <option value={book?.cateId}>
                                         {book?.cateName}
                                     </option>
+                                )}
+                                {bookDTO == null && (
+                                    <option value={0}>All</option>
                                 )}
                                 {categoryList.map((u: any, index: number) => (
                                     <option key={u.id} value={u.id}>

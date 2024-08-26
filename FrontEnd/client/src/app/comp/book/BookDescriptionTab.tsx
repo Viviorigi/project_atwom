@@ -1,11 +1,20 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { productDescriptionTabHeads } from "../../data/data";
+import { feedbackData, productDescriptionTabHeads } from "../../data/data";
 import Title from "../common/Title";
 import { ContentStylings } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import Cookies from 'universal-cookie';
+import { AuthConstant } from '../../constants/authConstant';
 
 import { BookDTO } from "../../model/BookDTO";
+import { FeedBackDTO } from "../../model/feedback/FeedBackDTO";
+import StarRatings from 'react-star-ratings';
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ApiUrlUtil } from "../../utils/ApiUrlUtil";
+import { HeadersUtil } from "../../utils/Headers.Util";
+import { UserDetail } from "../../model/auth/UserDetail";
 
 const DetailsContent = styled.div`
   margin-top: 60px;
@@ -120,7 +129,93 @@ const DescriptionTabsWrapper = styled.div`
 const BookDescriptionTab = (props: any) => {
   // const [book, setBook] = useState<BookDTO>(new BookDTO());
   const { book } = props;
-  console.log(book);
+  // console.log(book);
+  const [feedBack, setFeedBack] = useState<FeedBackDTO>(new FeedBackDTO());
+  const [rating, setRating] = React.useState(0);
+  const [comment, setComment] = useState("");
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserDetail>(new UserDetail());
+  const cookie = new Cookies();
+
+  useEffect(() => {
+    if (cookie.get(AuthConstant.ACCESS_TOKEN)) {
+      setIsLoggedIn(true);
+      console.log("Đã đăng nhập");
+      console.log(cookie.get(AuthConstant.ACCESS_TOKEN));
+    } else {
+      // console.log("Chưa hề đăng nhập");
+    }
+  }, [])
+
+  useEffect(() => {
+    const url = ApiUrlUtil.buildQueryString(`http://localhost:8080/get-info`);
+
+    axios.post(url, {}, {
+      headers: HeadersUtil.getHeadersAuth()
+    })
+      .then(response => {
+        console.log(response.data);
+        setUserInfo(response.data);
+      })
+      .catch(error => {
+        console.error("Error:", error.response ? error.response.data : error.message);
+      });
+  }, []);
+
+  //Xử lý feedBack-----------------------------------------------------------
+  const changeRating = (newRating: any) => {
+    setRating(newRating);
+    setFeedBack((prevFeedBack) => ({
+      ...prevFeedBack,
+      rating: newRating,
+    }));
+  };
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value);
+    setFeedBack((prevFeedBack) => ({
+      ...prevFeedBack,
+      comment: event.target.value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    console.log("handleSubmit function called");
+    console.log("Dữ liệu .....");
+    console.log(feedBack);
+    save();
+
+    // setRating(0);
+    // setComment("");
+    // setFeedBack(new FeedBackDTO());
+  };
+
+  const save = () => {
+    if (book?.id) {
+      feedBack.book_id = book?.id
+    }
+    if (userInfo != null && userInfo.userUid != null) {
+      feedBack.user_id = userInfo.userUid;
+    }
+    let url = `http://localhost:8080/feedback/add`;
+    axios.post(url, feedBack, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((resp: any) => {
+      if (resp.data === "success") {
+        toast.success("Lưu sách feed back");
+      }
+    }).catch((err: any) => {
+      console.log(err);
+      toast.error("Không thể lưu feedback");
+    })
+  }
+
+  //End ---------Xử lý feedBack-----------------------------------------------------------
+
+
 
   const [activeDesTab, setActiveDesTab] = useState(
     productDescriptionTabHeads[0].tabHead
@@ -170,14 +265,53 @@ const BookDescriptionTab = (props: any) => {
               <ContentStylings>
                 {book?.description && <div className="align-middle text-start text-1100"
                   dangerouslySetInnerHTML={{ __html: book?.description }} />}
-                
+
               </ContentStylings>
             </div>
             <div
               className={`tabs-content content-stylings ${activeDesTab === "tabComments" ? "show" : ""
                 }`}
             >
-              User comments here.
+              <div className="container mt-4">
+                <div className="row">
+                  <div className="col-md-6 offset-md-3">
+                    <div className="card p-3">
+                      <h4 className="card-title">Đánh giá của bạn</h4>
+
+                      {/* StarRatings component */}
+                      <div className="d-flex justify-content-center mb-3">
+                        <StarRatings
+                          rating={rating}
+                          starRatedColor="yellow"
+                          changeRating={changeRating}
+                          numberOfStars={5}
+                          name='rating'
+                        />
+                      </div>
+
+                      {/* Comment input */}
+                      <div className="form-group">
+                        <label htmlFor="comment">Bình luận:</label>
+                        <textarea
+                          id="comment"
+                          className="form-control"
+                          rows={4}
+                          placeholder="Nhập bình luận của bạn"
+                          value={comment}
+                          onChange={handleCommentChange}
+                        />
+                      </div>
+                      <button
+                        className={`btn btn-primary ${!isLoggedIn ? 'disabled' : ''}`}
+                        onClick={handleSubmit}
+                        disabled={!isLoggedIn}
+                      >
+                        Gửi
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               className={`tabs-content content-stylings ${activeDesTab === "tabQNA" ? "show" : ""

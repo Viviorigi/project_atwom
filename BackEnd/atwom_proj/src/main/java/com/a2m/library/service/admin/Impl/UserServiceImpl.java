@@ -1,6 +1,6 @@
 package com.a2m.library.service.admin.Impl;
 
-import java.sql.SQLException; 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -99,6 +99,14 @@ public class UserServiceImpl implements UserService {
 		UserDTO userDTO = convertToUserDTO(user);
 		return userDTO;
 	}
+	
+	@Override
+	public UserDTO get_user_by_id(Long userUid) {
+		// TODO Auto-generated method stub
+		User user = userRepository.findByUserUid(userUid).get();
+		UserDTO userDTO = convertToUserDTO(user);
+		return userDTO;
+	}
 
 	public Map<String, Object> getByUserUidList(List<String> userUidList)
 			throws JsonMappingException, JsonProcessingException {
@@ -131,6 +139,26 @@ public class UserServiceImpl implements UserService {
 		userDTO.setUpd_dt(user.getUpd_dt());
 		userDTO.setActive(user.isActive());
 		return userDTO;
+	}
+
+	@Override
+	public User convertToUser(UserDTO userDTO) {
+		User user = new User();
+
+		user.setUserUid(userDTO.getUserUid());
+		user.setUsername(userDTO.getUsername());
+		user.setPassword(userDTO.getPassword());
+		user.setEmail(userDTO.getEmail());
+		user.setFullName(userDTO.getFullName());
+		user.setDob(userDTO.getDob());
+		user.setClassName(userDTO.getClassName());
+		user.setPhone(userDTO.getPhone());
+		user.setAddress(userDTO.getAddress());
+		user.setAvatar(userDTO.getAvatar());
+		user.setCre_dt(userDTO.getCre_dt());
+		user.setUpd_dt(userDTO.getUpd_dt());
+		user.setActive(userDTO.isActive());
+		return user;
 	}
 
 	@Override
@@ -179,31 +207,29 @@ public class UserServiceImpl implements UserService {
 
 		userRepository.save(user);
 	}
-	
+
 	@Override
 	public UserResponse findByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        return convertToUserResponse(user.get());
-    }
-	
+		Optional<User> user = userRepository.findByUsername(username);
+		return convertToUserResponse(user.get());
+	}
+
 	@Override
 	public Optional<UserResponse> findUserByName(String username) {
 		Optional<User> user = userRepository.findByUsername(username);
-		return 	 user.map(this::convertToUserResponse);
+		return user.map(this::convertToUserResponse);
 	}
 
 	@Override
 	public Page<UserResponse> findByUsernameContaining(String keySearch, PageRequest pageRequest) {
-		 Page<User> users = userRepository.searchUsers(keySearch, pageRequest);
+		Page<User> users = userRepository.searchUsers(keySearch, pageRequest);
 
-	        // Convert Page<User> to Page<UserDTO>
-	        List<UserResponse> userDTOs = users.stream()
-	                                      .map(this::convertToUserResponse)
-	                                      .collect(Collectors.toList());
+		// Convert Page<User> to Page<UserDTO>
+		List<UserResponse> userDTOs = users.stream().map(this::convertToUserResponse).collect(Collectors.toList());
 
-	        return new PageImpl<>(userDTOs, pageRequest, users.getTotalElements());
+		return new PageImpl<>(userDTOs, pageRequest, users.getTotalElements());
 	}
-	
+
 	public UserResponse convertToUserResponse(User user) {
 		UserResponse userResponse = new UserResponse();
 		userResponse.setAddress(user.getAddress());
@@ -219,10 +245,10 @@ public class UserServiceImpl implements UserService {
 		userResponse.setUserUid(user.getUserUid());
 		userResponse.setUpd_dt(user.getUpd_dt());
 		userResponse.setActive(user.isActive());
-		List<String> roleNames = user.getRoles().stream()
-                .map(roles->roles.getRoleName())
-                .collect(Collectors.toList());
+		List<String> roleNames = user.getRoles().stream().map(roles -> roles.getRoleName())
+				.collect(Collectors.toList());
 		userResponse.setRoles(roleNames);
 		return userResponse;
 	}
+
 }
