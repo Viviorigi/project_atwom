@@ -56,15 +56,15 @@ const CartItem = ({ cartItem }: any) => {
             <p className="text-sm text-gray inline-flex">
               <span className="font-semibold">Category: </span> {cartItem.category}
             </p>
-            <p className="text-sm text-gray inline-flex">
-              <span className="font-semibold">Price: </span> ${cartItem.price}
-            </p>
+            {/* <p className="text-sm text-gray inline-flex">
+              <span className="font-semibold">Price: </span> {cartItem.price}
+            </p> */}
           </div>
         </div>
       </td>
-      <td>
-        <span className="text-lg font-bold">${cartItem.price}</span>
-      </td>
+      {/* <td>
+        <span className="text-lg font-bold">{cartItem.price}</span>
+      </td> */}
       <td>
         <div className="cart-tbl-qty flex items-center">
           <button className="qty-dec-btn" aria-label="Decrease quantity" onClick={() => cartItem.onDecreaseQuantity(cartItem.id)}>
@@ -76,9 +76,9 @@ const CartItem = ({ cartItem }: any) => {
           </button>
         </div>
       </td>
-      <td>
+      {/* <td>
         <span className="text-lg font-bold">${cartItem.price * cartItem.quantity}</span>
-      </td>
+      </td> */}
       <td>
         <div className="cart-tbl-actions flex justify-center">
           <button className="tbl-del-action" onClick={() => cartItem.onRemove(cartItem.id)}>

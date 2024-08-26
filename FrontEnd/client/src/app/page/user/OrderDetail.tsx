@@ -298,7 +298,7 @@ const OrderDetail = () => {
                   `Error fetching book for book ID ${detail.bookId}:`,
                   error
                 );
-                return null; // Handle error or return a default value
+                return null;
               }
             } else {
               console.warn("Detail book ID is undefined.");
@@ -365,16 +365,21 @@ const OrderDetail = () => {
                   <h4 className="text-3xl order-d-no">
                     Order no: #{checkout?.id ?? "N/A"}
                   </h4>
-                  <p className="text-lg font-medium text-gray">
-                    Placed On {checkout?.endTime ?? "N/A"}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-lg font-medium text-gray">
+                      Placed On {checkout?.endTime ?? "N/A"}
+                    </p>
+                    <p className="text-lg font-medium text-gray">
+                      Status: {checkout?.status ?? "N/A"}
+                    </p>
+                  </div>
                 </div>
-                <div className="order-d-top-r text-xxl text-gray font-semibold">
+                {/* <div className="order-d-top-r text-xxl text-gray font-semibold">
                   Total:{" "}
                   <span className="text-outerspace">
                     {currencyFormat(total)}
                   </span>
-                </div>
+                </div> */}
               </div>
 
               <OrderDetailStatusWrapper className="order-d-status">
@@ -417,13 +422,6 @@ const OrderDetail = () => {
                           </span>
                         </p>
                       </div>
-                      <button
-                        aria-label="d"
-                        type="button"
-                        className="text-xl text-outerspace order-d-item-btn"
-                      >
-                        <i className="bi bi-x-lg"></i>
-                      </button>
                     </div>
                   );
                 })}

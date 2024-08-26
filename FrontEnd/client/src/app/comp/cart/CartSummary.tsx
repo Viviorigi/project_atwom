@@ -72,13 +72,13 @@ const CartSummary = ({
           <SummaryLabel>Tổng số sản phẩm:</SummaryLabel>
           <SummaryValue>{totalProducts}</SummaryValue>
         </SummaryItem>
-        <SummaryItem>
+        {/* <SummaryItem>
           <SummaryLabel>Tổng tiền đơn hàng:</SummaryLabel>
           <SummaryValue>{totalPrice.toFixed(2)}đ</SummaryValue>
-        </SummaryItem>
+        </SummaryItem> */}
       </SummaryContent>
       <OrderButtonWrapper>
-        <OrderButton onClick={onOrder}>Đặt hàng</OrderButton>
+        <OrderButton onClick={onOrder}>Tạo yêu cầu</OrderButton>
       </OrderButtonWrapper>
     </SummaryWrapper>
   );
