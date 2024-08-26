@@ -208,7 +208,7 @@ export default function AddBook(props: any) {
         }
         const formData = new FormData();
         formData.append('book', JSON.stringify(book));
-        console.log("book trc khi save", book);
+        // console.log("book trc khi save", book);
 
         if (file) {
             formData.append('file', file);

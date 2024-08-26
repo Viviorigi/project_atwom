@@ -3,4 +3,5 @@ export class FeedBackDTO{
     rating?:number
     comment?:string
     book_id?:number
+    user_id?:number
 }

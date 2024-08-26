@@ -38,7 +38,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
     try {
       const response = await axios.get(`${BASE_URL}/${orderId}`);
       setDetails(response.data);
-      setTotalDetails(response.headers["x-total-count"]);
+      setTotalDetails(parseInt(response.headers["x-total-count"], 10));
     } catch (error) {
       console.error("Error fetching checkout details", error);
     }
@@ -85,37 +85,22 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
 
   const handleSave = async (detail: CheckoutDetailDTO) => {
     const action = mode === "edit" ? "update" : "add";
-    const url = `${BASE_URL}/${action}${
-      mode === "edit" ? `/${selectedDetail?.id}` : ""
-    }`;
-
-    Swal.fire({
-      title: "Confirm Save",
-      text: "Are you sure you want to save this record?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Save it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          if (action === "update") {
-            await axios.put(url, detail);
-            Swal.fire("Updated!", "The record has been updated.", "success");
-          } else {
-            await axios.post(url, detail);
-            Swal.fire("Added!", "The record has been added.", "success");
-          }
-          setAddDetailOpen(false);
-          fetchOrderDetails();
-        } catch (error) {
-          console.error("Error saving checkout detail", error);
-          Swal.fire("Error!", "Failed to save the record.", "error");
-        }
+    const url = `${BASE_URL}/${action}${mode === "edit" ? `/${detail.id}` : ""}`;
+  
+    try {
+      if (action === "update") {
+        await axios.put(url, detail);
+        Swal.fire("Updated!", "The record has been updated.", "success");
+      } else {
+        await axios.post(url, detail);
+        Swal.fire("Added!", "The record has been added.", "success");
       }
-    });
+      setAddDetailOpen(false);
+      fetchOrderDetails();
+    } catch (error) {
+    }
   };
+  
 
   const handleCancel = () => {
     setAddDetailOpen(false);
@@ -187,6 +172,8 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
         visible={addDetailOpen}
         style={{ width: "50vw" }}
         onHide={handleCancel}
+        modal
+        header={mode === "add" ? "Add Detail" : "Edit Detail"}
       >
         <AddDetailForm
           checkoutId={orderId}

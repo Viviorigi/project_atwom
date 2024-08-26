@@ -47,10 +47,9 @@ public class CheckoutController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CheckoutDTO> createCheckout(@RequestBody CheckoutDTO checkoutDTO) {
-        checkoutDTO.setStatus(CheckoutStatus.REQUESTED);
+    public ResponseEntity<CheckoutDTO> addCheckout(@RequestBody CheckoutDTO checkoutDTO) {
         CheckoutDTO createdCheckout = checkoutService.add(checkoutDTO);
-        return ResponseEntity.ok(createdCheckout);
+        return new ResponseEntity<>(createdCheckout, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/update")

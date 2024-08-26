@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.response.UserResponse;
+import com.a2m.library.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -19,6 +20,9 @@ public interface UserService {
 	public void signUp(UserDTO userDTO) throws Exception;
 
 	public UserDTO getByUserUid(Long userUid) throws JsonMappingException, JsonProcessingException;
+	
+	public UserDTO get_user_by_id(Long userUid);
+	public User convertToUser(UserDTO userDTO);
 
 	public Map<String, Object> getByUserUidList(List<String> userUidList)
 			throws JsonMappingException, JsonProcessingException;

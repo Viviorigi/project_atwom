@@ -8,4 +8,5 @@ public class FeedBackDTO {
 	private Double rating;
 	private String comment;
 	private int book_id;
+	private Long user_id;
 }

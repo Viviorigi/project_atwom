@@ -36,4 +36,9 @@ public class FeedBack {
 	@JsonBackReference
 	@JoinColumn(name = "book_id")
 	private Book book;
+	
+	@ManyToOne
+	@JsonBackReference
+	@JoinColumn(name = "user_id")
+	private User user;
 }

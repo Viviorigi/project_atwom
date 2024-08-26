@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { productDescriptionTabHeads } from "../../data/data";
+import { feedbackData, productDescriptionTabHeads } from "../../data/data";
 import Title from "../common/Title";
 import { ContentStylings } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import Cookies from 'universal-cookie';
+import { AuthConstant } from '../../constants/authConstant';
 
 import { BookDTO } from "../../model/BookDTO";
 import { FeedBackDTO } from "../../model/feedback/FeedBackDTO";
 import StarRatings from 'react-star-ratings';
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ApiUrlUtil } from "../../utils/ApiUrlUtil";
+import { HeadersUtil } from "../../utils/Headers.Util";
+import { UserDetail } from "../../model/auth/UserDetail";
 
 const DetailsContent = styled.div`
   margin-top: 60px;
@@ -127,6 +134,35 @@ const BookDescriptionTab = (props: any) => {
   const [rating, setRating] = React.useState(0);
   const [comment, setComment] = useState("");
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserDetail>(new UserDetail());
+  const cookie = new Cookies();
+
+  useEffect(() => {
+    if (cookie.get(AuthConstant.ACCESS_TOKEN)) {
+      setIsLoggedIn(true);
+      console.log("Đã đăng nhập");
+      console.log(cookie.get(AuthConstant.ACCESS_TOKEN));
+    } else {
+      // console.log("Chưa hề đăng nhập");
+    }
+  }, [])
+
+  useEffect(() => {
+    const url = ApiUrlUtil.buildQueryString(`http://localhost:8080/get-info`);
+
+    axios.post(url, {}, {
+      headers: HeadersUtil.getHeadersAuth()
+    })
+      .then(response => {
+        console.log(response.data);
+        setUserInfo(response.data);
+      })
+      .catch(error => {
+        console.error("Error:", error.response ? error.response.data : error.message);
+      });
+  }, []);
+
   //Xử lý feedBack-----------------------------------------------------------
   const changeRating = (newRating: any) => {
     setRating(newRating);
@@ -140,18 +176,42 @@ const BookDescriptionTab = (props: any) => {
     setComment(event.target.value);
     setFeedBack((prevFeedBack) => ({
       ...prevFeedBack,
-      feedbackText: event.target.value,
+      comment: event.target.value,
     }));
   };
 
   const handleSubmit = () => {
-    // In thông tin feedback để kiểm tra
+    console.log("handleSubmit function called");
+    console.log("Dữ liệu .....");
+    console.log(feedBack);
+    save();
 
-    // Reset trạng thái sau khi gửi nếu cần
-    setRating(0);
-    setComment("");
-    setFeedBack(new FeedBackDTO());
+    // setRating(0);
+    // setComment("");
+    // setFeedBack(new FeedBackDTO());
   };
+
+  const save = () => {
+    if (book?.id) {
+      feedBack.book_id = book?.id
+    }
+    if (userInfo != null && userInfo.userUid != null) {
+      feedBack.user_id = userInfo.userUid;
+    }
+    let url = `http://localhost:8080/feedback/add`;
+    axios.post(url, feedBack, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((resp: any) => {
+      if (resp.data === "success") {
+        toast.success("Lưu sách feed back");
+      }
+    }).catch((err: any) => {
+      console.log(err);
+      toast.error("Không thể lưu feedback");
+    })
+  }
 
   //End ---------Xử lý feedBack-----------------------------------------------------------
 
@@ -241,8 +301,13 @@ const BookDescriptionTab = (props: any) => {
                           onChange={handleCommentChange}
                         />
                       </div>
-
-                      <button className="btn btn-primary" onClick={handleSubmit}>Gửi</button>
+                      <button
+                        className={`btn btn-primary ${!isLoggedIn ? 'disabled' : ''}`}
+                        onClick={handleSubmit}
+                        disabled={!isLoggedIn}
+                      >
+                        Gửi
+                      </button>
                     </div>
                   </div>
                 </div>

@@ -1,124 +1,106 @@
-import styled from "styled-components";
-import  PropTypes  from "prop-types";
-import { Link } from "react-router-dom";
-import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import React from 'react';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const CartTableRowWrapper = styled.tr`
-  .cart-tbl {
-    &-prod {
-      grid-template-columns: 80px auto;
-      column-gap: 12px;
+  .cart-tbl-prod {
+    grid-template-columns: 80px auto;
+    column-gap: 12px;
 
-      @media (max-width: ${breakpoints.xl}) {
-        grid-template-columns: 60px auto;
-      }
-    }
-
-    &-qty {
-      .qty-inc-btn,
-      .qty-dec-btn {
-        width: 24px;
-        height: 24px;
-        border: 1px solid ${defaultTheme.color_platinum};
-        border-radius: 2px;
-
-        &:hover {
-          border-color: ${defaultTheme.color_sea_green};
-          background-color: ${defaultTheme.color_sea_green};
-          color: ${defaultTheme.color_white};
+    .cart-prod-info {
+      p {
+        margin-right: 8px;
+        span {
+          margin-right: 4px;
         }
       }
-
-      .qty-value {
-        width: 40px;
-        height: 24px;
-      }
     }
   }
 
-  .cart-prod-info {
-    p {
-      margin-right: 8px;
-      span {
-        margin-right: 4px;
+  .cart-tbl-qty {
+    .qty-inc-btn,
+    .qty-dec-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+
+      &:hover {
+        border-color: #2d9cdb;
+        background-color: #2d9cdb;
+        color: #fff;
       }
+    }
+
+    .qty-value {
+      width: 40px;
+      height: 24px;
     }
   }
 
-  .cart-prod-img {
-    width: 80px;
-    height: 80px;
-    overflow: hidden;
-    border-radius: 8px;
-
-    @media (max-width: ${breakpoints.xl}) {
-      width: 60px;
-      height: 60px;
+  .cart-tbl-actions {
+    .tbl-del-action {
+      color: red;
+      cursor: pointer;
     }
   }
 `;
 
-const CartItem = ({ cartItem }:any) => {
+const CartItem = ({ cartItem }: any) => {
   return (
-    <CartTableRowWrapper key={cartItem.id}>
+    <CartTableRowWrapper>
       <td>
-        <div className="cart-tbl-prod grid">
-          <div className="cart-prod-img">
-            <img src={cartItem.imgSource} className="object-fit-cover" alt="" />
-          </div>
+        <div className="cart-tbl-prod">
           <div className="cart-prod-info">
             <h4 className="text-base">{cartItem.title}</h4>
             <p className="text-sm text-gray inline-flex">
-              <span className="font-semibold">Color: </span> {cartItem.color}
+              <span className="font-semibold">Category: </span> {cartItem.category}
             </p>
             <p className="text-sm text-gray inline-flex">
-              <span className="font-semibold">Size:</span>
-              {cartItem.size}
+              <span className="font-semibold">Price: </span> ${cartItem.price}
             </p>
           </div>
         </div>
       </td>
       <td>
-        <span className="text-lg font-bold text-outerspace">
-          ${cartItem.price}
-        </span>
+        <span className="text-lg font-bold">${cartItem.price}</span>
       </td>
       <td>
         <div className="cart-tbl-qty flex items-center">
-          <button className="qty-dec-btn" aria-label="d">
-            <i className="bi bi-dash-lg">-</i>
+          <button className="qty-dec-btn" aria-label="Decrease quantity" onClick={() => cartItem.onDecreaseQuantity(cartItem.id)}>
+            -
           </button>
-          <span className="qty-value inline-flex items-center justify-center font-medium text-outerspace">
-            2
-          </span>
-          <button className="qty-inc-btn" aria-label="d">
-            <i className="bi bi-plus-lg">+</i>
+          <span className="qty-value inline-flex items-center justify-center font-medium">{cartItem.quantity}</span>
+          <button className="qty-inc-btn" aria-label="Increase quantity" onClick={() => cartItem.onIncreaseQuantity(cartItem.id)}>
+            +
           </button>
         </div>
       </td>
       <td>
-        <span className="cart-tbl-shipping uppercase text-silver font-bold">
-          {cartItem.shipping === 0 ? "Free" : cartItem.shipping}
-        </span>
-      </td>
-      <td>
-        <span className="text-lg font-bold text-outerspace">
-          ${cartItem.price * cartItem.quantity}
-        </span>
+        <span className="text-lg font-bold">${cartItem.price * cartItem.quantity}</span>
       </td>
       <td>
         <div className="cart-tbl-actions flex justify-center">
-          <Link to="/" className="tbl-del-action text-red">
-          <i className="fa fa-trash" ></i>
-          </Link>
+          <button className="tbl-del-action" onClick={() => cartItem.onRemove(cartItem.id)}>
+            <i className="fa fa-trash"></i>
+          </button>
         </div>
       </td>
     </CartTableRowWrapper>
   );
 };
 
-export default CartItem;
-
 CartItem.propTypes = {
-  cartItem: PropTypes.object,
+  cartItem: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    quantity: PropTypes.number.isRequired,
+    onIncreaseQuantity: PropTypes.func.isRequired,
+    onDecreaseQuantity: PropTypes.func.isRequired,
+    onRemove: PropTypes.func.isRequired,
+  }).isRequired,
 };
+
+export default CartItem;

@@ -14,7 +14,7 @@ export class WishService {
   }
 
   public getWishlist() {
-    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/wishlist/lst`);
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/wishlist/lst`);   
 
     return axios.get(url,{
       headers: HeadersUtil.getHeadersAuth()

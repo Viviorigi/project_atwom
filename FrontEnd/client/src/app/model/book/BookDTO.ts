@@ -2,7 +2,7 @@ import { CategoryDTO } from './CategoryDTO';
 import { AuthorDTO } from './AuthorDTO';
 
 export class BookDTO {
-  id?: number;
+  id: number | undefined;
   title?: string;
   publisher?:string;
   publicationYear?: number;

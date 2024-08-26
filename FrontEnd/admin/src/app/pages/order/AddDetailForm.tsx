@@ -32,7 +32,6 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
   );
   const [selectedBook, setSelectedBook] = useState<number>(detail?.bookId || 0);
   const [quantity, setQuantity] = useState<number>(detail?.quantity || 0);
-  const [confirmVisible, setConfirmVisible] = useState(false);
   const [errors, setErrors] = useState({
     category: "",
     book: "",
@@ -99,8 +98,28 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
     return valid;
   };
 
+  const checkIfBookExists = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/details/${checkoutId}`);
+      const existingDetails: CheckoutDetailDTO[] = response.data;
+  
+      const bookExists = existingDetails.some(detail => detail.bookId === selectedBook);
+  
+      return bookExists;
+    } catch (error) {
+      console.error("Error checking if book exists", error);
+      return false;
+    }
+  };
+
   const handleAdd = async () => {
     if (!validateForm()) return;
+
+    const bookExists = await checkIfBookExists();
+    if (bookExists) {
+      toast.error("Book already exists in the order detail");
+      return;
+    }
 
     Swal.fire({
       title: "Confirm Save",
@@ -176,7 +195,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
   };
 
   const handleSave = () => {
-    if (mode == "edit") {
+    if (mode === "edit") {
       handleEdit();
     } else {
       handleAdd();

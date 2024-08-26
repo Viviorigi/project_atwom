@@ -20,7 +20,7 @@ public class UserFine {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "checkout_id")
+    @JoinColumn(name = "checkout_id", unique = true)
     private Checkout checkout;
 
     @Column(name = "amount")

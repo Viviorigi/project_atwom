@@ -124,7 +124,7 @@ const AccountScreen = () => {
                   }}
                 >
                   <img
-                    src={userDetail.avatar ? userDetail.avatar : defaultPerson}
+                    src={userDetail.avatar ? `http://localhost:8080/getImage?atchFleSeqNm=${userDetail.avatar}` : defaultPerson}
                     alt="Preview"
                     style={{ width: "200px", height: "200px" }}
                   />
