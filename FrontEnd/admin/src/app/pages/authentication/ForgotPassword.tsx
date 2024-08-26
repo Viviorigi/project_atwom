@@ -52,7 +52,7 @@ export default function ForgotPassword() {
         <div className="container">
           <div className="row flex-center min-vh-100 py-5">
             <div className="col-sm-10 col-md-8 col-lg-5 col-xxl-4"><label className="d-flex flex-center text-decoration-none mb-4" >
-              <div className="d-flex align-items-center fw-bolder fs-5 d-inline-block"><img src="../../../assets/img/icons/logo.png" alt="phoenix" width={120} /></div>
+              <div className="d-flex align-items-center fw-bolder fs-5 d-inline-block"><img src="../../../assets/img/icons/book.avif" alt="phoenix" width={120} /></div>
             </label>
               <div className="px-xxl-5">
                 <div className="text-center mb-6">

@@ -13,7 +13,7 @@ public interface CartService {
     
     void removeBookFromCart(UserResponse userResponse, Long cartId);
     
-    Cart updateBookQuantity(UserResponse userResponse, Integer bookId, int quantity);
+    Cart updateBookQuantity(UserResponse userResponse, Long cartId, int quantity);
     
     void clearCart(UserResponse userResponse);
 }

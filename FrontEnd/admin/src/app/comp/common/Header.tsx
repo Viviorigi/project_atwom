@@ -71,8 +71,8 @@ export default function Header() {
                         <button className="btn navbar-toggler navbar-toggler-humburger-icon hover-bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle Navigation"><span className="navbar-toggle-icon"><span className="toggle-line" /></span></button>
                         <Link className="navbar-brand me-1 me-sm-3" to="/dashboard">
                             <div className="d-flex align-items-center">
-                                <div className="d-flex align-items-center"><img src="assets/img/icons/logo.png" alt="phoenix" width={27} />
-                                    <p className="logo-text ms-2 d-none d-sm-block">phoenix</p>
+                                <div className="d-flex align-items-center"><img src="assets/img/icons/book.avif" alt="phoenix" width={27} />
+                                    <p className="logo-text ms-2 d-none d-sm-block">ATWOM BOOK</p>
                                 </div>
                             </div>
                         </Link>
@@ -252,14 +252,15 @@ export default function Header() {
                                     <div className="overflow-auto scrollbar" style={{ height: '10rem' }}>
                                         <ul className="nav d-flex flex-column mb-2 pb-1">
                                             <li className="nav-item"><Link className="nav-link px-3" to="/dashboard"><span className="me-2 text-900" data-feather="pie-chart" />Dashboard</Link></li>
-                                            <li className="nav-item"><Link className="nav-link px-3" to="/student"> <span className="me-2 text-900" data-feather="lock" />Student </Link></li>
-                                            <li className="nav-item"><Link className="nav-link px-3" to="/order"> <span className="me-2 text-900" data-feather="lock" />Order </Link></li>
-                                            <li className="nav-item"><Link className="nav-link px-3" to="/book"> <span className="me-2 text-900" data-feather="lock" />Book </Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/student"> <span className="me-2 text-900" data-feather="lock" />Sinh viên </Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/category"> <span className="me-2 text-900" data-feather="lock" />Danh mục </Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/order"> <span className="me-2 text-900" data-feather="lock" />Đơn Đặt </Link></li>
+                                            <li className="nav-item"><Link className="nav-link px-3" to="/book"> <span className="me-2 text-900" data-feather="lock" />Sách</Link></li>
                                         </ul>
                                     </div>
                                     <div className="card-footer p-0 border-top">
-                                        <div className="px-3 mt-3"> <button className="btn btn-phoenix-secondary d-flex flex-center w-100" onClick={logout}> <span className="me-2">Log out</span><i className="fa-solid fa-arrow-right-from-bracket"></i></button></div>
-                                        <div className="my-2 text-center fw-bold fs--2 text-600"><a className="text-600 me-1" href="index.html#!">Privacy policy</a>•<a className="text-600 mx-1" href="index.html#!">Terms</a>•<a className="text-600 ms-1" href="index.html#!">Cookies</a></div>
+                                        <div className="px-3 mt-3 mb-3"> <button className="btn btn-phoenix-secondary d-flex flex-center w-100" onClick={logout}> <span className="me-2">Đăng xuất</span><i className="fa-solid fa-arrow-right-from-bracket"></i></button></div>
+         
                                     </div>
                                 </div>
                             </div>

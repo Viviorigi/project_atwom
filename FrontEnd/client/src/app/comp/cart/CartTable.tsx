@@ -51,6 +51,8 @@ const CartTable = ({
   onUpdateQuantity: (id: number, quantity: number) => void;
   onRemoveItem: (id: number) => void;
 }) => {
+  console.log(cartItems);
+  
   return (
     <TableWrapper>
       <Table>

@@ -252,13 +252,13 @@ const Order = () => {
                     <td className="text-center align-middle">
                       <span
                         className={` ${order.status === "REQUESTED"
-                            ? "badge badge-phoenix fs--2 badge-phoenix-info"
-                            : order.status === "APPROVED" ||
-                              order.status === "BORROWED"
-                              ? "badge badge-phoenix fs--2 badge-phoenix-success"
-                              : order.status === "REJECTED"
-                                ? "badge badge-phoenix fs--2 badge-phoenix-danger"
-                                : "badge badge-phoenix fs--2 badge-phoenix"
+                          ? "badge badge-phoenix fs--2 badge-phoenix-info"
+                          : order.status === "APPROVED" ||
+                            order.status === "BORROWED"
+                            ? "badge badge-phoenix fs--2 badge-phoenix-success"
+                            : order.status === "REJECTED"
+                              ? "badge badge-phoenix fs--2 badge-phoenix-danger"
+                              : "badge badge-phoenix fs--2 badge-phoenix"
                           }`}
                       >
                         <span className="badge-label">{order.status}</span>
@@ -271,8 +271,8 @@ const Order = () => {
                       {format(new Date(order.endTime), "dd/MM/yyyy, hh:mm")}
                     </td>
                     <td className="align-middle text-center">
-                    <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>
-                    <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i></button>
+                      <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>
+                      <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i></button>
                       <button aria-label='d' className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => viewOrderDetail(order)}><i className="far fa-eye"></i></button>
                     </td>
                   </tr>
@@ -299,6 +299,16 @@ const Order = () => {
           </div>
         </div>
       </div>
+      <footer className="footer position-absolute">
+        <div className="row g-0 justify-content-between align-items-center h-100">
+          <div className="col-12 col-sm-auto text-center">
+            <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with ATWOM BOOk<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2024 ©</p>
+          </div>
+          <div className="col-12 col-sm-auto text-center">
+            <p className="mb-0 text-600">v1.13.0</p>
+          </div>
+        </div>
+      </footer>
 
       <Dialog
         visible={open}
