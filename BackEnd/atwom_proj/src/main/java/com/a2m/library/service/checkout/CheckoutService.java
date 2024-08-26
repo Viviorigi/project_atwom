@@ -2,6 +2,7 @@ package com.a2m.library.service.checkout;
 
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.CheckoutDTO;
+import com.a2m.library.model.Checkout;
 
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,7 @@ public interface CheckoutService {
     Optional<CheckoutDTO> findById(Integer id);
 
     @Transactional
-    CheckoutDTO add(CheckoutDTO checkoutDTO);
+    Checkout add(CheckoutDTO checkoutDTO);
 
     CheckoutDTO update(Integer id, CheckoutDTO checkoutDTO);
 

@@ -150,6 +150,17 @@ public class UserController {
 				.totalPages(userPage.getTotalPages()).totalUsers(userPage.getTotalElements()).build();
 		return ResponseEntity.ok(response);
 	}
+	
+	@GetMapping(value = "/getAllActive")
+	public ResponseEntity<UserListResponse> getAllActive(@RequestParam(defaultValue = "") String keySearch,
+			@RequestParam("page") int page, @RequestParam("limit") int limit) {
+		PageRequest pageRequest = PageRequest.of(page - 1, limit, Sort.by("upd_dt").descending());
+		Page<UserResponse> userPage = userService.findByUsernameActive(keySearch, pageRequest);
+
+		UserListResponse response = UserListResponse.builder().users(userPage.getContent())
+				.totalPages(userPage.getTotalPages()).totalUsers(userPage.getTotalElements()).build();
+		return ResponseEntity.ok(response);
+	}
 
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteUser(@RequestParam Long userUid) {

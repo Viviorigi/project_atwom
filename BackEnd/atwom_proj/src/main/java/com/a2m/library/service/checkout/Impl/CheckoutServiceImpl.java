@@ -5,10 +5,12 @@ import com.a2m.library.dto.CheckoutDTO;
 import com.a2m.library.dto.CheckoutDetailDTO;
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
+import com.a2m.library.model.Book;
 import com.a2m.library.model.Checkout;
 import com.a2m.library.model.CheckoutDetail;
 import com.a2m.library.model.User;
 import com.a2m.library.model.UserFine;
+import com.a2m.library.repository.BookRepository;
 import com.a2m.library.repository.CheckoutRepository;
 import com.a2m.library.repository.UserFineRepository;
 import com.a2m.library.repository.UserRepository;
@@ -42,6 +44,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private BookRepository bookRepository;
 
     
 
@@ -76,23 +81,31 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     @Transactional
-    public CheckoutDTO add(CheckoutDTO checkoutDTO) {
+    public Checkout add(CheckoutDTO checkoutDTO) {
         User user = userRepository.findById(checkoutDTO.getUserUid())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + checkoutDTO.getUserUid()));
 
-        Checkout checkout = toEntity(checkoutDTO);
+        Checkout checkout = new Checkout();
         checkout.setUser(user);
         checkout.setStatus(CheckoutStatus.REQUESTED);
-        checkout = checkoutRepository.save(checkout);
-
-        if (checkoutDTO.getCheckoutDetails() != null) {
-            for (CheckoutDetailDTO detailDTO : checkoutDTO.getCheckoutDetails()) {
-                detailDTO.setId(null);
-                detailDTO.setCheckoutId(checkout.getId());
-                checkoutDetailService.save(detailDTO);
-            }
-        }
-        return toDTO(checkout);
+        checkout.setStartTime(checkoutDTO.getStartTime());
+        checkout.setEndTime(checkoutDTO.getEndTime());
+        checkout.setExpiredTime(checkoutDTO.getExpiredTime());
+        
+        List<CheckoutDetail> issueDetails = checkoutDTO.getCheckoutDetails().stream().map((detailDTO) -> {
+            Book book = bookRepository.findById(detailDTO.getBookId())
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+            CheckoutDetail detail = new CheckoutDetail();
+            detail.setCheckout(checkout);
+            detail.setBook(book);
+            detail.setQuantity(detailDTO.getQuantity());
+            return detail;
+        }).collect(Collectors.toList());
+        
+        checkout.setCheckoutDetails(issueDetails);
+        
+        
+        return checkoutRepository.save(checkout);
     }
 
     @Override

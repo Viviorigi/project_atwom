@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import com.a2m.library.constant.CheckoutStatus;
@@ -48,7 +49,7 @@ public class Checkout {
 
     @OneToMany(mappedBy = "checkout", cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<CheckoutDetail> checkoutDetails;
+    private List<CheckoutDetail> checkoutDetails;
 
     @OneToOne(mappedBy = "checkout", cascade = CascadeType.ALL)
     private UserFine userFine;

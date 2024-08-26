@@ -38,4 +38,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 		       "u.fullName LIKE %:keyword%) AND " +
 		       "u.deleted = false")
 	    Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
+	
+	@Query("SELECT u FROM User u WHERE " +
+		       "(u.username LIKE %:keyword% OR " +
+		       "u.email LIKE %:keyword% OR " +
+		       "u.fullName LIKE %:keyword%) AND " +
+		       "u.deleted = false AND " +
+		       "u.isActive = true")
+	    Page<User> searchUsersActive(@Param("keyword") String keyword, Pageable pageable);
 }

@@ -38,4 +38,6 @@ public interface UserService {
 	Optional<UserResponse> findUserByName(String username);
 	
 	Page<UserResponse> findByUsernameContaining(String keySearch, PageRequest pageRequest);
+	
+	Page<UserResponse> findByUsernameActive(String keySearch, PageRequest pageRequest);
 }
