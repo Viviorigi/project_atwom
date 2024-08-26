@@ -22,7 +22,7 @@ public class CheckoutDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

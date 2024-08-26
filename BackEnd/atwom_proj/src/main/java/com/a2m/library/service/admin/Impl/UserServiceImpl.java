@@ -229,7 +229,19 @@ public class UserServiceImpl implements UserService {
 
 		return new PageImpl<>(userDTOs, pageRequest, users.getTotalElements());
 	}
+	
+	@Override
+	public Page<UserResponse> findByUsernameActive(String keySearch, PageRequest pageRequest) {
+		 Page<User> users = userRepository.searchUsersActive(keySearch, pageRequest);
 
+	        // Convert Page<User> to Page<UserDTO>
+	        List<UserResponse> userDTOs = users.stream()
+	                                      .map(this::convertToUserResponse)
+	                                      .collect(Collectors.toList());
+
+	        return new PageImpl<>(userDTOs, pageRequest, users.getTotalElements());
+	}
+	
 	public UserResponse convertToUserResponse(User user) {
 		UserResponse userResponse = new UserResponse();
 		userResponse.setAddress(user.getAddress());
@@ -249,17 +261,6 @@ public class UserServiceImpl implements UserService {
 				.collect(Collectors.toList());
 		userResponse.setRoles(roleNames);
 		return userResponse;
-	}
-
-	@Override
-	public Page<UserResponse> findByUsernameActive(String keySearch, PageRequest pageRequest) {
-		// TODO Auto-generated method stub
-		Page<User> users = userRepository.searchUsersActive(keySearch, pageRequest);
-
-		// Convert Page<User> to Page<UserDTO>
-		List<UserResponse> userDTOs = users.stream().map(this::convertToUserResponse).collect(Collectors.toList());
-
-		return new PageImpl<>(userDTOs, pageRequest, users.getTotalElements());
 	}
 
 }

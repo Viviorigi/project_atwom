@@ -29,6 +29,15 @@ export class AuthService {
     });
   }
 
+  public getListActive(modelSearch: any) {
+    const params: RequestParam[] = ParamUtil.toRequestParams(modelSearch);
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/getAllActive`, params);
+
+    return axios.get(url, {
+      headers: HeadersUtil.getHeadersAuth()
+    });
+  }
+
   public create(auth:any){
     const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/create`);
     return axios.post(url,auth, {
