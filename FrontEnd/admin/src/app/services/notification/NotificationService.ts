@@ -29,6 +29,14 @@ export class NotificationService {
     });
   }
 
+  public getTotal() {
+    const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/notification/getTotal`);
+
+    return axios.get(url, {
+      headers: HeadersUtil.getHeadersAuth()
+    });
+  }
+
   public getNewest(modelSearch: any) {
     const params: RequestParam[] = ParamUtil.toRequestParams(modelSearch);
     const url = ApiUrlUtil.buildQueryString(process.env.REACT_APP_API_URL + `/api/admin/notification/getNew`, params);

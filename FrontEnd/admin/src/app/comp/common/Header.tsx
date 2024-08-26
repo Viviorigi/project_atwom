@@ -10,6 +10,7 @@ export default function Header() {
     const cookie = new Cookies();
     const [fullName,setFullName] = useState("");
     const [avatar,setAvatar] = useState("")
+    const [total, setTotal] = useState();
 
     const isDataFetched = useRef(false);
 
@@ -22,6 +23,8 @@ export default function Header() {
         if(storedAvatar){
             setAvatar(storedAvatar);
         }
+
+
 
         if (!isDataFetched.current) {
             NotificationService.getInstance()
@@ -39,6 +42,13 @@ export default function Header() {
                     console.error("Error fetching notifications:", error);
                   });
           }
+        
+          NotificationService.getInstance().getTotal().then((resp:any) => {
+            setTotal(resp.data);
+          }).catch((e:any) => {
+            console.log(e);
+            
+          })
 
         const events = new EventSource('http://localhost:8080/api/public/subscribe/admin');  
         events.onmessage = event => {
@@ -56,7 +66,7 @@ export default function Header() {
       }
       console.log(notifications);
       
-      },[])
+      },[notifications,total])
     const logout = ()=>{
         cookie.remove(AuthConstant.ACCESS_TOKEN);
         cookie.remove("fullName");
@@ -193,7 +203,16 @@ export default function Header() {
                             <div className="theme-control-toggle fa-icon-wait px-2"><input className="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" defaultValue="dark" id="themeControlToggle" /><label className="mb-0 theme-control-toggle-label theme-control-toggle-light" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span className="fa-regular fa-moon" data-feather="moon" /></label><label className="mb-0 theme-control-toggle-label theme-control-toggle-dark" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span className="fa-regular fa-sun" data-feather="sun" /></label></div>
                         </li>
                         <li className="nav-item dropdown">
-                            <a className="nav-link" href="index.html#" style={{ minWidth: '2.5rem' }} role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span className="far fa-bell" style={{ height: 20, width: 20 }} /></a>
+                            
+                            <a className="nav-link position-relative" href="index.html#" style={{ minWidth: '2.5rem' }} role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span className="far fa-bell" style={{ height: 20, width: 20 }} />
+                                {total ? 
+                                <span className="position-absolute top-auto start-85 translate-middle badge rounded-pill bg-danger">
+                                    {total}+
+                                    <span className="visually-hidden">unread messages</span>
+                                </span>
+                                : ""}
+                            </a>
+                            
                             <div className="dropdown-menu dropdown-menu-end notification-dropdown-menu py-0 shadow border border-300 navbar-dropdown-caret" id="navbarDropdownNotfication" aria-labelledby="navbarDropdownNotfication">
                                 <div className="card position-relative border-0">
                                     <div className="card-header p-2">

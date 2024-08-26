@@ -101,6 +101,14 @@ public class NotificationServiceImpl implements NotificationService {
 
         // Cập nhật trạng thái isRead
         notificationRepository.markAsRead(notificationIds);
+        
+	}
+
+
+	@Override
+	public long getAllTotalActiveFalse() {
+		// TODO Auto-generated method stub
+		return notificationRepository.countByActiveFalse();
 	}
 
 

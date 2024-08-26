@@ -23,4 +23,6 @@ public interface NotificationService {
 	void markAsRead(List<NotificationDTO> notifications);
 	
 	Page<NotificationDTO> findNotificationNewest(String keySearch, PageRequest pageRequest);
+	
+	public long getAllTotalActiveFalse();
 }
