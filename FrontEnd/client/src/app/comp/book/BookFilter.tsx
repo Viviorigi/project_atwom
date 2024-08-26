@@ -12,10 +12,17 @@ import { staticImages } from "../../utils/images";
 import { ProductFilterList, StyleFilterList } from "../../data/data";
 import { BookSearch } from "./book-search";
 import axios from "axios";
+import "../../../assets/css/book/book-filter.scss";
 
 interface BookFilterProps {
   searchDto: BookSearch; // Prop nhận đối tượng BookSearch
   setSearchDto: React.Dispatch<React.SetStateAction<BookSearch>>;
+}
+
+interface FilterState {
+  nxb: string; // Nhà xuất bản
+  public_year: number; // Năm xuất bản
+  cate_name: string; // Tên danh mục
 }
 
 // const BookFilter = ({ onFilterChange }) => {
@@ -33,12 +40,18 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
   const [cateNameList, setCateNameList] = useState([]);
   const [nxbList, setNxbList] = useState([]);
 
+  const [selectedFilters, setSelectedFilters] = useState<FilterState>({
+    nxb: '',
+    public_year: 0,
+    cate_name: '',
+  });
+
   useEffect(() => {
     setSearchDto({
       ...searchDto,
-      cate_name:'',
+      cate_name: '',
       nxb: '',
-      public_year:0
+      public_year: 0
       // timer:new Date().getTime()
     })
   }, [searchDto.keySearch])
@@ -123,6 +136,22 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
     })
   }, [searchDto.timer])
 
+  //------------------------------Xét giá trị cho filter-------------------------------------
+  const handleFilterClick = (filterType: any, value: any) => {
+    setSearchDto({
+      ...searchDto,
+      [filterType]: value,
+      timer: new Date().getTime()
+    });
+
+    setSelectedFilters(prevFilters => ({
+      ...prevFilters,
+      [filterType]: value,
+    }));
+  };
+  //End of------------------------------Xét giá trị cho filter--------------------------
+
+
   const toggleFilter = (filter: any) => {
     switch (filter) {
       case "product":
@@ -194,14 +223,8 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
               <div className="product-filter-item" key={index}>
                 <button
                   type="button"
-                  className="filter-item-head w-full flex items-center justify-between"
-                  onClick={() => {
-                    setSearchDto({
-                      ...searchDto,
-                      nxb: data,
-                      timer: new Date().getTime()
-                    })
-                  }}
+                  className={`filter-item-head w-full flex items-center justify-between ${selectedFilters.nxb === data ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick('nxb', data)}
                 >
                   <div style={{ textAlign: 'left' }}>
                     <span className="filter-head-title text-base text-gray font-semibold">
@@ -242,14 +265,9 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
               <div className="product-filter-item" key={index}>
                 <button
                   type="button"
-                  className="filter-item-head w-full flex items-center justify-between"
-                  onClick={() => {
-                    setSearchDto({
-                      ...searchDto,
-                      public_year: data,
-                      timer: new Date().getTime()
-                    })
-                  }}
+                  // className="filter-item-head w-full flex items-center justify-between"
+                  className={`filter-item-head w-full flex items-center justify-between ${selectedFilters.public_year === data ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick('public_year', data)}
                 >
                   {/* <span className="filter-head-title text-base text-gray font-semibold">
                     {data}
@@ -310,18 +328,9 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
               <div className="product-filter-item" key={index}>
                 <button
                   type="button"
-                  className="filter-item-head w-full flex items-center justify-between"
-                  onClick={() => {
-                    setSearchDto({
-                      ...searchDto,
-                      cate_name: data,
-                      timer: new Date().getTime()
-                    })
-                  }}
+                  className={`filter-item-head w-full flex items-center justify-between ${selectedFilters.cate_name === data ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick('cate_name', data)}
                 >
-                  {/* <span className="filter-head-title text-base text-gray font-semibold">
-                    {data}
-                  </span> */}
                   <div style={{ textAlign: 'left' }}>
                     <span className="filter-head-title text-base text-gray font-semibold">
                       {data}

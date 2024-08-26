@@ -77,11 +77,11 @@ public class Book {
     private Set<Author> authors;
   
   @OneToMany(mappedBy = "book")
-  @JsonManagedReference
+//  @JsonManagedReference(value = "book-imagebooks")
   private List<ImagesBook> imagebooks;
   
-  @OneToMany
-  @JsonManagedReference
+  @OneToMany(mappedBy = "book")
+//  @JsonManagedReference(value = "book-feedbacks")
   private List<FeedBack> feedBacks;
   
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)

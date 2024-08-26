@@ -36,8 +36,8 @@ public class FeedBackServiceImpl implements FeedBackService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	//--------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	@Override
 	public void save(FeedBackDTO feedBackDTO) {
 		// TODO Auto-generated method stub
@@ -58,7 +58,10 @@ public class FeedBackServiceImpl implements FeedBackService {
 		fbDTO.setRating(feedBack.getRating());
 		fbDTO.setComment(feedBack.getComment());
 		fbDTO.setBook_id(feedBack.getBook().getId());
-		fbDTO.setUser_id(feedBack.getUser().getUserUid());
+		if (feedBack.getUser().getUserUid() != null)
+			fbDTO.setUser_id(feedBack.getUser().getUserUid());
+		fbDTO.setUser_name(feedBack.getUser().getFullName());
+		fbDTO.setUser_avatar(feedBack.getUser().getAvatar());
 		return fbDTO;
 	}
 
@@ -67,17 +70,15 @@ public class FeedBackServiceImpl implements FeedBackService {
 		// TODO Auto-generated method stub
 		Book book = bookService.convertToBook(bookService.findById(feedBackDTO.getBook_id()));
 		User user = userService.convertToUser(userService.get_user_by_id(feedBackDTO.getUser_id()));
-		
+
 		FeedBack feedBack = new FeedBack();
 		feedBack.setId(feedBackDTO.getId());
 		feedBack.setRating(feedBackDTO.getRating());
 		feedBack.setComment(feedBackDTO.getComment());
 		feedBack.setBook(book);
 		feedBack.setUser(user);
-		
+
 		return feedBack;
 	}
-
-	
 
 }
