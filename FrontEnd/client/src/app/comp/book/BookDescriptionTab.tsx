@@ -168,17 +168,42 @@ const BookDescriptionTab = (props: any) => {
   }, []);
 
   //--------------------------Lấy ra feedBack-------------------------------
+  // useEffect(() => {
+  //   let url = `http://localhost:8080/feedback/list?id=${0}`;
+  //   if (book && book?.id) {
+  //     url = `http://localhost:8080/feedback/list?id=${book?.id}`;
+  //   }
+  //   // let url = `http://localhost:8080/feedback/all?id=${(0||book.id)}`;
+  //   axios.get(url).then((resp: any) => {
+  //     console.log("List feed back---------------");
+  //     console.log(resp.data);
+  //     setFeedBackList(resp.data)
+  //   }).catch((err: any) => {
+  //     // console.log(err);
+  //     toast.error("Không thể lấy feed back");
+  //   })
+  // }, [book?.id])
+
   useEffect(() => {
-    let url = `http://localhost:8080/feedback/all`;
-    axios.get(url).then((resp: any) => {
-      console.log("List feed back---------------");
-      console.log(resp.data);
-      setFeedBackList(resp.data)
-    }).catch((err: any) => {
-      // console.log(err);
-      toast.error("Xóa thất bại");
-    })
-  }, [])
+    if (book?.id) {
+      fetchFeedbackList();
+    }
+  }, [book?.id]); // Thêm book?.id vào dependency array để gọi lại khi book.id thay đổi
+
+  
+  const fetchFeedbackList = () => {
+    if (!book?.id) return; // Không làm gì nếu book.id không tồn tại
+
+    const url = `http://localhost:8080/feedback/list?id=${book.id}`;
+    axios.get(url)
+      .then((resp: any) => {
+        setFeedBackList(resp.data);
+      })
+      .catch((err: any) => {
+        toast.error("Không thể lấy feedback");
+      });
+  };
+
   //--End lấy feed back-----------------------------------------------------
 
   //Xử lý feedBack-----------------------------------------------------------
@@ -199,14 +224,7 @@ const BookDescriptionTab = (props: any) => {
   };
 
   const handleSubmit = () => {
-    console.log("handleSubmit function called");
-    console.log("Dữ liệu .....");
-    console.log(feedBack);
     save();
-
-    // setRating(0);
-    // setComment("");
-    // setFeedBack(new FeedBackDTO());
   };
 
   const save = () => {
@@ -223,10 +241,11 @@ const BookDescriptionTab = (props: any) => {
       }
     }).then((resp: any) => {
       if (resp.data === "success") {
-        toast.success("Lưu sách feed back");
+        fetchFeedbackList();
+        toast.success("Feed back thành công");
       }
     }).catch((err: any) => {
-      console.log(err);
+      // console.log(err);
       toast.error("Không thể lưu feedback");
     })
   }
@@ -335,53 +354,65 @@ const BookDescriptionTab = (props: any) => {
 
                   {/* Phần đánh giá và bình luận */}
                   <div className="col-md-6">
-                    <div className="card p-3">
-                      <h4 className="card-title">Đánh giá của bạn</h4>
+                    {isLoggedIn &&
+                      <div className="card p-3">
+                        <h4 className="card-title">Đánh giá của bạn</h4>
 
-                      {/* StarRatings component */}
-                      <div className="d-flex justify-content-center mb-3">
-                        <StarRatings
-                          rating={rating}
-                          starRatedColor="yellow"
-                          changeRating={changeRating}
-                          numberOfStars={5}
-                          name='rating'
-                        />
-                      </div>
+                        {/* StarRatings component */}
+                        <div className="d-flex justify-content-center mb-3">
+                          <StarRatings
+                            rating={rating}
+                            starRatedColor="yellow"
+                            changeRating={changeRating}
+                            numberOfStars={5}
+                            name='rating'
+                          />
+                        </div>
 
-                      {/* Comment input */}
-                      <div className="form-group">
-                        <label htmlFor="comment">Bình luận:</label>
-                        <textarea
-                          id="comment"
-                          className="form-control"
-                          rows={4}
-                          placeholder="Nhập bình luận của bạn"
-                          value={comment}
-                          onChange={handleCommentChange}
-                        />
+                        {/* Comment input */}
+                        <div className="form-group">
+                          <label htmlFor="comment">Bình luận:</label>
+                          <textarea
+                            id="comment"
+                            className="form-control"
+                            rows={4}
+                            placeholder="Nhập bình luận của bạn"
+                            value={comment}
+                            onChange={handleCommentChange}
+                          />
+                        </div>
+                        <button
+                          className={`btn btn-primary ${!isLoggedIn ? 'disabled' : ''}`}
+                          onClick={handleSubmit}
+                          disabled={!isLoggedIn}
+                        >
+                          Gửi
+                        </button>
                       </div>
-                      <button
-                        className={`btn btn-primary ${!isLoggedIn ? 'disabled' : ''}`}
-                        onClick={handleSubmit}
-                        disabled={!isLoggedIn}
-                      >
-                        Gửi
-                      </button>
-                    </div>
+                    }
+
+                    {
+                      isLoggedIn ||
+                      <div className="login-prompt card p-3">
+                        <h4 className="login-title">Đăng nhập để đánh giá</h4>
+                        <p className="login-message">Để đánh giá sản phẩm và gửi bình luận, bạn cần đăng nhập để tiếp tục.</p>
+                        <a href="/login" className="btn btn-secondary">Đăng nhập</a>
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
 
               {/* -------------------------------------End of feedback---------------------------- */}
-
             </div>
-            <div
+
+
+            {/* <div
               className={`tabs-content content-stylings ${activeDesTab === "tabQNA" ? "show" : ""
                 }`}
             >
               Question & Answers
-            </div>
+            </div> */}
           </div>
         </DescriptionTabsWrapper>
       </div>

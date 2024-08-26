@@ -7,8 +7,8 @@
 
     &.selected {
         // Kiểu dáng cho phần tử được chọn
-          background-color: #007bff1f; // Ví dụ: thay đổi màu nền khi được chọn
-          color: #fff; // Ví dụ: thay đổi màu chữ khi được chọn
+        background-color: #007bff1f; // Ví dụ: thay đổi màu nền khi được chọn
+        color: #fff; // Ví dụ: thay đổi màu chữ khi được chọn
         // border-color: #007bff; // Ví dụ: thay đổi màu viền khi được chọn
     }
 
@@ -34,3 +34,43 @@
         display: none;
     }
 }
+
+
+//--------------------------login để đăng nhập----------------------------------------
+
+/* Giao diện khi chưa đăng nhập */
+.login-prompt {
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.login-message {
+    margin-bottom: 1rem;
+    color: #666;
+}
+
+.login-prompt .btn-secondary {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.login-prompt .btn-secondary:hover {
+    background-color: #0056b3;
+}
+
+//-------------

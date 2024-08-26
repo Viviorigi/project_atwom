@@ -561,16 +561,16 @@ const navMenuData = [
       id: "tab-comments",
       tabHead: "tabComments",
       tabText: "User Comments",
-      badgeValue: 10,
+      // badgeValue: 10,
       badgeColor: "purple",
     },
-    {
-      id: "tab-QNA",
-      tabHead: "tabQNA",
-      tabText: "Question & Answer",
-      badgeValue: 4,
-      badgeColor: "outerspace",
-    },
+    // {
+    //   id: "tab-QNA",
+    //   tabHead: "tabQNA",
+    //   tabText: "Question & Answer",
+    //   badgeValue: 4,
+    //   badgeColor: "outerspace",
+    // },
   ];
   const cartItems = [
     {

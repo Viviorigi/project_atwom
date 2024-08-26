@@ -18,6 +18,7 @@ import com.a2m.library.dto.CategoryDTO;
 import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
 import com.a2m.library.repository.BookRepository;
+import com.a2m.library.repository.FeedBackRepository;
 import com.a2m.library.service.book.BookService;
 import com.a2m.library.service.category.CategoryService;
 
@@ -28,6 +29,9 @@ public class BookServiceImpl implements BookService {
 
 	@Autowired
 	CategoryService categoryService;
+	
+	@Autowired
+	FeedBackRepository feedBackRepository;
 
 	@Override
 	public List<BookDTO> findAll() {
@@ -58,6 +62,9 @@ public class BookServiceImpl implements BookService {
 		// TODO Auto-generated method stub
 		Page<Book> book = bookRepository.searchBookClient(keySearch, cateName, pubYear, nxb, pageRequest);
 		List<BookDTO> bookDTOs = book.stream().map(this::convertToBookDTO).collect(Collectors.toList());
+		for(BookDTO it: bookDTOs) {
+			it.setAve_rating(feedBackRepository.findAverageRatingByBookId(it.getId()));
+		}
 		return new PageImpl<>(bookDTOs, pageRequest, book.getTotalElements());
 	}
 

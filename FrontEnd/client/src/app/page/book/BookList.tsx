@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { FaStar } from 'react-icons/fa'; 
 import { Container, ContentStylings, Section } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import Breadcrumb from "../../comp/common/Breadcrumb";
@@ -14,6 +15,7 @@ import { Input, InputGroupWrapper } from "../../styles/form";
 import { Form, InputGroup, FormControl, Modal, Button } from 'react-bootstrap';
 import { BookSearch } from "../../comp/book/book-search";
 import Pagination from "../../comp/common/Pagination"
+import "../../../assets/css/book/book-list.scss";
 
 const ProductsContent = styled.div`
   grid-template-columns: 320px auto;
@@ -143,19 +145,18 @@ const BookListItem = () => {
 
   // Hàm xử lý dữ liệu từ BookFilter
   const handleFilterChange = (filterSelect: any) => {
-    console.log("đã truyền thành công");
-    console.log(filterSelect);
-    
+    // console.log("đã truyền thành công");
+    // console.log(filterSelect);
+
   };
 
   useEffect(() => {
     let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}&cateName=${searchDto.cate_name}&publicYear=${searchDto.public_year}&nxb=${searchDto.nxb}`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
-        console.log("Test dữ liệu");
-        console.log(resp.data);
-        
-        
+        // console.log("Test dữ liệu");
+        // console.log(resp.data);
+
         setBookList(resp.data.content);
         setTotalPages(resp.data.totalPages);
         setTotalItems(resp.data.totalElements);
@@ -252,7 +253,7 @@ const BookListItem = () => {
         <Breadcrumb items={breadcrumbItems} />
         <ProductsContent className="grid items-start">
           <ProductsContentLeft>
-            <BookFilter searchDto={searchDto} setSearchDto={setSearchDto}/>
+            <BookFilter searchDto={searchDto} setSearchDto={setSearchDto} />
             {/* <p>Filter là {selectedFilter}</p> */}
           </ProductsContentLeft>
           <ProductsContentRight>
@@ -281,7 +282,6 @@ const BookListItem = () => {
                     <div className="product-img">
                       {/* <Link to={`/book/details?id=${book.id}`}> */}
                       <Link to={`/book/details/?bookId=${book.id}`}>
-
                         <img
                           // className="object-fit-cover"
                           src={book.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book.image}` : imageBookDefault} onError={(e) => {
@@ -294,10 +294,16 @@ const BookListItem = () => {
                           height="399px"
                         />
                       </Link>
+                      {/* <div className="rating-badge">{book.ave_rating ? book.ave_rating.toFixed(1) : 'N/A'}</div> */}
+                      <div className="rating-badge">
+                        <FaStar style={{ marginRight: '5px' }} />
+                        {book.ave_rating ? book.ave_rating.toFixed(1) : 'N/A'}
+                      </div>
                     </div>
                     <div className="product-info">
                       <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#4a4e52', margin: '0' }}>{book.title}</p>
                       <p style={{ fontSize: '16px', fontWeight: 'normal', color: '#4a4e52', margin: '5px 0 0 0' }}>{book.publisher}</p>
+                      {/* <p>{book.ave_rating}</p> */}
                     </div>
                   </div>
                 ))}

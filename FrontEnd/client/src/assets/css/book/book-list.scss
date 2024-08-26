@@ -1,0 +1,32 @@
+.book-item {
+    position: relative;
+    /* Đảm bảo rằng phần tử con có thể được định vị tương đối */
+}
+
+.product-img {
+    position: relative;
+    /* Đảm bảo rằng phần tử con có thể được định vị tương đối */
+}
+
+.rating-badge {
+    position: absolute;
+    bottom: 10px;
+    /* Khoảng cách từ đáy */
+    left: 10px;
+    /* Khoảng cách từ bên trái */
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 12px;
+    /* Hình dạng tròn cho ngôi sao */
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    /* Căn giữa icon và điểm rating theo chiều dọc */
+}
+
+.rating-badge svg {
+    margin-right: 5px;
+    /* Khoảng cách giữa icon và điểm rating */
+}
