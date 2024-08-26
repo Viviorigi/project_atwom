@@ -161,24 +161,24 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
     fetchCheckoutData();
   }, []);
 
-  if (!checkout) return <p>You have no checkout.</p>;
+  if (!checkout) return <p>Bạn hiện chưa có đơn hàng nào.</p>;
 
   if (details.length === 0) {
     return (
       <OrderItemWrapper>
         <div className="order-item-details">
-          <h3 className="order-item-title">Order no: {checkoutId}</h3>
+          <h3 className="order-item-title">Mã đơn: {checkoutId}</h3>
           <div className="order-info-group">
             <div className="order-info-item">
-              <span className="text-gray font-semibold">Order Date:</span>
+              <span className="text-gray font-semibold">Ngày tạo đơn:</span>
               <span className="text-silver">{new Date(checkout.startTime).toLocaleDateString()}</span>
             </div>
             <div className="order-info-item">
-              <span className="text-gray font-semibold">Order Status:</span>
+              <span className="text-gray font-semibold">Trạng thái đơn hàng:</span>
               <span className="text-silver">{checkout.status}</span>
             </div>
           </div>
-          <p>No details available</p>
+          <p>Đơn hàng trống.</p>
         </div>
       </OrderItemWrapper>
     );
@@ -191,14 +191,14 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
   return (
     <OrderItemWrapper>
       <div className="order-item-details">
-        <h3 className="order-item-title">Order no: {checkoutId}</h3>
+        <h3 className="order-item-title">Mã đơn: {checkoutId}</h3>
         <div className="order-info-group">
           <div className="order-info-item">
-            <span className="text-gray font-semibold">Order Date:</span>
+            <span className="text-gray font-semibold">Ngày tạo đơn:</span>
             <span className="text-silver">{new Date(startTime).toLocaleDateString()}</span>
           </div>
           <div className="order-info-item">
-            <span className="text-gray font-semibold">Order Status:</span>
+            <span className="text-gray font-semibold">Trạng thái đơn hàng:</span>
             <span className="text-silver">{status}</span>
           </div>
         </div>
@@ -212,17 +212,17 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
             <h4 className="text-xl">{book?.title}</h4>
             <ul>
               <li className="font-semibold text-base">
-                <span>Category:</span>
+                <span>Danh mục:</span>
                 <span className="text-silver">{category?.name}</span>
               </li>
               <li className="font-semibold text-base">
-                <span>Qty:</span>
+                <span>Số lượng:</span>
                 <span className="text-silver">{quantity}</span>
               </li>
-              <li className="font-semibold text-base">
-                <span>Total:</span>
+              {/* <li className="font-semibold text-base">
+                <span>Tổng:</span>
                 <span className="text-silver">{currencyFormat(totalPrice)}</span>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

@@ -35,9 +35,9 @@ export class CartService {
     });
   }
 
-  public removeBookFromCart(bookId: number) {
+  public removeBookFromCart(cartId: number) {
     const url = ApiUrlUtil.buildQueryString(
-      process.env.REACT_APP_API_URL + `/api/cart/remove?bookId=${bookId}`
+      process.env.REACT_APP_API_URL + `/api/cart/remove?cartId=${cartId}`
     );
 
     return axios.delete(url, {

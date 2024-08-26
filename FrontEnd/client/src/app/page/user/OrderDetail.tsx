@@ -261,9 +261,9 @@ const OrderDetailListWrapper = styled.div`
 `;
 
 const breadcrumbItems = [
-  { label: "Home", link: "/" },
-  { label: "Order", link: "/order" },
-  { label: "Order Details", link: "/order_detail" },
+  { label: "Trang Chủ", link: "/" },
+  { label: "Đơn Hàng", link: "/order" },
+  { label: "Chi Tiết Đơn Hàng", link: "/order_detail" },
 ];
 
 const OrderDetail = () => {
@@ -295,13 +295,13 @@ const OrderDetail = () => {
                 return bookData;
               } catch (error) {
                 console.error(
-                  `Error fetching book for book ID ${detail.bookId}:`,
+                  `Lỗi khi tải sách cho ID sách ${detail.bookId}:`,
                   error
                 );
                 return null;
               }
             } else {
-              console.warn("Detail book ID is undefined.");
+              console.warn("ID sách trong chi tiết đơn hàng không xác định.");
               return null;
             }
           });
@@ -316,20 +316,20 @@ const OrderDetail = () => {
                 return category;
               } catch (error) {
                 console.error(
-                  `Error fetching category for book ID ${book.id}:`,
+                  `Lỗi khi tải danh mục cho ID sách ${book.id}:`,
                   error
                 );
                 return null;
               }
             } else {
-              console.warn("Book ID is undefined, skipping category fetch.");
+              console.warn("ID sách hiện không xác định, đang bỏ qua việc tải dữ liệu sách.");
               return null;
             }
           });
 
           await Promise.all(categoryPromises);
         } catch (error) {
-          console.error("Error fetching order details:", error);
+          console.error( "Lỗi khi tải dữ liệu chi tiết đơn hàng:", error);
         }
       };
 
@@ -363,14 +363,14 @@ const OrderDetail = () => {
               <div className="order-d-top flex justify-between items-start">
                 <div className="order-d-top-l">
                   <h4 className="text-3xl order-d-no">
-                    Order no: #{checkout?.id ?? "N/A"}
+                    Đơn số: #{checkout?.id ?? "N/A"}
                   </h4>
                   <div className="flex items-center justify-between">
                     <p className="text-lg font-medium text-gray">
-                      Placed On {checkout?.endTime ?? "N/A"}
+                      Ngày tạo đơn: {checkout?.endTime ?? "N/A"}
                     </p>
                     <p className="text-lg font-medium text-gray">
-                      Status: {checkout?.status ?? "N/A"}
+                      Trạng thái: {checkout?.status ?? "N/A"}
                     </p>
                   </div>
                 </div>
@@ -404,7 +404,7 @@ const OrderDetail = () => {
                           {book?.title ?? "N/A"}
                         </p>
                         <p className="text-md font-bold">
-                          Category: &nbsp;
+                          Danh mục: &nbsp;
                           <span className="font-medium text-gray">
                             {category?.name ?? "N/A"}
                           </span>
@@ -412,11 +412,11 @@ const OrderDetail = () => {
                       </div>
                       <div className="order-d-item-calc">
                         <p className="font-bold text-lg">
-                          Qty: &nbsp;
+                          Số lượng: &nbsp;
                           <span className="text-gray">{item.quantity}</span>
                         </p>
                         <p className="font-bold text-lg">
-                          Price: &nbsp;
+                          Giá tiền: &nbsp;
                           <span className="text-gray">
                             {currencyFormat(book?.price)}
                           </span>

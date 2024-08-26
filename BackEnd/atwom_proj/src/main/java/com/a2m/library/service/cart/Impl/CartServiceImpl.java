@@ -62,12 +62,16 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeBookFromCart(UserResponse userResponse, Integer bookId) {
+    public void removeBookFromCart(UserResponse userResponse, Long cartId) {
         User user = userRepository.findById(userResponse.getUserUid())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Cart cart = cartRepository.findByUserUserUidAndBookId(user.getUserUid(), bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found in the cart"));
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        if (!cart.getUser().getUserUid().equals(user.getUserUid())) {
+            throw new RuntimeException("Unauthorized to delete this cart item");
+        }
 
         cartRepository.delete(cart);
     }

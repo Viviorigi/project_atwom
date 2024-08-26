@@ -53,8 +53,8 @@ public class CartController {
     }
 
     @DeleteMapping("/remove")
-    public ResponseEntity<?> removeBookFromCart(@RequestParam Integer bookId,
-            @RequestHeader("Authorization") String jwt) {
+    public ResponseEntity<?> removeBookFromCart(@RequestParam Long cartId,
+                                                @RequestHeader("Authorization") String jwt) {
         try {
             String username = extractUsernameFromJwt(jwt);
             if (username == null) {
@@ -64,7 +64,7 @@ public class CartController {
             Optional<UserResponse> userOptional = userService.findUserByName(username);
             if (userOptional.isPresent()) {
                 UserResponse user = userOptional.get();
-                cartService.removeBookFromCart(user, bookId);
+                cartService.removeBookFromCart(user, cartId);
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");

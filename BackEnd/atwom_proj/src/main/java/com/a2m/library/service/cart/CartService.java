@@ -11,7 +11,7 @@ public interface CartService {
     
     List<Cart> getCartByUserUid(Long userUid);
     
-    void removeBookFromCart(UserResponse userResponse, Integer bookId);
+    void removeBookFromCart(UserResponse userResponse, Long cartId);
     
     Cart updateBookQuantity(UserResponse userResponse, Integer bookId, int quantity);
     
