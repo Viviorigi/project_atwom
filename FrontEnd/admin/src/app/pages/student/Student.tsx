@@ -115,13 +115,13 @@ export default function Student() {
   const deleteUser = (id: number) => {
     Swal.fire({
       title: `Confirm`,
-      text: `Do you want to Delete user`,
+      text: `Bạn có muốn xóa sinh viên này`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
       cancelButtonColor: "#E68A8C",
-      confirmButtonText: `Yes`,
-      cancelButtonText: `No`,
+      confirmButtonText: `Có`,
+      cancelButtonText: `Không`,
     }).then((result) => {
       if (result.value) {
         dispatch(setLoading(true));
@@ -150,7 +150,7 @@ export default function Student() {
         <div className='card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white'>
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mt-4">List Student</h2>
+              <h2 className="mt-4">Danh sách sinh viên</h2>
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
@@ -159,7 +159,7 @@ export default function Student() {
                 <div className="col-auto">
                   <div className="search-box d-flex">
                     {/* search input */}
-                    <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
+                    <input className="form-control search-input search" type="search" placeholder="Tìm kiếm sinh viên" name="keySearch" aria-label="Search"
                       value={userSearchParams.keySearch || ""}
                       onChange={handleChangeSearch}
                       onKeyUp={handleKeyUpSearch} />
@@ -175,7 +175,7 @@ export default function Student() {
                 <div className="col-auto scrollbar overflow-hidden-y flex-grow">
                   <div className="col-auto">
                     <button className="btn btn-primary" onClick={addStudent}>
-                      <span className="fas fa-plus me-2" />Create student
+                      <span className="fas fa-plus me-2" />Tạo mới sinh viên
                     </button></div>
                 </div>
               </div>
@@ -186,17 +186,17 @@ export default function Student() {
                   <thead>
                     <tr>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>USER</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>Sinh viên</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>EMAIL</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>USERNAME</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>PHONE</th>
+                      <th className="sort align-middle text-end" scope="col" style={{ width: '9%' }}>Tài Khoản</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>SĐT</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>DOB</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>ADDRESS</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ROLE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>ACTION</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>Địa chỉ</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>Ngày tạo</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>Ngày cập nhật</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>Vai Trò</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>Trạng Thái</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>Hành động</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
@@ -236,7 +236,7 @@ export default function Student() {
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total user: </span>  {totalUsers} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Tổng số sinh viên: </span>  {totalUsers} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPage} currentPage={userSearchParams.page} handlePageClick={handlePageClick} prev={prev} next={next} />
@@ -274,7 +274,7 @@ export default function Student() {
         <footer className="footer position-absolute">
           <div className="row g-0 justify-content-between align-items-center h-100">
             <div className="col-12 col-sm-auto text-center">
-              <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2023 ©<a className="mx-1" href="https://themewagon.com">Themewagon</a></p>
+              <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with ATWOM BOOk<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2024 ©</p>
             </div>
             <div className="col-12 col-sm-auto text-center">
               <p className="mb-0 text-600">v1.13.0</p>

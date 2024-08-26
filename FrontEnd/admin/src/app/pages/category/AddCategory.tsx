@@ -119,7 +119,7 @@ export default function AddCategory(props: any) {
                 axios.post(url, category).then((resp: any) => {
                     if (resp.data === "success") {
                         hideForm(true);
-                        toast.success("Lưu danh mục thành công");
+                        toast.success("Lưu thể loại thành công");
                         onSave()
                     }
                 }).catch((err: any) => {
@@ -160,14 +160,14 @@ export default function AddCategory(props: any) {
                     <div className="col-md-6 mb-5">
                         <div className="form-group">
                             <label>
-                                Name<span className="text-danger">(*)</span>
+                                Tên thể loại<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
                                 name="name"
                                 value={category.name || ""}
                                 onChange={handleChangeText}
-                                placeholder="Nhập tên danh mục" />
+                                placeholder="Nhập tên thể loại" />
                             <div className={`invalid-feedback ${category.name?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
 
@@ -202,7 +202,7 @@ export default function AddCategory(props: any) {
                                 onChange={handleChangeText}
                                 placeholder="Nhập tên danh mục" /> */}
                             <label>
-                                Description<span className="text-danger">(*)</span>
+                                Mô tả<span className="text-danger">(*)</span>
                             </label>
                             <JoditEditor
                                 value={editorContent}

@@ -101,7 +101,7 @@ export default function AddBook(props: any) {
 
     useEffect(() => {
         if (bookDTO && bookDTO.imagebooks.length > 0) {
-            setImageSources(bookDTO.imagebooks.map((image:any) => `http://localhost:8080/getImage?atchFleSeqNm=${image.filename}`));
+            setImageSources(bookDTO.imagebooks.map((image: any) => `http://localhost:8080/getImage?atchFleSeqNm=${image.filename}`));
         }
     }, [bookDTO])
 
@@ -264,20 +264,20 @@ export default function AddBook(props: any) {
 
     return (
         <div>
-            {/* <Button label="Show Form" icon="pi pi-plus" onClick={showDialog} /> */}
+            {/* <Button label="Hiển thị biểu mẫu" icon="pi pi-plus" onClick={showDialog} /> */}
             <Dialog
                 visible={visible}
                 // onHide={hideDialog}
                 onHide={() => hideForm(true)}
                 style={{ width: '1150px', backgroundColor: '#f5f5f5' }}
                 baseZIndex={1100}>
-                <h3>{bookDTO === null ? "Add Book" : "Edit Book"}</h3>
+                <h3>{bookDTO === null ? "Thêm sách" : "Chỉnh sửa sách"}</h3>
                 <div className="row">
                     {/* Cột 1 */}
                     <div className="col-md-6 mb-5">
                         <div className="form-group">
                             <label>
-                                Title<span className="text-danger">(*)</span>
+                                Tên sách<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
@@ -290,20 +290,20 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Publisher<span className="text-danger">(*)</span>
+                                Nhà xuất bản<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
                                 name="publisher"
                                 value={book.publisher || ""}
                                 onChange={handleChangeText}
-                                placeholder="Nhập tên tác giả" />
+                                placeholder="Nhập tên nhà xuất bản" />
                             <div className={`invalid-feedback ${book.publisher?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
 
                         <div className='form-group'>
                             <label>
-                                Publish year
+                                Năm xuất bản
                             </label>
                             <input type='number'
                                 name="publicationYear"
@@ -317,7 +317,7 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Quantity
+                                Số lượng
                             </label>
                             <input type='number'
                                 className="form-control"
@@ -331,7 +331,7 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Price
+                                Giá
                             </label>
                             <input type='number'
                                 className="form-control"
@@ -345,7 +345,7 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Category
+                                Thể loại
                             </label>
                             <select
                                 style={{
@@ -364,7 +364,7 @@ export default function AddBook(props: any) {
                                     </option>
                                 )}
                                 {bookDTO == null && (
-                                    <option value={0}>All</option>
+                                    <option value={0}>Tất cả</option>
                                 )}
                                 {categoryList.map((u: any, index: number) => (
                                     <option key={u.id} value={u.id}>
@@ -382,7 +382,7 @@ export default function AddBook(props: any) {
                         {bookDTO !== null && (
                             <div className="form-group">
                                 <label>
-                                    Active <span className="text-danger"></span>
+                                    Trạng thái <span className="text-danger"></span>
                                 </label>
                                 <select
                                     className="form-select"
@@ -390,15 +390,15 @@ export default function AddBook(props: any) {
                                     onChange={handleActiveChange}
                                     name="active"
                                 >
-                                    <option value="true">Active</option>
-                                    <option value="false">InActive</option>
+                                    <option value="true">Hoạt động</option>
+                                    <option value="false">Không hoạt động</option>
                                 </select>
                             </div>
                         )}
 
                         <div className='form-group'>
                             <label>
-                                Description
+                                Mô tả
                             </label>
                             <JoditEditor
                                 value={editorContent}
@@ -410,7 +410,7 @@ export default function AddBook(props: any) {
                         {/* Lưu ảnh bìa-------------------------------------------------- */}
                         <div className="form-group">
                             <label>
-                                Avatar
+                                Ảnh bìa
                             </label>
                             <br />
                             <input
@@ -431,23 +431,23 @@ export default function AddBook(props: any) {
                                 >
                                     <img
                                         src={imageSource}
-                                        alt="Preview"
+                                        alt="Xem trước"
                                         style={{ width: "100px", height: "100px" }}
                                         onError={(e) => {
                                             const target = e.target as HTMLImageElement;
-                                            target.onerror = null; // Prevent infinite loop in case fallback image also fails
-                                            target.src = noImageAvailable; // Set the fallback image
+                                            target.onerror = null; // Ngăn chặn vòng lặp vô tận trong trường hợp hình ảnh thay thế cũng thất bại
+                                            target.src = noImageAvailable; // Đặt hình ảnh thay thế
                                         }}
                                     />
                                 </div>
                             )}
                         </div>
 
-                        {/* Lưu ảnh description ---------------------------------------------------------------------- */}
+                        {/* Lưu ảnh mô tả ---------------------------------------------------------------------- */}
 
                         <div className="form-group">
                             <label>
-                                Description image
+                                Ảnh mô tả
                             </label>
                             <br />
                             <input
@@ -461,7 +461,7 @@ export default function AddBook(props: any) {
                                 <div className="preview Image" style={{ marginTop: "10px", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
                                     {imageSources.map((file, index) => (
                                         <div key={index} style={{ position: 'relative', margin: '5px' }}>
-                                            <img src={file} alt={`Preview ${index}`} style={{ width: "100px", height: "100px" }} />
+                                            <img src={file} alt={`Xem trước ${index}`} style={{ width: "100px", height: "100px" }} />
                                         </div>
                                     ))}
                                 </div>
@@ -472,12 +472,13 @@ export default function AddBook(props: any) {
                     {/* Hết form--------------------------------------------------------------- */}
 
                     <div className="text-center mt-3">
-                        <button onClick={save} className="btn btn-primary btn-sm me-2">Save</button>
-                        <button onClick={cancel} className="btn btn-danger btn-sm">Cancel</button>
+                        <button onClick={save} className="btn btn-primary btn-sm me-2">Lưu</button>
+                        <button onClick={cancel} className="btn btn-danger btn-sm">Hủy</button>
                     </div>
                 </div>
             </Dialog>
         </div>
+
     )
 }
 

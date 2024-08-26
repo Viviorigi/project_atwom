@@ -126,14 +126,14 @@ export default function StudentForm(props: any) {
       title: `Confirm`,
       text:
         user === null
-          ? "Do you want to create a new student?"
-          : `Do you want to update the student?`,
+          ? "Bạn có muốn tạo mới sinh viên?"
+          : `Bạn có muốn cập nhật sinh viên?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
       cancelButtonColor: "#E68A8C",
-      confirmButtonText: `Yes`,
-      cancelButtonText: `No`,
+      confirmButtonText: `Có`,
+      cancelButtonText: `Không`,
     }).then((result) => {
       if (result.value) {
         if (user === null) {
@@ -180,13 +180,13 @@ export default function StudentForm(props: any) {
   };
   return (
     <div>
-      <h3>{user === null ? "Add Student" : "Edit Student"}</h3>
+      <h3>{user === null ? "Tạo mới Sinh viên" : "Cập nhật Sinh viên"}</h3>
       <div className="row">
         {/* Column 1 */}
         <div className="col-md-6 mb-5">
           <div className="form-group">
             <label>
-              Username <span className="text-danger">(*)</span>
+              Tài khoản <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -194,7 +194,7 @@ export default function StudentForm(props: any) {
               className="form-control"
               value={userSave?.username || ""}
               onChange={handleChangeText}
-              placeholder="Enter Username"
+              placeholder="Nhập Tài khoản"
               readOnly={user !== null ? true : false}
             />
             <div
@@ -202,14 +202,13 @@ export default function StudentForm(props: any) {
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Username must not be empty and must be between 3 and 50
-              characters.
+              Tài khoản  không được để trống & tối thiểu 3 ký tự trở lên
             </div>
           </div>
           {user === null && (
             <div className="form-group">
               <label>
-                Password <span className="text-danger">(*)</span>
+                Mật khẩu <span className="text-danger">(*)</span>
               </label>
               <input
                 type="password"
@@ -217,14 +216,14 @@ export default function StudentForm(props: any) {
                 className="form-control"
                 value={userSave?.password || ""}
                 onChange={handleChangeText}
-                placeholder="Enter Password"
+                placeholder="Nhập mật khẩu"
               />
               <div
                 className={`invalid-feedback ${userSave?.password?.toString() === "" ? "d-block" : ""
                   }`}
                 style={{ fontSize: "100%", color: "red" }}
               >
-                Password must not be empty and must be at least 6 characters.
+                Mật khẩu không được để trống & tối thiểu 6 ký tự
               </div>
             </div>
           )}
@@ -239,20 +238,20 @@ export default function StudentForm(props: any) {
               className="form-control"
               value={userSave?.email || ""}
               onChange={handleChangeText}
-              placeholder="Enter Email"
+              placeholder="Nhập Email"
             />
             <div
               className={`invalid-feedback ${userSave?.email?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Email must not be empty.
+              Email không được để trống
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Full Name <span className="text-danger">(*)</span>
+              Họ và tên <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -260,20 +259,20 @@ export default function StudentForm(props: any) {
               className="form-control"
               value={userSave?.fullName || ""}
               onChange={handleChangeText}
-              placeholder="Enter Full Name"
+              placeholder="Nhập Họ và tên"
             />
             <div
               className={`invalid-feedback ${userSave?.fullName?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              FullName must not be empty.
+              Họ và tên không được để trống
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Phone <span className="text-danger">(*)</span>
+              SĐT <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -281,20 +280,20 @@ export default function StudentForm(props: any) {
               className="form-control"
               value={userSave?.phone || ""}
               onChange={handleChangeNumber}
-              placeholder="Enter Phone"
+              placeholder="Nhập SĐT"
             />
             <div
               className={`invalid-feedback ${userSave?.phone?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Phone must not be empty.
+              SĐT không được để trống
             </div>
           </div>
           {user !== null && (
             <div className="form-group">
               <label>
-                Active <span className="text-danger"></span>
+                Trạng thái <span className="text-danger"></span>
               </label>
               <select
                 className="form-select"
@@ -313,7 +312,7 @@ export default function StudentForm(props: any) {
         <div className="col-md-6">
           <div className="form-group">
             <label>
-              Class Name <span className="text-danger">(*)</span>
+              Lớp <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -321,19 +320,19 @@ export default function StudentForm(props: any) {
               className="form-control"
               value={userSave?.className || ""}
               onChange={handleChangeText}
-              placeholder="Enter Full Name"
+              placeholder="Nhập Lớp"
             />
             <div
               className={`invalid-feedback ${userSave?.className?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              ClassName must not be empty.
+              Lớp không được để trống.
             </div>
           </div>
           <div className="form-group">
             <label>
-              Date of Birth <span className="text-danger">(*)</span>
+              Ngày sinh <span className="text-danger">(*)</span>
             </label>
             <input
               type="date"
@@ -347,13 +346,13 @@ export default function StudentForm(props: any) {
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Dob must not be empty.
+              Ngày sinh không được để trống
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Address <span className="text-danger">(*)</span>
+              Địa chỉ <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -361,20 +360,20 @@ export default function StudentForm(props: any) {
               className="form-control"
               value={userSave?.address || ""}
               onChange={handleChangeText}
-              placeholder="Enter Address"
+              placeholder="Nhập Địa chỉ"
             />
             <div
               className={`invalid-feedback ${userSave?.address?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Address must not be empty.
+              Địa chỉ không được để trống
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Avatar <span className="text-danger">(*)</span>
+              Ảnh đại diện <span className="text-danger">(*)</span>
             </label>
             <br />
             <input
@@ -410,7 +409,7 @@ export default function StudentForm(props: any) {
       </div>
 
       <button type="submit" className="btn btn-primary mt-5" onClick={save}>
-        {user ? "Update" : "Save"}
+        {user ? "Cập nhật" : "Tạo mới"}
       </button>
     </div>
   );

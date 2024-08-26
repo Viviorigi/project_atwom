@@ -158,7 +158,7 @@ export default function Book() {
           <div className="row g-2 mb-4">
             <div className="col-auto">
               {/* title */}
-              <h2 className="mt-4">List Book</h2>
+              <h2 className="mt-4">Danh sách Sách</h2>
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
@@ -168,7 +168,7 @@ export default function Book() {
                   {/* Search input-------------------------------------------------------------------------------------------- */}
                   <div className="search-box d-flex">
                     {/* search input */}
-                    <input className="form-control search-input search" type="search" placeholder="Search book" name="keySearch" aria-label="Search"
+                    <input className="form-control search-input search" type="search" placeholder="Tìm kiếm sách" name="keySearch" aria-label="Search"
                       value={searchDto.keySearch || ""}
                       onChange={handleChangeText}
                       onKeyUp={handleKeyUpSearch}
@@ -202,7 +202,7 @@ export default function Book() {
                           });
                         }}
                       >
-                        <option value={0}>All</option>
+                        <option value={0}>Tất cả</option>
                         {categoryList && categoryList.map((u: any, index: number) => (
                           <option key={u.id} value={u.id}>
                             {u.name}
@@ -210,11 +210,10 @@ export default function Book() {
                         ))}
                       </select>
                     </div>
-
                   </div>
                 </div>
                 <div className="col-auto">
-                  <button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Add book</button>
+                  <button className="btn btn-primary" onClick={addBook}><span className="fas fa-plus me-2" />Thêm sách</button>
                 </div>
               </div>
             </div>
@@ -224,16 +223,16 @@ export default function Book() {
                   <thead>
                     <tr>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>TITLE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>PUBLISHER</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>PUBLISH YEAR</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>QUANTITY</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>PRICE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>ACTION</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>TIÊU ĐỀ</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>TÁC GIẢ</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NĂM XUẤT BẢN</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>SỐ LƯỢNG</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>GIÁ</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>MÔ TẢ</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NGÀY TẠO</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NGÀY CẬP NHẬT</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>TRẠNG THÁI</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>HÀNH ĐỘNG</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
@@ -262,7 +261,7 @@ export default function Book() {
                         <td className="align-middle text-center text-700">{formatDate(u.upd_dt)}</td>
                         <td className="align-middle text-center">
                           <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}>
-                            <span className="badge-label">{u.active ? "Active" : "Inactive"}</span>
+                            <span className="badge-label">{u.active ? "Hoạt động" : "Không hoạt động"}</span>
                           </span>
                         </td>
                         <td className="align-middle text-center">
@@ -275,13 +274,12 @@ export default function Book() {
                         </td>
                       </tr>
                     })}
-
                   </tbody>
                 </table>
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total books: </span>  {totalItems} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Tổng số sách: </span> {totalItems} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={prev} next={next} />
@@ -299,10 +297,11 @@ export default function Book() {
           }} />}
         </div>
       </div>
+
       <footer className="footer position-absolute">
         <div className="row g-0 justify-content-between align-items-center h-100">
           <div className="col-12 col-sm-auto text-center">
-            <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2023 ©<a className="mx-1" href="https://themewagon.com">Themewagon</a></p>
+            <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with ATWOM BOOk<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2024 ©</p>
           </div>
           <div className="col-12 col-sm-auto text-center">
             <p className="mb-0 text-600">v1.13.0</p>
