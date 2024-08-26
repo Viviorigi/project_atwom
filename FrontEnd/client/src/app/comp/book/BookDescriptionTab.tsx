@@ -168,21 +168,42 @@ const BookDescriptionTab = (props: any) => {
   }, []);
 
   //--------------------------Lấy ra feedBack-------------------------------
+  // useEffect(() => {
+  //   let url = `http://localhost:8080/feedback/list?id=${0}`;
+  //   if (book && book?.id) {
+  //     url = `http://localhost:8080/feedback/list?id=${book?.id}`;
+  //   }
+  //   // let url = `http://localhost:8080/feedback/all?id=${(0||book.id)}`;
+  //   axios.get(url).then((resp: any) => {
+  //     console.log("List feed back---------------");
+  //     console.log(resp.data);
+  //     setFeedBackList(resp.data)
+  //   }).catch((err: any) => {
+  //     // console.log(err);
+  //     toast.error("Không thể lấy feed back");
+  //   })
+  // }, [book?.id])
+
   useEffect(() => {
-    let url = `http://localhost:8080/feedback/list?id=${0}`;
-    if (book && book?.id) {
-      url = `http://localhost:8080/feedback/list?id=${book?.id}`;
+    if (book?.id) {
+      fetchFeedbackList();
     }
-    // let url = `http://localhost:8080/feedback/all?id=${(0||book.id)}`;
-    axios.get(url).then((resp: any) => {
-      console.log("List feed back---------------");
-      console.log(resp.data);
-      setFeedBackList(resp.data)
-    }).catch((err: any) => {
-      // console.log(err);
-      toast.error("Không thể lấy feed back");
-    })
-  }, [book?.id])
+  }, [book?.id]); // Thêm book?.id vào dependency array để gọi lại khi book.id thay đổi
+
+  
+  const fetchFeedbackList = () => {
+    if (!book?.id) return; // Không làm gì nếu book.id không tồn tại
+
+    const url = `http://localhost:8080/feedback/list?id=${book.id}`;
+    axios.get(url)
+      .then((resp: any) => {
+        setFeedBackList(resp.data);
+      })
+      .catch((err: any) => {
+        toast.error("Không thể lấy feedback");
+      });
+  };
+
   //--End lấy feed back-----------------------------------------------------
 
   //Xử lý feedBack-----------------------------------------------------------
@@ -203,14 +224,7 @@ const BookDescriptionTab = (props: any) => {
   };
 
   const handleSubmit = () => {
-    console.log("handleSubmit function called");
-    console.log("Dữ liệu .....");
-    console.log(feedBack);
     save();
-
-    // setRating(0);
-    // setComment("");
-    // setFeedBack(new FeedBackDTO());
   };
 
   const save = () => {
@@ -227,6 +241,7 @@ const BookDescriptionTab = (props: any) => {
       }
     }).then((resp: any) => {
       if (resp.data === "success") {
+        fetchFeedbackList();
         toast.success("Feed back thành công");
       }
     }).catch((err: any) => {

@@ -145,8 +145,8 @@ const BookListItem = () => {
 
   // Hàm xử lý dữ liệu từ BookFilter
   const handleFilterChange = (filterSelect: any) => {
-    console.log("đã truyền thành công");
-    console.log(filterSelect);
+    // console.log("đã truyền thành công");
+    // console.log(filterSelect);
 
   };
 
