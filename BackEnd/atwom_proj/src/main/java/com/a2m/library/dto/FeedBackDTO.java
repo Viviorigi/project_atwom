@@ -1,5 +1,8 @@
 package com.a2m.library.dto;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
 import lombok.Data;
 
 @Data
@@ -11,4 +14,6 @@ public class FeedBackDTO {
 	private Long user_id;
 	private String user_avatar;
 	private String user_name;
+    private LocalDateTime upd_dt;
+//    private Map<Double, Long> ratingCounts;
 }

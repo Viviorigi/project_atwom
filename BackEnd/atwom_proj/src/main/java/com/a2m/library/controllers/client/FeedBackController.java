@@ -1,6 +1,7 @@
 package com.a2m.library.controllers.client;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,15 @@ public class FeedBackController {
 	
 	@GetMapping("/feedback/list")
 	public ResponseEntity<?>feedBackList(@RequestParam(name =  "id", defaultValue = "0") Integer id){
-//		List<FeedBackDTO>feedBackDTOs = feedBackService.findAll();
 		List<FeedBackDTO>feedBackDTOs = feedBackService.findByBookId(id);
 		return ResponseEntity.ok().body(feedBackDTOs);
 	}
+	
+	 @GetMapping("/feedback/rating-counts")
+	    public ResponseEntity<?> getRatingCounts(@RequestParam(name = "id", defaultValue = "0") Integer id) {
+	        Map<Double, Long> ratingCounts = feedBackService.getRatingCounts(id);
+	        return ResponseEntity.ok().body(ratingCounts);
+	    }
 
 	@PostMapping("/feedback/add")
 	public ResponseEntity<?> feedBackAdd(@RequestBody FeedBackDTO feedBackDTO) {

@@ -58,3 +58,14 @@
     font-size: 0.9rem;
     color: #555;
 }
+
+.user-rating {
+    margin-top: 5px;
+}
+
+.user-rating .star-rating {
+    .star-rating-star {
+        color: #4CAF50;
+        /* Màu xanh lá cây */
+    }
+}

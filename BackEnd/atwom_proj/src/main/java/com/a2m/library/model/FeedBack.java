@@ -1,5 +1,7 @@
 package com.a2m.library.model;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -27,19 +29,18 @@ public class FeedBack {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Integer id;
-	
+
 	private Double rating;
 	private String comment;
-	
+
+	@Column(name = "udp_dt")
+	private LocalDateTime updDt;
+
 	@ManyToOne
-//	@JsonBackReference(value = "book-reference")
-//	@JsonIgnore
 	@JoinColumn(name = "book_id")
 	private Book book;
-	
+
 	@ManyToOne
-//	@JsonBackReference(value = "user-reference")
-//	@JsonIgnore
 	@JoinColumn(name = "user_id")
 	private User user;
 }

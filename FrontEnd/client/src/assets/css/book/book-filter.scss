@@ -73,4 +73,35 @@
     background-color: #0056b3;
 }
 
-//-------------
+//-----------------nút xóa---------------------------------------------------------
+.clear-filter-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.clear-filter-btn:hover {
+    color: #333;
+}
+
+.product-filter-item {
+    position: relative;
+}
+
+.clear-filter-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.clear-filter-btn:hover {
+    color: #333;
+}
