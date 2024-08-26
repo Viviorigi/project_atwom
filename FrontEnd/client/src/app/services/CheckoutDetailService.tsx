@@ -24,9 +24,9 @@ export const CheckoutDetailService = {
     }
   },
 
-  add: async (id: number,checkoutDetailDTO: CheckoutDetailDTO): Promise<CheckoutDetailDTO> => {
+  add: async (checkoutId: number,checkoutDetailDTO: CheckoutDetailDTO): Promise<CheckoutDetailDTO> => {
     try {
-      const response = await axios.post<CheckoutDetailDTO>(`${BASE_URL}/add/${id}`, checkoutDetailDTO);
+      const response = await axios.post<CheckoutDetailDTO>(`${BASE_URL}/add/${checkoutId}`, checkoutDetailDTO);
       return response.data;
     } catch (error) {
       console.error("Error adding checkout detail", error);

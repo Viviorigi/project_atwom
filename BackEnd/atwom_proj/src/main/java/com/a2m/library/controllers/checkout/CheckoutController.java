@@ -53,12 +53,6 @@ public class CheckoutController {
         return new ResponseEntity<>(createdCheckout, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
-    public ResponseEntity<CheckoutDTO> updateCheckout(@PathVariable Integer id, @RequestBody @Valid CheckoutDTO checkoutDTO) {
-        CheckoutDTO updatedCheckout = checkoutService.update(id, checkoutDTO);
-        return ResponseEntity.ok(updatedCheckout);
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCheckout(@PathVariable Integer id) {
         checkoutService.deleteById(id);

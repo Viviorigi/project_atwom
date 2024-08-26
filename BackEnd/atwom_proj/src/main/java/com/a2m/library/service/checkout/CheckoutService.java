@@ -17,8 +17,6 @@ public interface CheckoutService {
     @Transactional
     Checkout add(CheckoutDTO checkoutDTO);
 
-    CheckoutDTO update(Integer id, CheckoutDTO checkoutDTO);
-
     CheckoutDTO updateStatus(Integer id, CheckoutStatus status);
 
     void deleteById(Integer id);

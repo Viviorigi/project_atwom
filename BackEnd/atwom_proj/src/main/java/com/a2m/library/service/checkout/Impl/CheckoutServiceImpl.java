@@ -110,26 +110,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     @Transactional
-    public CheckoutDTO update(Integer id, CheckoutDTO checkoutDTO) {
-        Checkout checkout = checkoutRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
-
-        if (checkoutDTO.getStartTime() != null) {
-            checkout.setStartTime(checkoutDTO.getStartTime());
-        }
-        if (checkoutDTO.getEndTime() != null) {
-            checkout.setEndTime(checkoutDTO.getEndTime());
-        }
-        if (checkoutDTO.getStatus() != null) {
-            checkout.setStatus(checkoutDTO.getStatus());
-        }
-
-        checkout = checkoutRepository.save(checkout);
-        return toDTO(checkout);
-    }
-
-    @Override
-    @Transactional
     public CheckoutDTO updateStatus(Integer id, CheckoutStatus status) {
         Checkout checkout = checkoutRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));

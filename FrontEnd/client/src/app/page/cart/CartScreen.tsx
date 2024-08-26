@@ -182,6 +182,16 @@ const CartScreen = () => {
       if (result.isConfirmed) {
         const now = new Date();
         const currentISO = now.toISOString();
+        const newCheckoutDetails: CheckoutDetailDTO[] = cartItems.map((item) => ({
+          id: 0,
+          bookId: item.bookId,
+          bookTitle: item.bookTitle,
+          cate_id: item.cate_id,
+          categoryName: item.categoryName,
+          quantity: item.quantity,
+          checkoutId: 0,
+        }));
+  
         const newOrder: CheckoutDTO = {
           id: 0,
           user: { userUid: userDetail.userUid, username: "", fullName: userDetail.fullName, email: "", dob: "", className: "", phone: "", address: "", avatar: "", cre_dt: "", isActive: ""},
@@ -190,37 +200,16 @@ const CartScreen = () => {
           startTime: currentISO,
           endTime: currentISO,
           status: CheckoutStatus.REQUESTED,
-          checkoutDetails: [],
+          checkoutDetails: newCheckoutDetails,
           expiredTime: "",
-          fine: 0,
+          fine: 0
         };
   
         try {
-          const orderResponse = await addCheckout(newOrder);
-          const orderId = orderResponse.id;
-  
-          const detailPromises = cartItems.map(async (item) => {
-            const newDetail: CheckoutDetailDTO = {
-              id: 0,
-              bookId: item.bookId,
-              bookTitle: item.bookTitle,
-              cate_id: item.cate_id,
-              categoryName: item.categoryName,
-              quantity: item.quantity,
-              checkoutId: orderId,
-            };
-  
-            try {
-              await CheckoutDetailService.add(orderId, newDetail);
-            } catch (error) {
-              console.error("Lỗi khi thêm chi tiết đặt hàng", error);
-              toast.error("Lỗi khi thêm một số chi tiết");
-            }
-          });
-  
-          await Promise.all(detailPromises);
+          const createdCheckout = await addCheckout(newOrder);
           fetchCartItems();
           await handleClearCart();
+          toast.success("Đặt hàng thành công!");
         } catch (error) {
           console.error("Lỗi khi thêm đơn đặt hàng", error);
           toast.error("Lỗi khi thêm đơn đặt hàng");
@@ -228,6 +217,7 @@ const CartScreen = () => {
       }
     });
   };
+  
 
   const breadcrumbItems = [
     { label: "Trang chủ", link: "/" },
