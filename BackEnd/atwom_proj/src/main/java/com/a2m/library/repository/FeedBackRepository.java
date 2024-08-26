@@ -17,4 +17,7 @@ public interface FeedBackRepository extends JpaRepository<FeedBack, Integer> {
 
 	@Query("SELECT AVG(f.rating) FROM FeedBack f WHERE f.book.id = :bookId")
     Double findAverageRatingByBookId(@Param("bookId") Integer bookId);
+	
+	List<FeedBack> findByBookIdAndUser_UserUid(Integer bookId, Long userUid);
+	List<FeedBack> findTop5ByOrderByUpdDtDesc();
 }

@@ -1,0 +1,116 @@
+/* Định nghĩa các biến màu sắc */
+$color_outerspace: #2c3e50;
+$color_whitesmoke: #f5f5f5;
+$color_sea_green: #2e8b57;
+$color_white: #ffffff;
+
+/* Định nghĩa các breakpoints */
+$breakpoints: (
+    'sm': 576px,
+    'md': 768px,
+    'lg': 992px,
+    'xl': 1200px,
+    'xxl': 1400px
+);
+
+/* Định nghĩa theme mặc định */
+$defaultTheme: (
+    color_outerspace: $color_outerspace,
+    color_whitesmoke: $color_whitesmoke,
+    color_sea_green: $color_sea_green,
+    color_white: $color_white
+);
+
+/* Navigation Menu */
+.navigation-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 20px;
+    margin: 0;
+
+    @media (max-width: map-get($breakpoints, 'lg')) {
+        flex-direction: column;
+        padding: 0;
+    }
+}
+
+.nav-menu-item {
+    margin: 0;
+    padding: 10px 15px;
+
+    @media (max-width: map-get($breakpoints, 'lg')) {
+        margin: 0;
+        padding: 10px;
+    }
+}
+
+.nav-menu-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: map-get($defaultTheme, color_outerspace);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+
+    &:hover {
+        background-color: map-get($defaultTheme, color_whitesmoke);
+        color: map-get($defaultTheme, color_outerspace);
+    }
+
+    &.active {
+        background-color: map-get($defaultTheme, color_sea_green);
+        color: map-get($defaultTheme, color_white);
+        font-weight: 700;
+    }
+}
+
+/* Icon Links */
+.icon-links-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    @media (max-width: map-get($breakpoints, 'xl')) {
+        gap: 12px;
+    }
+
+    @media (max-width: map-get($breakpoints, 'sm')) {
+        gap: 8px;
+    }
+}
+
+.icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 36px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: map-get($defaultTheme, color_whitesmoke);
+    }
+
+    &.active {
+        background-color: map-get($defaultTheme, color_sea_green);
+
+        img {
+            filter: brightness(100);
+        }
+    }
+
+    img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+    }
+
+    span {
+        font-size: 0.875rem;
+    }
+}

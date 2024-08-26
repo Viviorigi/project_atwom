@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FaStar } from 'react-icons/fa'; 
+import { FaStar } from 'react-icons/fa';
 import { Container, ContentStylings, Section } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import Breadcrumb from "../../comp/common/Breadcrumb";
@@ -212,8 +212,8 @@ const BookListItem = () => {
   };
 
   const breadcrumbItems = [
-    { label: "Home", link: "/" },
-    { label: "Products", link: "" },
+    { label: "Trang chủ", link: "/" },
+    { label: "Sách", link: "" },
   ];
   return (
 
@@ -262,12 +262,12 @@ const BookListItem = () => {
               <ul className="products-right-nav flex items-center justify-end flex-wrap">
                 <li>
                   <Link to="/" className="active text-lg font-semibold">
-                    New
+                    {/* New */}
                   </Link>
                 </li>
                 <li>
                   <Link to="/" className="text-lg font-semibold">
-                    Recommended
+                    {/* Recommended */}
                   </Link>
                 </li>
               </ul>
@@ -327,37 +327,27 @@ const BookListItem = () => {
       <Section>
         <Container>
           <DescriptionContent>
-            <Title titleText={"Books for Everyone Online"} />
+            <Title titleText={"Sách Cho Mọi Người Trực Tuyến"} />
             <ContentStylings className="text-base content-stylings">
-              <h4>Books Collection Online at Library.</h4>
+              <h4>Bộ Sưu Tập Sách Trực Tuyến Tại Thư Viện.</h4>
               <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed,
-                molestiae ex atque similique consequuntur ipsum sapiente
-                inventore magni ducimus sequi nemo id, numquam officiis fugit
-                pariatur esse, totam facere ullam?
+                Tại thư viện của chúng tôi, bạn sẽ tìm thấy một bộ sưu tập phong phú các loại sách từ nhiều thể loại khác nhau, từ văn học cổ điển đến sách hiện đại. Chúng tôi cung cấp các cuốn sách được chọn lọc kỹ lưỡng, giúp bạn khám phá thế giới tri thức và văn hóa một cách dễ dàng và thuận tiện.
               </p>
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Consequatur nam magnam placeat nesciunt ipsa amet, vel illo
-                veritatis eligendi voluptatem!
+                Sách không chỉ là nguồn kiến thức vô tận mà còn là người bạn đồng hành trong hành trình khám phá thế giới. Với các sách về lịch sử, khoa học, và các tác phẩm văn học nổi tiếng, chúng tôi mang đến cho bạn cơ hội để mở rộng tầm hiểu biết và làm giàu trí tuệ.
               </p>
               <h4>
-                One-stop Destination to Shop Every Clothing for Everyone:
-                Library.
+                Điểm Đến Một Cửa Để Mua Sắm Trang Phục Cho Mọi Người: Thư Viện.
               </h4>
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo
-                iure doloribus optio aliquid id. Quos quod delectus, dolor est
-                ab exercitationem odio quae quas qui doloremque. Esse natus
-                minima ratione reiciendis nostrum, quam, quisquam modi aut,
-                neque hic provident dolorem.
+                Ngoài việc cung cấp sách, thư viện của chúng tôi còn là điểm đến lý tưởng để bạn tìm kiếm và mua sắm các tài liệu học tập, sách hướng dẫn và các nguồn tài nguyên hỗ trợ học tập. Với một không gian thân thiện và tiện nghi, chúng tôi mong muốn tạo ra một môi trường học tập đầy cảm hứng cho tất cả mọi người.
               </p>
               <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi
-                laborum dolorem deserunt aperiam voluptate mollitia.
+                Hãy ghé thăm thư viện trực tuyến của chúng tôi và khám phá những cuốn sách tuyệt vời, giúp bạn nâng cao kiến thức và trải nghiệm những câu chuyện thú vị. Chúng tôi cam kết mang đến cho bạn những sản phẩm chất lượng và dịch vụ tận tâm.
               </p>
-              <Link to="/">See More</Link>
+              <Link to="/">Xem Thêm</Link>
             </ContentStylings>
+
           </DescriptionContent>
         </Container>
       </Section>

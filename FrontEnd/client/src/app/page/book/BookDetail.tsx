@@ -474,13 +474,14 @@ const BookDetail = (props: any) => {
                 onClick={handleBorrowClick}
                 className="prod-add-btn"
               >
-                Borrow
+                {/* Borrow */}
+                Mượn
               </button>
               <button
                 className={`btn ${isFavorited ? "btn-danger" : "btn-success"}`}
                 onClick={handleFavoriteClick}
               >
-                {isFavorited ? "Remove from Wishtlist " : "Add to Wishlist "}
+                {isFavorited ? "Xóa khỏi danh sách yêu thích " : "Thêm vào danh sách yêu thích "}
                 {isFavorited ? (
                   <i className="fa-solid fa-heart"></i>
                 ) : (

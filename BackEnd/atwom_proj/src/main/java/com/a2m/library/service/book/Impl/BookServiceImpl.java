@@ -29,7 +29,7 @@ public class BookServiceImpl implements BookService {
 
 	@Autowired
 	CategoryService categoryService;
-	
+
 	@Autowired
 	FeedBackRepository feedBackRepository;
 
@@ -62,7 +62,7 @@ public class BookServiceImpl implements BookService {
 		// TODO Auto-generated method stub
 		Page<Book> book = bookRepository.searchBookClient(keySearch, cateName, pubYear, nxb, pageRequest);
 		List<BookDTO> bookDTOs = book.stream().map(this::convertToBookDTO).collect(Collectors.toList());
-		for(BookDTO it: bookDTOs) {
+		for (BookDTO it : bookDTOs) {
 			it.setAve_rating(feedBackRepository.findAverageRatingByBookId(it.getId()));
 		}
 		return new PageImpl<>(bookDTOs, pageRequest, book.getTotalElements());
@@ -74,7 +74,6 @@ public class BookServiceImpl implements BookService {
 		return books.stream().map(book -> convertToBookDTO(book)).collect(Collectors.toList());
 	}
 
-
 //	@Override
 //	public BookDTO findById(Integer id) {
 //		// TODO Auto-generated method stub
@@ -83,16 +82,15 @@ public class BookServiceImpl implements BookService {
 //	}
 
 	@Override
-    public BookDTO getBookById(Integer id) {
-        Optional<Book> optionalBook = bookRepository.findById(id);
-        if (optionalBook.isPresent()) {
-            Book book = optionalBook.get();
-            return convertToBookDTO(book);
-        } else {
-            throw new RuntimeException("Book not found with id: " + id);
-        }
-    }
-	
+	public BookDTO getBookById(Integer id) {
+		Optional<Book> optionalBook = bookRepository.findById(id);
+		if (optionalBook.isPresent()) {
+			Book book = optionalBook.get();
+			return convertToBookDTO(book);
+		} else {
+			throw new RuntimeException("Book not found with id: " + id);
+		}
+	}
 
 	@Override
 	public BookDTO findById(Integer id) {
@@ -148,6 +146,8 @@ public class BookServiceImpl implements BookService {
 			bookDTO.setCateName("Unknown");
 		}
 		bookDTO.setImagebooks(book.getImagebooks());
+		if (feedBackRepository.findAverageRatingByBookId(book.getId()) != null)
+			bookDTO.setAve_rating(feedBackRepository.findAverageRatingByBookId(book.getId()));
 
 		return bookDTO;
 	}

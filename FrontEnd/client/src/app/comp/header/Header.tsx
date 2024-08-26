@@ -13,6 +13,9 @@ import { BaseButtonGreen, BaseLinkGreen, BaseLinkOutlineDark } from "../../style
 import { jwtDecode } from "jwt-decode";
 import { AuthConstant } from "../../constants/authConstant";
 
+import "../../../assets/css/header/header.scss";
+
+
 const NavigationAndSearchWrapper = styled.div`
   column-gap: 20px;
   .search-form {
@@ -210,7 +213,7 @@ const Header = () => {
               className={`icon-link ${location.pathname === "/book" ? "active" : ""
                 } inline-flex items-center justify-center`}
             >
-              <span>Book</span>
+              <span>Sách</span>
             </Link>
 
             <Link
@@ -218,14 +221,14 @@ const Header = () => {
               className={`icon-link ${location.pathname === "/about" ? "active" : ""
                 } inline-flex items-center justify-center`}
             >
-              <span>About</span>
+              <span>Giới thiệu</span>
             </Link>
             <Link
               to="/contact"
               className={`icon-link ${location.pathname === "/contact" ? "active" : ""
                 } inline-flex items-center justify-center`}
             >
-              <span>Contact</span>
+              <span>Liên hệ</span>
             </Link>
             <Link
               to="/wishlist"

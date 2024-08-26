@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.a2m.library.dto.FeedBackDTO;
+import com.a2m.library.dto.RatingOfFeedBackDTO;
 import com.a2m.library.model.Book;
 import com.a2m.library.model.FeedBack;
 import com.a2m.library.model.User;
@@ -46,12 +47,24 @@ public class FeedBackServiceImpl implements FeedBackService {
 	@Override
 	public List<FeedBackDTO> findByBookId(Integer id) {
 		// TODO Auto-generated method stub
-//		List<FeedBack> feedbacks = feedBackRepository.findByBookId(id);
 		List<FeedBack> feedbacks = feedBackRepository.findByBookIdOrderByUpdDtDesc(id);
 		
 		return feedbacks.stream().map(this::convertToFbDTO).collect(Collectors.toList());
 	}
 
+	@Override
+	public List<FeedBackDTO> findFeedbacksByBookAndUser(Integer bookId, Long userId){
+		List<FeedBack>feedBacks = feedBackRepository.findByBookIdAndUser_UserUid(bookId, userId);
+		return feedBacks.stream().map(feedBack -> convertToFbDTO(feedBack)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<FeedBackDTO> findTop5ByOrderByCreatedAtDesc(){
+		 List<FeedBack> feedbacks = feedBackRepository.findTop5ByOrderByUpdDtDesc();
+	        return feedbacks.stream()
+	                        .map(this::convertToFbDTO)
+	                        .collect(Collectors.toList());
+	}
 	// --------------------------------------------------------------------------------------------
 	@Override
 	public void save(FeedBackDTO feedBackDTO) {
@@ -122,6 +135,5 @@ public class FeedBackServiceImpl implements FeedBackService {
 
 	    return res;
 	}
-
 
 }

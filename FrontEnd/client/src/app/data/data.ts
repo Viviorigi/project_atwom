@@ -553,14 +553,14 @@ const navMenuData = [
     {
       id: "tab-description",
       tabHead: "tabDescription",
-      tabText: "Description",
+      tabText: "Mô tả sách",
       badgeValue: null,
       badgeColor: "",
     },
     {
       id: "tab-comments",
       tabHead: "tabComments",
-      tabText: "User Comments",
+      tabText: "Đánh giá",
       // badgeValue: 10,
       badgeColor: "purple",
     },

@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.a2m.library.dto.FeedBackDTO;
+import com.a2m.library.dto.RatingOfFeedBackDTO;
 import com.a2m.library.dto.response.UserResponse;
 import com.a2m.library.dto.response.WishListResponse;
 import com.a2m.library.model.WishList;
+import com.a2m.library.repository.FeedBackRepository;
 import com.a2m.library.service.admin.UserService;
 import com.a2m.library.service.feedback.FeedBackService;
 import com.a2m.library.util.JwtUtil;
@@ -35,10 +37,19 @@ public class FeedBackController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	FeedBackRepository feedBackRepository;
 
 	@GetMapping("/feedback/list")
 	public ResponseEntity<?> feedBackList(@RequestParam(name = "id", defaultValue = "0") Integer id) {
 		List<FeedBackDTO> feedBackDTOs = feedBackService.findByBookId(id);
+		return ResponseEntity.ok().body(feedBackDTOs);
+	}
+	
+	@GetMapping("/feedback/new")
+	public ResponseEntity<?> feedBackNew() {
+		List<FeedBackDTO> feedBackDTOs = feedBackService.findTop5ByOrderByCreatedAtDesc();
 		return ResponseEntity.ok().body(feedBackDTOs);
 	}
 
@@ -46,6 +57,19 @@ public class FeedBackController {
 	public ResponseEntity<?> getRatingCounts(@RequestParam(name = "id", defaultValue = "0") Integer id) {
 		List<Double> ratingCounts = feedBackService.getRatingCounts(id);
 		return ResponseEntity.ok().body(ratingCounts);
+	}
+	
+	@GetMapping("/feedback/book-rating")
+	public ResponseEntity<?> getBookRating(@RequestParam(name = "id", defaultValue = "0") Integer id) {
+		Double rating = feedBackRepository.findAverageRatingByBookId(id);
+		return ResponseEntity.ok().body(rating);
+	}
+
+	@GetMapping("/feedback/myFeedBack")
+	public ResponseEntity<?> getMyFeedBack(@RequestParam(name = "book_id", defaultValue = "0") Integer book_id,
+			@RequestParam(name = "user_id", defaultValue = "0") Long user_id) {
+		List<FeedBackDTO> fb = feedBackService.findFeedbacksByBookAndUser(book_id, user_id);
+		return ResponseEntity.ok().body(fb);
 	}
 
 	@PostMapping("/feedback/add")

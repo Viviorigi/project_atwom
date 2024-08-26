@@ -22,22 +22,9 @@ import "../../../assets/css/book/book-feedback.scss";
 
 const DetailsContent = styled.div`
   margin-top: 60px;
-  @media (max-width: ${breakpoints.lg}) {
-    margin-top: 40px;
-  }
-
-  // .details-content-wrapper {
-  //   grid-template-columns: auto 500px;
-  //   gap: 40px;
-
-  //   @media (max-width: ${breakpoints.xl}) {
-  //     grid-template-columns: auto 400px;
-  //   }
-
-  //   @media (max-width: ${breakpoints.lg}) {
-  //     grid-template-columns: 100%;
-  //     gap: 24px;
-  //   }
+    @media (max-width: ${breakpoints.lg}) {
+      margin-top: 40px;
+    }
   }
 `;
 
@@ -166,7 +153,13 @@ const BookDescriptionTab = (props: any) => {
 
   const [feedBackList, setFeedBackList] = useState([]);
   const [ratingList, setRatingList] = useState([]);
+  const [ave, setAve] = useState(0);
+  const [totalFeed, setTotalFeed] = useState(0);
   const cookie = new Cookies();
+
+  // console.log("My book");
+  // console.log(book);
+
 
   useEffect(() => {
     if (cookie.get(AuthConstant.ACCESS_TOKEN)) {
@@ -208,7 +201,11 @@ const BookDescriptionTab = (props: any) => {
     const url = `http://localhost:8080/feedback/list?id=${book.id}`;
     axios.get(url)
       .then((resp: any) => {
+        // console.log("Số lượng");
+        // console.log(resp.data.length);
+
         setFeedBackList(resp.data);
+        setTotalFeed(resp.data.length);
       })
       .catch((err: any) => {
         toast.error("Không thể lấy feedback");
@@ -231,10 +228,7 @@ const BookDescriptionTab = (props: any) => {
     setFeedBack((prevFeedBack) => ({
       ...prevFeedBack,
       comment: event.target.value,
-      // upd_dt: new Date().toISOString()
     }));
-    // console.log("feedback: ");
-    // console.log(new Date().toISOString());
   };
 
   //-------------------------Lấy ra rating------------------------------------
@@ -251,12 +245,24 @@ const BookDescriptionTab = (props: any) => {
     const url = `http://localhost:8080/feedback/rating-counts?id=${book.id}`;
     axios.get(url)
       .then((resp: any) => {
-        console.log("data: ");
-        console.log(resp);
+        // console.log("data: ");
+        // console.log(resp);
         setRatingList(resp.data);
       })
       .catch((err: any) => {
         toast.error("Không thể lấy feedback");
+      });
+
+    const url_rating = `http://localhost:8080/feedback/book-rating?id=${book.id}`;
+    axios.get(url_rating)
+      .then((resp: any) => {
+        // console.log("rating is: ");
+        // console.log(resp.data);
+        const averageRating = parseFloat(resp.data).toFixed(1); // Làm tròn đến 1 chữ số thập phân
+        setAve(isNaN(Number(averageRating)) ? 0 : Number(averageRating));
+      })
+      .catch((err: any) => {
+        // toast.error("Không thể lấy feedback");
       });
   };
 
@@ -289,6 +295,7 @@ const BookDescriptionTab = (props: any) => {
     }).then((resp: any) => {
       if (resp.data === "success") {
         fetchFeedbackList();
+        fetchRatingList();
         toast.success("Feed back thành công");
       }
     }).catch((err: any) => {
@@ -315,7 +322,7 @@ const BookDescriptionTab = (props: any) => {
   };
   return (
     <DetailsContent>
-      <Title titleText={"Book Description"} />
+      <Title titleText={"Chi tiết sách"} />
 
       <div className="details-content-wrapper grid">
         <DescriptionTabsWrapper>
@@ -364,71 +371,34 @@ const BookDescriptionTab = (props: any) => {
               {/* <div className="container mt-4"> */}
               {/* ----------Feed back------------------------------------------------------------ */}
               <div className="container mt-4">
-
                 <div className="row">
-                  {/* Phần hiển thị phản hồi */}
-                  <div className="col-md-6">
-
-                    {ratingList.map((percentage, index) => (
-                      <div key={index}>
-                        <Label>⭐ {index + 1} Star</Label>
-                        <StarBar>
-                          <StarFill style={{ width: `${percentage}%` }} />
-                        </StarBar>
+                  {/* Phần hiển thị sao tổng quát ----------------------------------*/}
+                  <div className="col-md-3">
+                    <div className="rating-summary">
+                      <div className="rating-summary-header">
+                        <h4 className="rating-title">
+                           Tổng Quan 
+                        </h4>
+                        <div className="rating-info">
+                          <p className="average-rating">⭐ {ave.toFixed(1)} / 5</p>
+                          <p className="total-ratings">Số lượt đánh giá: {totalFeed}</p>
+                        </div>
                       </div>
-                    ))}
-
-                    {/* -----------Danh sách feed back --------------------------- */}
-                    <div className="feedback-container">
-                      {feedBackList.map((fb: any, index: any) => (
-                        <div key={index} className="feedback-item">
-                          <div className="feedback-header">
-                            <div className="avatar-container">
-                              <img
-                                src={fb.user_avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${fb.user_avatar}` : defaultPersonImage}
-                                alt="PersonAvatar"
-                                style={{
-                                  width: '50px',
-                                  height: '50px',
-                                  borderRadius: '50%',
-                                  objectFit: 'cover'
-                                }}
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.onerror = null;
-                                  target.src = defaultPersonImage;
-                                }}
-                              />
-                            </div>
-                            <div className="feedback-content">
-                              <div className="user-info">
-                                <strong className="user-name">{fb.user_name}</strong>
-                              </div>
-                              <div className="user-rating">
-                                <StarRatings
-                                  rating={fb.rating || 0} // Ensure you have a rating property in your feedback data
-                                  starRatedColor="#34B7F1"
-                                  numberOfStars={5}
-                                  starDimension="20px"
-                                  starSpacing="2px"
-                                  name="rating"
-                                // isSelectable={false}
-                                />
-                              </div>
-                              <p className="feedback-comment">{fb.comment}</p>
-                            </div>
+                      {ratingList.map((percentage, index) => (
+                        <div key={index} className="rating-summary-item">
+                          <label className="rating-label">⭐ {index + 1} Star</label>
+                          <div className="star-bar">
+                            <div className="star-fill" style={{ width: `${percentage}%` }}></div>
                           </div>
                         </div>
                       ))}
                     </div>
-
-                    {/* -------------------------------------------------- */}
                   </div>
 
-                  {/* Phần đánh giá và bình luận */}
-                  <div className="col-md-6">
+                  {/* Phần nhập feedback và hiển thị feedback */}
+                  <div className="col-md-9">
                     {isLoggedIn &&
-                      <div className="card p-3">
+                      <div className="card p-3 mb-3">
                         <h4 className="card-title">Đánh giá của bạn</h4>
 
                         {/* StarRatings component */}
@@ -464,14 +434,56 @@ const BookDescriptionTab = (props: any) => {
                       </div>
                     }
 
-                    {
-                      isLoggedIn ||
-                      <div className="login-prompt card p-3">
+                    {!isLoggedIn &&
+                      <div className="login-prompt card p-3 mb-3">
                         <h4 className="login-title">Đăng nhập để đánh giá</h4>
                         <p className="login-message">Để đánh giá sản phẩm và gửi bình luận, bạn cần đăng nhập để tiếp tục.</p>
                         <a href="/login" className="btn btn-secondary">Đăng nhập</a>
                       </div>
                     }
+
+                    {/* Hiển thị feedback */}
+                    <div className="feedback-container mt-4">
+                      {feedBackList.map((fb: any, index: any) => (
+                        <div key={index} className="feedback-item card p-3 mb-3">
+                          <div className="feedback-header d-flex align-items-center">
+                            <div className="avatar-container">
+                              <img
+                                src={fb.user_avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${fb.user_avatar}` : defaultPersonImage}
+                                alt="PersonAvatar"
+                                style={{
+                                  width: '50px',
+                                  height: '50px',
+                                  borderRadius: '50%',
+                                  objectFit: 'cover'
+                                }}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.onerror = null;
+                                  target.src = defaultPersonImage;
+                                }}
+                              />
+                            </div>
+                            <div className="feedback-content ms-3">
+                              <div className="user-info">
+                                <strong className="user-name">{fb.user_name}</strong>
+                              </div>
+                              <div className="user-rating">
+                                <StarRatings
+                                  rating={fb.rating || 0} // Ensure you have a rating property in your feedback data
+                                  starRatedColor="#34B7F1"
+                                  numberOfStars={5}
+                                  starDimension="20px"
+                                  starSpacing="2px"
+                                  name="rating"
+                                />
+                              </div>
+                              <p className="feedback-comment">{fb.comment}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
