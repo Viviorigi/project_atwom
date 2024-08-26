@@ -36,6 +36,14 @@ public class FeedBackServiceImpl implements FeedBackService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	//---------------------------------------------------------------------------------------------
+	@Override
+	public List<FeedBackDTO> findByBookId(Integer id) {
+		// TODO Auto-generated method stub
+		List<FeedBack> feedbacks = feedBackRepository.findByBookId(id);
+		return feedbacks.stream().map(this::convertToFbDTO).collect(Collectors.toList());
+	}
 
 	// --------------------------------------------------------------------------------------------
 	@Override
@@ -80,5 +88,7 @@ public class FeedBackServiceImpl implements FeedBackService {
 
 		return feedBack;
 	}
+
+	
 
 }

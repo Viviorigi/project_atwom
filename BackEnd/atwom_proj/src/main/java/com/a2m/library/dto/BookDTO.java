@@ -30,5 +30,6 @@ public class BookDTO{
     private LocalDateTime upd_dt;
     private int cateId;
     private String cateName;
+    private Double ave_rating = 0.0;
     private List<ImagesBook> imagebooks;
 }

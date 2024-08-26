@@ -9,6 +9,8 @@ public interface FeedBackService {
 	public List<FeedBackDTO> findAll();
 	public List<FeedBackDTO> searchFeedBack();
 	
+	public List<FeedBackDTO> findByBookId(Integer id);
+	
 	public void save(FeedBackDTO feedBackDTO);
 	public void deleteById(Integer id);
 	

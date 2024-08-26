@@ -35,9 +35,10 @@ public class FeedBackController {
 	@Autowired
 	UserService userService;
 	
-	@GetMapping("/feedback/all")
-	public ResponseEntity<?>feedBackList(){
-		List<FeedBackDTO>feedBackDTOs = feedBackService.findAll();
+	@GetMapping("/feedback/list")
+	public ResponseEntity<?>feedBackList(@RequestParam(name =  "id", defaultValue = "0") Integer id){
+//		List<FeedBackDTO>feedBackDTOs = feedBackService.findAll();
+		List<FeedBackDTO>feedBackDTOs = feedBackService.findByBookId(id);
 		return ResponseEntity.ok().body(feedBackDTOs);
 	}
 
