@@ -75,7 +75,24 @@ public class NotificationController {
 		Page<NotificationDTO> notiPage = notificationService.findNotificationNewest(keySearch, pageRequest);
 		NotificationListResponse response = NotificationListResponse.builder().notis(notiPage.getContent())
 				.totalPages(notiPage.getTotalPages()).totalBanners(notiPage.getTotalElements()).build();
-		notificationService.markAsRead(notiPage.getContent());
+		
 		return ResponseEntity.ok(response);
 	}
+	
+	@GetMapping(value = "/notification/getTotalNew")
+	public ResponseEntity<NotificationListResponse> getTotalNew(@RequestParam(defaultValue = "") String keySearch,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int limit) {
+		PageRequest pageRequest = PageRequest.of(page - 1, limit);
+		Page<NotificationDTO> notiPage = notificationService.findNotificationNewest(keySearch, pageRequest);
+		NotificationListResponse response = NotificationListResponse.builder().notis(notiPage.getContent())
+				.totalPages(notiPage.getTotalPages()).totalBanners(notiPage.getTotalElements()).build();
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("/notification/getTotal")
+    public ResponseEntity<Long> getInactiveProductCount() {
+        long count = notificationService.getAllTotalActiveFalse();
+        return ResponseEntity.ok(count);
+    }
 }

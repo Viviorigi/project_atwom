@@ -28,8 +28,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 	@Query("UPDATE Notification n SET n.active = true WHERE n.id IN :ids")
     public void markAsRead(@Param("ids") List<Long> ids);
 	
-	@Query("SELECT n FROM Notification n ORDER BY n.cre_dt DESC")
+	@Query("SELECT n FROM Notification n WHERE n.active = false ORDER BY n.cre_dt DESC")
 	Page<Notification> findNotificationNewest(Pageable pageable);
+	
+	long countByActiveFalse();
 }
 
 // WHERE n.active = false
