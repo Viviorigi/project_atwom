@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -90,7 +93,8 @@ public class User implements Serializable {
     private List<WishList> wishlist = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "user")
-    private List<FeedBack> feedBack = new ArrayList<FeedBack>();
+//	@JsonManagedReference
+    private List<FeedBack> feedBack;
 
 	@OneToMany(mappedBy = "user")
     private List<Cart> cart = new ArrayList<>();

@@ -15,6 +15,8 @@ import { toast } from "react-toastify";
 import { ApiUrlUtil } from "../../utils/ApiUrlUtil";
 import { HeadersUtil } from "../../utils/Headers.Util";
 import { UserDetail } from "../../model/auth/UserDetail";
+import "../../../assets/css/book/book-feedback.scss";
+import defaultPersonImage from "../../../assets/images/imagePerson.png"
 
 const DetailsContent = styled.div`
   margin-top: 60px;
@@ -136,6 +138,8 @@ const BookDescriptionTab = (props: any) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState<UserDetail>(new UserDetail());
+
+  const [feedBackList, setFeedBackList] = useState([]);
   const cookie = new Cookies();
 
   useEffect(() => {
@@ -162,6 +166,20 @@ const BookDescriptionTab = (props: any) => {
         console.error("Error:", error.response ? error.response.data : error.message);
       });
   }, []);
+
+  //--------------------------Lấy ra feedBack-------------------------------
+  useEffect(() => {
+    let url = `http://localhost:8080/feedback/all`;
+    axios.get(url).then((resp: any) => {
+      console.log("List feed back---------------");
+      console.log(resp.data);
+      setFeedBackList(resp.data)
+    }).catch((err: any) => {
+      // console.log(err);
+      toast.error("Xóa thất bại");
+    })
+  }, [])
+  //--End lấy feed back-----------------------------------------------------
 
   //Xử lý feedBack-----------------------------------------------------------
   const changeRating = (newRating: any) => {
@@ -272,9 +290,51 @@ const BookDescriptionTab = (props: any) => {
               className={`tabs-content content-stylings ${activeDesTab === "tabComments" ? "show" : ""
                 }`}
             >
+              {/* <div className="container mt-4"> */}
+              {/* ----------Feed back------------------------------------------------------------ */}
               <div className="container mt-4">
                 <div className="row">
-                  <div className="col-md-6 offset-md-3">
+                  {/* Phần hiển thị phản hồi */}
+                  <div className="col-md-6">
+
+                    {/* -----------Danh sách feed back --------------------------- */}
+                    <div className="feedback-container">
+                      {feedBackList.map((fb: any, index: any) => (
+                        <div key={index} className="feedback-item">
+                          <div className="feedback-header">
+                            <div className="avatar-container">
+                              <img
+                                src={fb.user_avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${fb.user_avatar}` : defaultPersonImage}
+                                alt="PersonAvatar"
+                                style={{
+                                  width: '50px',
+                                  height: '50px',
+                                  borderRadius: '50%',
+                                  objectFit: 'cover'
+                                }}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.onerror = null;
+                                  target.src = defaultPersonImage;
+                                }}
+                              />
+                            </div>
+                            <div className="feedback-content">
+                              <div className="user-info">
+                                <strong className="user-name">{fb.user_name}</strong>
+                              </div>
+                              <p className="feedback-comment">{fb.comment}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* -------------------------------------------------- */}
+                  </div>
+
+                  {/* Phần đánh giá và bình luận */}
+                  <div className="col-md-6">
                     <div className="card p-3">
                       <h4 className="card-title">Đánh giá của bạn</h4>
 
@@ -312,6 +372,9 @@ const BookDescriptionTab = (props: any) => {
                   </div>
                 </div>
               </div>
+
+              {/* -------------------------------------End of feedback---------------------------- */}
+
             </div>
             <div
               className={`tabs-content content-stylings ${activeDesTab === "tabQNA" ? "show" : ""

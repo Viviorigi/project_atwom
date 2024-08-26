@@ -247,7 +247,8 @@ export default function Book() {
                                 const target = e.target as HTMLImageElement;
                                 target.onerror = null; // Prevent infinite loop in case fallback image also fails
                                 target.src = noImageAvailable; // Set the fallback image
-                              }} /></div>
+                              }} />
+                            </div>
                             <p className="mb-0 ms-3 text-1100 fw-bold">{u.title}</p>
                           </div>
                         </td>
@@ -255,7 +256,7 @@ export default function Book() {
                         <td className="align-middle text-center text-1000">{u.publicationYear}</td>
                         <td className="align-middle text-center text-1100">{u.quantity}</td>
                         <td className="align-middle text-start text-700">{formatCurrency(u.price)}</td>
-                        <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }}/>
+                        <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }} />
                         {/* <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-start text-1000"  dangerouslySetInnerHTML={{ __html: u.description }}/> */}
                         <td className="align-middle text-center text-700">{formatDate(u.cre_dt)}</td>
                         <td className="align-middle text-center text-700">{formatDate(u.upd_dt)}</td>

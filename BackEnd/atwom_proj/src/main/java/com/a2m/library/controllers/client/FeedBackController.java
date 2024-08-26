@@ -1,10 +1,12 @@
 package com.a2m.library.controllers.client;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,6 +34,12 @@ public class FeedBackController {
 	
 	@Autowired
 	UserService userService;
+	
+	@GetMapping("/feedback/all")
+	public ResponseEntity<?>feedBackList(){
+		List<FeedBackDTO>feedBackDTOs = feedBackService.findAll();
+		return ResponseEntity.ok().body(feedBackDTOs);
+	}
 
 	@PostMapping("/feedback/add")
 	public ResponseEntity<?> feedBackAdd(@RequestBody FeedBackDTO feedBackDTO) {

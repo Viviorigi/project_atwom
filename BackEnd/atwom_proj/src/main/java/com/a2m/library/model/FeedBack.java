@@ -1,8 +1,7 @@
 package com.a2m.library.model;
 
-import org.hibernate.annotations.ManyToAny;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,12 +32,14 @@ public class FeedBack {
 	private String comment;
 	
 	@ManyToOne
-	@JsonBackReference
+//	@JsonBackReference(value = "book-reference")
+//	@JsonIgnore
 	@JoinColumn(name = "book_id")
 	private Book book;
 	
 	@ManyToOne
-	@JsonBackReference
+//	@JsonBackReference(value = "user-reference")
+//	@JsonIgnore
 	@JoinColumn(name = "user_id")
 	private User user;
 }

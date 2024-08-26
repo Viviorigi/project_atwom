@@ -1,0 +1,60 @@
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* Khoảng cách giữa các feedback item */
+    padding: 1rem;
+    background-color: #f9f9f9;
+    /* Màu nền của container feedback */
+}
+
+.feedback-item {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    /* Màu nền của mỗi feedback item */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    /* Khoảng cách giữa avatar và nội dung */
+    padding: 1rem;
+}
+
+.avatar-container {
+    width: 50px;
+    /* Kích thước của avatar */
+    height: 50px;
+    /* Kích thước của avatar */
+    overflow: hidden;
+    border-radius: 50%;
+    /* Đảm bảo hình ảnh có dạng tròn */
+}
+
+.feedback-content {
+    flex: 1;
+    /* Cho phép phần nội dung chiếm hết không gian còn lại */
+    background-color: #f1f1f1;
+    /* Màu nền của khối nội dung */
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.user-info {
+    margin-bottom: 0.5rem;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
+}
+
+.feedback-comment {
+    font-size: 0.9rem;
+    color: #555;
+}
