@@ -185,14 +185,14 @@ const Hero = () => {
           {banner?.map((b: any) => {
             return (
               <HeroSliderItemWrapper key={b.id}>
-                <img src={`http://localhost:8080/files/${b.image}`} className="object-fit-cover" alt="" onError={(e) => {
+                <img src={`http://localhost:8080/api/auth/getImage?atchFleSeqNm=${b.image}`} className="object-fit-cover" alt="" onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null; // Prevent infinite loop in case fallback image also fails
                   target.src = noImageAvailable; // Set the fallback image
                 }} style={{
                   width: "100%",
                   height: "auto",
-                  maxWidth: "40%",
+                  maxWidth: "100%",
                   objectFit: "cover",
                 }} />
                 <HeroSlideContent className="flex items-center w-full h-full">

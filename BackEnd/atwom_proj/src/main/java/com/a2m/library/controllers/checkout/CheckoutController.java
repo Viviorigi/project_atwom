@@ -3,6 +3,7 @@ package com.a2m.library.controllers.checkout;
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.CheckoutDTO;
 import com.a2m.library.dto.response.ResourceNotFoundException;
+import com.a2m.library.model.Checkout;
 import com.a2m.library.service.checkout.CheckoutService;
 
 import jakarta.validation.Valid;
@@ -47,8 +48,8 @@ public class CheckoutController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CheckoutDTO> addCheckout(@RequestBody CheckoutDTO checkoutDTO) {
-        CheckoutDTO createdCheckout = checkoutService.add(checkoutDTO);
+    public ResponseEntity<Checkout> addCheckout(@RequestBody CheckoutDTO checkoutDTO) {
+        Checkout createdCheckout = checkoutService.add(checkoutDTO);
         return new ResponseEntity<>(createdCheckout, HttpStatus.CREATED);
     }
 

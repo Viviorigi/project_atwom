@@ -126,12 +126,12 @@ export default function Book() {
   }, [searchDto.page, searchDto.timer])
 
   useEffect(() => {
-    let url = `http://localhost:8080/category/list/all`;
+    let url = `http://localhost:8080/category/list?page=1&keySearch=`;
     axios.get(url).then((resp: any) => {
       console.log("Test cate");
       console.log(resp.data);
       if (resp.data) {
-        setCategoryList(resp.data);
+        setCategoryList(resp.data.content);
       }
     }).catch((err: any) => {
 
@@ -203,7 +203,7 @@ export default function Book() {
                         }}
                       >
                         <option value={0}>All</option>
-                        {categoryList.map((u: any, index: number) => (
+                        {categoryList && categoryList.map((u: any, index: number) => (
                           <option key={u.id} value={u.id}>
                             {u.name}
                           </option>

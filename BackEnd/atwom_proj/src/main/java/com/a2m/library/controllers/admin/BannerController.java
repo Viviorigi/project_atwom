@@ -1,5 +1,7 @@
 package com.a2m.library.controllers.admin;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.a2m.library.config.FileUploadConfig;
 import com.a2m.library.dto.UserDTO;
 import com.a2m.library.dto.response.BannerListResponse;
 import com.a2m.library.dto.response.MessageResponse;
@@ -38,6 +41,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -47,6 +51,15 @@ public class BannerController {
 	private BannerService bannerService;
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	private final Path resourcePath;
+    private final Path resourcePathThumb;
+    
+    @Autowired
+    public BannerController(FileUploadConfig fileUploadConfig) {
+        this.resourcePath = fileUploadConfig.getResourcePath();
+        this.resourcePathThumb = fileUploadConfig.getResourcePathThumb();
+    }
 	
 	@Value("${file.upload-dir}")
 	private String uploadDir;
@@ -65,18 +78,17 @@ public class BannerController {
 				String timestamp = String.valueOf(System.currentTimeMillis());
 				String newFilename = timestamp + "_" + originalFilename;
 
-				final Path directory = Paths.get(uploadDir);
-				final Path filePath = Paths.get(uploadDir + newFilename);
-				if (!Files.exists(directory)) {
-					Files.createDirectories(directory);
-				}
+				Path filePath = resourcePath.resolve(newFilename);
 				Files.write(filePath, file.getBytes());
+				
+				
 				banner.setImage(newFilename);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return ResponseEntity.badRequest().body(new MessageResponse("File upload failed"));
 			}
 		}
+
 
 		// Save banner information
 		try {
@@ -122,16 +134,12 @@ public class BannerController {
                 }
 
                 String originalFilename = file.getOriginalFilename();
-                String timestamp = String.valueOf(System.currentTimeMillis());
-                String newFilename = timestamp + "_" + originalFilename;
+				String timestamp = String.valueOf(System.currentTimeMillis());
+				String newFilename = timestamp + "_" + originalFilename;
 
-                Path directory = Paths.get(uploadDir);
-                Path filePath = directory.resolve(newFilename);
-                if (!Files.exists(directory)) {
-                    Files.createDirectories(directory);
-                }
-
-                Files.write(filePath, file.getBytes());
+				Path filePath = resourcePath.resolve(newFilename);
+				
+				Files.write(filePath, file.getBytes());
 
                 banner.setImage(newFilename);
 
@@ -179,6 +187,28 @@ public class BannerController {
 		BannerListResponse response = BannerListResponse.builder().banners(bannerPage.getContent())
 				.totalPages(bannerPage.getTotalPages()).totalBanners(bannerPage.getTotalElements()).build();
 		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("/banner/getImage")
+	public void getImage(@RequestParam String atchFleSeqNm, 
+	                     HttpServletResponse httpServletResponse) {
+	    try {
+	        Path targetLocation = resourcePath.resolve(atchFleSeqNm);
+
+	        httpServletResponse.setContentType(Files.probeContentType(targetLocation));
+
+	        try (InputStream inputStream = Files.newInputStream(targetLocation);
+	             OutputStream outputStream = httpServletResponse.getOutputStream()) {
+	            byte[] buffer = new byte[8192];
+	            int bytesRead;
+	            while ((bytesRead = inputStream.read(buffer)) != -1) {
+	                outputStream.write(buffer, 0, bytesRead);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace(); // Consider replacing with proper logging
+	        httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	    }
 	}
 
 }

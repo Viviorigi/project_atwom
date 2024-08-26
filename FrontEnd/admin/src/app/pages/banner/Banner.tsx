@@ -11,6 +11,7 @@ import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import { BannerService } from '../../services/banner/BannerService';
 import BannerForm from './BannerForm';
 import BannerInfo from './BannerInfo';
+import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 
 export default function Banner() {
   const [listBanner, setListListBanner] = useState([]);
@@ -200,7 +201,12 @@ export default function Banner() {
                       return <tr className="hover-actions-trigger btn-reveal-trigger position-static" key={u.id} >
                         <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{indexOfFirstItem + index + 1}</td>
                         <td className="customer align-middle white-space-nowrap ps-10"><div className="d-flex align-items-center text-1100">
-                          <img style={{ width: "200px" }} src={`http://localhost:8080/files/${u.image}`} alt="" />
+                        <div className="avatar">
+                            <img className="" src={u.image ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${u.image}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                              target.src = noImageAvailable; // Set the fallback image
+                            }} /></div>
                         </div></td>
                         <td className="email align-middle white-space-nowrap text-center ps-3">{u.title}</td>
                         <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-1000">{u.description}</td>

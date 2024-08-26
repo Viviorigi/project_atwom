@@ -5,6 +5,13 @@ import { UserDTO } from "../../model/UserDTO";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { CheckoutService } from "../../services/checkout/CheckoutService";
+import Pagination from "../../comp/common/Pagination";
+import { BookSearch } from "../book/book-search";
+import axios from "axios";
+import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
+import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
+import { BookDTO } from "../../model/BookDTO";
 
 interface OrderFormProps {
   order: CheckoutDTO | null;
@@ -40,6 +47,53 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
   const [newStatus, setNewStatus] = useState<CheckoutStatus>(CheckoutStatus.REQUESTED);
   const [errors, setErrors] = useState({ user: '', status: '' });
 
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [searchDto, setSearchDto] = useState(new BookSearch('', 1, 0, new Date().getTime()))
+  const [bookList, setBookList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
+
+  
+
+  const [products, setProducts] = useState<BookDTO[]>([]);
+  const [selectedProductIds, setSelectedProductIds] = useState<Set<number>>(new Set());
+
+  const handleCheckboxChange = (productId: number, checked: boolean) => {
+    setSelectedProductIds(prevSelectedProductIds => {
+      const newSelectedProductIds = new Set(prevSelectedProductIds);
+      if (checked) {
+        newSelectedProductIds.add(productId);
+      } else {
+        newSelectedProductIds.delete(productId);
+      }
+      return newSelectedProductIds;
+    });
+  };
+
+  const handleChangeSearch = (event: any) => {
+    setSearchDto({
+      ...searchDto,
+      [event.target.name]: event.target.value,
+      page: 1
+    });
+  };
+
+  // Handle button click
+  const handleGetSelectedProducts = () => {
+    const selectedProducts = products.filter(product => selectedProductIds.has(1));
+    console.log(selectedProducts);
+    alert(JSON.stringify(selectedProducts, null, 2));
+  };
+
+  const handleKeyUpSearch = (e: any) => {
+    if (e.key === "Enter") {
+      setSearchDto({
+        ...searchDto,
+        timer: new Date().getTime(),
+      });
+    }
+  };
+
   useEffect(() => {
     if (order != null) {
       setCurrentOrder({ ...order });
@@ -51,7 +105,58 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
     } else {
       setCurrentOrder(defaultCheckout);
     }
-  }, [order]);
+
+    let url = `http://localhost:8080/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
+    axios.get(url).then((resp: any) => {
+      console.log(resp.data);
+      if (resp.data) {
+        setBookList(resp.data.content);
+        setTotalPages(resp.data.totalPages);
+        setTotalItems(resp.data.totalElements);
+        // console.log(bookList);
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [order,searchDto.page, searchDto.timer]);
+
+  useEffect(() => {
+    let url = `http://localhost:8080/category/list?page=1&keySearch=`;
+    axios.get(url).then((resp: any) => {
+      // console.log(resp.data.name);
+      if (resp.data) {
+        setCategoryList(resp.data.content);
+      }
+    }).catch((err: any) => {
+
+    })
+  }, [])
+
+  const prev = () => {
+    if (searchDto.page > 1) {
+      setSearchDto(() => ({
+        ...searchDto,
+        page: searchDto.page - 1,
+      }));
+    }
+  };
+  const next = () => {
+    if (searchDto.page < totalPages) {
+      setSearchDto(() => ({
+        ...searchDto,
+        page: searchDto.page + 1,
+      }));
+    }
+  };
+
+  const handlePageClick = (pageNumber: any) => {
+    setSearchDto(() => ({
+      ...searchDto,
+      page: pageNumber,
+    }));
+  };
+
+  
 
   const updateStatusOptions = (status: CheckoutStatus) => {
     switch (status) {
@@ -212,19 +317,21 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
   const isAddMode = order === null;
 
   return (
-    <div className="container form-group">
+    <div className="row container-fluid w-100">
       {isAddMode && (
-        <div className="row mb-3">
+        <>
+          <div className="row mb-3" >
           <div className="col-2">User</div>
-          <div className="col-9">
+          <div className="col-10" >
             <select
-              className="form-control"
+              className="form-select overflow-y-auto"
               name="user"
               value={selectedUser || ''}
               onChange={e => setSelectedUser(parseInt(e.target.value, 10))}
+              
               required
             >
-              <option value="">Select User</option>
+              <option value="" >Select User</option>
               {users.map(user => (
                 <option key={user.userUid} value={user.userUid}>
                   {user.fullName}
@@ -234,6 +341,85 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
             {errors.user && <div className="text-danger">{errors.user}</div>}
           </div>
         </div>
+
+        <div className="row mb-3" >
+          <div className="col-2">Book</div>
+          <div className="search-box d-flex">
+                    {/* search input */}
+                    <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
+                      value={searchDto.keySearch || ""}
+                      onChange={handleChangeSearch}
+                      onKeyUp={handleKeyUpSearch}
+                       />
+                    <button className='btn btn-primary' onClick={() => {
+                      setSearchDto({
+                        ...searchDto,
+                        timer: new Date().getTime(),
+                      });
+                    }}><span className="fas fa-search " /></button>
+                  </div>
+        </div>
+
+        <div className=" border-bottom border-200 position-relative top-1">
+              <div className="table-responsive scrollbar-overlay mx-n1 px-1">
+                <table className="table table-bordered fs--1 mb-2 mt-5">
+                  <thead>
+                    <tr>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>TITLE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>PUBLISHER</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>QUANTITY</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>PRICE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
+                    </tr>
+                  </thead>
+                  <tbody className="list" id="customers-table-body">
+                    {bookList.map((u: any, index: number) => {
+                      return <tr className={selectedProductIds.has(u.id) ? 'table-primary hover-actions-trigger btn-reveal-trigger position-static':'hover-actions-trigger btn-reveal-trigger position-static'} key={u.id}>
+                      <td className='align-middle text-center text-700'><input
+                        type="checkbox"
+                        onChange={e => handleCheckboxChange(u.id, e.target.checked)}
+                  /></td>
+                      <td className="align-middle text-center">
+                        <div className="d-flex align-items-center">
+                          <div className="avatar avatar-m">
+                            <img className="rounded-circle" src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                              target.src = noImageAvailable; // Set the fallback image
+                            }} /></div>
+                          <p className="mb-0 ms-3 text-1100 fw-bold">{u.title}</p>
+                        </div>
+                      </td>
+                      <td className="align-middle text-center">{u.publisher}</td>
+                      <td className="align-middle text-center text-1100">{u.quantity}</td>
+                      <td className="align-middle text-start text-700">{formatCurrency(u.price)}</td>
+                      <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }}/>
+                      {/* <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-start text-1000"  dangerouslySetInnerHTML={{ __html: u.description }}/> */}
+                      <td className="align-middle text-center">
+                        <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}>
+                          <span className="badge-label">{u.active ? "Active" : "Inactive"}</span>
+                        </span>
+                      </td>
+                    </tr>
+                    })}
+
+                  </tbody>
+                </table>
+              </div>
+              <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
+                <div className="col-auto d-flex">
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total user: </span>  {totalPages} </p>
+                </div>
+                <div className="col-auto d-flex">
+                  <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={prev} next={next} />
+                </div>
+              </div>
+            </div>
+        </>
+        
+        
       )}
       {!isAddMode && (
         <div className="row mb-3">

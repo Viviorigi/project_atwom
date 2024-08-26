@@ -231,14 +231,13 @@ const CartScreen = () => {
 
   const breadcrumbItems = [
     { label: "Trang chủ", link: "/" },
-    { label: "Giỏ hàng", link: "" },
+    { label: "Đơn hàng", link: "" },
   ];
 
   return (
     <CartPageWrapper>
       <Container>
         <Breadcrumb items={breadcrumbItems} />
-        <CartShopping />
         {isLoggedIn ? (
           <>
             <CartTableWrapper>

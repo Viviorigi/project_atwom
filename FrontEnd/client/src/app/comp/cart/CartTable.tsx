@@ -57,9 +57,9 @@ const CartTable = ({
         <thead>
           <TableRow>
             <TableHeaderCell>Chi tiết sản phẩm</TableHeaderCell>
-            <TableHeaderCell>Giá tiền</TableHeaderCell>
+            {/* <TableHeaderCell>Giá tiền</TableHeaderCell> */}
             <TableHeaderCell>Số lượng</TableHeaderCell>
-            <TableHeaderCell>Tạm tính</TableHeaderCell>
+            {/* <TableHeaderCell>Tạm tính</TableHeaderCell> */}
             <TableHeaderCell>|</TableHeaderCell>
           </TableRow>
         </thead>

@@ -17,7 +17,10 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ filterStatus, userUid }) 
     const [error, setError] = useState<string | null>(null);
     const [userDetail, setUserDetail] = useState<UserDetail>(new UserDetail());
     const [totalCheckouts, setTotalCheckouts] = useState<number>(0);
-    const maxOrdersToShow = 10;
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(1);
+
+    const ordersPerPage = 5;
 
     useEffect(() => {
         AuthService.getInstance().getInfo().then((resp: any) => {
@@ -33,14 +36,21 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ filterStatus, userUid }) 
         const fetchOrders = async () => {
             setLoading(true);
             try {
-                const fetchedOrders = await getAllCheckouts(String(userDetail.fullName), 10, 1);
+                const fetchedOrders = await getAllCheckouts(String(userDetail.fullName), 100, 1);
 
                 const filteredOrders = fetchedOrders.filter(order =>
                     !filterStatus || filterStatus.split(',').includes(order.status)
-                ).slice(0, maxOrdersToShow);
+                );
 
-                setOrders(filteredOrders);
                 setTotalCheckouts(filteredOrders.length);
+                setTotalPages(Math.ceil(filteredOrders.length / ordersPerPage));
+
+                const paginatedOrders = filteredOrders.slice(
+                    (currentPage - 1) * ordersPerPage,
+                    currentPage * ordersPerPage
+                );
+
+                setOrders(paginatedOrders);
             } catch (err) {
                 setError('Error fetching orders');
                 console.error(err);
@@ -52,13 +62,26 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ filterStatus, userUid }) 
         if (userDetail.fullName) {
             fetchOrders();
         }
-    }, [userDetail.fullName, filterStatus]);
+    }, [userDetail.fullName, filterStatus, currentPage]);
+
+    const handlePreviousPage = () => {
+        setCurrentPage(prevPage => Math.max(prevPage, 1));
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
+    };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
     return (
         <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '10px' }}>
+                <button onClick={handlePreviousPage} disabled={currentPage === 1}>Previous</button>
+                <span style={{ margin: '0 10px' }}>Page {currentPage} of {totalPages}</span>
+                <button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</button>
+            </div>
             <p>Total Checkouts: {totalCheckouts}</p>
             {totalCheckouts > 0 ? (
                 orders.map(order => (

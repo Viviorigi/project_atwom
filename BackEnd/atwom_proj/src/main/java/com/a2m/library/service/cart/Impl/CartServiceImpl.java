@@ -42,24 +42,24 @@ public class CartServiceImpl implements CartService {
                     return newCart;
                 });
 
-        cart.setQuantity(cart.getQuantity() + quantity);
+        cart.setQuantity(1);
 
         return cartRepository.save(cart);
     }
 
     @Override
-public List<Cart> getCartByUserUid(Long userUid) {
-    List<Cart> cartItems = cartRepository.findByUserUserUid(userUid);
+    public List<Cart> getCartByUserUid(Long userUid) {
+        List<Cart> cartItems = cartRepository.findByUserUserUid(userUid);
 
-    for (Cart cart : cartItems) {
-        System.out.println("Cart ID: " + cart.getId());
-        System.out.println("User ID: " + cart.getUser().getUserUid());
-        System.out.println("Book ID: " + cart.getBook().getId());
-        System.out.println("Quantity: " + cart.getQuantity());
+        for (Cart cart : cartItems) {
+            System.out.println("Cart ID: " + cart.getId());
+            System.out.println("User ID: " + cart.getUser().getUserUid());
+            System.out.println("Book ID: " + cart.getBook().getId());
+            System.out.println("Quantity: " + cart.getQuantity());
+        }
+
+        return cartItems;
     }
-
-    return cartItems;
-}
 
     @Override
     public void removeBookFromCart(UserResponse userResponse, Integer bookId) {

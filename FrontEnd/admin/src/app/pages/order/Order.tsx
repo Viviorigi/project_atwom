@@ -66,10 +66,10 @@ const Order = () => {
       const modelSearch = {
         keySearch: orderSearchParams.keySearch,
         page: orderSearchParams.page,
-        limit: orderSearchParams.limit,
+        limit: 1000,
       };
 
-      const response = await AuthService.getInstance().getList(modelSearch);
+      const response = await AuthService.getInstance().getListActive(modelSearch);
       const { users, totalPages, totalUsers } = response.data;
 
       setUsers(users);
@@ -205,28 +205,28 @@ const Order = () => {
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "20%" }}
+                    style={{ width: "10%" }}
                   >
                     Student
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "20%" }}
+                    style={{ width: "10%" }}
                   >
                     Status
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "15%" }}
+                    style={{ width: "10%" }}
                   >
                     Start Time
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "15%" }}
+                    style={{ width: "10%" }}
                   >
                     Update Time
                   </th>
@@ -251,16 +251,15 @@ const Order = () => {
                     </td>
                     <td className="text-center align-middle">
                       <span
-                        className={` ${
-                          order.status === "REQUESTED"
+                        className={` ${order.status === "REQUESTED"
                             ? "badge badge-phoenix fs--2 badge-phoenix-info"
                             : order.status === "APPROVED" ||
                               order.status === "BORROWED"
-                            ? "badge badge-phoenix fs--2 badge-phoenix-success"
-                            : order.status === "REJECTED"
-                            ? "badge badge-phoenix fs--2 badge-phoenix-danger"
-                            : "badge badge-phoenix fs--2 badge-phoenix"
-                        }`}
+                              ? "badge badge-phoenix fs--2 badge-phoenix-success"
+                              : order.status === "REJECTED"
+                                ? "badge badge-phoenix fs--2 badge-phoenix-danger"
+                                : "badge badge-phoenix fs--2 badge-phoenix"
+                          }`}
                       >
                         <span className="badge-label">{order.status}</span>
                       </span>
@@ -272,24 +271,9 @@ const Order = () => {
                       {format(new Date(order.endTime), "dd/MM/yyyy, hh:mm")}
                     </td>
                     <td className="align-middle text-center">
-                      <button
-                        className="btn btn-warning btn-sm me-2"
-                        onClick={() => editOrder(order)}
-                      >
-                        <i className="fa-solid fa-pen"></i>
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm me-2"
-                        onClick={() => deleteOrder(order.id)}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
-                      <button
-                        className="btn btn-info btn-sm"
-                        onClick={() => viewOrderDetail(order)}
-                      >
-                        <span className="fas fa-eye" />
-                      </button>
+                    <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>
+                    <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i></button>
+                      <button aria-label='d' className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => viewOrderDetail(order)}><i className="far fa-eye"></i></button>
                     </td>
                   </tr>
                 ))}
@@ -323,7 +307,7 @@ const Order = () => {
           fetchOrders();
           fetchAllUsers();
         }}
-        style={{ width: "40vw" }}
+        style={{ width: "1150px" }}
         header={mode === "add" ? "Add New Order" : "Edit Order"}
       >
         <OrderForm
