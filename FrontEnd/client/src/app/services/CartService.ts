@@ -45,9 +45,9 @@ export class CartService {
     });
   }
 
-  public updateBookQuantity(bookId: number, quantity: number) {
+  public updateBookQuantity(cartId: number, quantity: number) {
     const url = ApiUrlUtil.buildQueryString(
-      process.env.REACT_APP_API_URL + `/api/cart/update?bookId=${bookId}&quantity=${quantity}`
+      process.env.REACT_APP_API_URL + `/api/cart/update?cartId=${cartId}&quantity=${quantity}`
     );
 
     return axios.put(url, {}, {

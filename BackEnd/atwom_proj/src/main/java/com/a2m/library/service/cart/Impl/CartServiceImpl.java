@@ -77,12 +77,16 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart updateBookQuantity(UserResponse userResponse, Integer bookId, int quantity) {
+    public Cart updateBookQuantity(UserResponse userResponse, Long cartId, int quantity) {
         User user = userRepository.findById(userResponse.getUserUid())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Cart cart = cartRepository.findByUserUserUidAndBookId(user.getUserUid(), bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found in the cart"));
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        if (!cart.getUser().getUserUid().equals(user.getUserUid())) {
+            throw new RuntimeException("Unauthorized to update this cart item");
+        }
 
         cart.setQuantity(quantity);
 

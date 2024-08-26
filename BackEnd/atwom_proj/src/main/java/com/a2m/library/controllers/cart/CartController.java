@@ -76,28 +76,29 @@ public class CartController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateBookQuantity(@RequestParam Integer bookId,
-            @RequestParam int quantity,
-            @RequestHeader("Authorization") String jwt) {
-        try {
-            String username = extractUsernameFromJwt(jwt);
-            if (username == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-            }
-
-            Optional<UserResponse> userOptional = userService.findUserByName(username);
-            if (userOptional.isPresent()) {
-                UserResponse user = userOptional.get();
-                Cart cart = cartService.updateBookQuantity(user, bookId, quantity);
-                return ResponseEntity.ok(cart);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+public ResponseEntity<?> updateBookQuantity(@RequestParam Long cartId,
+                                            @RequestParam int quantity,
+                                            @RequestHeader("Authorization") String jwt) {
+    try {
+        String username = extractUsernameFromJwt(jwt);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
         }
+
+        Optional<UserResponse> userOptional = userService.findUserByName(username);
+        if (userOptional.isPresent()) {
+            UserResponse user = userOptional.get();
+            Cart cart = cartService.updateBookQuantity(user, cartId, quantity);
+            return ResponseEntity.ok(cart);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
     }
+}
+
 
     @DeleteMapping("/clear")
     public ResponseEntity<?> clearCart(@RequestHeader("Authorization") String jwt) {
