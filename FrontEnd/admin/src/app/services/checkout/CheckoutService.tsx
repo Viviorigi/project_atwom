@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { CheckoutDTO } from '../../model/CheckoutDTO';
 import { CheckoutStatus } from '../../model/CheckoutStatus';
+import { CheckoutBookDTO } from '../../model/CheckoutBookDTO';
 
 const BASE_URL = 'http://localhost:8080/api/checkout';
 
@@ -25,9 +26,9 @@ export const CheckoutService = {
     }
   },
 
-  save: async (checkoutDTO: CheckoutDTO): Promise<CheckoutDTO> => {
+  save: async (checkoutDTO: CheckoutBookDTO): Promise<CheckoutBookDTO> => {
     try {
-      const response = await axios.post<CheckoutDTO>(`${BASE_URL}/add`, checkoutDTO);
+      const response = await axios.post<CheckoutBookDTO>(`${BASE_URL}/add`, checkoutDTO);
       return response.data;
     } catch (error) {
       console.error("Error saving checkout", error);
