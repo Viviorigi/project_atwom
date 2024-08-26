@@ -15,7 +15,7 @@ public interface FeedBackService {
 	public void save(FeedBackDTO feedBackDTO);
 	public void deleteById(Integer id);
 	
-	public Map<Double, Long> getRatingCounts(Integer bookId);
+	public List<Double> getRatingCounts(Integer bookId);
 	
 	public FeedBackDTO convertToFbDTO(FeedBack feedBack);
 	public FeedBack convertToFeedBack(FeedBackDTO feedBackDTO);

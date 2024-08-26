@@ -1,5 +1,6 @@
 package com.a2m.library.service.feedback.Impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import com.a2m.library.repository.FeedBackRepository;
 import com.a2m.library.service.admin.UserService;
 import com.a2m.library.service.book.BookService;
 import com.a2m.library.service.feedback.FeedBackService;
+
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 @Service
 public class FeedBackServiceImpl implements FeedBackService {
@@ -96,26 +99,29 @@ public class FeedBackServiceImpl implements FeedBackService {
 	}
 
 	@Override
-	public Map<Double, Long> getRatingCounts(Integer bookId) {
+	public List<Double> getRatingCounts(Integer bookId) {
 	    List<FeedBackDTO> feedbacks = findByBookId(bookId);
-	    Map<Double, Long> ratingCounts = new HashMap<>();
+	    int[] cnt = new int[6]; // Mảng đếm số lượng đánh giá từ 1 đến 5
+	    long totalRatings = 0; // Tổng số lượng đánh giá hợp lệ
 
-	    // Khởi tạo map với các mức sao từ 1 đến 5
-	    for (int i = 1; i <= 5; i++) {
-	        ratingCounts.put(i * 1.0, 0L);
-	    }
-
-	    // Đếm số lượng sao
+	    // Đếm số lượng đánh giá cho từng mức sao
 	    for (FeedBackDTO feedback : feedbacks) {
-	        Double rating = feedback.getRating();  // Sử dụng Double trực tiếp
+	        Integer rating = feedback.getRating();
 	        if (rating != null && rating >= 1 && rating <= 5) {
-	            // Lấy số lượng hiện tại, nếu không có thì mặc định là 0
-	            Long currentCount = ratingCounts.getOrDefault(rating, 0L);
-	            ratingCounts.put(rating, currentCount + 1);
+	            cnt[rating]++;
+	            totalRatings++;
 	        }
 	    }
 
-	    return ratingCounts;
+	    // Tính tỷ lệ phần trăm cho mỗi mức sao
+	    List<Double> res = new ArrayList<>();
+	    for (int i = 1; i <= 5; i++) {
+	        double percentage = totalRatings == 0 ? 0.0 : ((double) cnt[i] / totalRatings) * 100;
+	        res.add(percentage);
+	    }
+
+	    return res;
 	}
+
 
 }

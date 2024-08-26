@@ -30,7 +30,7 @@ public class FeedBack {
 	@Column(name = "id")
 	private Integer id;
 
-	private Double rating;
+	private Integer rating;
 	private String comment;
 
 	@Column(name = "udp_dt")

@@ -41,6 +41,29 @@ const DetailsContent = styled.div`
   }
 `;
 
+const StarBar = styled.div`
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  margin-bottom: 10px;
+`;
+
+const StarFill = styled.div`
+  position: absolute;
+  height: 100%;
+  background-color: #f39c12;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+`;
+
+const Label = styled.span`
+  display: inline-block;
+  width: 100px;
+  font-weight: bold;
+`;
+
 const DescriptionTabsWrapper = styled.div`
   .tabs-heads {
     column-gap: 20px;
@@ -230,7 +253,7 @@ const BookDescriptionTab = (props: any) => {
       .then((resp: any) => {
         console.log("data: ");
         console.log(resp);
-        setFeedBackList(resp.data);
+        setRatingList(resp.data);
       })
       .catch((err: any) => {
         toast.error("Không thể lấy feedback");
@@ -275,7 +298,12 @@ const BookDescriptionTab = (props: any) => {
   }
 
   //End ---------Xử lý feedBack-----------------------------------------------------------
-
+  //-------------------xử lý rating--------------------------------------------
+  const getPercentage = (index: number) => {
+    if (ratingList.length === 0) return 0;
+    const total = ratingList.reduce((acc, curr) => acc + curr, 0);
+    return (ratingList[index] / total) * 100;
+  };
 
 
   const [activeDesTab, setActiveDesTab] = useState(
@@ -336,9 +364,19 @@ const BookDescriptionTab = (props: any) => {
               {/* <div className="container mt-4"> */}
               {/* ----------Feed back------------------------------------------------------------ */}
               <div className="container mt-4">
+
                 <div className="row">
                   {/* Phần hiển thị phản hồi */}
                   <div className="col-md-6">
+
+                    {ratingList.map((percentage, index) => (
+                      <div key={index}>
+                        <Label>⭐ {index + 1} Star</Label>
+                        <StarBar>
+                          <StarFill style={{ width: `${percentage}%` }} />
+                        </StarBar>
+                      </div>
+                    ))}
 
                     {/* -----------Danh sách feed back --------------------------- */}
                     <div className="feedback-container">
@@ -368,7 +406,7 @@ const BookDescriptionTab = (props: any) => {
                               </div>
                               <div className="user-rating">
                                 <StarRatings
-                                  rating={fb.rating} // Ensure you have a rating property in your feedback data
+                                  rating={fb.rating || 0} // Ensure you have a rating property in your feedback data
                                   starRatedColor="#34B7F1"
                                   numberOfStars={5}
                                   starDimension="20px"
