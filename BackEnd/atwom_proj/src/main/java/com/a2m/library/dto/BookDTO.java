@@ -17,8 +17,6 @@ public class BookDTO{
     private int publicationYear;
     private String publisher;
     private Integer quantity;
-//    private Integer quantityPlaced;
-//    private Integer status;
     private Double price;
     @Column(columnDefinition = "TEXT")
     private String description;

@@ -16,5 +16,5 @@ export const formatDate = (date: any) => {
 export default function FunctionUtils() {
     return (
         <div>FunctionUtils</div>
-    )
+    ) 
 }

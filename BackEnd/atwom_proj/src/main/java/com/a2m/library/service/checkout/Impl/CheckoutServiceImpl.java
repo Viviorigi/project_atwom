@@ -98,7 +98,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             CheckoutDetail detail = new CheckoutDetail();
             detail.setCheckout(checkout);
             detail.setBook(book);
-            detail.setQuantity(detailDTO.getQuantity());
+            detail.setQuantity(1);
             return detail;
         }).collect(Collectors.toList());
         

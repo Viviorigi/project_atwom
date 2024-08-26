@@ -1,6 +1,7 @@
 package com.a2m.library.service.feedback;
 
 import java.util.List;
+import java.util.Map;
 
 import com.a2m.library.dto.FeedBackDTO;
 import com.a2m.library.model.FeedBack;
@@ -13,6 +14,8 @@ public interface FeedBackService {
 	
 	public void save(FeedBackDTO feedBackDTO);
 	public void deleteById(Integer id);
+	
+	public List<Double> getRatingCounts(Integer bookId);
 	
 	public FeedBackDTO convertToFbDTO(FeedBack feedBack);
 	public FeedBack convertToFeedBack(FeedBackDTO feedBackDTO);

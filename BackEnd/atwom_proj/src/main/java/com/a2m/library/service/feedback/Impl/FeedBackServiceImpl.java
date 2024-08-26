@@ -1,6 +1,9 @@
 package com.a2m.library.service.feedback.Impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,8 @@ import com.a2m.library.repository.FeedBackRepository;
 import com.a2m.library.service.admin.UserService;
 import com.a2m.library.service.book.BookService;
 import com.a2m.library.service.feedback.FeedBackService;
+
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 @Service
 public class FeedBackServiceImpl implements FeedBackService {
@@ -36,12 +41,14 @@ public class FeedBackServiceImpl implements FeedBackService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	//---------------------------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------------------------
 	@Override
 	public List<FeedBackDTO> findByBookId(Integer id) {
 		// TODO Auto-generated method stub
-		List<FeedBack> feedbacks = feedBackRepository.findByBookId(id);
+//		List<FeedBack> feedbacks = feedBackRepository.findByBookId(id);
+		List<FeedBack> feedbacks = feedBackRepository.findByBookIdOrderByUpdDtDesc(id);
+		
 		return feedbacks.stream().map(this::convertToFbDTO).collect(Collectors.toList());
 	}
 
@@ -70,6 +77,7 @@ public class FeedBackServiceImpl implements FeedBackService {
 			fbDTO.setUser_id(feedBack.getUser().getUserUid());
 		fbDTO.setUser_name(feedBack.getUser().getFullName());
 		fbDTO.setUser_avatar(feedBack.getUser().getAvatar());
+		fbDTO.setUpd_dt(feedBack.getUpdDt());
 		return fbDTO;
 	}
 
@@ -83,12 +91,37 @@ public class FeedBackServiceImpl implements FeedBackService {
 		feedBack.setId(feedBackDTO.getId());
 		feedBack.setRating(feedBackDTO.getRating());
 		feedBack.setComment(feedBackDTO.getComment());
+		feedBack.setUpdDt(feedBackDTO.getUpd_dt());
 		feedBack.setBook(book);
 		feedBack.setUser(user);
 
 		return feedBack;
 	}
 
-	
+	@Override
+	public List<Double> getRatingCounts(Integer bookId) {
+	    List<FeedBackDTO> feedbacks = findByBookId(bookId);
+	    int[] cnt = new int[6]; // Mảng đếm số lượng đánh giá từ 1 đến 5
+	    long totalRatings = 0; // Tổng số lượng đánh giá hợp lệ
+
+	    // Đếm số lượng đánh giá cho từng mức sao
+	    for (FeedBackDTO feedback : feedbacks) {
+	        Integer rating = feedback.getRating();
+	        if (rating != null && rating >= 1 && rating <= 5) {
+	            cnt[rating]++;
+	            totalRatings++;
+	        }
+	    }
+
+	    // Tính tỷ lệ phần trăm cho mỗi mức sao
+	    List<Double> res = new ArrayList<>();
+	    for (int i = 1; i <= 5; i++) {
+	        double percentage = totalRatings == 0 ? 0.0 : ((double) cnt[i] / totalRatings) * 100;
+	        res.add(percentage);
+	    }
+
+	    return res;
+	}
+
 
 }

@@ -150,6 +150,19 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
     }));
   };
   //End of------------------------------Xét giá trị cho filter--------------------------
+  // -------------Nút x----------------------------------------------------------------
+  const clearFilter = (filterType: keyof FilterState) => {
+    setSelectedFilters(prevFilters => ({
+      ...prevFilters,
+      [filterType]: '',
+    }));
+    setSearchDto({
+      ...searchDto,
+      [filterType]: '',
+      timer: new Date().getTime()
+    });
+  };
+  // --------------------------------------------------------------------------
 
 
   const toggleFilter = (filter: any) => {
@@ -235,6 +248,15 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
                     <i className="bi bi-chevron-right"></i>
                   </span>
                 </button>
+
+                {selectedFilters.nxb === data && (
+                  <button
+                    className="clear-filter-btn"
+                    onClick={() => clearFilter('nxb')}
+                  >
+                    &times;
+                  </button>
+                )}
               </div>
             );
           })}
@@ -281,6 +303,14 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
                     <i className="bi bi-chevron-right"></i>
                   </span>
                 </button>
+                {selectedFilters.public_year === data && (
+                  <button
+                    className="clear-filter-btn"
+                    onClick={() => clearFilter('public_year')}
+                  >
+                    &times;
+                  </button>
+                )}
               </div>
             );
           })}
@@ -340,6 +370,14 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
                     <i className="bi bi-chevron-right"></i>
                   </span>
                 </button>
+                {selectedFilters.cate_name === data && (
+                  <button
+                    className="clear-filter-btn"
+                    onClick={() => clearFilter('cate_name')}
+                  >
+                    &times;
+                  </button>
+                )}
               </div>
             );
           })}

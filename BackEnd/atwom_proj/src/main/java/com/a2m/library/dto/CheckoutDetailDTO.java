@@ -11,7 +11,6 @@ public class CheckoutDetailDTO {
     private String bookTitle;
     private String categoryName;
     private Integer quantity;
-
     private BookDTO bookDTO;
 }
 

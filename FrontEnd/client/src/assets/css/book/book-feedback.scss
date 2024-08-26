@@ -58,3 +58,48 @@
     font-size: 0.9rem;
     color: #555;
 }
+
+.user-rating {
+    margin-top: 5px;
+}
+
+.user-rating .star-rating {
+    .star-rating-star {
+        color: #4CAF50;
+        /* Màu xanh lá cây */
+    }
+}
+
+//--------------------------
+.stars-container {
+    margin: 20px 0;
+}
+
+.star-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.star-label {
+    width: 100px;
+    font-weight: bold;
+}
+
+.star-bar {
+    flex: 1;
+    height: 20px;
+    background-color: #e0e0e0;
+    position: relative;
+    border-radius: 10px;
+}
+
+.star-fill {
+    height: 100%;
+    background-color: #f39c12;
+    border-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: width 0.3s ease;
+}

@@ -12,6 +12,9 @@ import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 import { BookDTO } from "../../model/BookDTO";
+import { CheckoutDetailDTO } from "../../model/CheckoutDetailDTO";
+import { CheckoutBookDTO } from "../../model/CheckoutBookDTO";
+import { CheckoutDetailBookDTO } from "../../model/CheckoutDetailsBookDTO";
 
 interface OrderFormProps {
   order: CheckoutDTO | null;
@@ -76,13 +79,6 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
       [event.target.name]: event.target.value,
       page: 1
     });
-  };
-
-  // Handle button click
-  const handleGetSelectedProducts = () => {
-    const selectedProducts = products.filter(product => selectedProductIds.has(1));
-    console.log(selectedProducts);
-    alert(JSON.stringify(selectedProducts, null, 2));
   };
 
   const handleKeyUpSearch = (e: any) => {
@@ -209,6 +205,11 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
     setNewStatus(e.target.value as CheckoutStatus);
   };
 
+  const checkoutDetails: CheckoutDetailBookDTO[] = Array.from(selectedProductIds).map((id:any) => ({
+    bookId: id,
+    quantity: 1, // Bạn có thể thay đổi giá trị này theo nhu cầu
+  }));
+
   const handleAdd = async () => {
     if (!validateForm()) return;
 
@@ -225,15 +226,12 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
       if (result.isConfirmed) {
         const selectedUserObj = users.find(user => user.userUid === selectedUser);
 
-        const newOrder: CheckoutDTO = {
-          id: 0,
-          user: { userUid: 0, username: "", fullName: "", password: "", email: "", dob: "", className: "", phone: "", address: "", avatar: "", cre_dt: "", upd_dt: "", deleted: false, isActive: true, resetPasswordToken: "", tokenExpirationDate: "", roles: [] },
+        const newOrder: CheckoutBookDTO = {
           userUid: selectedUser || 0,
-          userFullName: selectedUserObj?.fullName || "",
           startTime: startTime.toISOString(),
           endTime: endTime.toISOString(),
           status: CheckoutStatus.REQUESTED,
-          checkoutDetails: [],
+          checkoutDetails: checkoutDetails,
           expiredTime: "",
           fine: 0
         };
@@ -303,6 +301,8 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
   };
 
   const handleSave = async () => {
+    console.log(selectedProductIds);
+    
     if (isAddMode) {
       await handleAdd();
     } else {
@@ -312,6 +312,10 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
   const handleCancel = () => {
     onClose(false);
+  };
+
+  const getSelectedProducts = () => {
+    return products.filter((product:any) => selectedProductIds.has(product.id));
   };
 
   const isAddMode = order === null;
@@ -379,6 +383,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
                       return <tr className={selectedProductIds.has(u.id) ? 'table-primary hover-actions-trigger btn-reveal-trigger position-static':'hover-actions-trigger btn-reveal-trigger position-static'} key={u.id}>
                       <td className='align-middle text-center text-700'><input
                         type="checkbox"
+                        checked={selectedProductIds.has(u.id)}
                         onChange={e => handleCheckboxChange(u.id, e.target.checked)}
                   /></td>
                       <td className="align-middle text-center">

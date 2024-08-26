@@ -15,8 +15,10 @@ import { toast } from "react-toastify";
 import { ApiUrlUtil } from "../../utils/ApiUrlUtil";
 import { HeadersUtil } from "../../utils/Headers.Util";
 import { UserDetail } from "../../model/auth/UserDetail";
-import "../../../assets/css/book/book-feedback.scss";
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
+import { format } from 'date-fns';
+
+import "../../../assets/css/book/book-feedback.scss";
 
 const DetailsContent = styled.div`
   margin-top: 60px;
@@ -37,6 +39,29 @@ const DetailsContent = styled.div`
   //     gap: 24px;
   //   }
   }
+`;
+
+const StarBar = styled.div`
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  margin-bottom: 10px;
+`;
+
+const StarFill = styled.div`
+  position: absolute;
+  height: 100%;
+  background-color: #f39c12;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+`;
+
+const Label = styled.span`
+  display: inline-block;
+  width: 100px;
+  font-weight: bold;
 `;
 
 const DescriptionTabsWrapper = styled.div`
@@ -140,13 +165,14 @@ const BookDescriptionTab = (props: any) => {
   const [userInfo, setUserInfo] = useState<UserDetail>(new UserDetail());
 
   const [feedBackList, setFeedBackList] = useState([]);
+  const [ratingList, setRatingList] = useState([]);
   const cookie = new Cookies();
 
   useEffect(() => {
     if (cookie.get(AuthConstant.ACCESS_TOKEN)) {
       setIsLoggedIn(true);
-      console.log("Đã đăng nhập");
-      console.log(cookie.get(AuthConstant.ACCESS_TOKEN));
+      // console.log("Đã đăng nhập");
+      // console.log(cookie.get(AuthConstant.ACCESS_TOKEN));
     } else {
       // console.log("Chưa hề đăng nhập");
     }
@@ -159,7 +185,7 @@ const BookDescriptionTab = (props: any) => {
       headers: HeadersUtil.getHeadersAuth()
     })
       .then(response => {
-        console.log(response.data);
+        // console.log(response.data);
         setUserInfo(response.data);
       })
       .catch(error => {
@@ -168,29 +194,14 @@ const BookDescriptionTab = (props: any) => {
   }, []);
 
   //--------------------------Lấy ra feedBack-------------------------------
-  // useEffect(() => {
-  //   let url = `http://localhost:8080/feedback/list?id=${0}`;
-  //   if (book && book?.id) {
-  //     url = `http://localhost:8080/feedback/list?id=${book?.id}`;
-  //   }
-  //   // let url = `http://localhost:8080/feedback/all?id=${(0||book.id)}`;
-  //   axios.get(url).then((resp: any) => {
-  //     console.log("List feed back---------------");
-  //     console.log(resp.data);
-  //     setFeedBackList(resp.data)
-  //   }).catch((err: any) => {
-  //     // console.log(err);
-  //     toast.error("Không thể lấy feed back");
-  //   })
-  // }, [book?.id])
 
   useEffect(() => {
     if (book?.id) {
       fetchFeedbackList();
     }
-  }, [book?.id]); // Thêm book?.id vào dependency array để gọi lại khi book.id thay đổi
+  }, [book?.id]);
 
-  
+
   const fetchFeedbackList = () => {
     if (!book?.id) return; // Không làm gì nếu book.id không tồn tại
 
@@ -220,13 +231,44 @@ const BookDescriptionTab = (props: any) => {
     setFeedBack((prevFeedBack) => ({
       ...prevFeedBack,
       comment: event.target.value,
+      // upd_dt: new Date().toISOString()
     }));
+    // console.log("feedback: ");
+    // console.log(new Date().toISOString());
+  };
+
+  //-------------------------Lấy ra rating------------------------------------
+  useEffect(() => {
+    if (book?.id) {
+      fetchRatingList();
+    }
+  }, [book?.id]);
+
+
+  const fetchRatingList = () => {
+    if (!book?.id) return; // Không làm gì nếu book.id không tồn tại
+
+    const url = `http://localhost:8080/feedback/rating-counts?id=${book.id}`;
+    axios.get(url)
+      .then((resp: any) => {
+        console.log("data: ");
+        console.log(resp);
+        setRatingList(resp.data);
+      })
+      .catch((err: any) => {
+        toast.error("Không thể lấy feedback");
+      });
   };
 
   const handleSubmit = () => {
+    if (rating === 0) {
+      toast.error("Vui lòng xếp hạng trước khi gửi.")
+      return; // Không gửi dữ liệu nếu rating chưa được chọn
+    }
     save();
   };
 
+  // --------------------------------Lưu feedBack--------------------------------
   const save = () => {
     if (book?.id) {
       feedBack.book_id = book?.id
@@ -234,6 +276,11 @@ const BookDescriptionTab = (props: any) => {
     if (userInfo != null && userInfo.userUid != null) {
       feedBack.user_id = userInfo.userUid;
     }
+    setFeedBack((prevFeedBack) => ({
+      ...prevFeedBack,
+      // comment: event.target.value,
+      upd_dt: new Date().toISOString()
+    }));
     let url = `http://localhost:8080/feedback/add`;
     axios.post(url, feedBack, {
       headers: {
@@ -251,7 +298,12 @@ const BookDescriptionTab = (props: any) => {
   }
 
   //End ---------Xử lý feedBack-----------------------------------------------------------
-
+  //-------------------xử lý rating--------------------------------------------
+  const getPercentage = (index: number) => {
+    if (ratingList.length === 0) return 0;
+    const total = ratingList.reduce((acc, curr) => acc + curr, 0);
+    return (ratingList[index] / total) * 100;
+  };
 
 
   const [activeDesTab, setActiveDesTab] = useState(
@@ -312,9 +364,19 @@ const BookDescriptionTab = (props: any) => {
               {/* <div className="container mt-4"> */}
               {/* ----------Feed back------------------------------------------------------------ */}
               <div className="container mt-4">
+
                 <div className="row">
                   {/* Phần hiển thị phản hồi */}
                   <div className="col-md-6">
+
+                    {ratingList.map((percentage, index) => (
+                      <div key={index}>
+                        <Label>⭐ {index + 1} Star</Label>
+                        <StarBar>
+                          <StarFill style={{ width: `${percentage}%` }} />
+                        </StarBar>
+                      </div>
+                    ))}
 
                     {/* -----------Danh sách feed back --------------------------- */}
                     <div className="feedback-container">
@@ -341,6 +403,17 @@ const BookDescriptionTab = (props: any) => {
                             <div className="feedback-content">
                               <div className="user-info">
                                 <strong className="user-name">{fb.user_name}</strong>
+                              </div>
+                              <div className="user-rating">
+                                <StarRatings
+                                  rating={fb.rating || 0} // Ensure you have a rating property in your feedback data
+                                  starRatedColor="#34B7F1"
+                                  numberOfStars={5}
+                                  starDimension="20px"
+                                  starSpacing="2px"
+                                  name="rating"
+                                // isSelectable={false}
+                                />
                               </div>
                               <p className="feedback-comment">{fb.comment}</p>
                             </div>
