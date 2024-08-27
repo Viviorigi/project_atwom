@@ -9,6 +9,7 @@ const FooterWrapper = styled.footer`
   background-color: ${defaultTheme.color_outerspace};
   color: ${defaultTheme.color_whitesmoke};
   height: auto;
+  fixed:bottom;
 
   @media (max-width: ${breakpoints.lg}) {
     padding-top: 40px;
@@ -119,8 +120,8 @@ const FooterWrapper = styled.footer`
 
 const Footer = () => {
   return (
-    <FooterWrapper>
-      <Container>
+    <FooterWrapper className="fixed-bottom">
+      <Container >
         <div className="footer-top">
           {/* Map through footerData and render footer items */}
         </div>
