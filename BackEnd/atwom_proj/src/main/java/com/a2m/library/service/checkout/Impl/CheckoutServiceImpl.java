@@ -97,7 +97,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         checkout.setUser(user);
         checkout.setStatus(CheckoutStatus.REQUESTED);
         checkout.setStartTime(LocalDateTime.now());
-        checkout.setEndTime(LocalDateTime.now().plusMonths(1));
+        checkout.setEndTime(LocalDateTime.now());
         checkout.setExpiredTime(checkout.getEndTime().plusMonths(1));
         
         List<CheckoutDetail> issueDetails = checkoutDTO.getCheckoutDetails().stream().map((detailDTO) -> {
@@ -124,8 +124,8 @@ public class CheckoutServiceImpl implements CheckoutService {
         checkout.setUser(user);
         checkout.setStatus(CheckoutStatus.REQUESTED);
         checkout.setStartTime(LocalDateTime.now());
-        checkout.setEndTime(LocalDateTime.now().plusMonths(1));
-        checkout.setExpiredTime(checkout.getEndTime().plusMonths(1));
+        checkout.setEndTime(LocalDateTime.now());
+        checkout.setExpiredTime(checkoutDTO.getExpiredTime());
         
         List<CheckoutDetail> issueDetails = checkoutDTO.getCheckoutDetails().stream().map((detailDTO) -> {
             Book book = bookRepository.findById(detailDTO.getBookId())

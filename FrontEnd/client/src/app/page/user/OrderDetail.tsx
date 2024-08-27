@@ -22,9 +22,14 @@ import defaultimage from "../../../assets/images/imageBookDefault.png";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { Link } from "react-router-dom";
 
+
 const OrderDetailScreenWrapper = styled.main`
   .btn-and-title-wrapper {
     margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
     .title {
       margin-bottom: 0;
     }
@@ -44,6 +49,9 @@ const OrderDetailScreenWrapper = styled.main`
     padding: 26px 32px;
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     @media (max-width: ${breakpoints.sm}) {
       flex-direction: column;
@@ -260,6 +268,25 @@ const OrderDetailListWrapper = styled.div`
   }
 `;
 
+const OrderDetailButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px; /* Adjust the gap as needed */
+
+  .order-overview-button {
+    display: flex;
+    gap: 12px;
+
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+`;
+
 const breadcrumbItems = [
   { label: "Trang Chủ", link: "/" },
   { label: "Đơn Hàng", link: "/order" },
@@ -366,10 +393,12 @@ const OrderDetail = () => {
                     Đơn số: #{checkout?.id ?? "N/A"}
                   </h4>
                   <div className="flex items-center justify-between">
-                    <p className="text-lg font-medium text-gray">
-                      Ngày tạo đơn: {checkout?.endTime ?? "N/A"}
+                    <p className="text-lg font-medium text-black">
+                      Ngày tạo đơn: {checkout?.startTime ?? "N/A"}
                     </p>
-                    <p className="text-lg font-medium text-gray">
+                  </div>
+                  <div>
+                    <p className="text-lg font-medium text-black">
                       Trạng thái: {checkout?.status ?? "N/A"}
                     </p>
                   </div>
@@ -393,11 +422,11 @@ const OrderDetail = () => {
                   return (
                     <div className="order-d-item grid" key={item.id}>
                       <div className="order-d-item-img">
-                        <img
-                          src={book?.image ?? defaultimage}
-                          alt=""
-                          className="object-fit-cover"
-                        />
+                      <img className="rounded-circle" src={book?.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book?.image}` : defaultimage} alt="PersonAvatar" onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        target.src = defaultimage;
+                      }} />
                       </div>
                       <div className="order-d-item-info">
                         <p className="text-xl font-bold">
@@ -415,12 +444,12 @@ const OrderDetail = () => {
                           Số lượng: &nbsp;
                           <span className="text-gray">{item.quantity}</span>
                         </p>
-                        <p className="font-bold text-lg">
+                        {/* <p className="font-bold text-lg">
                           Giá tiền: &nbsp;
                           <span className="text-gray">
                             {currencyFormat(book?.price)}
                           </span>
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                   );

@@ -19,33 +19,28 @@ const Order = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [open, setOpen] = useState(false);
   const [orderDetailOpen, setOrderDetailOpen] = useState(false);
-  const [orderSearchParams, setOrderSearchParams] = useState({
+  const [searchDto, setSearchDto] = useState({
     keySearch: "",
     page: 1,
-    limit: 10,
-    timer: new Date().getTime(),
+    limit: 5,
   });
   const [users, setUsers] = useState<UserDTO[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const dispatch = useAppDispatch();
-  const indexOfLastItem = orderSearchParams.page * orderSearchParams.limit;
-  const indexOfFirstItem = indexOfLastItem - orderSearchParams.limit;
+  const indexOfLastItem = searchDto.page * searchDto.limit;
+  const indexOfFirstItem = indexOfLastItem - searchDto.limit;
   const orderRef = useRef<CheckoutDTO | null>(null);
 
   useEffect(() => {
     fetchOrders();
     fetchAllUsers();
-  }, [orderSearchParams.timer, orderSearchParams.page]);
+  }, [searchDto]);
 
   const fetchOrders = async () => {
     try {
-      const resp = await CheckoutService.findAll({
-        keySearch: orderSearchParams.keySearch,
-        limit: orderSearchParams.limit,
-        page: orderSearchParams.page,
-      });
+      const resp = await CheckoutService.findAll(searchDto);
 
       const filteredOrders = resp.filter((order) =>
         ["REQUESTED", "APPROVED", "REJECTED"].includes(order.status)
@@ -54,7 +49,7 @@ const Order = () => {
       dispatch(setLoading(false));
       setOrders(filteredOrders);
       setTotalOrders(filteredOrders.length);
-      setTotalPage(Math.ceil(filteredOrders.length / orderSearchParams.limit));
+      setTotalPage(Math.ceil(filteredOrders.length / searchDto.limit));
     } catch (error) {
       console.error("Error fetching orders", error);
       dispatch(setLoading(false));
@@ -64,9 +59,9 @@ const Order = () => {
   const fetchAllUsers = async () => {
     try {
       const modelSearch = {
-        keySearch: orderSearchParams.keySearch,
-        page: orderSearchParams.page,
-        limit: 1000,
+        keySearch: searchDto.keySearch,
+        page: 1,
+        limit: 100,
       };
 
       const response = await AuthService.getInstance().getListActive(modelSearch);
@@ -85,19 +80,19 @@ const Order = () => {
   }, []);
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOrderSearchParams({
-      ...orderSearchParams,
-      [event.target.name]: event.target.value,
+    setSearchDto((prevParams) => ({
+      ...prevParams,
+      keySearch: event.target.value,
       page: 1,
-    });
+    }));
   };
 
   const handleKeyUpSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setOrderSearchParams({
-        ...orderSearchParams,
-        timer: new Date().getTime(),
-      });
+      setSearchDto((prevParams) => ({
+        ...prevParams,
+        page: 1,
+      }));
     }
   };
 
@@ -134,10 +129,10 @@ const Order = () => {
         try {
           await CheckoutService.deleteById(id);
           dispatch(setLoading(false));
-          setOrderSearchParams({
-            ...orderSearchParams,
-            timer: new Date().getTime(),
-          });
+          setSearchDto((prevParams) => ({
+            ...prevParams,
+            page: 1,
+          }));
           toast.success("Order deleted successfully");
         } catch (error) {
           dispatch(setLoading(false));
@@ -145,6 +140,25 @@ const Order = () => {
         }
       }
     });
+  };
+
+  const handlePageClick = (pageNumber: number) => {
+    setSearchDto((prevDto) => ({
+      ...prevDto,
+      page: pageNumber,
+    }));
+  };
+
+  const handlePrevClick = () => {
+    if (searchDto.page > 1) {
+      handlePageClick(searchDto.page - 1);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (searchDto.page < totalPages) {
+      handlePageClick(searchDto.page + 1);
+    }
   };
 
   return (
@@ -165,17 +179,17 @@ const Order = () => {
                   placeholder="Search orders by Student"
                   name="keySearch"
                   aria-label="Search"
-                  value={orderSearchParams.keySearch || ""}
+                  value={searchDto.keySearch || ""}
                   onChange={handleChangeSearch}
                   onKeyUp={handleKeyUpSearch}
                 />
                 <button
                   className="btn btn-primary"
                   onClick={() =>
-                    setOrderSearchParams({
-                      ...orderSearchParams,
-                      timer: new Date().getTime(),
-                    })
+                    setSearchDto((prevParams) => ({
+                      ...prevParams,
+                      page: 1,
+                    }))
                   }
                 >
                   <span className="fas fa-search" />
@@ -288,13 +302,13 @@ const Order = () => {
               </p>
             </div>
             <div className="col-auto d-flex">
-              <Pagination
-                currentPage={orderSearchParams.page}
-                totalPages={totalPage}
-                onPageChange={(page: any) =>
-                  setOrderSearchParams({ ...orderSearchParams, page })
-                }
-              />
+            <Pagination
+              totalPage={totalPages}
+              currentPage={searchDto.page}
+              handlePageClick={handlePageClick}
+              prev={handlePrevClick}
+              next={handleNextClick}
+            />
             </div>
           </div>
         </div>
@@ -302,10 +316,10 @@ const Order = () => {
       <footer className="footer position-absolute">
         <div className="row g-0 justify-content-between align-items-center h-100">
           <div className="col-12 col-sm-auto text-center">
-            <p className="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with ATWOM BOOk<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2024 ©</p>
+            <p className="mb-0 mt-2 mt-sm-0 text-900">ATWOM BOOk<span className="d-none d-sm-inline-block" /><span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2024 ©</p>
           </div>
           <div className="col-12 col-sm-auto text-center">
-            <p className="mb-0 text-600">v1.13.0</p>
+            <p className="mb-0 text-600">v1.1.0</p>
           </div>
         </div>
       </footer>

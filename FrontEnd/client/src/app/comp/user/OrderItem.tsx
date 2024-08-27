@@ -1,16 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { BaseLinkGreen } from "../../styles/button";
+import { BaseLinkGreen } from '../../styles/button';
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { currencyFormat } from "../../utils/helper";
-import { getCheckoutById, getCheckoutDetailsByCheckoutId } from '../../services/CheckoutService';
+import { deleteCheckout, getCheckoutById, getCheckoutDetailsByCheckoutId, rejectCheckout } from '../../services/CheckoutService';
 import { CheckoutDTO, CheckoutDetailDTO } from '../../model/checkout/CheckoutDTO';
 import { BookDTO } from '../../model/book/BookDTO';
 import { CategoryDTO } from '../../model/book/CategoryDTO';
 import { getBookById, getCategoryByBookId } from '../../services/BookService';
 import defaultimage from '../../../assets/images/imageBookDefault.png';
 
+const BaseLinkRed = styled.button`
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  // Add more styles as needed
+`;
+
+const BaseLinkDelete = styled.button`
+  background-color: darkgray;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  // Add more styles as needed
+`;
 
 const OrderItemWrapper = styled.div`
   margin: 30px 0;
@@ -116,18 +133,19 @@ const OrderItemWrapper = styled.div`
     }
 
     &-button {
-      margin-left: 20px;
+      display: flex;
+      gap: 12px; // Space between buttons
+      margin-left: auto; // Pushes buttons to the right
     }
   }
 `;
 
-
-
 interface OrderItemProps {
   checkoutId: number;
+  onRefresh: () => void;
 }
 
-const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
+const OrderItem: React.FC<OrderItemProps> = ({ checkoutId, onRefresh }) => {
   const [checkout, setCheckout] = useState<CheckoutDTO | null>(null);
   const [details, setDetails] = useState<CheckoutDetailDTO[]>([]);
   const [book, setBook] = useState<BookDTO | null>(null);
@@ -135,12 +153,8 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
 
   useEffect(() => {
     const fetchCheckoutData = async () => {
-      const seenIds = new Set<number>();
-
       try {
         const checkoutData = await getCheckoutById(checkoutId);
-        if (seenIds.has(checkoutData.id)) return;
-        seenIds.add(checkoutData.id);
         setCheckout(checkoutData);
 
         const detailsData = await getCheckoutDetailsByCheckoutId(checkoutId);
@@ -159,7 +173,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
     };
 
     fetchCheckoutData();
-  }, []);
+  }, [checkoutId]);
 
   if (!checkout) return <p>Bạn hiện chưa có đơn hàng nào.</p>;
 
@@ -186,7 +200,34 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
 
   const { startTime, status } = checkout;
   const quantity = details[0].quantity;
-  const totalPrice = quantity * (book?.price || 0);
+
+  const handleCancel = async () => {
+    if (window.confirm('Are you sure you want to cancel this order?')) {
+      if (checkout && (checkout.status === 'REQUESTED' || checkout.status === 'APPROVED')) {
+        try {
+          await rejectCheckout(checkoutId);
+          const updatedCheckout = await getCheckoutById(checkoutId);
+          setCheckout(updatedCheckout);
+          onRefresh();
+        } catch (error) {
+          console.error('Error rejecting checkout:', error);
+        }
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this order?')) {
+      if (checkout && (checkout.status === 'REQUESTED' || checkout.status === 'APPROVED' || checkout.status === 'REJECTED' || checkout.status === 'RETURNED')) {
+        try {
+          await deleteCheckout(checkoutId);
+          onRefresh();
+        } catch (error) {
+          console.error('Error deleting checkout:', error);
+        }
+      }
+    }
+  };
 
   return (
     <OrderItemWrapper>
@@ -195,17 +236,21 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
         <div className="order-info-group">
           <div className="order-info-item">
             <span className="text-gray font-semibold">Ngày tạo đơn:</span>
-            <span className="text-silver">{new Date(startTime).toLocaleDateString()}</span>
+            <span className="text-black">{new Date(startTime).toLocaleDateString()}</span>
           </div>
           <div className="order-info-item">
             <span className="text-gray font-semibold">Trạng thái đơn hàng:</span>
-            <span className="text-silver">{status}</span>
+            <span className="text-black">{status}</span>
           </div>
         </div>
       </div>
       <div className="order-overview">
         <div className="order-overview-img">
-          <img src={defaultimage || ''} alt={book?.title} className="object-fit-cover" />
+          <img className="rounded-circle" src={book?.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book?.image}` : defaultimage} alt="PersonAvatar" onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = defaultimage;
+          }} />
         </div>
         <div className="order-overview-content">
           <div className="order-overview-info">
@@ -213,20 +258,26 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId }) => {
             <ul>
               <li className="font-semibold text-base">
                 <span>Danh mục:</span>
-                <span className="text-silver">{category?.name}</span>
+                <span className="text-black">{category?.name}</span>
               </li>
               <li className="font-semibold text-base">
                 <span>Số lượng:</span>
-                <span className="text-silver">{quantity}</span>
+                <span className="text-black">{quantity}</span>
               </li>
-              {/* <li className="font-semibold text-base">
-                <span>Tổng:</span>
-                <span className="text-silver">{currencyFormat(totalPrice)}</span>
-              </li> */}
             </ul>
+            {details.length > 0 && (
+              <BaseLinkGreen to={`/order_detail/${checkoutId}`}>Xem chi tiết</BaseLinkGreen>
+            )}
+          </div>
+          <div className="order-overview-button">
+            {(status === 'REQUESTED' || status === 'APPROVED') && (
+              <BaseLinkRed onClick={handleCancel}>Hủy</BaseLinkRed>
+            )}
+            {(status === 'REQUESTED' || status === 'APPROVED' || status === 'REJECTED' || status === 'RETURNED') && (
+              <BaseLinkDelete onClick={handleDelete}>Xóa</BaseLinkDelete>
+            )}
           </div>
         </div>
-        {details.length > 0 && <BaseLinkGreen to={`/order_detail/${checkoutId}`}>View Detail</BaseLinkGreen>}
       </div>
     </OrderItemWrapper>
   );

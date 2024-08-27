@@ -35,3 +35,8 @@ export const getCheckoutDetailsByCheckoutId = async (checkoutId: number): Promis
     return response.data;
 };
 
+export const rejectCheckout = async (id: number): Promise<CheckoutDTO> => {
+    const response = await axios.put(`${BASE_URL}/checkout/reject/${id}`);
+    return response.data;
+};
+

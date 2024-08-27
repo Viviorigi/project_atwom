@@ -295,10 +295,11 @@ const BookListItem = () => {
                         />
                       </Link>
                       {/* <div className="rating-badge">{book.ave_rating ? book.ave_rating.toFixed(1) : 'N/A'}</div> */}
-                      <div className="rating-badge">
-                        <FaStar style={{ marginRight: '5px' }} />
-                        {book.ave_rating ? book.ave_rating.toFixed(1) : 'N/A'}
-                      </div>
+                      {book.ave_rating &&
+                        <div className="rating-badge">
+                          <FaStar style={{ marginRight: '5px' }} />
+                          {book.ave_rating && book.ave_rating.toFixed(1)}
+                        </div>}
                     </div>
                     <div className="product-info">
                       <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#4a4e52', margin: '0' }}>{book.title}</p>
