@@ -76,8 +76,7 @@ public class Book {
     )
     private Set<Author> authors;
   
-  @OneToMany(mappedBy = "book")
-//  @JsonManagedReference(value = "book-imagebooks")
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
   private List<ImagesBook> imagebooks;
   
   @OneToMany(mappedBy = "book")

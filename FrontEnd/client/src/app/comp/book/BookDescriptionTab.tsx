@@ -245,6 +245,7 @@ const BookDescriptionTab = (props: any) => {
       ...prevFeedBack,
       rating: newRating,
     }));
+    
   };
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -295,6 +296,16 @@ const BookDescriptionTab = (props: any) => {
       toast.error("Vui lòng xếp hạng trước khi gửi.")
       return; // Không gửi dữ liệu nếu rating chưa được chọn
     }
+    // setFeedBack((prevFeedBack) => ({
+    //   ...prevFeedBack,
+    //   rating:0,
+    //   comment: '',
+    //   upd_dt: new Date().toISOString()
+    // }));
+
+    setComment('');
+    setRating(0);
+    
     save();
   };
 

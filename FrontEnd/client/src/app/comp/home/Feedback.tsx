@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import StarRatings from 'react-star-ratings';
+import { Link } from "react-router-dom";
 
 
 
@@ -123,49 +124,52 @@ const Feedback = () => {
         >
           {feedBackList?.map((feedback: any) => {
             return (
+
               <FeedbackItemWrapper key={feedback.id}>
-                <div className="feedback-item-wrap bg-white">
-                  <div className="feedback-top flex items-center">
-                    {/* Avatar Section */}
-                    <div className="feedback-icon">
-                      <img
-                        src={feedback.user_avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${feedback.user_avatar}` : defaultPersonImage}
-                        alt="PersonAvatar"
-                        style={{
-                          width: '50px',
-                          height: '50px',
-                          borderRadius: '50%',
-                          objectFit: 'cover',
-                        }}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.onerror = null;
-                          target.src = defaultPersonImage;
-                        }}
-                      />
-                    </div>
-
-                    <div className="feedback-details flex flex-col ml-4">
-                      {/* User Name */}
-                      <p className="font-semibold text-base">{feedback.user_name}</p>
-
-                      {/* Rating Section */}
-                      <div className="user-rating mb-2">
-                        <StarRatings
-                          rating={feedback.rating || 0} // Ensure you have a rating property in your feedback data
-                          starRatedColor="#34B7F1"
-                          numberOfStars={5}
-                          starDimension="20px"
-                          starSpacing="2px"
-                          name="rating"
+                <Link to={`/book/details/?bookId=${feedback.book_id}`}>
+                  <div className="feedback-item-wrap bg-white">
+                    <div className="feedback-top flex items-center">
+                      {/* Avatar Section */}
+                      <div className="feedback-icon">
+                        <img
+                          src={feedback.user_avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${feedback.user_avatar}` : defaultPersonImage}
+                          alt="PersonAvatar"
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                          }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            target.src = defaultPersonImage;
+                          }}
                         />
                       </div>
 
-                      {/* Comment Section */}
-                      <span className="text-sm">{feedback.comment}</span>
+                      <div className="feedback-details flex flex-col ml-4">
+                        {/* User Name */}
+                        <p className="font-semibold text-base">{feedback.user_name}</p>
+
+                        {/* Rating Section */}
+                        <div className="user-rating mb-2">
+                          <StarRatings
+                            rating={feedback.rating || 0} // Ensure you have a rating property in your feedback data
+                            starRatedColor="#34B7F1"
+                            numberOfStars={5}
+                            starDimension="20px"
+                            starSpacing="2px"
+                            name="rating"
+                          />
+                        </div>
+
+                        {/* Comment Section */}
+                        <span className="text-sm">{feedback.comment}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </FeedbackItemWrapper>
             );
           })}
