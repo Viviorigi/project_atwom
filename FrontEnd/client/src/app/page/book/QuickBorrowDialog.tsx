@@ -21,11 +21,22 @@ interface QuickBorrowDialogProps {
 }
 
 const StyledDialog = styled(Dialog)`
-  width: 50vw;
+  width: 60vw;
+  border-radius: 10px;
+  padding: 10px;
+
   .p-dialog-header {
-    font-size: 1.5rem;
-    font-weight: bold;
+    text-align: center;
   }
+
+  .p-dialog-content {
+    padding: 0;
+  }
+`;
+
+const DialogContent = styled.div`
+  width: 90%;
+  margin: 0 auto;
 `;
 
 const StyledInput = styled.input`
@@ -45,6 +56,33 @@ const DialogFooter = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
+`;
+
+const StyledButton = styled(Button)`
+  border-radius: 8px;
+  margin-left: 10px;
+  font-size: 1rem;
+  padding: 10px 20px;
+`;
+
+const PrimaryButton = styled(StyledButton)`
+  background-color: #007bff;
+  border: none;
+  color: white;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const SecondaryButton = styled(StyledButton)`
+  background-color: #6c757d;
+  border: none;
+  color: white;
+
+  &:hover {
+    background-color: #5a6268;
+  }
 `;
 
 const QuickBorrowDialog: React.FC<QuickBorrowDialogProps> = ({
@@ -136,23 +174,24 @@ const QuickBorrowDialog: React.FC<QuickBorrowDialogProps> = ({
   };
 
   return (
-    <StyledDialog visible={visible} style={{ width: "60vw" }} onHide={onHide} header="Mượn nhanh">
-      <div>
-        <label htmlFor="expiredTime">Ngày hết hạn:</label>
-        <StyledInput
-          type="date"
-          id="expiredTime"
-          value={expiredTime}
-          onChange={(e) => setExpiredTime(e.target.value)}
-          placeholder="dd/mm/yyyy"
-        />
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-      </div>
-      <DialogFooter>
-        <Button label="Tạo đơn" icon="pi pi-check" onClick={handleSubmit} autoFocus className="p-button-text"/>
-        <div><label>||</label></div>
-        <Button label="Hủy" icon="pi pi-times" onClick={onHide} className="p-button-text" />
-      </DialogFooter>
+    <StyledDialog visible={visible} onHide={onHide} header="Mượn nhanh">
+      <DialogContent>
+        <div>
+          <label htmlFor="expiredTime">Ngày hết hạn:</label>
+          <StyledInput
+            type="date"
+            id="expiredTime"
+            value={expiredTime}
+            onChange={(e) => setExpiredTime(e.target.value)}
+            placeholder="dd/mm/yyyy"
+          />
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+        </div>
+        <DialogFooter>
+          <PrimaryButton label="Tạo đơn" icon="pi pi-check" onClick={handleSubmit} autoFocus />
+          <SecondaryButton label="Hủy" icon="pi pi-times" onClick={onHide} />
+        </DialogFooter>
+      </DialogContent>
     </StyledDialog>
   );
 };

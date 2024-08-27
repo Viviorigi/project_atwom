@@ -67,8 +67,32 @@ const BookDetailsWrapper = styled.div`
   .prod-comments {
     column-gap: 10px;
   }
+
   .prod-add-btn {
-    min-width: 160px;
+  background-color: green;
+  color: white;
+  padding: 7px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+  .btn-quick-borrow {
+  background-color: green;
+  color: white;
+  min-width: 160px;
+    column-gap: 8px;
+    &-text {
+      margin-top: 2px;
+    }
+  }
+
+  .prod-add-btn {
+  background-color: green;
+  color: white;
+  min-width: 160px;
     column-gap: 8px;
     &-text {
       margin-top: 2px;
@@ -507,9 +531,9 @@ const BookDetail = (props: any) => {
               </button>
             </div>
             <div className="btn-and-price flex items-center flex-wrap">
-            <button onClick={() => setShowQuickBorrowDialog(true)} className="btn btn-quick-borrow">
-                  Mượn nhanh
-                </button>
+              <button onClick={() => setShowQuickBorrowDialog(true)} className="btn btn-quick-borrow">
+                Mượn nhanh
+              </button>
             </div>
             <BookServices />
           </BookDetailsWrapper>
