@@ -20,6 +20,8 @@ import com.a2m.library.repository.ContactRepository;
 import com.a2m.library.service.admin.ContactService;
 import com.a2m.library.service.admin.EmailService;
 
+import jakarta.mail.MessagingException;
+
 @Service
 public class ContactServiceImpl implements ContactService {
 	@Autowired
@@ -51,6 +53,15 @@ public class ContactServiceImpl implements ContactService {
 				.orElseThrow(() -> new BadRequestException("User not found"));
 		contact.setResponseDate(LocalDateTime.now());
 		contact.setResponse(contactDTO.getResponse());
+		new Thread(() -> {
+		    try {
+				emailService.sendEmailResponseContact(contact.getEmail(), "Response", contact.getFirstName() + contact.getLastName(), "http://localhost:3333");
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}).start();
+		
 		emailService.sendEmailResponseContact(contact.getEmail(), "Response",contact.getFirstName()+ contact.getLastName(), "http://localhost:3333");
 		contactRepository.save(contact);
 	}
