@@ -220,6 +220,8 @@ const Header = () => {
               to="/about"
               className={`icon-link ${location.pathname === "/about" ? "active" : ""
                 } inline-flex items-center justify-center`}
+                state={{}}
+                style={{width:"70px"}}
             >
               <span>Giới thiệu</span>
             </Link>
@@ -278,8 +280,8 @@ const Header = () => {
             
             {!isLoggedIn &&
               <div className="flex items-center ">
-                <BaseLinkGreen to="/login">Login</BaseLinkGreen>
-                <BaseLinkOutlineDark to="/register">Sign up</BaseLinkOutlineDark>
+                <BaseLinkGreen to="/login">Đăng nhập</BaseLinkGreen>
+                <BaseLinkOutlineDark to="/register">Đăng ký</BaseLinkOutlineDark>
               </div>}
 
           </IconLinksWrapper>

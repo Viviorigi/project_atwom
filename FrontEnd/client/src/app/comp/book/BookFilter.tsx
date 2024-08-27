@@ -318,6 +318,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
       </PriceFilter>
 
       {/* <ColorsFilter>
+     {/* <ColorsFilter>
         <FilterTitle
           className="flex items-center justify-between"
           onClick={() => toggleFilter("color")}

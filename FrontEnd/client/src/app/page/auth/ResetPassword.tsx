@@ -14,7 +14,9 @@ import { toast } from "react-toastify";
 const ResetScreenWrapper = styled.section``;
 
 const ResetPassword = () => {
-  const [resetPwsRequest, setResetPwsRequest] = useState<ResetpwdRequest>(new ResetpwdRequest());
+  const [resetPwsRequest, setResetPwsRequest] = useState<ResetpwdRequest>(
+    new ResetpwdRequest()
+  );
 
   const handleChangeText = (event: any) => {
     const { name, value } = event.target;
@@ -43,33 +45,39 @@ const ResetPassword = () => {
       return;
     }
 
-    AuthService.getInstance().resetPass(resetPwsRequest).then((resp: any) => {
-      if (resp) {
-        // dispatch(setLoading(false))
-        toast.success(resp.data.message)
-      }
-    }).catch((error: any) => {
-      // dispatch(setLoading(false));
-      toast.error("Email not found");
-    });
-    
-  }
+    AuthService.getInstance()
+      .resetPass(resetPwsRequest)
+      .then((resp: any) => {
+        if (resp) {
+          // dispatch(setLoading(false))
+          toast.success("Đã gửi email reset mật khẩu");
+        }
+      })
+      .catch((error: any) => {
+        // dispatch(setLoading(false));
+        toast.error("Không tìm thấy email");
+      });
+  };
   return (
     <ResetScreenWrapper>
       <FormGridWrapper>
         <Container>
           <div className="form-grid-content">
             <div className="form-grid-left">
-              <img src={staticImages.book_form} className="object-fit-cover" alt="" />
+              <img
+                src={staticImages.book_form}
+                className="object-fit-cover"
+                alt=""
+              />
             </div>
             <div className="form-grid-right">
               <FormTitle>
-                <h3>Reset Your Password</h3>
+                <h3>Đặt lại mật khẩu của bạn</h3>
                 <p>
-                  Enter your email and we &apos;ll send you a link to reset your
-                  password.
+                  Nhập email của bạn và chúng tôi sẽ gửi cho bạn một liên kết để
+                  đặt lại mật khẩu.
                 </p>
-                <p>Please check it.</p>
+                <p>Vui lòng kiểm tra email.</p>
               </FormTitle>
               {/* form submit */}
               <FormElement>
@@ -80,23 +88,31 @@ const ResetPassword = () => {
                   type="text"
                   value={resetPwsRequest.email}
                   onChange={handleChangeText}
-                  placeholder="Enter your email"
+                  placeholder="Nhập email của bạn"
                   name="email"
                   className="form-elem-control"
                 />
                 <div
-                  className={`invalid-feedback ${resetPwsRequest.email?.toString() === "" ? "d-block" : ""}`}
+                  className={`invalid-feedback ${
+                    resetPwsRequest.email?.toString() === "" ? "d-block" : ""
+                  }`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
-                  Email not empty
+                  Email không được để trống
                 </div>
               </FormElement>
               {/* <BaseButtonBlack type="submit" className="form-submit-btn"> */}
-              <button className="form-submit-btn" style={{ backgroundColor: "black", color: "white" }} onClick={send}>Send</button>
+              <button
+                className="form-submit-btn"
+                style={{ backgroundColor: "black", color: "white" }}
+                onClick={send}
+              >
+                Gửi
+              </button>
               {/* </BaseButtonBlack>   */}
               <p className="flex flex-wrap account-rel-text">
                 <Link to="/login" className="font-medium">
-                  Back to Login
+                  Quay lại Đăng nhập
                 </Link>
               </p>
             </div>

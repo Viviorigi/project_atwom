@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { AuthConstant } from "../../constants/authConstant";
 import Cookies from "universal-cookie";
 import { AuthService } from "../../services/AuthService";
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 
 const SignInScreenWrapper = styled.section`
   .form-separator {
@@ -44,7 +44,9 @@ const SignInScreenWrapper = styled.section`
 `;
 
 const SignIn = () => {
-  const [loginRequest, setLoginRequest] = useState<LoginRequest>(new LoginRequest());
+  const [loginRequest, setLoginRequest] = useState<LoginRequest>(
+    new LoginRequest()
+  );
   const navigate = useNavigate();
   const cookie = new Cookies();
   const [rememberMe, setRememberMe] = useState(false);
@@ -63,25 +65,25 @@ const SignIn = () => {
     const storedUsername = cookie.get("username");
     const storedPassword = cookie.get("password");
     if (storedUsername) {
-      setLoginRequest(prev => ({
+      setLoginRequest((prev) => ({
         ...prev,
-        username: storedUsername
+        username: storedUsername,
       }));
     }
-    if(storedPassword) {
-      setLoginRequest(prev => ({
+    if (storedPassword) {
+      setLoginRequest((prev) => ({
         ...prev,
-        password: decryptPassword(storedPassword,'1234')
+        password: decryptPassword(storedPassword, "1234"),
       }));
     }
-  }, [])
+  }, []);
 
   const setLoginState = () => {
     setLoginRequest((prev: LoginRequest) => {
       return {
         ...prev,
         username: prev.username || "",
-        password: prev.password || ""
+        password: prev.password || "",
       };
     });
   };
@@ -98,10 +100,13 @@ const SignIn = () => {
     return true;
   };
 
-  const encryptPassword = (password:any, secretKey:any) => {
+  const encryptPassword = (password: any, secretKey: any) => {
     return CryptoJS.AES.encrypt(password, secretKey).toString();
   };
-  const decryptPassword = (encryptedPassword: string, secretKey: string): string => {
+  const decryptPassword = (
+    encryptedPassword: string,
+    secretKey: string
+  ): string => {
     const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey);
     return bytes.toString(CryptoJS.enc.Utf8);
   };
@@ -111,28 +116,38 @@ const SignIn = () => {
       return;
     }
     // dispatch(setLoading(true));
-    AuthService.getInstance().login(loginRequest).then((resp: any) => {
-      if (resp) {
-        // dispatch(setLoading(false))
-        const expires = new Date();
-        expires.setDate(expires.getDate() + AuthConstant.EXPIRES_TOKEN)
-        cookie.set(AuthConstant.ACCESS_TOKEN, resp.data.jwt, { path: '/', expires: expires })
-        cookie.set('fullName', resp.data.fullName)
-        cookie.set('avatar', resp.data.avatar)
-        navigate('/')
-        if (rememberMe) {
-          cookie.set('username', resp.data.username)
-          cookie.set('password', encryptPassword(loginRequest.password,'1234'), { expires: expires})
-        } else {
-          cookie.remove('username')
-          cookie.remove('password')
-        };
-      }
-    }).catch((error: any) => {
-      // dispatch(setLoading(false));
-      toast.error("Username or Password wrong");
-    });
-  }
+    AuthService.getInstance()
+      .login(loginRequest)
+      .then((resp: any) => {
+        if (resp) {
+          // dispatch(setLoading(false))
+          const expires = new Date();
+          expires.setDate(expires.getDate() + AuthConstant.EXPIRES_TOKEN);
+          cookie.set(AuthConstant.ACCESS_TOKEN, resp.data.jwt, {
+            path: "/",
+            expires: expires,
+          });
+          cookie.set("fullName", resp.data.fullName);
+          cookie.set("avatar", resp.data.avatar);
+          navigate("/");
+          if (rememberMe) {
+            cookie.set("username", resp.data.username);
+            cookie.set(
+              "password",
+              encryptPassword(loginRequest.password, "1234"),
+              { expires: expires }
+            );
+          } else {
+            cookie.remove("username");
+            cookie.remove("password");
+          }
+        }
+      })
+      .catch((error: any) => {
+        // dispatch(setLoading(false));
+        toast.error("Username or Password wrong");
+      });
+  };
 
   return (
     <SignInScreenWrapper>
@@ -140,66 +155,98 @@ const SignIn = () => {
         <Container>
           <div className="form-grid-content">
             <div className="form-grid-left">
-              <img src={staticImages.book_form} className="object-fit-cover" alt="" />
+              <img
+                src={staticImages.book_form}
+                className="object-fit-cover"
+                alt=""
+              />
             </div>
             <div className="form-grid-right">
               <FormTitle>
-                <h3 className="mt-3">Sign In</h3>
+                <h3 className="mt-3">Đăng nhập</h3>
               </FormTitle>
               <FormElement>
                 <label htmlFor="" className="form-elem-label">
-                  User name
+                  Tài khoản
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter username"
+                  placeholder="Nhập tài khoản"
                   name="username"
                   onChange={handleChangeText}
                   value={loginRequest.username || ""}
                   className="form-elem-control"
                 />
                 <div
-                  className={`invalid-feedback ${loginRequest.username?.toString() === "" ? "d-block" : ""}`}
+                  className={`invalid-feedback ${
+                    loginRequest.username?.toString() === "" ? "d-block" : ""
+                  }`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
-                  Username not empty
+                  Tài khoản không để trống
                 </div>
               </FormElement>
               <FormElement>
-                <input type="password"
+                <label htmlFor="" className="form-elem-label">
+                  Mật khẩu
+                </label>
+                <input
+                  type="password"
                   className="form-elem-control"
-                  placeholder="Enter password"
+                  placeholder="Nhập mật khẩu"
                   name="password"
                   onChange={handleChangeText}
-                  value={loginRequest.password || ""} />
+                  value={loginRequest.password || ""}
+                />
                 <div
-                  className={`invalid-feedback ${loginRequest.password?.toString() === "" ? "d-block" : ""}`}
+                  className={`invalid-feedback ${
+                    loginRequest.password?.toString() === "" ? "d-block" : ""
+                  }`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
-                  Password not empty
+                  Mật khẩu không để trống
                 </div>
               </FormElement>
               <div className="d-flex justify-content-between">
                 <div className="col-auto">
-                  <div className="form-check  mb-0 mt-1"><input className="form-check-input" id="basic-checkbox" type="checkbox" checked={rememberMe}
-                    onChange={handleCheckboxChange} /><label className="form-check-label mb-0" htmlFor="basic-checkbox">Remember me</label></div>
+                  <div className="form-check  mb-0 mt-1">
+                    <input
+                      className="form-check-input"
+                      id="basic-checkbox"
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label
+                      className="form-check-label mb-0"
+                      htmlFor="basic-checkbox"
+                    >
+                      Nhớ mật khẩu
+                    </label>
+                  </div>
                 </div>
                 <Link
                   to="/forgot-password"
                   className="form-elem-text font-medium mt-1"
                 >
-                  Forgot your password?
+                  Quên mật khẩu?
                 </Link>
               </div>
               {/* <BaseButtonBlack type="button" className="form-submit-btn" > */}
-              <button className="form-submit-btn" style={{ backgroundColor: "black", color: "white" }} onClick={login}>Sign in</button>
+              <button
+                className="form-submit-btn"
+                style={{ backgroundColor: "black", color: "white" }}
+                onClick={login}
+              >
+                Đăng nhập
+              </button>
               {/* </BaseButtonBlack> */}
               <p className="flex flex-wrap account-rel-text">
-                Don&apos;t have a account?
+                Bạn chưa có tài khoản?
                 <Link to="/register" className="font-medium">
-                  Sign Up
+                  Đăng ký
                 </Link>
-                `
+                
               </p>
             </div>
           </div>

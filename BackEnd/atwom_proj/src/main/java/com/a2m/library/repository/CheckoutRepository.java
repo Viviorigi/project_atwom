@@ -30,7 +30,7 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
     @Query("UPDATE Checkout c SET c.status = :status, c.endTime = :endTime, c.expiredTime = :expiredTime WHERE c.id = :id")
     void updateStatusToBorrowed(Integer id, CheckoutStatus status, LocalDateTime endTime, LocalDateTime expiredTime);
 
-    @Query("SELECT c FROM Checkout c WHERE (:keySearch IS NULL OR c.user.fullName LIKE %:keySearch%)")
+    @Query("SELECT c FROM Checkout c WHERE (:keySearch IS NULL OR c.user.fullName LIKE CONCAT('%', :keySearch, '%'))")
     Page<Checkout> findByKeySearch(
             @Param("keySearch") String keySearch,
             Pageable pageable);

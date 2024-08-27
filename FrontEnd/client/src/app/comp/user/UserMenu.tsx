@@ -10,7 +10,7 @@ import { jwtDecode } from "jwt-decode";
 
 const NavMenuWrapper = styled.nav`
   margin-top: 32px;
-  
+
   .nav-menu-list {
     row-gap: 8px;
 
@@ -79,10 +79,10 @@ const UserMenu = () => {
   useEffect(() => {
     const storedFullName = cookie.get("fullName");
     if (storedFullName) {
-      setFullName(storedFullName)
+      setFullName(storedFullName);
     }
 
-    const access_token = cookie.get('access_token');
+    const access_token = cookie.get("access_token");
 
     if (access_token) {
       try {
@@ -96,24 +96,25 @@ const UserMenu = () => {
           setIsLoggedIn(true);
         } else {
           cookie.remove(AuthConstant.ACCESS_TOKEN);
-          cookie.remove('fullName');
-          cookie.remove('avatar');
+          cookie.remove("fullName");
+          cookie.remove("avatar");
           setIsLoggedIn(false);
         }
       } catch (error) {
         console.log(error);
-
       }
     }
-  }, [])
-  const logout =()=>{
+  }, []);
+  const logout = () => {
     cookie.remove(AuthConstant.ACCESS_TOKEN);
     cookie.remove("fullName");
-  }
+  };
   return (
     <div>
-      <Title titleText={`Hello  ${fullName}`} />
-      <p className="text-base font-light italic">Welcome to your account.</p>
+      <Title titleText={`Xin chào ${fullName}`} />
+      <p className="text-base font-light italic">
+        Chào mừng bạn đến với tài khoản của bạn.
+      </p>
 
       <NavMenuWrapper>
         <ul className="nav-menu-list grid">
@@ -131,7 +132,7 @@ const UserMenu = () => {
                 <img src="./assets/icons/ac_orders.svg" alt="" />
               </span>
               <span className="text-base font-semibold nav-link-text no-wrap">
-                My orders
+                Đơn hàng của tôi
               </span>
             </Link>
           </li>
@@ -149,7 +150,7 @@ const UserMenu = () => {
                 <img src="./assets/icons/ac_heart.svg" alt="" />
               </span>
               <span className="text-base font-semibold nav-link-text no-wrap">
-                Wish List
+                Danh sách yêu thích
               </span>
             </Link>
           </li>
@@ -167,17 +168,21 @@ const UserMenu = () => {
                 <img src="./assets/icons/ac_user.svg" alt="" />
               </span>
               <span className="text-base font-semibold nav-link-text no-wrap">
-                My Account
+                Tài khoản của tôi
               </span>
             </Link>
           </li>
           <li className="nav-menu-item">
-            <Link to="/" className={`nav-menu-link flex items-center`} onClick={logout}>
+            <Link
+              to="/"
+              className={`nav-menu-link flex items-center`}
+              onClick={logout}
+            >
               <span className="nav-link-icon flex items-center justify-center">
                 <img src="./assets/icons/ac_sign_out.svg" alt="" />
               </span>
               <span className="text-base font-semibold nav-link-text no-wrap">
-                Sign out
+                Đăng xuất
               </span>
             </Link>
           </li>

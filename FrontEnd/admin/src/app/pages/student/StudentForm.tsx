@@ -373,7 +373,7 @@ export default function StudentForm(props: any) {
 
           <div className="form-group">
             <label>
-              Ảnh đại diện <span className="text-danger">(*)</span>
+              Ảnh đại diện 
             </label>
             <br />
             <input

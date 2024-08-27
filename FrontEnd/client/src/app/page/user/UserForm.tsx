@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import { UserDetail } from '../../model/auth/UserDetail';
-import defaultPersonImage from "../../../assets/images/imagePerson.png"
-import { AuthService } from '../../services/AuthService';
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import React, { useEffect, useState } from "react";
+import { UserDetail } from "../../model/auth/UserDetail";
+import defaultPersonImage from "../../../assets/images/imagePerson.png";
+import { AuthService } from "../../services/AuthService";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 export default function UserForm(props: any) {
   const { closeForm, user, onSave } = props;
   console.log(user);
-  const [userSave, setUserSave] = useState<UserDetail>(
-    new UserDetail()
-  );
+  const [userSave, setUserSave] = useState<UserDetail>(new UserDetail());
 
   useEffect(() => {
     if (user) {
@@ -20,7 +18,6 @@ export default function UserForm(props: any) {
 
   const [image, setImage] = useState<string | undefined>(undefined);
   const [file, setFile] = useState<File | null>(null);
-
 
   const handleChangeText = (event: any) => {
     const { name, value, onSave } = event.target;
@@ -74,7 +71,11 @@ export default function UserForm(props: any) {
     }
     return true;
   };
-  const imageSource = image ? image : user.avatar !== null ? `http://localhost:8080/files/${user.avatar}` : defaultPersonImage;
+  const imageSource = image
+    ? image
+    : user.avatar !== null
+    ? `http://localhost:8080/files/${user.avatar}`
+    : defaultPersonImage;
 
   const handleFileChange = (event: any) => {
     const filePreview = event.target.files[0];
@@ -102,41 +103,41 @@ export default function UserForm(props: any) {
     }
     Swal.fire({
       title: `Confirm`,
-      text: "Do you want to update my info",
+      text: "Bạn có muốn cập nhật thông tin cá nhân",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
       cancelButtonColor: "#E68A8C",
-      confirmButtonText: `Yes`,
-      cancelButtonText: `No`,
+      confirmButtonText: `Có`,
+      cancelButtonText: `Không`,
     }).then((result) => {
       if (result.value) {
         AuthService.getInstance()
           .update(formData)
           .then((resp: any) => {
-            if (resp) {          
-                toast.success(resp.data.message);
-                closeForm();
-                onSave();  
+            if (resp) {
+              toast.success("Cập nhật thành công");
+              closeForm();
+              onSave();
             }
           })
           .catch((error: any) => {
             closeForm();
-            toast.error(error.response.data.message);
+            toast.error("Cập nhật thất bại");
           });
       }
     });
   };
 
   return (
-    <div className='container'>
-      <h3>Update Info</h3>
+    <div className="container">
+      <h3>Cập nhật thông tin</h3>
       <div className="row">
-        {/* Column 1 */}
+        {/* Cột 1 */}
         <div className="col-md-6 mb-5">
           <div className="form-group">
             <label>
-              Username <span className="text-danger">(*)</span>
+              Tên đăng nhập <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -144,16 +145,16 @@ export default function UserForm(props: any) {
               className="form-control"
               value={userSave?.username || ""}
               onChange={handleChangeText}
-              placeholder="Enter Username"
+              placeholder="Nhập tên đăng nhập"
               readOnly={user !== null ? true : false}
             />
             <div
-              className={`invalid-feedback ${userSave?.username?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.username?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Username must not be empty and must be between 3 and 50
-              characters.
+              Tên đăng nhập không được để trống và phải từ 3 đến 50 ký tự.
             </div>
           </div>
 
@@ -167,20 +168,21 @@ export default function UserForm(props: any) {
               className="form-control"
               value={userSave?.email || ""}
               onChange={handleChangeText}
-              placeholder="Enter Email"
+              placeholder="Nhập email"
             />
             <div
-              className={`invalid-feedback ${userSave?.email?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.email?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Email must not be empty.
+              Email không được để trống.
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Full Name <span className="text-danger">(*)</span>
+              Họ và tên <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -188,20 +190,21 @@ export default function UserForm(props: any) {
               className="form-control"
               value={userSave?.fullName || ""}
               onChange={handleChangeText}
-              placeholder="Enter Full Name"
+              placeholder="Nhập họ và tên"
             />
             <div
-              className={`invalid-feedback ${userSave?.fullName?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.fullName?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              FullName must not be empty.
+              Họ và tên không được để trống.
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Phone <span className="text-danger">(*)</span>
+              Số điện thoại <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -209,22 +212,23 @@ export default function UserForm(props: any) {
               className="form-control"
               value={userSave?.phone || ""}
               onChange={handleChangeNumber}
-              placeholder="Enter Phone"
+              placeholder="Nhập số điện thoại"
             />
             <div
-              className={`invalid-feedback ${userSave?.phone?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.phone?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Phone must not be empty.
+              Số điện thoại không được để trống.
             </div>
           </div>
         </div>
-        {/* Column 2 */}
+        {/* Cột 2 */}
         <div className="col-md-6">
           <div className="form-group">
             <label>
-              Class Name <span className="text-danger">(*)</span>
+              Tên lớp <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -232,19 +236,20 @@ export default function UserForm(props: any) {
               className="form-control"
               value={userSave?.className || ""}
               onChange={handleChangeText}
-              placeholder="Enter Full Name"
+              placeholder="Nhập tên lớp"
             />
             <div
-              className={`invalid-feedback ${userSave?.className?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.className?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              ClassName must not be empty.
+              Tên lớp không được để trống.
             </div>
           </div>
           <div className="form-group">
             <label>
-              Date of Birth <span className="text-danger">(*)</span>
+              Ngày sinh <span className="text-danger">(*)</span>
             </label>
             <input
               type="date"
@@ -254,17 +259,18 @@ export default function UserForm(props: any) {
               onChange={handleChangeText}
             />
             <div
-              className={`invalid-feedback ${userSave?.dob?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.dob?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Dob must not be empty.
+              Ngày sinh không được để trống.
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Address <span className="text-danger">(*)</span>
+              Địa chỉ <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -272,20 +278,21 @@ export default function UserForm(props: any) {
               className="form-control"
               value={userSave?.address || ""}
               onChange={handleChangeText}
-              placeholder="Enter Address"
+              placeholder="Nhập địa chỉ"
             />
             <div
-              className={`invalid-feedback ${userSave?.address?.toString() === "" ? "d-block" : ""
-                }`}
+              className={`invalid-feedback ${
+                userSave?.address?.toString() === "" ? "d-block" : ""
+              }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Address must not be empty.
+              Địa chỉ không được để trống.
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Avatar <span className="text-danger">(*)</span>
+              Ảnh đại diện <span className="text-danger">(*)</span>
             </label>
             <br />
             <input
@@ -316,8 +323,8 @@ export default function UserForm(props: any) {
       </div>
 
       <button type="submit" className="btn btn-primary mb-5" onClick={save}>
-        Update Info
+        Cập nhật thông tin
       </button>
     </div>
-  )
+  );
 }
