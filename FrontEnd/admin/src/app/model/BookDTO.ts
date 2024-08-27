@@ -8,6 +8,7 @@ export class BookDTO {
   publicationYear?: number;
   description?:string;
   price?: number;
+  nxb?:string;
   image?: string; 
   quantity?: number;
   active?:boolean;

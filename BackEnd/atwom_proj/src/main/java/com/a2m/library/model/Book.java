@@ -79,8 +79,7 @@ public class Book {
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
   private List<ImagesBook> imagebooks;
   
-  @OneToMany(mappedBy = "book")
-//  @JsonManagedReference(value = "book-feedbacks")
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
   private List<FeedBack> feedBacks;
   
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)

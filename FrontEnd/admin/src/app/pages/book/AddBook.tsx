@@ -12,6 +12,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 import JoditEditor, { Jodit } from "jodit-react";
 import DOMPurify from 'dompurify';
+import { useAppDispatch } from '../../store/hook';
+import { setLoading } from '../../reducers/spinnerSlice';
 
 
 
@@ -24,6 +26,8 @@ export default function AddBook(props: any) {
     const [categoryList, setCategoryList] = useState([]);
     const [categoryEdit, setCategoryEdit] = useState<CategoryDTO>();
     const [categoryEditId, setCategoryListId] = useState(0);
+    const [chkSelect, setChkSelect] = useState(0);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         let url = `http://localhost:8080/category/list/all`;
@@ -132,8 +136,10 @@ export default function AddBook(props: any) {
                 upd_dt: new Date().toISOString()
             })
             setEditorContent(bookDTO.description || '');
-            console.log("Edittt");
-            console.log(bookDTO);
+            if (bookDTO.cate_id != 0)
+                setChkSelect(1);
+            // console.log("Edittt");
+            // console.log(bookDTO);
 
 
         } else {
@@ -185,6 +191,10 @@ export default function AddBook(props: any) {
             setBookState();
             return false;
         }
+        if (book.cateId === 0) {
+            setBookState();
+            return false;
+        }
         return true;
     }
 
@@ -193,22 +203,28 @@ export default function AddBook(props: any) {
             return {
                 ...prev,
                 title: prev.title || '',
+                nxb: prev.nxb || '',
                 publisher: prev.publisher || '',
                 publicationYear: prev.publicationYear || 0,
                 quantity: prev.quantity || 0,
                 price: prev.price || 0,
+                cateId: prev.cateId || 0
                 // category: prev.category || undefined
             }
         })
     }
 
     const save = () => {
+        
+    
         if (!chk()) {
             return;
         }
+
+
         const formData = new FormData();
         formData.append('book', JSON.stringify(book));
-        // console.log("book trc khi save", book);
+         console.log("book trc khi save", book);
 
         if (file) {
             formData.append('file', file);
@@ -229,6 +245,7 @@ export default function AddBook(props: any) {
             cancelButtonText: `No`
         }).then((result) => {
             if (result.value) {
+                dispatch(setLoading(true));
                 // logic
                 let url = `http://localhost:8080/book/add`;
                 axios.post(url, formData, {
@@ -237,12 +254,16 @@ export default function AddBook(props: any) {
                     }
                 }).then((resp: any) => {
                     if (resp.data === "success") {
-                        hideForm(true);
-                        toast.success("Lưu sách thành công");
-                        onSave()
+                        setTimeout(() => {
+                            hideForm(true);
+                            dispatch(setLoading(false));
+                            toast.success("Lưu sách thành công");
+                            onSave()
+                        }, 1000);
                     }
                 }).catch((err: any) => {
-                    console.log(err);
+                    dispatch(setLoading(false));
+                    // console.log(err);
                     toast.error("Không thể lưu sách");
                 })
             }
@@ -290,7 +311,7 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Nhà xuất bản<span className="text-danger">(*)</span>
+                                Tên tác giả<span className="text-danger">(*)</span>
                             </label>
                             <input type='text'
                                 className="form-control"
@@ -303,12 +324,25 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
+                                Nhà xuất bản<span className="text-danger">(*)</span>
+                            </label>
+                            <input type='text'
+                                className="form-control"
+                                name="nxb"
+                                value={book.nxb || ""}
+                                onChange={handleChangeText}
+                                placeholder="Nhập tên nhà xuất bản" />
+                            <div className={`invalid-feedback ${book.nxb?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                        </div>
+
+                        <div className='form-group'>
+                            <label>
                                 Năm xuất bản
                             </label>
                             <input type='number'
                                 name="publicationYear"
                                 className="form-control"
-                                value={book.publicationYear == undefined ? '' : book.publicationYear}
+                                value={book.publicationYear == undefined ? 0 : book.publicationYear}
                                 onKeyDown={handleKeyPress}
                                 onChange={handleChangeNumber}
                                 placeholder="Nhập năm xuất bản" />
@@ -322,7 +356,7 @@ export default function AddBook(props: any) {
                             <input type='number'
                                 className="form-control"
                                 name="quantity"
-                                value={book.quantity == undefined ? '' : book.quantity}
+                                value={book.quantity == undefined ? 0 : book.quantity}
                                 onKeyDown={handleKeyPress}
                                 onChange={handleChangeNumber}
                                 placeholder="Số lượng sách" />
@@ -336,7 +370,7 @@ export default function AddBook(props: any) {
                             <input type='number'
                                 className="form-control"
                                 name="price"
-                                value={book.price == undefined ? '' : book.price}
+                                value={book.price == undefined ? 0.0 : book.price}
                                 onKeyDown={handleKeyPress}
                                 onChange={handleChangeNumber}
                                 placeholder="Giá" />
@@ -345,7 +379,7 @@ export default function AddBook(props: any) {
 
                         <div className='form-group'>
                             <label>
-                                Thể loại
+                                Thể loại<span className="text-danger">(*)</span>
                             </label>
                             <select
                                 style={{
@@ -355,7 +389,6 @@ export default function AddBook(props: any) {
                                 className="form-select"
                                 onChange={handleCategoryChange}
                                 name='cateId'
-                            // value={book.cateId || 0}
                             >
 
                                 {bookDTO != null && (
@@ -372,7 +405,7 @@ export default function AddBook(props: any) {
                                     </option>
                                 ))}
                             </select>
-                            {/* <div className={`invalid-feedback ${book.category?.id == null ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div> */}
+                            <div className={`invalid-feedback ${book.cateId?.toString() == '0' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
                         </div>
 
                     </div>
@@ -404,7 +437,7 @@ export default function AddBook(props: any) {
                                 value={editorContent}
                                 onChange={(newContent) => handleContentChange(newContent)}
                             />
-                            <div className={`invalid-feedback ${book.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                            {/* <div className={`invalid-feedback ${book.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div> */}
                         </div>
 
                         {/* Lưu ảnh bìa-------------------------------------------------- */}

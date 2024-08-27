@@ -48,15 +48,6 @@ public class BookClientController {
 		return ResponseEntity.ok().body(books);
 	}
 	
-//	@GetMapping("/book/list/all")
-//	public ResponseEntity<?> bookGetAllPage(
-//			@RequestParam(value = "page", defaultValue = "1") Integer page,
-//            @RequestParam(value = "keySearch", defaultValue = "") String keySearch,
-//            @RequestParam("cateId") Integer cateId) {
-//		PageRequest pageRequest = PageRequest.of(page - 1, 9, Sort.by("upd_dt").descending());
-//		Page<BookDTO> book = bookService.findByKeySearch(keySearch,cateId, pageRequest);
-//		return ResponseEntity.ok().body(book);
-//	}
 	
 	@GetMapping("/book/list/all")
 	public ResponseEntity<?> bookGetAllPage(

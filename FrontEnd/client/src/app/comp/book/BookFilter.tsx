@@ -386,7 +386,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
       </SizesFilter>
 
       {/* -----------------------------------Lọc theo đánh giá---------------------------- */}
-      <StyleFilter onClick={() => toggleFilter("style")}>
+      {/* <StyleFilter onClick={() => toggleFilter("style")}>
         <FilterTitle className="flex items-center justify-between">
           <p className="filter-title-text text-gray text-base font-semibold text-lg">
             Lọc theo đánh giá
@@ -399,25 +399,9 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isStyleFilterOpen ? "hide" : "show"}`}>
-          {/* {StyleFilterList?.map((styleFilter) => {
-            return (
-              <div className="style-filter-item" key={styleFilter.id}>
-                <button
-                  type="button"
-                  className="filter-item-head w-full flex items-center justify-between"
-                >
-                  <span className="filter-head-title text-base text-gray font-semibold">
-                    {styleFilter.title}
-                  </span>
-                  <span className="filter-head-icon text-gray">
-                    <i className="bi bi-chevron-right"></i>
-                  </span>
-                </button>
-              </div>
-            );
-          })} */}
         </FilterWrap>
-      </StyleFilter>
+      </StyleFilter> */}
+      
     </>
   );
 };

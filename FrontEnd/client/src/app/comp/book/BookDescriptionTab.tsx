@@ -221,13 +221,13 @@ const BookDescriptionTab = (props: any) => {
   useEffect(() => {
     if (book?.id && userInfo?.userUid) {
       const url = `http://localhost:8080/feedback/myFeedBack?book_id=${book.id}&user_id=${userInfo.userUid}`;
-  
+
       axios.get(url)
         .then(response => {
-          
+
           // console.log("Feed là: ");
           // console.log(response.data);
-          
+
           setMyFeedBack(response.data);
         })
         .catch(error => {
@@ -236,7 +236,7 @@ const BookDescriptionTab = (props: any) => {
         });
     }
   }, [book?.id, userInfo?.userUid]);
-  
+
 
   //Xử lý feedBack-----------------------------------------------------------
   const changeRating = (newRating: any) => {
@@ -245,7 +245,7 @@ const BookDescriptionTab = (props: any) => {
       ...prevFeedBack,
       rating: newRating,
     }));
-    
+
   };
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -305,7 +305,7 @@ const BookDescriptionTab = (props: any) => {
 
     setComment('');
     setRating(0);
-    
+
     save();
   };
 
@@ -432,7 +432,7 @@ const BookDescriptionTab = (props: any) => {
 
                   {/* Phần nhập feedback và hiển thị feedback */}
                   <div className="col-md-9">
-                    {isLoggedIn && (myFeedBack?.rating == null) &&
+                    {isLoggedIn &&
                       <div className="card p-3 mb-3">
                         <h4 className="card-title">Đánh giá của bạn</h4>
 
@@ -500,9 +500,13 @@ const BookDescriptionTab = (props: any) => {
                               />
                             </div>
                             <div className="feedback-content ms-3">
-                              <div className="user-info">
+                              <div className="user-info d-flex justify-content-between align-items-center">
                                 <strong className="user-name">{fb.user_name}</strong>
+                                <span className="feedback-time text-muted">
+                                  {new Date(fb.upd_dt).toLocaleDateString()}
+                                </span>
                               </div>
+
                               <div className="user-rating">
                                 <StarRatings
                                   rating={fb.rating || 0} // Ensure you have a rating property in your feedback data
@@ -519,6 +523,8 @@ const BookDescriptionTab = (props: any) => {
                         </div>
                       ))}
                     </div>
+
+                    {/* //-------------------------------------- */}
                   </div>
                 </div>
               </div>

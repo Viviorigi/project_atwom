@@ -12,7 +12,7 @@ import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import StarRatings from 'react-star-ratings';
 import { Link } from "react-router-dom";
 
-
+import "./fb.scss"
 
 const FeedbackItemWrapper = styled.div`
   padding-left: 16px;
@@ -149,9 +149,12 @@ const Feedback = () => {
                       </div>
 
                       <div className="feedback-details flex flex-col ml-4">
-                        {/* User Name */}
-                        <p className="font-semibold text-base">{feedback.user_name}</p>
-
+                        <div className="user-info d-flex justify-content-between align-items-center">
+                          <strong className="user-name">{feedback.user_name}</strong>
+                          <span className="feedback-time text-muted">
+                            {new Date(feedback.upd_dt).toLocaleDateString()}
+                          </span>
+                        </div>
                         {/* Rating Section */}
                         <div className="user-rating mb-2">
                           <StarRatings

@@ -10,6 +10,8 @@ import { format } from 'date-fns';
 import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
 import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
+import { useAppDispatch } from '../../store/hook';
+import { setLoading } from '../../reducers/spinnerSlice';
 
 export default function Book() {
 
@@ -21,6 +23,7 @@ export default function Book() {
   const [totalItems, setTotalItems] = useState(0);
   const bookRef = useRef<any>();
   const visible = useRef<any>(true);
+  const dispatch = useAppDispatch();
 
   //phân trang
   const handlePageClick = (pageNumber: any) => {
@@ -91,17 +94,17 @@ export default function Book() {
       cancelButtonText: `No`
     }).then((result) => {
       if (result.value) {
+        dispatch(setLoading(true));
         let url = `http://localhost:8080/book/delete?id=${id}`;
         axios.delete(url).then((resp: any) => {
-          // if (resp.data === "success") {
+          dispatch(setLoading(false));
           toast.success("Đã xóa");
-          // console.log(resp.data);
           setSearchDto({
             ...searchDto,
             timer: new Date().getTime()
           })
-          // }
         }).catch((err: any) => {
+          dispatch(setLoading(false));
           // console.log(err);
           toast.error("Xóa thất bại");
         })
@@ -228,7 +231,7 @@ export default function Book() {
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NĂM XUẤT BẢN</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>SỐ LƯỢNG</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>GIÁ</th>
-                      {/* <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>MÔ TẢ</th> */}
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>Nhà xuất bản</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NGÀY TẠO</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NGÀY CẬP NHẬT</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>TRẠNG THÁI</th>
@@ -257,6 +260,7 @@ export default function Book() {
                         <td className="align-middle text-start text-700">{formatCurrency(u.price)}</td>
                         {/* <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }} /> */}
                         {/* <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-start text-1000"  dangerouslySetInnerHTML={{ __html: u.description }}/> */}
+                        <td className="align-middle text-center text-1100">{u.nxb}</td>
                         <td className="align-middle text-center text-700">{formatDate(u.cre_dt)}</td>
                         <td className="align-middle text-center text-700">{formatDate(u.upd_dt)}</td>
                         <td className="align-middle text-center">

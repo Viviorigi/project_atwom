@@ -9,6 +9,8 @@ import Pagination from '../../comp/common/Pagination';
 import { format } from 'date-fns';
 import { formatCurrency, formatDate } from "../../utils/FunctionUtils";
 import "../../../assets/css/category/cate.scss";
+import { useAppDispatch } from '../../store/hook';
+import { setLoading } from '../../reducers/spinnerSlice';
 
 
 export default function Book() {
@@ -20,6 +22,7 @@ export default function Book() {
   const [totalItems, setTotalItems] = useState(0);
   const categoryRef = useRef<any>();
   const visible = useRef<any>(true);
+  const dispatch = useAppDispatch();
 
   //phân trang
   const handlePageClick = (pageNumber: any) => {
@@ -90,13 +93,11 @@ export default function Book() {
       cancelButtonText: `No`
     }).then((result) => {
       if (result.value) {
+        dispatch(setLoading(true));
         let url = `http://localhost:8080/category/delete?id=${id}`;
         axios.delete(url).then((resp: any) => {
-          console.log("thông báo xóa: ");
-          console.log(resp.data);
-
-
           // if (resp.data === "success") {
+          dispatch(setLoading(false));
           toast.success("Đã xóa");
           // console.log(resp.data);
           setSearchDto({
@@ -105,7 +106,7 @@ export default function Book() {
           })
           // }
         }).catch((err: any) => {
-          console.log(err);
+          dispatch(setLoading(false));
           toast.error("Xóa thất bại");
         })
       }

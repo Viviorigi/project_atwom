@@ -63,9 +63,11 @@ const Category = () => {
   };
 
   const [bookList, setBookList] = useState([]);
+  const [bookLoveList, setBookLoveList] = useState([]);
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/new`;
+    // ----------------------Sach mơi
+    let url = process.env.REACT_APP_API_URL + `/book/new`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
         setBookList(resp.data);
@@ -73,12 +75,23 @@ const Category = () => {
     }).catch((err: any) => {
 
     })
+
+    // ----------------------------Sách yêu thích
+    let url_book_love = process.env.REACT_APP_API_URL + `/book/love`;
+    axios.get(url_book_love).then((resp: any) => {
+      if (resp.data)
+        
+        
+      setBookLoveList(resp.data);
+    }).catch((err: any) => {
+    })
+
   }, [])
 
   return (
     <Section>
       <Container>
-        <Title titleText={"New Book"} />
+        <Title titleText={"Sách mới"} />
         <ArrivalSliderWrapper>
           <Slider
             nextArrow={<CustomNextArrow />}
@@ -88,7 +101,7 @@ const Category = () => {
 
             {bookList.map((u: any) => {
               return (
-                <ProductCardBoxWrapper key={u.id}> 
+                <ProductCardBoxWrapper key={u.id}>
                   <div className="product-img">
                     {/* <Link to={`/book/details/?id=${u.id}`}> */}
                     <Link to={`/book/details/?bookId=${u.id}`}>
@@ -116,8 +129,48 @@ const Category = () => {
         </ArrivalSliderWrapper>
       </Container>
 
+      {/* ----------------------------------------------------- */}
+      <Container>
+        <Title titleText={"Sách được yêu thích"} />
+        <ArrivalSliderWrapper>
+          <Slider
+            nextArrow={<CustomNextArrow />}
+            prevArrow={<CustomPrevArrow />}
+            {...settings}
+          >
 
+            {bookLoveList.map((u: any) => {
+              return (
+                <ProductCardBoxWrapper key={u.id}>
+                  <div className="product-img">
+                    {/* <Link to={`/book/details/?id=${u.id}`}> */}
+                    <Link to={`/book/details/?bookId=${u.id}`}>
+                      <img
+                        className="object-fit-cover"
+                        src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null; // Prevent infinite loop in case fallback image also fails
+                          target.src = imageBookDefault; // Set the fallback image
+                        }}
+                        alt=""
+                        width="100px"
+                        height="100px"
+                      />
+                    </Link>
+                  </div>
+                  <div className="product-info">
+                    <p className="font-semibold text-xl">{u.title}</p>
+                  </div>
+                </ProductCardBoxWrapper>
+              );
+            })}
+          </Slider>
+
+        </ArrivalSliderWrapper>
+      </Container>
     </Section>
+
+
   );
 };
 

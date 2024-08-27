@@ -1,0 +1,22 @@
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    /* Thêm khoảng cách phía dưới nếu cần */
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 1rem;
+    /* Kích thước chữ của tên người dùng */
+    margin-right: 8px;
+    /* Khoảng cách giữa tên người dùng và thời gian phản hồi */
+}
+
+.feedback-time {
+    font-size: 0.875rem;
+    /* Kích thước chữ nhỏ hơn một chút */
+    color: #6c757d;
+    /* Màu chữ xám nhạt để làm nổi bật thời gian */
+}

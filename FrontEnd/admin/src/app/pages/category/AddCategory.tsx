@@ -6,12 +6,15 @@ import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
 import JoditEditor, { Jodit } from "jodit-react";
 import DOMPurify from 'dompurify';
+import { useAppDispatch } from "../../store/hook";
+import { setLoading } from "../../reducers/spinnerSlice";
 
 export default function AddCategory(props: any) {
     const { hideForm, categoryDTO, onSave } = props;
     const [category, setCategory] = useState<CategoryDTO>(new CategoryDTO());
     const [editorContent, setEditorContent] = useState('');
     const currentDate = new Date().toISOString();
+    const dispatch = useAppDispatch();
 
     //xử lý text-editor 
     const handleContentChange = (newContent: any) => {
@@ -49,7 +52,7 @@ export default function AddCategory(props: any) {
             setCategory({
                 ...categoryDTO,
                 active: true,
-                description:'',
+                description: '',
                 cre_dt: new Date().toISOString(),
                 upd_dt: new Date().toISOString()
             })
@@ -78,10 +81,10 @@ export default function AddCategory(props: any) {
             setCategoryState();
             return false;
         }
-        if (category.description === undefined || category.description === '') {
-            setCategoryState();
-            return false;
-        }
+        // if (category.description === undefined || category.description === '') {
+        //     setCategoryState();
+        //     return false;
+        // }
         return true;
     }
 
@@ -118,12 +121,17 @@ export default function AddCategory(props: any) {
                 let url = `http://localhost:8080/category/add`;
                 axios.post(url, category).then((resp: any) => {
                     if (resp.data === "success") {
-                        hideForm(true);
-                        toast.success("Lưu thể loại thành công");
-                        onSave()
+                        dispatch(setLoading(true));
+                        setTimeout(() => {
+                            hideForm(true);
+                            dispatch(setLoading(false));
+                            toast.success("Lưu thể loại thành công");
+                            onSave()
+                        }, 1000);
                     }
                 }).catch((err: any) => {
-                    console.log(err);
+                    dispatch(setLoading(false));
+                    // console.log(err);
 
                 })
             }
@@ -208,7 +216,7 @@ export default function AddCategory(props: any) {
                                 value={editorContent}
                                 onChange={(newContent) => handleContentChange(newContent)}
                             />
-                            <div className={`invalid-feedback ${category.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div>
+                            {/* <div className={`invalid-feedback ${category.description?.toString() == '' ? "d-block" : ""}`} style={{ fontSize: "100%" }}>Không được để trống</div> */}
                         </div>
                     </div>
 

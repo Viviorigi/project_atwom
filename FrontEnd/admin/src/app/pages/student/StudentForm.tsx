@@ -12,8 +12,8 @@ export default function StudentForm(props: any) {
   const [userSave, setUserSave] = useState<UserDTORequest>(
     new UserDTORequest()
   );
-  const dispatch = useAppDispatch();
-  console.log(user);
+  const dispatch = useAppDispatch();  
+  // console.log(user);
 
   useEffect(() => {
     if (user) {
