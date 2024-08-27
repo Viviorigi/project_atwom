@@ -69,7 +69,8 @@ export default function BannerForm(props: any) {
   };
 
 
-  const imageSource = image? image : banner!==null ? `http://localhost:8080/files/${banner.image}`: defaultPersonImage;
+  const imageSource = image? image : banner!==null ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${banner.image}
+`: defaultPersonImage;
 
   const save = () => {
     

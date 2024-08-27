@@ -270,7 +270,19 @@ const Return = () => {
                       {order.user ? order.user.fullName : "N/A"}
                     </td>
                     <td className="align-middle text-center">
-                      {order.status}
+                    <span
+                        className={` ${order.status === "REQUESTED"
+                          ? "badge badge-phoenix fs--2 badge-phoenix-info"
+                          : order.status === "RETURNED" ||
+                            order.status === "BORROWED"
+                            ? "badge badge-phoenix fs--2 badge-phoenix-success"
+                            : order.status === "REJECTED"
+                              ? "badge badge-phoenix fs--2 badge-phoenix-danger"
+                              : "badge badge-phoenix fs--2 badge-phoenix"
+                          }`}
+                      >
+                        <span className="badge-label">{order.status}</span>
+                      </span>
                     </td>
                     <td className="align-middle text-center">
                       {format(new Date(order.startTime), "dd-MM-yyyy")}
@@ -291,24 +303,9 @@ const Return = () => {
                         : "N/A"}
                     </td>
                     <td className="align-middle text-center">
-                    <button
-                        className="btn btn-warning btn-sm me-2"
-                        onClick={() => editOrder(order)}
-                      >
-                        <i className="fa-solid fa-pen"></i>
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm me-2"
-                        onClick={() => deleteOrder(order.id)}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
-                      <button
-                        className="btn btn-info btn-sm"
-                        onClick={() => viewOrderDetail(order)}
-                      >
-                        <span className="fas fa-eye" />
-                      </button>
+                    <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>
+                      <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i></button>
+                      <button aria-label='d' className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => viewOrderDetail(order)}><i className="far fa-eye"></i></button>
                     </td>
                   </tr>
                 ))}

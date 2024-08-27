@@ -10,7 +10,9 @@ export default function Header() {
     const cookie = new Cookies();
     const [fullName,setFullName] = useState("");
     const [avatar,setAvatar] = useState("")
-    const [total, setTotal] = useState();
+    // const [total, setTotal] = useState(0);
+    const total = useRef(0)
+    const [timer, setTimer] = useState(0)
 
     const isDataFetched = useRef(false);
 
@@ -44,7 +46,7 @@ export default function Header() {
           }
         
           NotificationService.getInstance().getTotal().then((resp:any) => {
-            setTotal(resp.data);
+            total.current = resp.data
           }).catch((e:any) => {
             console.log(e);
             
@@ -54,10 +56,11 @@ export default function Header() {
         events.onmessage = event => {
             const newNotification = new NotificationDTO(event.data);
             console.log(event.data);
+            total.current = total.current + 1;
             setNotifications(prevNotifications => {
                 const updatedNotifications = [...prevNotifications, newNotification];
                 
-                if (updatedNotifications.length > 5) {
+                if (updatedNotifications.length > 10) {
                     updatedNotifications.shift(); 
                 }
                 
@@ -65,6 +68,9 @@ export default function Header() {
             });
       }
       console.log(notifications);
+      return () => {
+        events.close();
+    };
       
       },[notifications,total])
     const logout = ()=>{
@@ -207,7 +213,7 @@ export default function Header() {
                             <a className="nav-link position-relative" href="index.html#" style={{ minWidth: '2.5rem' }} role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span className="far fa-bell" style={{ height: 20, width: 20 }} />
                                 {total ? 
                                 <span className="position-absolute top-auto start-85 translate-middle badge rounded-pill bg-danger">
-                                    {total}+
+                                    {total.current}+
                                     <span className="visually-hidden">unread messages</span>
                                 </span>
                                 : ""}

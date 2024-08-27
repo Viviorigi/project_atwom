@@ -228,7 +228,7 @@ export default function Book() {
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NĂM XUẤT BẢN</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>SỐ LƯỢNG</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>GIÁ</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>MÔ TẢ</th>
+                      {/* <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>MÔ TẢ</th> */}
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NGÀY TẠO</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>NGÀY CẬP NHẬT</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>TRẠNG THÁI</th>
@@ -255,7 +255,7 @@ export default function Book() {
                         <td className="align-middle text-center text-1000">{u.publicationYear}</td>
                         <td className="align-middle text-center text-1100">{u.quantity}</td>
                         <td className="align-middle text-start text-700">{formatCurrency(u.price)}</td>
-                        <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }} />
+                        {/* <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }} /> */}
                         {/* <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-start text-1000"  dangerouslySetInnerHTML={{ __html: u.description }}/> */}
                         <td className="align-middle text-center text-700">{formatDate(u.cre_dt)}</td>
                         <td className="align-middle text-center text-700">{formatDate(u.upd_dt)}</td>

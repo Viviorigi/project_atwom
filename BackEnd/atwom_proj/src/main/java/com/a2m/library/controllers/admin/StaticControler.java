@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.a2m.library.service.book.BookService;
 
 @RestController
-//@RequestMapping(value = "api/admin")
+@RequestMapping(value = "api/admin")
 public class StaticControler {
 	@Autowired
 	BookService bookService;

@@ -66,7 +66,8 @@ export default function BannerInfo(props: any) {
                   <div className="row align-items-center g-3 g-sm-5 text-center text-sm-start">
                     <div className="col-12 col-sm-auto">
                       <label className="cursor-pointer avatar avatar-5xl img-fluid " htmlFor="avatarFile">
-                        <img className="img-fluid" src={info.image ? `http://localhost:8080/files/${info.image}` : defaultPersonImage} alt="" /></label>
+                        <img className="img-fluid" src={info.image ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${info.image}
+` : defaultPersonImage} alt="" /></label>
                     </div>
                   </div>
                 </div>
