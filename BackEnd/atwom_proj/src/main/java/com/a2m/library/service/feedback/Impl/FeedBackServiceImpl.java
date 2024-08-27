@@ -1,5 +1,6 @@
 package com.a2m.library.service.feedback.Impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,7 @@ public class FeedBackServiceImpl implements FeedBackService {
 	@Override
 	public void save(FeedBackDTO feedBackDTO) {
 		// TODO Auto-generated method stub
+		feedBackDTO.setUpd_dt(LocalDateTime.now());
 		feedBackRepository.save(convertToFeedBack(feedBackDTO));
 	}
 

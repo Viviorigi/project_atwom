@@ -37,6 +37,7 @@ public interface BookService {
 	
 	//---Thong ke
 	public long getCountBooksAddedToday();
+	public List<BookDTO> bookLove();
 }
 
 

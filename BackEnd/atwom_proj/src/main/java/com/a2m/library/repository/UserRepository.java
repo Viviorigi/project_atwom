@@ -46,4 +46,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 		       "u.deleted = false AND " +
 		       "u.isActive = true")
 	    Page<User> searchUsersActive(@Param("keyword") String keyword, Pageable pageable);
+	
+	@Query("SELECT COUNT(b) FROM User b WHERE FUNCTION('DATE', b.upd_dt) = CURRENT_DATE")
+    long countUserAddedToday();
 }

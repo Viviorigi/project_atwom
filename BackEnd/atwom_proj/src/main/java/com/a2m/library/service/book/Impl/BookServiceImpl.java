@@ -19,6 +19,7 @@ import com.a2m.library.model.Book;
 import com.a2m.library.model.Category;
 import com.a2m.library.repository.BookRepository;
 import com.a2m.library.repository.FeedBackRepository;
+import com.a2m.library.repository.WishlistRepository;
 import com.a2m.library.service.book.BookService;
 import com.a2m.library.service.category.CategoryService;
 
@@ -32,6 +33,9 @@ public class BookServiceImpl implements BookService {
 
 	@Autowired
 	FeedBackRepository feedBackRepository;
+	
+	@Autowired
+	WishlistRepository wishlistRepository;
 
 	@Override
 	public List<BookDTO> findAll() {
@@ -232,6 +236,14 @@ public class BookServiceImpl implements BookService {
 	public long getCountBooksAddedToday() {
 		// TODO Auto-generated method stub
 		return bookRepository.countBooksAddedToday();
+	}
+
+	@Override
+	public List<BookDTO> bookLove() {
+		// TODO Auto-generated method stub
+		List<Book> love = wishlistRepository.findTop5MostLikedBooks();
+		return love.stream().map(book -> convertToBookDTO(book)).collect(Collectors.toList());
+//		return null;
 	}
 
 }

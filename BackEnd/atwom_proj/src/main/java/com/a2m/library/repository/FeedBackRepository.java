@@ -20,4 +20,7 @@ public interface FeedBackRepository extends JpaRepository<FeedBack, Integer> {
 	
 	List<FeedBack> findByBookIdAndUser_UserUid(Integer bookId, Long userUid);
 	List<FeedBack> findTop5ByOrderByUpdDtDesc();
+	
+	@Query("SELECT COUNT(b) FROM FeedBack   b WHERE FUNCTION('DATE', b.updDt) = CURRENT_DATE")
+    long countFeedBackAddedToday();
 }
