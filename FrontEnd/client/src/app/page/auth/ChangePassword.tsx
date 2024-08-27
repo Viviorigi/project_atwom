@@ -85,20 +85,17 @@ const ChangePassword = () => {
             </div>
             <div className="form-grid-right">
               <FormTitle>
-                <h3>Create New Password</h3>
-                <p>
-                  Your new password mst be different from previous used
-                  passwords.
-                </p>
+                <h3>Đổi mật khẩu</h3>
+                
               </FormTitle>
 
               <FormElement>
                 <label htmlFor="" className="form-elem-label">
-                  Current Password
+                  Mật khẩu hiện tại
                 </label>
                 <input
                   type="password"
-                  placeholder="Enter new Password"
+                  placeholder="Nhập mật khẩu hiện tại"
                   name="currentPassword"
                   onChange={handleChangeText}
                   value={pass.currentPassword || ""}
@@ -108,17 +105,17 @@ const ChangePassword = () => {
                   className={`invalid-feedback ${pass.currentPassword?.toString() === "" ? "d-block" : ""}`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
-                  CurrentPassword Password not empty
+                  Mật khẩu hiện tại không để trống
                 </div>
               </FormElement>
 
               <FormElement>
                 <label htmlFor="" className="form-elem-label">
-                  New Password
+                  Mật khẩu mới
                 </label>
                 <input
                   type="password"
-                  placeholder="Enter new Password"
+                  placeholder="Nhập mật khẩu mới"
                   name="newPassword"
                   onChange={handleChangeText}
                   value={pass.newPassword || ""}
@@ -128,16 +125,16 @@ const ChangePassword = () => {
                   className={`invalid-feedback ${pass.newPassword?.toString() === "" ? "d-block" : ""}`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
-                  New Password not empty
+                  Mật khẩu mới không để trống
                 </div>
               </FormElement>
               <FormElement>
                 <label htmlFor="" className="form-elem-label">
-                  Confirm Password
+                  Nhập lại mật khẩu
                 </label>
                 <input
                   type="password"
-                  placeholder="Enter Confirm Password"
+                  placeholder="Nhập lại mật khẩu"
                   name="confirmPassword"
                   onChange={handleChangeText}
                   value={pass.confirmPassword || ""}
@@ -147,15 +144,15 @@ const ChangePassword = () => {
                   className={`invalid-feedback ${pass.confirmPassword?.toString() === "" ? "d-block" : ""}`}
                   style={{ fontSize: "100%", color: "red" }}
                 >
-                  Confirm Password not empty
+                  Nhập lại mật khẩu không được trống
                 </div>
                 <div className={`invalid-feedback ${pass?.confirmPassword?.toString() !== pass?.newPassword?.toString() ? "d-block" : ""}`}
                   style={{ fontSize: "100%", color: "red" }}>
-                  Confirm Password does not match
+                  Nhập lại mật khẩu không chính xác
                 </div>
               </FormElement>
 
-              <button className="form-submit-btn" style={{ backgroundColor: "black", color: "white" }} onClick={changePassword}>Change Password</button>
+              <button className="form-submit-btn" style={{ backgroundColor: "black", color: "white" }} onClick={changePassword}>Đổi Mật Khẩu</button>
 
             </div>
           </div>

@@ -137,13 +137,13 @@ export default function StudentForm(props: any) {
     }).then((result) => {
       if (result.value) {
         if (user === null) {
-          // dispatch(setLoading(true));
+          dispatch(setLoading(true));
           AuthService.getInstance()
             .create(formData)
             .then((resp: any) => {
               if (resp) {
                 setTimeout(() => {
-                  // dispatch(setLoading(false));
+                  dispatch(setLoading(false));
                   toast.success(resp.data.message);
                   closeForm();
                   onSave();
@@ -151,7 +151,7 @@ export default function StudentForm(props: any) {
               }
             })
             .catch((error: any) => {
-              // dispatch(setLoading(false));
+              dispatch(setLoading(false));
               closeForm();
               toast.error(error.message);
             });
@@ -373,7 +373,7 @@ export default function StudentForm(props: any) {
 
           <div className="form-group">
             <label>
-              Ảnh đại diện <span className="text-danger">(*)</span>
+              Ảnh đại diện 
             </label>
             <br />
             <input

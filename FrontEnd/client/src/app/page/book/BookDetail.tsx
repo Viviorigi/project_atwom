@@ -254,14 +254,14 @@ const BookDetail = (props: any) => {
           WishService.getInstance()
             .remove(book?.id)
             .then((resp: any) => {
-              toast.success("Remove from wishlist successfully");
+              toast.success("Xóa khỏi danh sách yêu thích thành công");
               setIsFavorited(false);
             });
         } else {
           WishService.getInstance()
             .add(book?.id)
             .then((resp: any) => {
-              toast.success("add to wishlist successfully");
+              toast.success("Thêm vào danh sách yêu thích thành công");
               setIsFavorited(true);
             });
         }
@@ -275,7 +275,7 @@ const BookDetail = (props: any) => {
             (item: any) => item.id !== book?.id
           );
           localStorage.setItem("wishlist", JSON.stringify(updatedFavorites));
-          toast.success("Remove from wishlist successfully");
+          toast.success("Xóa khỏi danh sách yêu thích thành công");
           setIsFavorited(false);
         } else {
           const bookDetails = {
@@ -286,13 +286,13 @@ const BookDetail = (props: any) => {
             image: book?.image,
           };
           savedFavorites.push(bookDetails);
-          toast.success("add to wishlist successfully");
+          toast.success("Thêm vào danh sách yêu thích thành công");
           localStorage.setItem("wishlist", JSON.stringify(savedFavorites));
           setIsFavorited(true);
         }
       }
     } catch (error) {
-      console.error("There was an error updating the favorite status!", error);
+      console.error("error:", error);
     }
   };
 

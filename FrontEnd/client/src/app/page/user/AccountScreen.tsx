@@ -9,10 +9,10 @@ import { UserContent, UserDashboardWrapper } from "../../styles/user";
 import { useEffect, useRef, useState } from "react";
 import { UserDetail } from "../../model/auth/UserDetail";
 import { AuthService } from "../../services/AuthService";
-import defaultPerson from "../../../assets/images/imagePerson.png"
+import defaultPerson from "../../../assets/images/imagePerson.png";
 import { format } from "date-fns";
 import { BaseLinkGreen } from "../../styles/button";
-import { Dialog } from 'primereact/dialog';
+import { Dialog } from "primereact/dialog";
 import UserForm from "./UserForm";
 
 const AccountScreenWrapper = styled.main`
@@ -57,10 +57,10 @@ const AccountScreenWrapper = styled.main`
 
 const breadcrumbItems = [
   {
-    label: "Home",
+    label: "Trang chủ",
     link: "/",
   },
-  { label: "Account", link: "/account" },
+  { label: "Tài khoản", link: "/account" },
 ];
 
 const AccountScreen = () => {
@@ -78,14 +78,16 @@ const AccountScreen = () => {
   };
 
   useEffect(() => {
-    AuthService.getInstance().getInfo().then((resp: any) => {
-      if (resp) {
-        SetUserDetail(resp.data);
-        console.log(userDetail);
-      }
-    }
-    ).catch()
-  }, [saveTrigger])
+    AuthService.getInstance()
+      .getInfo()
+      .then((resp: any) => {
+        if (resp) {
+          SetUserDetail(resp.data);
+          console.log(userDetail);
+        }
+      })
+      .catch();
+  }, [saveTrigger]);
   const formatDOB = (date: any) => {
     if (!date) {
       return "Date not provided";
@@ -99,19 +101,29 @@ const AccountScreen = () => {
         <UserDashboardWrapper>
           <UserMenu />
           <UserContent>
-            <Title titleText={"My Account"} />
+            <Title titleText={"Tài khoản của tôi"} />
             <div className="d-flex justify-content-between">
-              <h3 className="mt-2">Details Info</h3>
+              <h3 className="mt-2">Thông tin chi tiết</h3>
               <div>
-              <BaseLinkGreen className="p-2 m-2" to="/change_password">Change Password</BaseLinkGreen>
-              <button className="btn btn-primary" onClick={()=>editUser(userDetail)}>Update info</button>
+                <BaseLinkGreen className="p-2 m-2" to="/change_password">
+                  Đổi mật khẩu
+                </BaseLinkGreen>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => editUser(userDetail)}
+                >
+                  Cập nhật thông tin
+                </button>
               </div>
             </div>
 
-            <div className="form-wrapper "  style={{marginBottom:"50px"}}>
+            <div className="form-wrapper" style={{ marginBottom: "50px" }}>
               <div className="form-group">
-                <label className="form-label font-semibold text-base" style={{ fontSize: "20px" }}>
-                  Avatar
+                <label
+                  className="form-label font-semibold text-base mb-3"
+                  style={{ fontSize: "20px" }}
+                >
+                  Ảnh đại diện
                 </label>
                 <br />
                 <div
@@ -124,7 +136,11 @@ const AccountScreen = () => {
                   }}
                 >
                   <img
-                    src={userDetail.avatar ? `http://localhost:8080/getImage?atchFleSeqNm=${userDetail.avatar}` : defaultPerson}
+                    src={
+                      userDetail.avatar
+                        ? `http://localhost:8080/getImage?atchFleSeqNm=${userDetail.avatar}`
+                        : defaultPerson
+                    }
                     alt="Preview"
                     style={{ width: "200px", height: "200px" }}
                   />
@@ -136,9 +152,12 @@ const AccountScreen = () => {
                   className="form-label font-semibold text-base"
                   style={{ fontSize: "20px" }}
                 >
-                  Your Name
+                  Tên của bạn
                 </label>
-                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                <div
+                  className="form-input-wrapper flex items-center"
+                  style={{ marginBottom: "20px" }}
+                >
                   <h4 className="form-elem-control text-outerspace font-semibold ">
                     {userDetail.fullName || ""}
                   </h4>
@@ -150,9 +169,12 @@ const AccountScreen = () => {
                   className="form-label font-semibold text-base"
                   style={{ fontSize: "20px" }}
                 >
-                  Email Address
+                  Địa chỉ email
                 </label>
-                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                <div
+                  className="form-input-wrapper flex items-center"
+                  style={{ marginBottom: "20px" }}
+                >
                   <h4 className="form-elem-control text-outerspace font-semibold ">
                     {userDetail.email || ""}
                   </h4>
@@ -164,9 +186,12 @@ const AccountScreen = () => {
                   className="form-label font-semibold text-base"
                   style={{ fontSize: "20px" }}
                 >
-                  Phone Number
+                  Số điện thoại
                 </label>
-                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                <div
+                  className="form-input-wrapper flex items-center"
+                  style={{ marginBottom: "20px" }}
+                >
                   <h4 className="form-elem-control text-outerspace font-semibold ">
                     {userDetail.phone || ""}
                   </h4>
@@ -178,9 +203,12 @@ const AccountScreen = () => {
                   className="form-label font-semibold text-base"
                   style={{ fontSize: "20px" }}
                 >
-                  Address
+                  Địa chỉ
                 </label>
-                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                <div
+                  className="form-input-wrapper flex items-center"
+                  style={{ marginBottom: "20px" }}
+                >
                   <h4 className="form-elem-control text-outerspace font-semibold ">
                     {userDetail.address || ""}
                   </h4>
@@ -192,9 +220,12 @@ const AccountScreen = () => {
                   className="form-label font-semibold text-base"
                   style={{ fontSize: "20px" }}
                 >
-                  Dob
+                  Ngày sinh
                 </label>
-                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                <div
+                  className="form-input-wrapper flex items-center"
+                  style={{ marginBottom: "20px" }}
+                >
                   <h4 className="form-elem-control text-outerspace font-semibold ">
                     {formatDOB(userDetail.dob)}
                   </h4>
@@ -206,23 +237,29 @@ const AccountScreen = () => {
                   className="form-label font-semibold text-base"
                   style={{ fontSize: "20px" }}
                 >
-                  ClassName
+                  Lớp
                 </label>
-                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                <div
+                  className="form-input-wrapper flex items-center"
+                  style={{ marginBottom: "20px" }}
+                >
                   <h4 className="form-elem-control text-outerspace font-semibold ">
                     {userDetail.className || ""}
                   </h4>
                 </div>
               </FormElement>
-              <FormElement className="form-elem ">
+              <FormElement className="form-elem">
                 <label
                   htmlFor=""
                   className="form-label font-semibold text-base"
                   style={{ fontSize: "20px" }}
                 >
-                  Create Date Account
+                  Ngày tạo tài khoản
                 </label>
-                <div className="form-input-wrapper flex items-center" style={{ marginBottom: "20px" }}>
+                <div
+                  className="form-input-wrapper flex items-center"
+                  style={{ marginBottom: "20px" }}
+                >
                   <h4 className="form-elem-control text-outerspace font-semibold ">
                     {formatDOB(userDetail.cre_dt)}
                   </h4>
@@ -239,7 +276,7 @@ const AccountScreen = () => {
                 user={userRef.current}
                 closeForm={handleClickClose}
                 onSave={() => {
-                  setSaveTrigger(new Date().getTime())
+                  setSaveTrigger(new Date().getTime());
                 }}
               />
             </Dialog>
@@ -247,7 +284,6 @@ const AccountScreen = () => {
         </UserDashboardWrapper>
       </Container>
     </AccountScreenWrapper>
-
   );
 };
 

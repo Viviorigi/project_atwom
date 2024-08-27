@@ -33,24 +33,41 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public void SendEmailVerificationUrl(String to, String subject, String verificationUrl) throws MessagingException {
-		String htmlContent = "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "<meta charset='UTF-8'>"
-				+ "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-				+ "<title>Email Verification</title>" + "<style>"
-				+ "body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }"
-				+ ".container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }"
-				+ ".header { background-color: #007bff; color: #fff; padding: 20px; text-align: center; }"
-				+ ".header h1 { margin: 0; }" + ".content { padding: 20px; text-align: center; }"
-				+ ".content p { font-size: 16px; line-height: 1.5; }"
-				+ ".btn { display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: #007bff; background-color: #fff; border: 2px solid #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s, color 0.3s; }"
-				+ ".btn:hover { background-color: #007bff; color: #fff; }"
-				+ ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }"
-				+ "</style>" + "</head>" + "<body>" + "<div class='container'>" + "<div class='header'>"
-				+ "<h1>Account Verification</h1>" + "</div>" + "<div class='content'>" + "<p>Hello,</p>"
-				+ "<p>Thank you for registering. Please click the link below to verify your email address and complete your registration:</p>"
-				+ "<a href='" + verificationUrl + "' class='btn'>Verify Your Email</a>"
-				+ "<p>If you did not register for this account, please ignore this email.</p>" + "</div>"
-				+ "<div class='footer'>" + "<p>&copy; 2024 Atwom Library. All rights reserved.</p>" + "</div>"
-				+ "</div>" + "</body>" + "</html>";
+		String htmlContent = "<!DOCTYPE html>" +
+			    "<html lang='vi'>" +
+			    "<head>" +
+			    "<meta charset='UTF-8'>" +
+			    "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+			    "<title>Xác Thực Email</title>" +
+			    "<style>" +
+			    "body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }" +
+			    ".container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }" +
+			    ".header { background-color: #007bff; color: #fff; padding: 20px; text-align: center; }" +
+			    ".header h1 { margin: 0; }" +
+			    ".content { padding: 20px; text-align: center; }" +
+			    ".content p { font-size: 16px; line-height: 1.5; }" +
+			    ".btn { display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: #007bff; background-color: #fff; border: 2px solid #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s, color 0.3s; }" +
+			    ".btn:hover { background-color: #007bff; color: #fff; }" +
+			    ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }" +
+			    "</style>" +
+			    "</head>" +
+			    "<body>" +
+			    "<div class='container'>" +
+			    "<div class='header'>" +
+			    "<h1>Xác Thực Tài Khoản</h1>" +
+			    "</div>" +
+			    "<div class='content'>" +
+			    "<p>Xin chào,</p>" +
+			    "<p>Cảm ơn bạn đã đăng ký. Vui lòng nhấp vào liên kết dưới đây để xác thực địa chỉ email của bạn và hoàn tất việc đăng ký:</p>" +
+			    "<a href='" + verificationUrl + "' class='btn'>Xác Thực Email Của Bạn</a>" +
+			    "<p>Nếu bạn không đăng ký tài khoản này, vui lòng bỏ qua email này.</p>" +
+			    "</div>" +
+			    "<div class='footer'>" +
+			    "<p>&copy; 2024 Thư Viện Atwom. Tất cả quyền được bảo lưu.</p>" +
+			    "</div>" +
+			    "</div>" +
+			    "</body>" +
+			    "</html>";
 
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -63,25 +80,43 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public void sendPasswordResetRequestEmail(String to, String subject, String resetLink) {
-		String htmlContent = "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "<meta charset='UTF-8'>"
-				+ "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-				+ "<title>Password Reset Request</title>" + "<style>"
-				+ "body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }"
-				+ ".container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }"
-				+ ".header { background-color: #007bff; color: #fff; padding: 20px; text-align: center; }"
-				+ ".header h1 { margin: 0; }" + ".content { padding: 20px; text-align: center; }"
-				+ ".content p { font-size: 16px; line-height: 1.5; }"
-				+ ".btn { display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: #007bff; background-color: #fff; border: 2px solid #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s, color 0.3s; }"
-				+ ".btn:hover { background-color: #007bff; color: #fff; }"
-				+ ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }"
-				+ "</style>" + "</head>" + "<body>" + "<div class='container'>" + "<div class='header'>"
-				+ "<h1>Password Reset Request</h1>" + "</div>" + "<div class='content'>" + "<p>Hello,</p>"
-				+ "<p>You requested a password reset. Click the link below to reset your password:</p>" + "<a href='"
-				+ resetLink + "' class='btn'>Reset Password</a>"
-				+ "<p>If you did not request a password reset, please ignore this email.</p>"
-				+ "<p>This link will expire in 5 minutes.</p>" + "</div>" + "<div class='footer'>"
-				+ "<p>&copy; 2024 Atwom Library. All rights reserved.</p>" + "</div>" + "</div>" + "</body>"
-				+ "</html>";
+		String htmlContent = "<!DOCTYPE html>" +
+			    "<html lang='vi'>" +
+			    "<head>" +
+			    "<meta charset='UTF-8'>" +
+			    "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+			    "<title>Yêu Cầu Đặt Lại Mật Khẩu</title>" +
+			    "<style>" +
+			    "body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }" +
+			    ".container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }" +
+			    ".header { background-color: #007bff; color: #fff; padding: 20px; text-align: center; }" +
+			    ".header h1 { margin: 0; }" +
+			    ".content { padding: 20px; text-align: center; }" +
+			    ".content p { font-size: 16px; line-height: 1.5; }" +
+			    ".btn { display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: #007bff; background-color: #fff; border: 2px solid #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s, color 0.3s; }" +
+			    ".btn:hover { background-color: #007bff; color: #fff; }" +
+			    ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }" +
+			    "</style>" +
+			    "</head>" +
+			    "<body>" +
+			    "<div class='container'>" +
+			    "<div class='header'>" +
+			    "<h1>Yêu Cầu Đặt Lại Mật Khẩu</h1>" +
+			    "</div>" +
+			    "<div class='content'>" +
+			    "<p>Xin chào,</p>" +
+			    "<p>Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấp vào liên kết dưới đây để đặt lại mật khẩu của bạn:</p>" +
+			    "<a href='" + resetLink + "' class='btn'>Đặt Lại Mật Khẩu</a>" +
+			    "<p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>" +
+			    "<p>Liên kết này sẽ hết hạn trong 5 phút.</p>" +
+			    "</div>" +
+			    "<div class='footer'>" +
+			    "<p>&copy; 2024 Thư Viện Atwom. Tất cả quyền được bảo lưu.</p>" +
+			    "</div>" +
+			    "</div>" +
+			    "</body>" +
+			    "</html>";
+
 
 
 		MimeMessage message = mailSender.createMimeMessage();
@@ -101,24 +136,42 @@ public class EmailServiceImpl implements EmailService {
 	@Override
 	public void sendEmailResponseContact(String to, String subject,String fullName, String url) throws MessagingException {
 		// TODO Auto-generated method stub
-		String htmlContent = "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "<meta charset='UTF-8'>"
-				+ "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-				+ "<title>Response Form AtWm</title>" + "<style>"
-				+ "body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }"
-				+ ".container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }"
-				+ ".header { background-color: #007bff; color: #fff; padding: 20px; text-align: center; }"
-				+ ".header h1 { margin: 0; }" + ".content { padding: 20px; text-align: center; }"
-				+ ".content p { font-size: 16px; line-height: 1.5; }"
-				+ ".btn { display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: #007bff; background-color: #fff; border: 2px solid #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s, color 0.3s; }"
-				+ ".btn:hover { background-color: #007bff; color: #fff; }"
-				+ ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }"
-				+ "</style>" + "</head>" + "<body>" + "<div class='container'>" + "<div class='header'>"
-				+ "<h1>Response Form ATWOM Library</h1>" + "</div>" + "<div class='content'>" + "<p>Hello " +fullName.toUpperCase()+ "</p>"
-				+ "<p>Thank you for leave us a message. Please click the link below to visit our library:</p>"
-				+ "<a href='" + url + "' class='btn'>Continue Issue</a>"
-				+ "<p>Have a good day.</p>" + "</div>"
-				+ "<div class='footer'>" + "<p>&copy; 2024 Atwom Library. All rights reserved.</p>" + "</div>"
-				+ "</div>" + "</body>" + "</html>";
+		String htmlContent = "<!DOCTYPE html>" +
+			    "<html lang='vi'>" +
+			    "<head>" +
+			    "<meta charset='UTF-8'>" +
+			    "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+			    "<title>Biểu Mẫu Phản Hồi Tại Thư Viện AtWOM</title>" +
+			    "<style>" +
+			    "body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }" +
+			    ".container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }" +
+			    ".header { background-color: #007bff; color: #fff; padding: 20px; text-align: center; }" +
+			    ".header h1 { margin: 0; }" +
+			    ".content { padding: 20px; text-align: center; }" +
+			    ".content p { font-size: 16px; line-height: 1.5; }" +
+			    ".btn { display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: #007bff; background-color: #fff; border: 2px solid #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s, color 0.3s; }" +
+			    ".btn:hover { background-color: #007bff; color: #fff; }" +
+			    ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }" +
+			    "</style>" +
+			    "</head>" +
+			    "<body>" +
+			    "<div class='container'>" +
+			    "<div class='header'>" +
+			    "<h1>Biểu Mẫu Phản Hồi Thư Viện ATWOM</h1>" +
+			    "</div>" +
+			    "<div class='content'>" +
+			    "<p>Xin chào " + fullName.toUpperCase() + "</p>" +
+			    "<p>Cảm ơn bạn đã gửi cho chúng tôi một tin nhắn. Vui lòng nhấp vào liên kết dưới đây để truy cập thư viện của chúng tôi:</p>" +
+			    "<a href='" + url + "' class='btn'>Tiếp Tục Vấn Đề</a>" +
+			    "<p>Chúc bạn một ngày tốt lành.</p>" +
+			    "</div>" +
+			    "<div class='footer'>" +
+			    "<p>&copy; 2024 Thư Viện Atwom. Tất cả quyền được bảo lưu.</p>" +
+			    "</div>" +
+			    "</div>" +
+			    "</body>" +
+			    "</html>";
+
 
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);

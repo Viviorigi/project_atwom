@@ -25,7 +25,7 @@ public class PasswordResetService {
 	public void sendPasswordResetToken(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new IllegalArgumentException("No user found with that email");
+            throw new IllegalArgumentException("Không tìm thấy email này");
         }
 
         String token = UUID.randomUUID().toString();
@@ -36,7 +36,7 @@ public class PasswordResetService {
         String resetLink = "http://localhost:8080/api/auth/reset-password?token=" + token;
         
         // Send the email
-        emailService.sendPasswordResetRequestEmail(email, "Password Reset Request", resetLink);
+        emailService.sendPasswordResetRequestEmail(email, "Yêu cầu đặt lại mật khẩu", resetLink);
     }
 	
 	//reset new password

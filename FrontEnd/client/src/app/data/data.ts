@@ -28,32 +28,7 @@ const navMenuData = [
     },
   ];
 
-  const socialLinksData = [
-    {
-      id: "social_link_1",
-      site_name: "facebook",
-      site_icon: "bi bi-facebook",
-      site_url: "www.facbook.com",
-    },
-    {
-      id: "social_link_2",
-      site_name: "instagram",
-      site_icon: "bi bi-instagram",
-      site_url: "www.instagram.com",
-    },
-    {
-      id: "social_link_3",
-      site_name: "twitter",
-      site_icon: "bi bi-twitter",
-      site_url: "www.twitter.com",
-    },
-    {
-      id: "social_link_4",
-      site_name: "linkedin",
-      site_icon: "bi bi-linkedin",
-      site_url: "www.linkedin.com",
-    },
-  ];
+
 
   const footerData = [
     {
@@ -627,7 +602,6 @@ const navMenuData = [
 
   export {
     navMenuData,
-    socialLinksData,
     footerData,
     sideMenuData,
     bannerData,

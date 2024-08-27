@@ -88,9 +88,9 @@ public class StudentService {
 
 		String verificationUrl = "http://localhost:8080/api/student/verify?token=" + token;
 		
-		emailService.SendEmailVerificationUrl(user.getEmail(), "Verify your email", verificationUrl);
+		emailService.SendEmailVerificationUrl(user.getEmail(), "Xác thực tài khoản", verificationUrl);
 		
-		seeNotificationService.sendSseNotification_Account("admin", "User with username: "+user.getUsername()+" and email: "
-				+user.getEmail()+" has registered account");
+		seeNotificationService.sendSseNotification_Account("admin", "Sinh viên với tài khoản "+user.getUsername()+" và email: "
+				+user.getEmail()+" đã đăng ký tài khoản");
 	}
 }

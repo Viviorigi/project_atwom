@@ -10,7 +10,9 @@ export default function Header() {
     const cookie = new Cookies();
     const [fullName,setFullName] = useState("");
     const [avatar,setAvatar] = useState("")
-    const [total, setTotal] = useState();
+    // const [total, setTotal] = useState(0);
+    const total = useRef(0)
+    const [timer, setTimer] = useState(0)
 
     const isDataFetched = useRef(false);
 
@@ -44,7 +46,7 @@ export default function Header() {
           }
         
           NotificationService.getInstance().getTotal().then((resp:any) => {
-            setTotal(resp.data);
+            total.current = resp.data
           }).catch((e:any) => {
             console.log(e);
             
@@ -54,10 +56,11 @@ export default function Header() {
         events.onmessage = event => {
             const newNotification = new NotificationDTO(event.data);
             console.log(event.data);
+            total.current = total.current + 1;
             setNotifications(prevNotifications => {
                 const updatedNotifications = [...prevNotifications, newNotification];
                 
-                if (updatedNotifications.length > 5) {
+                if (updatedNotifications.length > 10) {
                     updatedNotifications.shift(); 
                 }
                 
@@ -65,6 +68,9 @@ export default function Header() {
             });
       }
       console.log(notifications);
+      return () => {
+        events.close();
+    };
       
       },[notifications,total])
     const logout = ()=>{
@@ -207,8 +213,8 @@ export default function Header() {
                             <a className="nav-link position-relative" href="index.html#" style={{ minWidth: '2.5rem' }} role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span className="far fa-bell" style={{ height: 20, width: 20 }} />
                                 {total ? 
                                 <span className="position-absolute top-auto start-85 translate-middle badge rounded-pill bg-danger">
-                                    {total}+
-                                    <span className="visually-hidden">unread messages</span>
+                                    {total.current}+
+                                    <span className="visually-hidden">Chưa đọc</span>
                                 </span>
                                 : ""}
                             </a>
@@ -217,7 +223,7 @@ export default function Header() {
                                 <div className="card position-relative border-0">
                                     <div className="card-header p-2">
                                         <div className="d-flex justify-content-between">
-                                            <h5 className="text-black mb-0">Notificatons</h5><button className="btn btn-link p-0 fs--1 fw-normal" type="button">Mark all as read</button>
+                                            <h5 className="text-black mb-0">Thông báo</h5><button className="btn btn-link p-0 fs--1 fw-normal" type="button">Mark all as read</button>
                                         </div>
                                     </div>
                                         <div className="card-body p-0">
@@ -236,7 +242,7 @@ export default function Header() {
                                                         </div>
 
                                                         <div className="font-sans-serif d-none d-sm-block"><button className="btn fs--2 btn-sm dropdown-toggle dropdown-caret-none transition-none notification-dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs--2 text-900" /></button>
-                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Mark as read</a></div>
+                                                            <div className="dropdown-menu dropdown-menu-end py-2"><a className="dropdown-item" href="index.html#!">Đánh dấu đã xem</a></div>
                                                         </div>
                                                     </div>
                                                     

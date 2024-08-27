@@ -201,7 +201,7 @@ export default function Wishlist() {
       localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
     } else {
       Swal.fire({
-        title: `Confirm`,
+        title: `Xác nhận`,
         text: `Bạn muốn xóa khỏi danh sách yêu thích`,
         icon: "warning",
         showCancelButton: true,
@@ -214,7 +214,7 @@ export default function Wishlist() {
           WishService.getInstance().remove(id).then(() => {
             const updatedWishlist = wishlistItems.filter(item => item.id !== id);
             setWishlistItems(updatedWishlist);
-            toast.success("remove successfully!")
+            toast.success("Xóa khỏi danh sách yêu thích thành công")
           }).catch((err: any) => {
             console.error("Error removing item from wishlist", err);
           });
@@ -225,7 +225,7 @@ export default function Wishlist() {
 
   return (
     <div className='container'>
-      <h1 className='p-4'>My wishlist</h1>
+      <h1 className='p-4'>Danh sách yêu thích của bạn</h1>
       <ScrollbarXWrapper>
         <WishlistTableWrapper className="w-full">
           <thead>
@@ -283,7 +283,7 @@ export default function Wishlist() {
             ) : (
               <tr>
                 <td colSpan={4} style={{ textAlign: 'center', padding: '20px' }}>
-                  Your wishlist is empty.
+                  Danh sách yêu thích trống
                 </td>
               </tr>
             )}
