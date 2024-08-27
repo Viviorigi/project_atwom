@@ -43,5 +43,9 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 			+ "(:nxb IS NULL OR :nxb = '' OR u.nxb = :nxb)")
 	Page<Book> searchBookClient(@Param("keySearch") String keySearch, @Param("cateName") String cateName,
 			@Param("publicYear") int publicYear, @Param("nxb") String nxb, Pageable pageable);
+	
+	//
+	@Query("SELECT COUNT(b) FROM Book b WHERE FUNCTION('DATE', b.cre_dt) = CURRENT_DATE AND b.active = true")
+    long countBooksAddedToday();
 
 }

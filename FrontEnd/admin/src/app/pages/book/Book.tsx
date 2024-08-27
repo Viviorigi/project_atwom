@@ -265,6 +265,9 @@ export default function Book() {
                           </span>
                         </td>
                         <td className="align-middle text-center">
+                          {/* <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}>
+                            <i className="far fa-eye"></i>
+                          </button> */}
                           <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editBook(u)}>
                             <i className="fa-solid fa-pen"></i>
                           </button>

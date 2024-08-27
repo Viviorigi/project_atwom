@@ -1,6 +1,18 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useFetcher } from 'react-router-dom';
 
 export default function DashBoard() {
+  const [bookToday, setBookToday] = useState(0);
+  useEffect(() => {
+    let url_book_today = process.env.REACT_APP_API_URL + `/api/admin/book/today`;
+    axios.get(url_book_today).then((resp: any) => {
+      console.log("Số sách mới = ");
+      console.log(resp);
+    }).catch((err: any) => {
+    })
+
+  }, [])
   return (
     <>
       <div className="content">

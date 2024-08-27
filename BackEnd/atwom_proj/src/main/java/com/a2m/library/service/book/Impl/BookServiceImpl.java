@@ -228,4 +228,10 @@ public class BookServiceImpl implements BookService {
 		return res;
 	}
 
+	@Override
+	public long getCountBooksAddedToday() {
+		// TODO Auto-generated method stub
+		return bookRepository.countBooksAddedToday();
+	}
+
 }

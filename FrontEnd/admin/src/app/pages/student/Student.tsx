@@ -223,7 +223,7 @@ export default function Student() {
                         <td className="last-order align-middle white-space-nowrap text-700 text-end">
                           <span className={u.isActive ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}><span className="badge-label">{u.isActive ? "Active" : "InActive"}</span></span>
                         </td>
-                        <td className="last-order align-middle white-space-nowrap text-700 ">
+                        <td className="last-order align-middle white-space-nowrap text-700 "> 
                           <button className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => info(u)}><i className="far fa-eye"></i></button>
                           <button className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editUser(u)}><i className="fa-solid fa-pen"></i></button>
                           <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteUser(u.userUid)}><i className="fa-solid fa-trash"></i></button>

@@ -152,6 +152,7 @@ const BookDescriptionTab = (props: any) => {
   const [userInfo, setUserInfo] = useState<UserDetail>(new UserDetail());
 
   const [feedBackList, setFeedBackList] = useState([]);
+  const [myFeedBack, setMyFeedBack] = useState<FeedBackDTO>();
   const [ratingList, setRatingList] = useState([]);
   const [ave, setAve] = useState(0);
   const [totalFeed, setTotalFeed] = useState(0);
@@ -186,6 +187,8 @@ const BookDescriptionTab = (props: any) => {
       });
   }, []);
 
+
+
   //--------------------------Lấy ra feedBack-------------------------------
 
   useEffect(() => {
@@ -213,6 +216,27 @@ const BookDescriptionTab = (props: any) => {
   };
 
   //--End lấy feed back-----------------------------------------------------
+
+  // ----------------------Lấy ra myFeedBack---------------------------------
+  useEffect(() => {
+    if (book?.id && userInfo?.userUid) {
+      const url = `http://localhost:8080/feedback/myFeedBack?book_id=${book.id}&user_id=${userInfo.userUid}`;
+  
+      axios.get(url)
+        .then(response => {
+          
+          // console.log("Feed là: ");
+          // console.log(response.data);
+          
+          setMyFeedBack(response.data);
+        })
+        .catch(error => {
+          console.error("Error:", error.response ? error.response.data : error.message);
+          toast.error("Không thể lấy feedback");
+        });
+    }
+  }, [book?.id, userInfo?.userUid]);
+  
 
   //Xử lý feedBack-----------------------------------------------------------
   const changeRating = (newRating: any) => {
@@ -377,7 +401,7 @@ const BookDescriptionTab = (props: any) => {
                     <div className="rating-summary">
                       <div className="rating-summary-header">
                         <h4 className="rating-title">
-                           Tổng Quan 
+                          Tổng Quan
                         </h4>
                         <div className="rating-info">
                           <p className="average-rating">⭐ {ave.toFixed(1)} / 5</p>
@@ -397,7 +421,7 @@ const BookDescriptionTab = (props: any) => {
 
                   {/* Phần nhập feedback và hiển thị feedback */}
                   <div className="col-md-9">
-                    {isLoggedIn &&
+                    {isLoggedIn && (myFeedBack?.rating == null) &&
                       <div className="card p-3 mb-3">
                         <h4 className="card-title">Đánh giá của bạn</h4>
 

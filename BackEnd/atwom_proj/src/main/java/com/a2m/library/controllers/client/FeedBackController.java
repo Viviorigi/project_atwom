@@ -69,7 +69,10 @@ public class FeedBackController {
 	public ResponseEntity<?> getMyFeedBack(@RequestParam(name = "book_id", defaultValue = "0") Integer book_id,
 			@RequestParam(name = "user_id", defaultValue = "0") Long user_id) {
 		List<FeedBackDTO> fb = feedBackService.findFeedbacksByBookAndUser(book_id, user_id);
-		return ResponseEntity.ok().body(fb);
+		FeedBackDTO res = new FeedBackDTO();
+		if(fb.size() != 0)
+			res = fb.get(0);
+		return ResponseEntity.ok().body(res);
 	}
 
 	@PostMapping("/feedback/add")

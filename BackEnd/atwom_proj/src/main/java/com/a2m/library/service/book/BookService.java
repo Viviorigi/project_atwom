@@ -34,6 +34,9 @@ public interface BookService {
 	public Set<Integer>getPublicationYears(List<BookDTO> bookDTO);
 	public Set<String>getNxb(List<BookDTO> bookDTO);
 	public Set<String>getTypeCate(List<BookDTO> bookDTO);
+	
+	//---Thong ke
+	public long getCountBooksAddedToday();
 }
 
 
