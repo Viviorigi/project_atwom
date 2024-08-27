@@ -38,45 +38,45 @@ const OrderItemList: React.FC<OrderItemListProps> = ({
       });
   }, []);
 
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const fetchedOrders = await getAllCheckouts(
+        String(userDetail.fullName),
+        50,
+        1
+      );
+
+      const filteredOrders = fetchedOrders.filter(
+        (order) =>
+          !filterStatus || filterStatus.split(",").includes(order.status)
+      );
+
+      setTotalCheckouts(filteredOrders.length);
+      setTotalPages(Math.ceil(filteredOrders.length / ordersPerPage));
+
+      const paginatedOrders = filteredOrders.slice(
+        (currentPage - 1) * ordersPerPage,
+        currentPage * ordersPerPage
+      );
+
+      setOrders(paginatedOrders);
+    } catch (err) {
+      setError("Error fetching orders");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const fetchedOrders = await getAllCheckouts(
-          String(userDetail.fullName),
-          50,
-          1
-        );
-
-        const filteredOrders = fetchedOrders.filter(
-          (order) =>
-            !filterStatus || filterStatus.split(",").includes(order.status)
-        );
-
-        setTotalCheckouts(filteredOrders.length);
-        setTotalPages(Math.ceil(filteredOrders.length / ordersPerPage));
-
-        const paginatedOrders = filteredOrders.slice(
-          (currentPage - 1) * ordersPerPage,
-          currentPage * ordersPerPage
-        );
-
-        setOrders(paginatedOrders);
-      } catch (err) {
-        setError("Error fetching orders");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (userDetail.fullName) {
       fetchOrders();
     }
   }, [userDetail.fullName, filterStatus, currentPage]);
 
   const handlePreviousPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage, 1));
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
   const handleNextPage = () => {
@@ -96,16 +96,22 @@ const OrderItemList: React.FC<OrderItemListProps> = ({
           marginBottom: "10px",
         }}
       >
-        <button onClick={handlePreviousPage} disabled={currentPage === 1}>&lt;</button>
+        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+          &lt;
+        </button>
         <span style={{ margin: "0 10px" }}> {currentPage} </span>
         <button onClick={handleNextPage} disabled={currentPage === totalPages}>
           &gt;
         </button>
       </div>
-      <p>Total Checkouts: {totalCheckouts}</p>
+      <p>Tổng số đơn: {totalCheckouts}</p>
       {totalCheckouts > 0 ? (
         orders.map((order) => (
-          <OrderItem key={order.id} checkoutId={order.id} />
+          <OrderItem
+            key={order.id}
+            checkoutId={order.id}
+            onRefresh={fetchOrders}
+          />
         ))
       ) : (
         <p>Đơn hàng trống.</p>

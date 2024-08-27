@@ -178,7 +178,8 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
       case CheckoutStatus.BORROWED:
         setStatusOptions([
           CheckoutStatus.BORROWED,
-          CheckoutStatus.EXPIRED
+          CheckoutStatus.EXPIRED,
+          CheckoutStatus.RETURNED
         ]);
         break;
       default:
@@ -289,6 +290,9 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
               case CheckoutStatus.EXPIRED:
                 await CheckoutService.expiredCheckout(currentOrder.id);
                 break;
+              case CheckoutStatus.RETURNED:
+                await CheckoutService.returnedCheckout(currentOrder.id);
+                break;
               default:
                 break;
             }
@@ -381,7 +385,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
                       <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>PUBLISHER</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>QUANTITY</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>PRICE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th>
+                      {/* <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th> */}
                       <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
                     </tr>
                   </thead>
@@ -407,7 +411,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
                       <td className="align-middle text-center">{u.publisher}</td>
                       <td className="align-middle text-center text-1100">{u.quantity}</td>
                       <td className="align-middle text-start text-700">{formatCurrency(u.price)}</td>
-                      <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }}/>
+                      {/* <td className="align-middle text-center text-1100" dangerouslySetInnerHTML={{ __html: u.description }}/> */}
                       {/* <td className="total-orders align-middle white-space-nowrap fw-semi-bold  text-start text-1000"  dangerouslySetInnerHTML={{ __html: u.description }}/> */}
                       <td className="align-middle text-center">
                         <span className={u.active ? 'badge badge-phoenix fs--2 badge-phoenix-success' : 'badge badge-phoenix fs--2 badge-phoenix-danger'}>

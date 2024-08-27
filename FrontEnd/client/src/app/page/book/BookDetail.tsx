@@ -20,6 +20,9 @@ import { AuthConstant } from "../../constants/authConstant";
 import { WishService } from "../../services/WishListService";
 import { toast } from "react-toastify";
 import { CartService } from "../../services/CartService";
+import QuickBorrowDialog from './QuickBorrowDialog';
+import { AuthService } from "../../services/AuthService";
+import { UserDetail } from "../../model/auth/UserDetail";
 
 const DetailsScreenWrapper = styled.main`
   margin: 40px 0;
@@ -192,6 +195,8 @@ const BookColorWrapper = styled.div`
 `;
 
 const BookDetail = (props: any) => {
+  const [userDetail, setUserDetail] = useState<UserDetail>(new UserDetail());
+  const [showQuickBorrowDialog, setShowQuickBorrowDialog] = useState(false);
   const [book, setBook] = useState<BookDTO>();
   // const {bookId} = props;
   // console.log(bookId);
@@ -224,6 +229,19 @@ const BookDetail = (props: any) => {
     if (cookie.get(AuthConstant.ACCESS_TOKEN)) {
       setIsLoggedIn(true);
     }
+  }, []);
+
+  useEffect(() => {
+    AuthService.getInstance()
+      .getInfo()
+      .then((resp: any) => {
+        if (resp) {
+          setUserDetail(resp.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch user info:", error);
+      });
   }, []);
 
   useEffect(() => {
@@ -474,8 +492,7 @@ const BookDetail = (props: any) => {
                 onClick={handleBorrowClick}
                 className="prod-add-btn"
               >
-                {/* Borrow */}
-                Mượn
+                Thêm vào giỏ hàng
               </button>
               <button
                 className={`btn ${isFavorited ? "btn-danger" : "btn-success"}`}
@@ -488,6 +505,11 @@ const BookDetail = (props: any) => {
                   <i className="fa-regular fa-heart"></i>
                 )}
               </button>
+            </div>
+            <div className="btn-and-price flex items-center flex-wrap">
+            <button onClick={() => setShowQuickBorrowDialog(true)} className="btn btn-quick-borrow">
+                  Mượn nhanh
+                </button>
             </div>
             <BookServices />
           </BookDetailsWrapper>
@@ -568,6 +590,15 @@ const BookDetail = (props: any) => {
 
         <BookSimilar />
       </Container>
+      <QuickBorrowDialog
+        visible={showQuickBorrowDialog}
+        onHide={() => setShowQuickBorrowDialog(false)}
+        book = {book}
+        userDetail={userDetail}
+        isLoggedIn={isLoggedIn}
+        cateid={book?.cateId}
+        catename={book?.cateName}
+      />
     </DetailsScreenWrapper>
   );
 };

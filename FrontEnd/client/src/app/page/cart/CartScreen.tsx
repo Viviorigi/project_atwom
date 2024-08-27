@@ -162,7 +162,7 @@ const CartScreen = () => {
     }
   };
 
-  const handleOrder = async () => {
+  const handleOrder = async (expiredTime:string) => {
     if (!isLoggedIn) {
       console.error("Bạn chưa đăng nhập");
       toast.error("Bạn cần phải đăng nhập để đặt hàng");
@@ -201,7 +201,7 @@ const CartScreen = () => {
           endTime: currentISO,
           status: CheckoutStatus.REQUESTED,
           checkoutDetails: newCheckoutDetails,
-          expiredTime: "",
+          expiredTime: expiredTime,
           fine: 0
         };
   
