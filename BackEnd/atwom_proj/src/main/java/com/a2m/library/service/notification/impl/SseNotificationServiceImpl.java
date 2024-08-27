@@ -61,6 +61,27 @@ public class SseNotificationServiceImpl implements SeeNotificationService {
             System.out.println("Value is empty");
         });
 	}
+
+	@Override
+	public void sendSseNotification_Order(String user, String data) {
+		// TODO Auto-generated method stub
+		Notification notification = new Notification();
+    	notification.setReceiver(user);
+    	notification.setMessage(data);
+    	notification.setCre_dt(LocalDateTime.now());
+    	notificationRepository.save(notification);
+    	
+        seeEmitterRepository.get(user).ifPresentOrElse(sseEmitter -> {
+            try {
+                sseEmitter.send(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+                seeEmitterRepository.remove(user);
+            }
+        }, () -> {
+            System.out.println("Value is empty");
+        });
+	}
     
     
 }

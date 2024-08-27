@@ -108,13 +108,13 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
 
   return (
     <div className="container mt-4">
-      <div className="row mb-3">
+      {/* <div className="row mb-3">
         <div className="col-md-12 text-end">
           <button className="btn btn-primary" onClick={handleAdd}>
             Add New Book
           </button>
         </div>
-      </div>
+      </div> */}
       <div className="table-responsive">
         <table className="table">
           <thead>
@@ -123,7 +123,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
               <th>Tên danh mục</th>
               <th>Tên sách</th>
               <th>Số lượng sách</th>
-              <th>Actions</th>
+              {/* <th>Actions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -134,20 +134,21 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
                   <td>{detail.categoryName}</td>
                   <td>{detail.bookTitle}</td>
                   <td>{detail.quantity}</td>
-                  <td>
+                  {/* <td>
                     <button
                       className="btn btn-warning btn-sm me-2"
                       onClick={() => handleEdit(detail)}
                     >
                       Edit
                     </button>
+
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(detail.id)}
                     >
                       Delete
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             ) : (
@@ -168,21 +169,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
           onPageChange={handlePageClick}
         />
       </div>
-      <Dialog
-        visible={addDetailOpen}
-        style={{ width: "50vw" }}
-        onHide={handleCancel}
-        modal
-        header={mode === "add" ? "Add Detail" : "Edit Detail"}
-      >
-        <AddDetailForm
-          checkoutId={orderId}
-          detail={selectedDetail}
-          mode={mode}
-          onSave={handleSave}
-          onClose={handleCancel}
-        />
-      </Dialog>
+      
     </div>
   );
 };

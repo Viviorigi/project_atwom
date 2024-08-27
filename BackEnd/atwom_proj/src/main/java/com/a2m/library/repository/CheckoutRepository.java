@@ -1,8 +1,8 @@
 package com.a2m.library.repository;
 
-import com.a2m.library.constant.CheckoutStatus;
-import com.a2m.library.dto.BookDTO;
+import com.a2m.library.constant.CheckoutStatus; 
 import com.a2m.library.model.Checkout;
+
 import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -34,4 +34,7 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
     Page<Checkout> findByKeySearch(
             @Param("keySearch") String keySearch,
             Pageable pageable);
+    
+    @Query("SELECT c FROM Checkout c WHERE c.status IN ('EXPIRED','RETURNED','PENALTY') ")
+	    Page<Checkout> searchNotification(@Param("keyword") String keyword, Pageable pageable);
 }

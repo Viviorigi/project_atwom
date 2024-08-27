@@ -16,6 +16,16 @@ export const CheckoutService = {
     }
   },
 
+  findNeedReturn: async (params?: { keySearch?: string; limit?: number; page?: number; }): Promise<CheckoutDTO[]> => {
+    try {
+      const response = await axios.get<CheckoutDTO[]>(`${BASE_URL}/checkout/getReturn`, { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching checkouts", error);
+      throw error;
+    }
+  },
+
   findById: async (id: number): Promise<CheckoutDTO> => {
     try {
       const response = await axios.get<CheckoutDTO>(`${BASE_URL}/${id}`);
@@ -88,7 +98,7 @@ export const CheckoutService = {
 
   returnedCheckout: async (id: number): Promise<CheckoutDTO> => {
     try {
-      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/${id}/returned`);
+      const response = await axios.put<CheckoutDTO>(`${BASE_URL}/return/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error marking checkout as returned with ID: ${id}`, error);

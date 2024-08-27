@@ -134,8 +134,8 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
-	public void sendEmailResponseContact(String to, String subject,String fullName, String url) throws MessagingException {
-		// TODO Auto-generated method stub
+	public void sendEmailResponseContact(String to, String subject,String fullName,String resp, String url) throws MessagingException {
+
 		String htmlContent = "<!DOCTYPE html>" +
 			    "<html lang='vi'>" +
 			    "<head>" +
@@ -171,7 +171,6 @@ public class EmailServiceImpl implements EmailService {
 			    "</div>" +
 			    "</body>" +
 			    "</html>";
-
 
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);

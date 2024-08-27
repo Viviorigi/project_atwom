@@ -48,7 +48,7 @@ const Order = () => {
       });
 
       const filteredOrders = resp.filter((order) =>
-        ["REQUESTED", "APPROVED", "REJECTED", "BORROWED"].includes(order.status)
+        ["REQUESTED", "APPROVED", "REJECTED"].includes(order.status)
       );
 
       dispatch(setLoading(false));

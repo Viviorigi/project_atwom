@@ -4,6 +4,7 @@ import { CheckoutStatus } from "../../model/CheckoutStatus";
 import { toast } from "react-toastify";
 import { CheckoutService } from "../../services/checkout/CheckoutService";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface ReturnFormProps {
   returnData: CheckoutDTO | null;
@@ -39,18 +40,18 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
   const validate = (): boolean => {
     if (!currentReturn) return false;
 
-    if (
-      status !== CheckoutStatus.RETURNED &&
-      status !== CheckoutStatus.PENALTY
-    ) {
-      toast.error("Status must be either RETURNED or PENALTY.");
-      return false;
-    }
+    // if (
+    //   status !== CheckoutStatus.RETURNED &&
+    //   status !== CheckoutStatus.PENALTY
+    // ) {
+    //   toast.error("Status must be either RETURNED or PENALTY.");
+    //   return false;
+    // }
 
-    if (status === CheckoutStatus.PENALTY && fine <= 0) {
-      toast.error("Fine must be greater than 0 for PENALTY status.");
-      return false;
-    }
+    // if (status === CheckoutStatus.PENALTY && fine <= 0) {
+    //   toast.error("Fine must be greater than 0 for PENALTY status.");
+    //   return false;
+    // }
 
     return true;
   };
@@ -60,56 +61,72 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
 
     if (!validate()) return;
 
-    const confirmed = window.confirm(
-      "Are you sure you want to save the changes?"
-    );
-    if (!confirmed) return;
+    // const confirmed = window.confirm(
+    //   "Are you sure you want to save the changes?"
+    // );
+    // if (!confirmed) return;
 
-    const updatedReturn: CheckoutDTO = {
-      ...currentReturn,
-      status,
-      fine,
-      expiredTime: returnDate,
-      id: currentReturn.id!,
-    };
-
-    try {
-      if (status === CheckoutStatus.RETURNED) {
-        await CheckoutService.returnedCheckout(updatedReturn.id);
-      } else if (status === CheckoutStatus.PENALTY) {
-        await CheckoutService.penaltyCheckout(updatedReturn.id);
-      } else {
-        await CheckoutService.update(updatedReturn.id, updatedReturn);
+    Swal.fire({
+      title: "Confirm",
+      text: "Do you want to save changes?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#89B449",
+      cancelButtonColor: "#E68A8C",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then(async (result) => {
+      if(result.isConfirmed){
+        const updatedReturn: CheckoutDTO = {
+          ...currentReturn,
+          status,
+          fine,
+          expiredTime: returnDate,
+          id: currentReturn.id!,
+        };
+    
+        try {
+          if (status === CheckoutStatus.RETURNED) {
+            await CheckoutService.returnedCheckout(updatedReturn.id);
+          } else if (status === CheckoutStatus.EXPIRED) {
+            await CheckoutService.expiredCheckout(updatedReturn.id);
+          } else {
+            await CheckoutService.update(updatedReturn.id, updatedReturn);
+          }
+    
+          // Update fine
+          // await axios.put(`http://localhost:8080/api/userfine/update/${currentReturn.id}`, null, {
+          //   params: {
+          //     amount: fine,
+          //   },
+          // });
+    
+          toast.success("Return saved successfully");
+          onSave(updatedReturn);
+          onClose(true);
+        } catch (error) {
+          if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || "Failed to save return";
+            toast.error(errorMessage);
+          } else {
+            toast.error("Failed to save return");
+          }
+        }
       }
+      
+    });
 
-      // Update fine
-      await axios.put(`http://localhost:8080/api/userfine/update/${currentReturn.id}`, null, {
-        params: {
-          amount: fine,
-        },
-      });
-
-      toast.success("Return saved successfully");
-      onSave(updatedReturn);
-      onClose(true);
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        const errorMessage = error.response.data?.message || "Failed to save return";
-        toast.error(errorMessage);
-      } else {
-        toast.error("Failed to save return");
-      }
-    }
+    
   };
 
   const handleStatusOptions = (currentStatus: CheckoutStatus): CheckoutStatus[] => {
     switch (currentStatus) {
-      case CheckoutStatus.EXPIRED:
-        return [CheckoutStatus.RETURNED, CheckoutStatus.PENALTY];
+      case CheckoutStatus.BORROWED:
+        return [CheckoutStatus.RETURNED, CheckoutStatus.EXPIRED];
       case CheckoutStatus.RETURNED:
         return [CheckoutStatus.RETURNED];
-      case CheckoutStatus.PENALTY:
-        return [CheckoutStatus.PENALTY];
+      case CheckoutStatus.EXPIRED:
+        return [CheckoutStatus.EXPIRED];
       default:
         return [];
     }
@@ -118,18 +135,13 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
   const statusOptions = handleStatusOptions(status);
 
   return (
-    <div className="modal show" style={{ display: "block" }}>
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
+    <div className=" row container-fluid w-100">
+      <div className="row mb-3">
+        <div className="">
+          <div className="">
             <h5 className="modal-title">Edit Return</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => onClose(false)}
-            ></button>
           </div>
-          <div className="modal-body">
+          <div className="col-12">
             <div className="mb-3">
               <label className="form-label">Student Name</label>
               <input
@@ -153,7 +165,7 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
                 ))}
               </select>
             </div>
-            {status === CheckoutStatus.PENALTY && (
+            {/* {status === CheckoutStatus.PENALTY && (
               <div className="mb-3">
                 <label className="form-label">Fine</label>
                 <input
@@ -163,8 +175,8 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
                   onChange={(e) => setFine(parseFloat(e.target.value))}
                 />
               </div>
-            )}
-            {status === CheckoutStatus.RETURNED && (
+            )} */}
+            {/* {status === CheckoutStatus.RETURNED && (
               <div className="mb-3">
                 <label className="form-label">Return Date</label>
                 <input
@@ -174,7 +186,7 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
                   onChange={(e) => setReturnDate(e.target.value)}
                 />
               </div>
-            )}
+            )} */}
           </div>
           <div className="modal-footer">
             <button

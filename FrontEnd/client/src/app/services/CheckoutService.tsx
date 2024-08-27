@@ -17,7 +17,7 @@ export const getCheckoutById = async (id: number): Promise<CheckoutDTO> => {
 };
 
 export const addCheckout = async (checkoutDTO: CheckoutDTO): Promise<CheckoutDTO> => {
-    const response = await axios.post(`${BASE_URL}/checkout/add`, checkoutDTO);
+    const response = await axios.post(`${BASE_URL}/checkout/add-client`, checkoutDTO);
     return response.data;
 };
 

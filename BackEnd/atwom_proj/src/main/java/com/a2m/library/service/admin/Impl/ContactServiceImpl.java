@@ -55,14 +55,13 @@ public class ContactServiceImpl implements ContactService {
 		contact.setResponse(contactDTO.getResponse());
 		new Thread(() -> {
 		    try {
-				emailService.sendEmailResponseContact(contact.getEmail(), "Response", contact.getFirstName() + contact.getLastName(), "http://localhost:3333");
+				emailService.sendEmailResponseContact(contact.getEmail(), "Response", contact.getFirstName() + contact.getLastName(),contact.getResponse(), "http://localhost:3333");
 			} catch (MessagingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}).start();
-		
-		emailService.sendEmailResponseContact(contact.getEmail(), "Response",contact.getFirstName()+ contact.getLastName(), "http://localhost:3333");
+	
 		contactRepository.save(contact);
 	}
 

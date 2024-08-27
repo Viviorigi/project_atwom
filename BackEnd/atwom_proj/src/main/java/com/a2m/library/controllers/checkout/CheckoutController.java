@@ -2,6 +2,9 @@ package com.a2m.library.controllers.checkout;
 
 import com.a2m.library.constant.CheckoutStatus;
 import com.a2m.library.dto.CheckoutDTO;
+import com.a2m.library.dto.NotificationDTO;
+import com.a2m.library.dto.response.CheckoutListResponse;
+import com.a2m.library.dto.response.NotificationListResponse;
 import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.model.Checkout;
 import com.a2m.library.service.checkout.CheckoutService;
@@ -9,6 +12,8 @@ import com.a2m.library.service.checkout.CheckoutService;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -46,10 +51,18 @@ public class CheckoutController {
         Optional<CheckoutDTO> checkout = checkoutService.findById(id);
         return ResponseEntity.ok(checkout);
     }
+    
+    
 
     @PostMapping("/add")
     public ResponseEntity<Checkout> addCheckout(@RequestBody CheckoutDTO checkoutDTO) {
         Checkout createdCheckout = checkoutService.add(checkoutDTO);
+        return new ResponseEntity<>(createdCheckout, HttpStatus.CREATED);
+    }
+    
+    @PostMapping("/add-client")
+    public ResponseEntity<Checkout> addCheckoutClient(@RequestBody CheckoutDTO checkoutDTO) {
+        Checkout createdCheckout = checkoutService.addClient(checkoutDTO);
         return new ResponseEntity<>(createdCheckout, HttpStatus.CREATED);
     }
 
@@ -82,6 +95,12 @@ public class CheckoutController {
         CheckoutDTO updatedCheckout = checkoutService.borrowCheckout(id);
         return ResponseEntity.ok(updatedCheckout);
     }
+    
+    @PutMapping("/return/{id}")
+    public ResponseEntity<CheckoutDTO> returnCheckout(@PathVariable Integer id) {
+        CheckoutDTO updatedCheckout = checkoutService.returnedCheckout(id);
+        return ResponseEntity.ok(updatedCheckout);
+    }
 
     @PutMapping("/expired/{id}")
     public ResponseEntity<CheckoutDTO> expiredCheckout(@PathVariable Integer id) {
@@ -111,4 +130,15 @@ public class CheckoutController {
     public void checkExpiredCheckouts() {
         checkoutService.checkExpiredCheckouts();
     }
+    
+    @GetMapping(value = "/checkout/getReturn")
+	public ResponseEntity<CheckoutListResponse> getReturn(@RequestParam(defaultValue = "") String keySearch,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int limit) {
+		PageRequest pageRequest = PageRequest.of(page - 1, limit);
+		Page<CheckoutDTO> notiPage = checkoutService.findCheckoutNeedReturn(keySearch, pageRequest);
+		CheckoutListResponse response = CheckoutListResponse.builder().notis(notiPage.getContent())
+				.totalPages(notiPage.getTotalPages()).totalCheckouts(notiPage.getTotalElements()).build();
+		
+		return ResponseEntity.ok(response);
+	}
 }

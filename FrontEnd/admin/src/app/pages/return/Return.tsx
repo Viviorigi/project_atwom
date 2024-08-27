@@ -212,7 +212,7 @@ const Return = () => {
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "20%" }}
+                    style={{ width: "10%" }}
                   >
                     Student
                   </th>
@@ -226,21 +226,21 @@ const Return = () => {
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "15%" }}
+                    style={{ width: "10%" }}
                   >
                     Start Time
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "15%" }}
+                    style={{ width: "10%" }}
                   >
                     Update Time
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "15%" }}
+                    style={{ width: "10%" }}
                   >
                     Expired Date
                   </th>
@@ -254,7 +254,7 @@ const Return = () => {
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "10%" }}
+                    style={{ width: "20%" }}
                   >
                     Action
                   </th>
@@ -276,7 +276,7 @@ const Return = () => {
                           : order.status === "RETURNED" ||
                             order.status === "BORROWED"
                             ? "badge badge-phoenix fs--2 badge-phoenix-success"
-                            : order.status === "REJECTED"
+                            : order.status === "EXPIRED"
                               ? "badge badge-phoenix fs--2 badge-phoenix-danger"
                               : "badge badge-phoenix fs--2 badge-phoenix"
                           }`}
@@ -342,7 +342,7 @@ const Return = () => {
         </footer>
       <Dialog
         visible={open}
-        style={{ width: "10vw" }}
+        style={{ width: "1150px" }}
         onHide={() => setOpen(false)}
       >
         <ReturnForm

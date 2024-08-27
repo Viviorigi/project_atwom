@@ -48,7 +48,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
     order?.endTime ? new Date(order.endTime) : new Date()
   );
   const [newStatus, setNewStatus] = useState<CheckoutStatus>(CheckoutStatus.REQUESTED);
-  const [errors, setErrors] = useState({ user: '', status: '' });
+  const [errors, setErrors] = useState({ user: '', status: '' ,issue:''});
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -164,11 +164,15 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
         ]);
         break;
       case CheckoutStatus.APPROVED:
+        setStatusOptions([
+          CheckoutStatus.REJECTED,
+          CheckoutStatus.BORROWED,
+        ]);
+        break;
       case CheckoutStatus.REJECTED:
         setStatusOptions([
           CheckoutStatus.APPROVED,
           CheckoutStatus.REJECTED,
-          CheckoutStatus.BORROWED
         ]);
         break;
       case CheckoutStatus.BORROWED:
@@ -185,7 +189,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
   const validateForm = () => {
     let valid = true;
-    let errors = { user: '', status: '' };
+    let errors = { user: '', status: '', issue: '' };
 
     if (isAddMode && !selectedUser) {
       errors.user = 'User is required';
@@ -194,6 +198,11 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
     if (!currentOrder.status) {
       errors.status = 'Status is required';
+      valid = false;
+    }
+
+    if (selectedProductIds.size === 0){
+      errors.issue = 'Book not null';
       valid = false;
     }
 
@@ -207,7 +216,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
   const checkoutDetails: CheckoutDetailBookDTO[] = Array.from(selectedProductIds).map((id:any) => ({
     bookId: id,
-    quantity: 1, // Bạn có thể thay đổi giá trị này theo nhu cầu
+    quantity: 1,
   }));
 
   const handleAdd = async () => {
@@ -228,8 +237,6 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
         const newOrder: CheckoutBookDTO = {
           userUid: selectedUser || 0,
-          startTime: startTime.toISOString(),
-          endTime: endTime.toISOString(),
           status: CheckoutStatus.REQUESTED,
           checkoutDetails: checkoutDetails,
           expiredTime: "",
@@ -248,7 +255,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
   };
 
   const handleEdit = async () => {
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
 
     Swal.fire({
       title: "Confirm",
@@ -409,13 +416,16 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
                       </td>
                     </tr>
                     })}
+                    
 
                   </tbody>
+                  
                 </table>
+                {errors.issue && <div className="text-danger">{errors.issue}</div>}
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total user: </span>  {totalPages} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total order: </span>  {totalPages} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={prev} next={next} />
