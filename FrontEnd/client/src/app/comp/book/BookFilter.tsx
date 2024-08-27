@@ -317,7 +317,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
         </FilterWrap>
       </PriceFilter>
 
-      <ColorsFilter>
+     {/* <ColorsFilter>
         <FilterTitle
           className="flex items-center justify-between"
           onClick={() => toggleFilter("color")}
@@ -334,7 +334,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
         </FilterTitle>
         <FilterWrap className={`${!isColorFilterOpen ? "hide" : "show"}`}>
         </FilterWrap>
-      </ColorsFilter>
+      </ColorsFilter> */}
 
       {/* -----------------------------------Lọc theo tên danh mục---------------------------- */}
       <SizesFilter>
