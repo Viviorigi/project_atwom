@@ -41,7 +41,7 @@ export default function BannerForm(props: any) {
       };
       reader.readAsDataURL(filePreview);
     } else {
-      alert("Please select a valid image file.");
+      alert("Hãy chọn file ảnh tồn tại.");
     }
   };
 
@@ -69,7 +69,7 @@ export default function BannerForm(props: any) {
   };
 
 
-  const imageSource = image? image : banner!==null ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${banner.image}
+  const imageSource = image? image : banner!==null ? `${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${banner.image}
 `: defaultPersonImage;
 
   const save = () => {
@@ -86,8 +86,8 @@ export default function BannerForm(props: any) {
       title: `Confirm`,
       text:
         banner === null
-          ? "Do you want to create a new banner?"
-          : `Do you want to update the banner?`,
+          ? "Tạo một banner mới?"
+          : `Cập nhật banner?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -142,13 +142,13 @@ export default function BannerForm(props: any) {
   };
   return (
     <div>
-      <h3>{banner === null ? "Add User" : "Edit User"}</h3>
+      <h3>{banner === null ? "Thêm banner" : "Cập nhật banner"}</h3>
       <div className="row">
         {/* Column 1 */}
         <div className="col-md-6 mb-5">
           <div className="form-group">
             <label>
-              Title <span className="text-danger">(*)</span>
+              Tiêu đề <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -156,7 +156,7 @@ export default function BannerForm(props: any) {
               className="form-control"
               value={bannerSave.title || ""}
               onChange={handleChangeText}
-              placeholder="Enter title"
+              placeholder="Nhập tiêu đề"
               
             />
             <div
@@ -164,13 +164,12 @@ export default function BannerForm(props: any) {
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Banner must not be empty and must be between 3 and 50
-              characters.
+              Tiêu đề không được rỗng và phải có từ 5 ký tự trở lên.
             </div>
           </div>
             <div className="form-group">
               <label>
-                Description <span className="text-danger">(*)</span>
+                Miêu tả <span className="text-danger">(*)</span>
               </label>
               <input
                 type="text"
@@ -178,14 +177,14 @@ export default function BannerForm(props: any) {
                 className="form-control"
                 value={bannerSave.description || ""}
                 onChange={handleChangeText}
-                placeholder="Enter description"
+                placeholder="Nhập miêu tả"
               />
               <div
                 className={`invalid-feedback ${bannerSave.description?.toString() === "" ? "d-block" : ""
                   }`}
                 style={{ fontSize: "100%", color: "red" }}
               >
-                Description must not be empty and must be at least 6 characters.
+                Miêu tả không được rỗng và phải có từ 5 ký tự trở lên.
               </div>
             </div>
 
@@ -194,7 +193,7 @@ export default function BannerForm(props: any) {
         <div className="col-md-6">
           <div className="form-group">
             <label>
-              Banner Image <span className="text-danger">(*)</span>
+              Ảnh banner <span className="text-danger">(*)</span>
             </label>
             <br />
             <input
@@ -225,7 +224,7 @@ export default function BannerForm(props: any) {
       </div>
 
       <button type="submit" className="btn btn-primary mt-5" onClick={save}>
-        {banner ? "Update" : "Save"}
+        {banner ? "Cập nhật" : "Lưu"}
       </button>
     </div>
   );

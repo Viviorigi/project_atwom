@@ -52,7 +52,7 @@ export default function Header() {
             
           })
 
-        const events = new EventSource('http://localhost:8080/api/public/subscribe/admin');  
+        const events = new EventSource(`${process.env.REACT_APP_API_URL}/api/public/subscribe/admin`);  
         events.onmessage = event => {
             const newNotification = new NotificationDTO(event.data);
             console.log(event.data);
@@ -262,7 +262,7 @@ export default function Header() {
                         </li>           
                         <li className="nav-item dropdown"><a className="nav-link lh-1 pe-0" id="navbarDropdownUser" href="index.html#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                             <div className="avatar avatar-l ">
-                                <img className="rounded-circle "  src={avatar?`http://localhost:8080/files/${avatar}`:defaultPersonImage} alt="" />
+                                <img className="rounded-circle "  src={avatar?`${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${avatar}`:defaultPersonImage} alt="" />
                             </div>
                         </a>
                             <div className="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border border-300" aria-labelledby="navbarDropdownUser">
@@ -270,7 +270,7 @@ export default function Header() {
                                     <div className="card-body p-0">
                                         <div className="text-center pt-4 pb-3">
                                             <div className="avatar avatar-xl ">
-                                                <img className="rounded-circle " src={avatar?`http://localhost:8080/files/${avatar}`:defaultPersonImage} alt="" />
+                                                <img className="rounded-circle " src={avatar?`${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${avatar}`:defaultPersonImage} alt="" />
                                             </div>
                                             <h6 className="mt-2 text-black">{fullName?fullName:"USER"}</h6>
                                         </div>

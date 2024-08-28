@@ -237,7 +237,7 @@ export default function Book() {
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Tổng số sách: </span>  {totalItems} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Tổng số danh mục: </span>  {totalItems} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={prev} next={next} />

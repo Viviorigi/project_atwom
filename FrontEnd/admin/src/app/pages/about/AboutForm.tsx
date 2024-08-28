@@ -91,8 +91,8 @@ export default function AboutForm(props: any) {
             title: `Confirm`,
             text:
                 about === null
-                    ? "Do you want to create a new about?"
-                    : `Do you want to update the about?`,
+                    ? "Bạn có muốn tạo about?"
+                    : `Bạn có muốn cập nhật about này?`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#89B449",
@@ -147,13 +147,13 @@ export default function AboutForm(props: any) {
     const editor = useRef<Jodit | null>(null);
     return (
         <div>
-            <h3>{about === null ? "Add about" : "Edit about"}</h3>
+            <h3>{about === null ? "Tạo mới about" : "Cập nhật about"}</h3>
             <div className="row">
                 {/* Column 1 */}
                 <div className="col-md-12 mb-5">
                     <div className="form-group">
                         <label>
-                            Question <span className="text-danger">(*)</span>
+                            Câu hỏi <span className="text-danger">(*)</span>
                         </label>
                         <input
                             type="text"
@@ -161,7 +161,7 @@ export default function AboutForm(props: any) {
                             className="form-control"
                             value={aboutSave?.question || ""}
                             onChange={handleChangeText}
-                            placeholder="Enter FirstName"
+                            placeholder="Nhập câu hỏi"
                             readOnly={about !== null ? true : false}
                         />
                         <div
@@ -169,27 +169,26 @@ export default function AboutForm(props: any) {
                                 }`}
                             style={{ fontSize: "100%", color: "red" }}
                         >
-                            Question must not be empty and must be between 3 and 50
-                            characters.
+                            Câu hỏi phải không được rỗng.
                         </div>
                     </div>
 
                     <div className="">
                         <label>
-                            Answer <span className="text-danger">(*)</span>
+                            Trả lời <span className="text-danger">(*)</span>
                         </label>
                         <JoditEditor
                             value={content}
                             onChange={(newContent) => handleContentChange(newContent)}
                             
                         />
-                        <button onClick={() => console.log(aboutSave.answer)}>Save Content</button>
+                        <button onClick={() => console.log(aboutSave.answer)}>Lưu thay đổi</button>
                         <div
                             className={`invalid-feedback ${aboutSave?.answer?.toString() === "" ? "d-block" : ""
                                 }`}
                             style={{ fontSize: "100%", color: "red" }}
                         >
-                            Answer must not be empty and must be at least 6 characters.
+                            Trả lời không được rỗng!
                         </div>
                     </div>
 
@@ -198,7 +197,7 @@ export default function AboutForm(props: any) {
             </div>
 
             <button type="submit" className="btn btn-primary mt-5" onClick={save}>
-                {about ? "Update" : "Save"}
+                {about ? "Cập nhật" : "Lưu"}
             </button>
         </div>
     );

@@ -114,7 +114,7 @@ export default function About() {
   const deleteUser = (c_id: number) => {
     Swal.fire({
       title: `Confirm`,
-      text: `Do you want to Delete user`,
+      text: `Xóa about này`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -149,7 +149,7 @@ export default function About() {
         <div className='card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white'>
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mt-4">List About</h2>
+              <h2 className="mt-4">Danh sách About</h2>
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
@@ -174,7 +174,7 @@ export default function About() {
                 <div className="col-auto scrollbar overflow-hidden-y flex-grow">
                   <div className="col-auto">
                     <button className="btn btn-primary" onClick={addStudent}>
-                      <span className="fas fa-plus me-2" />Create about
+                      <span className="fas fa-plus me-2" />Khởi tạo about
                     </button></div>
                 </div>
               </div>
@@ -185,11 +185,11 @@ export default function About() {
                   <thead>
                     <tr>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '2%' }}>#</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>QUESTION</th>
-                      <th className="sort align-middle text-end" scope="col" style={{ width: '20%' }}>ANSWER</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>CREATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>UPDATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>ACTION</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>Câu hỏi</th>
+                      <th className="sort align-middle text-end" scope="col" style={{ width: '20%' }}>Trả lời</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>Ngày tạo</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>Ngày cập nhật</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '12%' }}>Hành động</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
@@ -213,7 +213,7 @@ export default function About() {
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total about: </span>  {totalUsers} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Tổng số about: </span>  {totalUsers} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPage} currentPage={userSearchParams.page} handlePageClick={handlePageClick} prev={prev} next={next} />
