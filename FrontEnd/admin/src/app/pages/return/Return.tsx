@@ -94,7 +94,7 @@ const Return = () => {
       const penaltyOrders = orders.filter(order => order.status === "PENALTY");
       
       for (const order of penaltyOrders) {
-        const response = await axios.get<UserFineDTO>(`http://localhost:8080/api/userfine/checkout/${order.id}`);
+        const response = await axios.get<UserFineDTO>(process.env.REACT_APP_API_URL + `/api/userfine/checkout/${order.id}`);
         if (response.data) {
           finesMap.set(order.id, response.data.amount);
         }

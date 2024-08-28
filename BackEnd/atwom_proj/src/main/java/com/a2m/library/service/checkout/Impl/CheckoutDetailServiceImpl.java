@@ -31,6 +31,7 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
     @Autowired
     private BookRepository bookRepository;
 
+
     @Autowired
     private CheckoutRepository checkoutRepository;
 
@@ -60,6 +61,8 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
     @Override
     @Transactional
     public CheckoutDetailDTO addDetailToCheckout(Integer checkoutId, CheckoutDetailDTO checkoutDetailDTO) {
+        Book book = bookRepository.findById(checkoutDetailDTO.getBookId())
+                .orElseThrow(() -> new RuntimeException("Book not found"));
         Checkout checkout = checkoutRepository.findById(checkoutId)
             .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + checkoutId));
         
@@ -72,24 +75,42 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         checkoutDetail.setCheckout(checkout);
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
 
-        return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
+        if(checkoutDetail.getQuantity() - book.getQuantity() > 0){
+            return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
+        } else {
+            throw new IllegalStateException("Order quantity must > Book quantity.");
+        }
     }
 
     @Override
     public CheckoutDetailDTO save(CheckoutDetailDTO checkoutDetailDTO) {
+        Book book = bookRepository.findById(checkoutDetailDTO.getBookId())
+                .orElseThrow(() -> new RuntimeException("Book not found"));
         CheckoutDetail checkoutDetail = new CheckoutDetail();
         checkoutDetail.setBook(bookRepository.findById(checkoutDetailDTO.getBookId()).orElseThrow(() -> new ResourceNotFoundException("Book not found")));
         checkoutDetail.setCheckout(checkoutRepository.findById(checkoutDetailDTO.getCheckoutId()).orElseThrow(() -> new ResourceNotFoundException("Checkout not found")));
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
-        return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
+
+        if(checkoutDetail.getQuantity() - book.getQuantity() > 0){
+            return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
+        } else {
+            throw new IllegalStateException("Order quantity must > Book quantity.");
+        }
     }
 
     @Override
     public CheckoutDetailDTO update(Integer id, CheckoutDetailDTO checkoutDetailDTO) {
+        Book book = bookRepository.findById(checkoutDetailDTO.getBookId())
+                .orElseThrow(() -> new RuntimeException("Book not found"));
         CheckoutDetail checkoutDetail = checkoutDetailRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("CheckoutDetail not found"));
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
-        return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
+        
+        if(checkoutDetail.getQuantity() - book.getQuantity() > 0){
+            return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
+        } else {
+            throw new IllegalStateException("Order quantity must > Book quantity.");
+        }
     }
 
     @Override

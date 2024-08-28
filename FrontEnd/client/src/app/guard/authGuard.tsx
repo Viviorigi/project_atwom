@@ -34,7 +34,7 @@ export default function AuthGuard(props: any) {
     } else {
       // let domain = window.location.origin;
       window.location.href = process.env.REACT_APP_AUTH_URL + "/login"
-    }
+    } 
   }, [navigate]);
 
   return auth && props.children;

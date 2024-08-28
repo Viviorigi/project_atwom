@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import AddDetailForm from "./AddDetailForm";
 import { Dialog } from "primereact/dialog";
 
-const BASE_URL = "http://localhost:8080/api/checkoutdt";
+const BASE_URL = process.env.REACT_APP_API_URL + "/api/checkoutdt";
 
 interface OrderDetailProps {
   orderId: number;

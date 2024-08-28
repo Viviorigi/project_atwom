@@ -61,11 +61,6 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
 
     if (!validate()) return;
 
-    // const confirmed = window.confirm(
-    //   "Are you sure you want to save the changes?"
-    // );
-    // if (!confirmed) return;
-
     Swal.fire({
       title: "Confirm",
       text: "Do you want to save changes?",
@@ -122,11 +117,11 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
   const handleStatusOptions = (currentStatus: CheckoutStatus): CheckoutStatus[] => {
     switch (currentStatus) {
       case CheckoutStatus.BORROWED:
-        return [CheckoutStatus.RETURNED, CheckoutStatus.EXPIRED];
+        return [CheckoutStatus.BORROWED,CheckoutStatus.RETURNED, CheckoutStatus.EXPIRED];
       case CheckoutStatus.RETURNED:
         return [CheckoutStatus.RETURNED];
       case CheckoutStatus.EXPIRED:
-        return [CheckoutStatus.EXPIRED];
+        return [CheckoutStatus.EXPIRED,CheckoutStatus.RETURNED];
       default:
         return [];
     }
