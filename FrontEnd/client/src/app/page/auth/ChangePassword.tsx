@@ -61,13 +61,13 @@ const ChangePassword = () => {
           cookie.remove("avatar")
           cookie.remove('username')
           cookie.remove('password')
-          toast.success(resp.data.message + " Please login back");
+          toast.success("Đổi mật khẩu thành công ! Vui lòng đăng nhập lại");
           navigate("/login")
         }
       })
       .catch((error: any) => {
         // dispatch(setLoading(false));
-        toast.error("Change password error");
+        toast.error("Đổi mật khẩu thất bại");
       });
   }
 

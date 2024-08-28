@@ -145,7 +145,7 @@ const SignIn = () => {
       })
       .catch((error: any) => {
         // dispatch(setLoading(false));
-        toast.error("Username or Password wrong");
+        toast.error("Tài khoản hoặc mật khẩu không chính xác");
       });
   };
 

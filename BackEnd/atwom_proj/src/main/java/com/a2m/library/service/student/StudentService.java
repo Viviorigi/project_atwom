@@ -86,7 +86,7 @@ public class StudentService {
 
 		tokenRepository.save(verificationToken);
 
-		String verificationUrl = "http://localhost:8080/api/student/verify?token=" + token;
+		String verificationUrl = "http://localhost:8196/api/student/verify?token=" + token;
 		
 		emailService.SendEmailVerificationUrl(user.getEmail(), "Xác thực tài khoản", verificationUrl);
 		

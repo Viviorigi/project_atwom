@@ -422,7 +422,7 @@ const OrderDetail = () => {
                   return (
                     <div className="order-d-item grid" key={item.id}>
                       <div className="order-d-item-img">
-                      <img className="rounded-circle" src={book?.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${book?.image}` : defaultimage} alt="PersonAvatar" onError={(e) => {
+                      <img className="w-100" src={book?.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${book?.image}` : defaultimage} alt="PersonAvatar" onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.onerror = null;
                         target.src = defaultimage;

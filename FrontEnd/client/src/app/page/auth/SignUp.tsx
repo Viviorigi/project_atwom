@@ -91,7 +91,7 @@ const SignUp = () => {
       })
       .catch((error: any) => {
         setIsLoading(false); // Stop loading
-        toast.error(error.response.data.message);
+        toast.error("Đăng ký lỗi");
       });
   };
 

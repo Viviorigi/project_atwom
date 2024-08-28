@@ -17,6 +17,7 @@ const ResetPassword = () => {
   const [resetPwsRequest, setResetPwsRequest] = useState<ResetpwdRequest>(
     new ResetpwdRequest()
   );
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const handleChangeText = (event: any) => {
     const { name, value } = event.target;
@@ -44,7 +45,7 @@ const ResetPassword = () => {
     if (!chk()) {
       return;
     }
-
+    setIsLoading(true);
     AuthService.getInstance()
       .resetPass(resetPwsRequest)
       .then((resp: any) => {
@@ -52,9 +53,11 @@ const ResetPassword = () => {
           // dispatch(setLoading(false))
           toast.success("Đã gửi email reset mật khẩu");
         }
+        setIsLoading(false);
       })
       .catch((error: any) => {
         // dispatch(setLoading(false));
+        setIsLoading(false);
         toast.error("Không tìm thấy email");
       });
   };
@@ -105,9 +108,9 @@ const ResetPassword = () => {
               <button
                 className="form-submit-btn"
                 style={{ backgroundColor: "black", color: "white" }}
-                onClick={send}
+                onClick={send} disabled={isLoading} 
               >
-                Gửi
+                {isLoading ? "Đang xử lý..." : "Gửi"}
               </button>
               {/* </BaseButtonBlack>   */}
               <p className="flex flex-wrap account-rel-text">

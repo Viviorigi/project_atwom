@@ -108,6 +108,7 @@ const UserMenu = () => {
   const logout = () => {
     cookie.remove(AuthConstant.ACCESS_TOKEN);
     cookie.remove("fullName");
+    window.location.href = process.env.REACT_APP_AUTH_URL + "/"
   };
   return (
     <div>

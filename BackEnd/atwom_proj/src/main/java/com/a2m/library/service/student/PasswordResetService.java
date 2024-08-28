@@ -33,7 +33,7 @@ public class PasswordResetService {
         user.setTokenExpirationDate(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
 
-        String resetLink = "http://localhost:8080/api/auth/reset-password?token=" + token;
+        String resetLink = "http://localhost:8196/api/auth/reset-password?token=" + token;
         
         // Send the email
         emailService.sendPasswordResetRequestEmail(email, "Yêu cầu đặt lại mật khẩu", resetLink);

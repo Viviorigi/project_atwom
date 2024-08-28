@@ -76,10 +76,10 @@ const OrderList: React.FC = () => {
         <UserDashboardWrapper>
           <UserMenu />
           <UserContent>
-            <Title titleText={"My Orders"} />
+            <Title titleText={"Đơn hàng của tôi"} />
             <div className="order-tabs">
               <div className="order-tabs-heads">
-                {['all', 'progress', 'canceled', 'completed', 'return'].map(id => (
+                {['Tất cả', 'Đang Tiến hành', 'Hủy', 'Hoàn thành', 'Trả lại'].map(id => (
                   <button
                     key={id}
                     type="button"
