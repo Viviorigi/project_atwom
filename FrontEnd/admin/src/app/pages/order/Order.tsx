@@ -226,7 +226,7 @@ const Order = () => {
                   <th
                     className="sort align-middle text-center"
                     scope="col"
-                    style={{ width: "10%" }}
+                    style={{ width: "5%" }}
                   >
                     Status
                   </th>
@@ -243,6 +243,13 @@ const Order = () => {
                     style={{ width: "10%" }}
                   >
                     Update Time
+                  </th>
+                  <th
+                    className="sort align-middle text-center"
+                    scope="col"
+                    style={{ width: "5%" }}
+                  >
+                    Expired Date
                   </th>
                   <th
                     className="sort align-middle text-center"
@@ -283,6 +290,11 @@ const Order = () => {
                     </td>
                     <td className="align-middle text-center">
                       {format(new Date(order.endTime), "dd/MM/yyyy, hh:mm")}
+                    </td>
+                    <td className="align-middle text-center text-900">
+                      {order.endTime
+                        ? format(new Date(order.endTime), "dd/MM/yyyy")
+                        : "N/A"}
                     </td>
                     <td className="align-middle text-center">
                       <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>

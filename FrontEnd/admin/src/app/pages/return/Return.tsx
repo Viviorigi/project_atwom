@@ -285,7 +285,7 @@ const Return = () => {
                       </span>
                     </td>
                     <td className="align-middle text-center">
-                      {format(new Date(order.startTime), "dd-MM-yyyy")}
+                      {format(new Date(order.startTime), "dd/MM/yyyy, hh:mm")}
                     </td>
                     <td className="align-middle text-center text-900">
                       {order.startTime
@@ -294,7 +294,7 @@ const Return = () => {
                     </td>
                     <td className="align-middle text-center text-900">
                       {order.endTime
-                        ? format(new Date(order.endTime), "dd/MM/yyyy, hh:mm")
+                        ? format(new Date(order.endTime), "dd/MM/yyyy")
                         : "N/A"}
                     </td>
                     <td className="align-middle text-center">

@@ -75,7 +75,7 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         checkoutDetail.setCheckout(checkout);
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
 
-        if(checkoutDetail.getQuantity() - book.getQuantity() > 0){
+        if(checkoutDetail.getQuantity() - book.getQuantity() < 0){
             return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
         } else {
             throw new IllegalStateException("Order quantity must > Book quantity.");
@@ -91,7 +91,7 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         checkoutDetail.setCheckout(checkoutRepository.findById(checkoutDetailDTO.getCheckoutId()).orElseThrow(() -> new ResourceNotFoundException("Checkout not found")));
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
 
-        if(checkoutDetail.getQuantity() - book.getQuantity() > 0){
+        if(checkoutDetail.getQuantity() - book.getQuantity() < 0){
             return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
         } else {
             throw new IllegalStateException("Order quantity must > Book quantity.");
@@ -105,8 +105,8 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         CheckoutDetail checkoutDetail = checkoutDetailRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("CheckoutDetail not found"));
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
-        
-        if(checkoutDetail.getQuantity() - book.getQuantity() > 0){
+
+        if(checkoutDetail.getQuantity() - book.getQuantity() < 0){
             return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
         } else {
             throw new IllegalStateException("Order quantity must > Book quantity.");

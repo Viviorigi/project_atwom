@@ -98,7 +98,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         checkout.setStatus(CheckoutStatus.REQUESTED);
         checkout.setStartTime(LocalDateTime.now());
         checkout.setEndTime(LocalDateTime.now());
-        checkout.setExpiredTime(checkout.getEndTime().plusMonths(1));
+        checkout.setExpiredTime(LocalDateTime.now().plusMonths(1));
         
         List<CheckoutDetail> issueDetails = checkoutDTO.getCheckoutDetails().stream().map((detailDTO) -> {
             Book book = bookRepository.findById(detailDTO.getBookId())
@@ -107,7 +107,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            if(detail.getQuantity() - book.getQuantity() > 0){
+            if(detail.getQuantity() - book.getQuantity() < 0){
                 return detail;
             } else {
                 throw new IllegalStateException("Order quantity must > Book quantity.");
@@ -138,7 +138,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            if(detail.getQuantity() - book.getQuantity() > 0){
+            if(detail.getQuantity() - book.getQuantity() < 0){
                 return detail;
             } else {
                 throw new IllegalStateException("Order quantity must > Book quantity.");
