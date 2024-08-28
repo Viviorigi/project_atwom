@@ -134,11 +134,11 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
       <div className="row mb-3">
         <div className="">
           <div className="">
-            <h5 className="modal-title">Edit Return</h5>
+            <h5 className="modal-title">Chỉnh sửa đơn trả</h5>
           </div>
           <div className="col-12">
             <div className="mb-3">
-              <label className="form-label">Student Name</label>
+              <label className="form-label">Học tên</label>
               <input
                 type="text"
                 className="form-control"
@@ -147,7 +147,7 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">Status</label>
+              <label className="form-label">Trạng thái</label>
               <select
                 className="form-control"
                 value={status}
@@ -189,14 +189,14 @@ const ReturnForm: React.FC<ReturnFormProps> = ({
               className="btn btn-secondary"
               onClick={() => onClose(false)}
             >
-              Close
+              Đóng
             </button>
             <button
               type="button"
               className="btn btn-primary"
               onClick={handleConfirm}
             >
-              Save changes
+              Lưu
             </button>
           </div>
         </div>

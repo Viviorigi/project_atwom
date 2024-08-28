@@ -136,8 +136,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         checkout.setUser(user);
         checkout.setStatus(CheckoutStatus.REQUESTED);
         checkout.setStartTime(LocalDateTime.now());
-
-        checkout.setEndTime(LocalDateTime.now().plusDays(7));
+        checkout.setEndTime(LocalDateTime.now());
         checkout.setExpiredTime(checkout.getEndTime().plusMonths(1));
         
         List<CheckoutDetail> issueDetails = checkoutDTO.getCheckoutDetails().stream().map((detailDTO) -> {

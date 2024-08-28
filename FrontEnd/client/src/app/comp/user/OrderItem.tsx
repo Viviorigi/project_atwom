@@ -202,7 +202,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId, onRefresh }) => {
   const quantity = details[0].quantity;
 
   const handleCancel = async () => {
-    if (window.confirm('Are you sure you want to cancel this order?')) {
+    if (window.confirm('Bạn có muốn hủy đơn?')) {
       if (checkout && (checkout.status === 'REQUESTED' || checkout.status === 'APPROVED')) {
         try {
           await rejectCheckout(checkoutId);
@@ -217,7 +217,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId, onRefresh }) => {
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this order?')) {
+    if (window.confirm('Bạn có muốn xóa đơn?')) {
       if (checkout && (checkout.status === 'REQUESTED' || checkout.status === 'APPROVED' || checkout.status === 'REJECTED' || checkout.status === 'RETURNED')) {
         try {
           await deleteCheckout(checkoutId);

@@ -264,14 +264,14 @@ const Order = () => {
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Ngày trả
+                    Cập nhật
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "5%" }}
                   >
-                    Expired Date
+                    Ngày trả
                   </th>
                   <th
                     className="sort align-middle text-center"
