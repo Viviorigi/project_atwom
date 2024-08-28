@@ -234,7 +234,7 @@ const BookDetail = (props: any) => {
   }, [book]);
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/detail?id=${id}`;
+    let url = `${process.env.REACT_APP_API_URL}/book/detail?id=${id}`;
     axios
       .get(url)
       .then((resp: any) => {
@@ -391,7 +391,7 @@ const BookDetail = (props: any) => {
           {/* <BookPreview previewImages={book?.image} /> */}
           {/* <img
             // className="object-fit-cover"
-            src={book?.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book?.image}` : imageBookDefault} onError={(e) => {
+            src={book?.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${book?.image}` : imageBookDefault} onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null; // Prevent infinite loop in case fallback image also fails
               target.src = imageBookDefault; // Set the fallback image

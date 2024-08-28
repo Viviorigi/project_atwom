@@ -185,7 +185,7 @@ const Hero = () => {
           {banner?.map((b: any) => {
             return (
               <HeroSliderItemWrapper key={b.id}>
-                <img src={`http://localhost:8080/api/auth/getImage?atchFleSeqNm=${b.image}`} className="object-fit-cover" alt="" onError={(e) => {
+                <img src={`${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${b.image}`} className="object-fit-cover" alt="" onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null; // Prevent infinite loop in case fallback image also fails
                   target.src = noImageAvailable; // Set the fallback image

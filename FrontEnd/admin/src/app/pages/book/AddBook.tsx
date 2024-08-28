@@ -30,7 +30,7 @@ export default function AddBook(props: any) {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        let url = `http://localhost:8080/category/list/all`;
+        let url = `${process.env.REACT_APP_API_URL}/category/list/all`; 
         axios.get(url).then((resp: any) => {
             // console.log(resp.data.name);
             if (resp.data) {
@@ -99,13 +99,13 @@ export default function AddBook(props: any) {
 
 
     // const imageSource = image ? image : bookDTO.image !== null ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage;
-    const imageSource = image || (bookDTO && bookDTO.image ? `http://localhost:8080/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage);
+    const imageSource = image || (bookDTO && bookDTO.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${bookDTO.image}` : defaultPersonImage);
 
     const [imageSources, setImageSources] = useState<string[]>([]);
 
     useEffect(() => {
         if (bookDTO && bookDTO.imagebooks.length > 0) {
-            setImageSources(bookDTO.imagebooks.map((image: any) => `http://localhost:8080/getImage?atchFleSeqNm=${image.filename}`));
+            setImageSources(bookDTO.imagebooks.map((image: any) => `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${image.filename}`));
         }
     }, [bookDTO])
 
@@ -247,7 +247,7 @@ export default function AddBook(props: any) {
             if (result.value) {
                 dispatch(setLoading(true));
                 // logic
-                let url = `http://localhost:8080/book/add`;
+                let url = `${process.env.REACT_APP_API_URL}/book/add`;
                 axios.post(url, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'

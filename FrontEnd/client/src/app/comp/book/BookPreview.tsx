@@ -93,16 +93,16 @@ const BookPreview: React.FC<BookPreviewProps> = ({ previewImages, image }) => {
 
   useEffect(() => {
     if (previewImages && previewImages.length > 0) {
-      setActivePreviewImage(`http://localhost:8080/getImage?atchFleSeqNm=${previewImages[0].filename}`);
+      setActivePreviewImage(`${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${previewImages[0].filename}`);
     }
     if (image != undefined) {
-      setImagePre(`http://localhost:8080/getImage?atchFleSeqNm=${image}`);
+      setImagePre(`${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${image}`);
     }
   }, [previewImages, image]);
 
 
   const handlePreviewImageChange = (previewImage: any) => {
-    setActivePreviewImage(`http://localhost:8080/getImage?atchFleSeqNm=${previewImage.filename}`);
+    setActivePreviewImage(`${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${previewImage.filename}`);
   };
 
   return (
@@ -117,7 +117,7 @@ const BookPreview: React.FC<BookPreviewProps> = ({ previewImages, image }) => {
             >
               <div className="preview-item">
                 <img
-                  src={`http://localhost:8080/getImage?atchFleSeqNm=${previewImage.filename}`}
+                  src={`${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${previewImage.filename}`}
                   alt=""
                   className="object-fit-cover"
                 />

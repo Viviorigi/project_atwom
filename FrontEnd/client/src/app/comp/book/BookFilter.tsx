@@ -59,7 +59,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
 
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/list/all/filter?keySearch=${searchDto.keySearch}`;
+    let url = `${process.env.REACT_APP_API_URL}/book/list/all/filter?keySearch=${searchDto.keySearch}`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
         setBookList(resp.data);;
@@ -70,7 +70,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
   }, [searchDto.keySearch])
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/filter/publisher`;
+    let url = `${process.env.REACT_APP_API_URL}/book/filter/publisher`;
     axios.post(url, bookList).then((resp: any) => {
       if (resp.data) {
         if (searchDto.keySearch == '') {
@@ -87,7 +87,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
   }, [searchDto.timer])
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/filter/publishYear`;
+    let url = `${process.env.REACT_APP_API_URL}/book/filter/publishYear`;
     axios.post(url, bookList).then((resp: any) => {
       if (resp.data) {
         if (searchDto.keySearch == '') {
@@ -104,7 +104,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
   }, [searchDto.timer])
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/filter/cateName`;
+    let url = `${process.env.REACT_APP_API_URL}/book/filter/cateName`;
     axios.post(url, bookList).then((resp: any) => {
       if (resp.data) {
         if (searchDto.keySearch == '') {
@@ -121,7 +121,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
   }, [searchDto.timer])
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/filter/nxb`;
+    let url = `${process.env.REACT_APP_API_URL}/book/filter/nxb`;
     axios.post(url, bookList).then((resp: any) => {
       if (resp.data) {
         if (searchDto.keySearch == '') {

@@ -50,7 +50,7 @@ const ProductSimilar = () => {
 
   const [bookList, setBookList] = useState([]);
   useEffect(() => {
-    let url = `http://localhost:8080/book/similar?id=${id}`;
+    let url = `${process.env.REACT_APP_API_URL}/book/similar?id=${id}`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
         // console.log("test similar");
@@ -75,7 +75,7 @@ const ProductSimilar = () => {
               <div className="product-img">
                 <Link to={`/book/details/?bookId=${book.id}`}>
                   <img
-                    src={book.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book.image}` : imageBookDefault} onError={(e) => {
+                    src={book.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${book.image}` : imageBookDefault} onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;  
                       target.src = imageBookDefault;  
