@@ -250,7 +250,7 @@ export default function Wishlist() {
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div style={{ marginRight: '10px' }}>
                           <img
-                            src={`http://localhost:8080/getImage?atchFleSeqNm=${book.image}`}
+                            src={`${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${book.image}`}
                             style={{ width: '120px', height: '120px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
                             alt={book.title}
                           />

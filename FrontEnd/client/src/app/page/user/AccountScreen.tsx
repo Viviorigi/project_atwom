@@ -138,7 +138,7 @@ const AccountScreen = () => {
                   <img
                     src={
                       userDetail.avatar
-                        ? `http://localhost:8080/getImage?atchFleSeqNm=${userDetail.avatar}`
+                        ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${userDetail.avatar}`
                         : defaultPerson
                     }
                     alt="Preview"

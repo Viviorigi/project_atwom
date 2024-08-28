@@ -108,7 +108,7 @@ const Category = () => {
                     <Link to={`/book/details/?bookId=${u.id}`}>
                       <img
                         className="object-fit-cover"
-                        src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {
+                        src={u.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.onerror = null; // Prevent infinite loop in case fallback image also fails
                           target.src = imageBookDefault; // Set the fallback image
@@ -148,7 +148,7 @@ const Category = () => {
                     <Link to={`/book/details/?bookId=${u.id}`}>
                       <img
                         className="object-fit-cover"
-                        src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {
+                        src={u.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${u.image}` : imageBookDefault} onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.onerror = null; // Prevent infinite loop in case fallback image also fails
                           target.src = imageBookDefault; // Set the fallback image
