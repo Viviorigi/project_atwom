@@ -173,7 +173,7 @@ const BookDescriptionTab = (props: any) => {
   }, [])
 
   useEffect(() => {
-    const url = ApiUrlUtil.buildQueryString(`http://localhost:8080/get-info`);
+    const url = ApiUrlUtil.buildQueryString(`${process.env.REACT_APP_API_URL}/get-info`);
 
     axios.post(url, {}, {
       headers: HeadersUtil.getHeadersAuth()

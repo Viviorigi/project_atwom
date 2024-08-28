@@ -32,7 +32,7 @@ export default function AuthGuard(props: any) {
       setAuth(true)
     } else {
       // let domain = window.location.origin;
-      window.location.href = process.env.REACT_APP_AUTH_URL + "/login"
+      window.location.href = process.env.REACT_APP_ADMIN_URL + "/login"
     }
   }, [navigate]);
 
