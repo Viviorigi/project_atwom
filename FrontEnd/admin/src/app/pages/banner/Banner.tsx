@@ -117,7 +117,7 @@ export default function Banner() {
   const deleteUser = (b_id: number) => {
     Swal.fire({
       title: `Confirm`,
-      text: `Do you want to Delete user`,
+      text: `Xác nhận xóa banner`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -152,7 +152,7 @@ export default function Banner() {
         <div className='card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white'>
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mt-4">List Banner</h2>
+              <h2 className="mt-4">Danh sách Banner</h2>
             </div>
           </div>
           <div id="products" data-list="{&quot;valueNames&quot;:[&quot;customer&quot;,&quot;email&quot;,&quot;total-orders&quot;,&quot;total-spent&quot;,&quot;city&quot;,&quot;last-seen&quot;,&quot;last-order&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
@@ -177,7 +177,7 @@ export default function Banner() {
                 <div className="col-auto scrollbar overflow-hidden-y flex-grow">
                   <div className="col-auto">
                     <button className="btn btn-primary" onClick={addBanner}>
-                      <span className="fas fa-plus me-2" />Create Banner
+                      <span className="fas fa-plus me-2" />Tạo Banner
                     </button></div>
                 </div>
               </div>
@@ -189,11 +189,11 @@ export default function Banner() {
                     <tr>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '15%' }}>Banner</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>TITLE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '25%' }}>DESCRIPTION</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>CREATE_AT</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>UPDATE_AT</th>
-                      <th className="sort align-middle text-center justify-content-center" scope="col" style={{ width: '15%' }}>Action</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '20%' }}>Tiêu đề</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '25%' }}>Miêu tả</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>Ngày tạo</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '10%' }}>Ngày cập nhật</th>
+                      <th className="sort align-middle text-center justify-content-center" scope="col" style={{ width: '15%' }}>Hành động</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
@@ -202,7 +202,7 @@ export default function Banner() {
                         <td className='align-middle white-space-nowrap  text-700 text-end pe-3'>{indexOfFirstItem + index + 1}</td>
                         <td className="customer align-middle white-space-nowrap ps-10"><div className="d-flex align-items-center text-1100">
                         <div className="avatar">
-                            <img className="" src={u.image ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${u.image}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
+                            <img className="" src={u.image ? `${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${u.image}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.onerror = null; // Prevent infinite loop in case fallback image also fails
                               target.src = noImageAvailable; // Set the fallback image
@@ -226,7 +226,7 @@ export default function Banner() {
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total banner: </span>  {totalUsers} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Tổng số banner: </span>  {totalUsers} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPage} currentPage={userSearchParams.page} handlePageClick={handlePageClick} prev={prev} next={next} />

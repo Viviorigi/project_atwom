@@ -68,7 +68,7 @@ export default function Contact() {
         }
         Swal.fire({
             title: `Confirm`,
-            text: "Do you want to submit",
+            text: "Xác nhận",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#89B449",
@@ -107,12 +107,12 @@ export default function Contact() {
                             </div>
                             <div className="col-lg-6 col-md-12">
                                 <div className="card p-5">
-                                    <h2 className='footer-title mb-3'><b>Contact Us</b></h2>
-                                    <p className='mb-2'><b>Address:</b>  VietNam, VietNam, 2nd floor</p>
-                                    <p className='mb-2'><b>Phone:</b>  <a className='footer-tel' href="tel:+1234567890">Call us at +1 (234) 567-890</a></p>
-                                    <p className='mb-4'><b>Hours:</b>  From 8 a.m To 6 p.m</p>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus quos iusto rerum architecto a eaque consequuntur impedit! Harum earum iste, suscipit soluta, culpa necessitatibus quia sit nulla doloremque officia cum.</p>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit hic veniam unde numquam in ullam laudantium odit explicabo itaque! Voluptate similique, accusantium consequatur provident soluta quaerat maxime adipisci vero sed.</p>
+                                    <h2 className='footer-title mb-3'><b>Liên hệ chúng tôi</b></h2>
+                                    <p className='mb-2'><b>Địa chỉ:</b>  VietNam, VietNam, 2nd floor</p>
+                                    <p className='mb-2'><b>Số điện thoại:</b>  <a className='footer-tel' href="tel:+1234567890">Call us at +1 (234) 567-890</a></p>
+                                    <p className='mb-4'><b>Giờ mở:</b>  From 8 a.m To 6 p.m</p>
+                                    <p>Rất hanh hạnh được phục vụ sinh viên và các quý khách đến đọc sách.</p>
+
                                 </div>
                             </div>
                         </div>
@@ -125,55 +125,55 @@ export default function Contact() {
                         <div className="row">
                             <div className="col-lg-8 col-md-10 col-sm-12 m-auto">
                                 <div className="card p-5">
-                                    <h2 className='text-center mb-4'>Leave Us A message</h2>
+                                    <h2 className='text-center mb-4'>Để lại cho chúng tôi phản hồi</h2>
                                     <div className=" d-flex align-items-center justify-content-center">
                                         <div className="row g-3">
                                             <div className="col-md-6">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">FirstName</label>
+                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">Họ</label>
                                                 <input type="text" className="form-control" name='firstName' value={contact.firstName || ""} onChange={handleChangeText} aria-label="First name" />
                                                 <div
                                                     className={`invalid-feedback ${contact?.firstName?.toString() === "" ? "d-block" : ""
                                                         }`}
                                                     style={{ fontSize: "100%", color: "red" }}
                                                 >
-                                                    FirstName must not be empty.
+                                                    Họ không được để rỗng.
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">LastName</label>
+                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">Tên</label>
                                                 <input type="text" className="form-control" name='lastName' value={contact.lastName || ""} onChange={handleChangeText} aria-label="Last name" />
                                                 <div
                                                     className={`invalid-feedback ${contact?.lastName?.toString() === "" ? "d-block" : ""
                                                         }`}
                                                     style={{ fontSize: "100%", color: "red" }}
                                                 >
-                                                    LastName must not be empty.
+                                                    Tên không được rỗng.
                                                 </div>
                                             </div>
                                             <div className='col-12'>
-                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">Enter Your Email address</label>
+                                                <label htmlFor="exampleFormControlInput1" className="form-label mb-3">Nhập email</label>
                                                 <input type="email" className="form-control" name='email' value={contact?.email || ""} onChange={handleChangeText} id="exampleFormControlInput1" />
                                                 <div
                                                     className={`invalid-feedback ${contact?.email?.toString() === "" ? "d-block" : ""
                                                         }`}
                                                     style={{ fontSize: "100%", color: "red" }}
                                                 >
-                                                    Email must not be empty.
+                                                    Email khônd được rỗng.
                                                 </div>
                                             </div>
                                             <div className="col-12">
-                                                <label htmlFor="exampleFormControlTextarea1" className="form-label">Type in your message</label>
+                                                <label htmlFor="exampleFormControlTextarea1" className="form-label">Nhập liên hệ của bản</label>
                                                 <textarea className="form-control" name='question' value={contact?.question || ""} onChange={handleChangeText} id="exampleFormControlTextarea1" rows={3}></textarea>
                                                 <div
                                                     className={`invalid-feedback ${contact?.question?.toString() === "" ? "d-block" : ""
                                                         }`}
                                                     style={{ fontSize: "100%", color: "red" }}
                                                 >
-                                                    Message must not be empty.
+                                                    Liên hệ không được rỗng.
                                                 </div>
                                             </div>
                                             <div className='col-12 text-center gap-2'>
-                                                <BaseButtonGreen type="submit" onClick={submit}>Submit</BaseButtonGreen>
+                                                <BaseButtonGreen type="submit" onClick={submit}>Gửi liên hệ</BaseButtonGreen>
                                             </div>
                                         </div>
                                     </div>

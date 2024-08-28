@@ -19,7 +19,7 @@ export default function BannerInfo(props: any) {
     const deleteBanner = (b_id: number) => {
       Swal.fire({
         title: `Confirm`,
-        text: `Do you want to Delete user`,
+        text: `Xóa banner này?`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#89B449",
@@ -54,7 +54,7 @@ export default function BannerInfo(props: any) {
           </div>
           <div className="col-auto">
             <div className="row g-2 g-sm-3">
-              <div className="col-auto"><button className="btn btn-phoenix-danger" onClick={() => deleteBanner(info.id)}><i className="fa-solid fa-trash"></i> Delete Banner</button></div>
+              <div className="col-auto"><button className="btn btn-phoenix-danger" onClick={() => deleteBanner(info.id)}><i className="fa-solid fa-trash"></i> Xóa Banner</button></div>
             </div>
           </div>
         </div>
@@ -66,28 +66,28 @@ export default function BannerInfo(props: any) {
                   <div className="row align-items-center g-3 g-sm-5 text-center text-sm-start">
                     <div className="col-12 col-sm-auto">
                       <label className="cursor-pointer avatar avatar-5xl img-fluid " htmlFor="avatarFile">
-                        <img className="img-fluid" src={info.image ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${info.image}
+                        <img className="img-fluid" src={info.image ? `${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${info.image}
 ` : defaultPersonImage} alt="" /></label>
                     </div>
                   </div>
                 </div>
                 <div className="d-flex flex-between-center pt-4">
                   <div>
-                    <h6 className="mb-2 text-800">Title</h6>
+                    <h6 className="mb-2 text-800">Tiêu Đề</h6>
                     <h4 className="fs-1 text-1000 mb-0">{info.title}</h4>
                   </div>
                   <div className="text-end">
-                    <h6 className="mb-2 text-800">Created At</h6>
+                    <h6 className="mb-2 text-800">Ngày tạo</h6>
                     <h4 className="fs-1 text-1000 mb-0">{formatDate(info.cre_dt)}</h4>
                   </div>
                   <div className="text-end">
-                    <h6 className="mb-2 text-800">Updated At</h6>
+                    <h6 className="mb-2 text-800">Ngày cập nhật</h6>
                     <h4 className="fs-1 text-1000 mb-0">{formatDate(info.upd_dt)}</h4>
                   </div>
                 </div>
                 <div className="d-flex flex-between-center pt-4">
                   <div>
-                    <h6 className="mb-2 text-800">Description</h6>
+                    <h6 className="mb-2 text-800">Miêu tả</h6>
                     <h4 className="fs-1 text-1000 mb-0">{info.description}</h4>
                   </div>
                 </div>

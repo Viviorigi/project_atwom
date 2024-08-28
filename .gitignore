@@ -100,6 +100,6 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all
 
-/BackEnd/atwom_proj/src/main/resources/application.properties
+# /BackEnd/atwom_proj/src/main/resources/application.properties
 
-/BackEnd/atwom_proj/src/main/resources
+# /BackEnd/atwom_proj/src/main/resources

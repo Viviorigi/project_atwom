@@ -123,16 +123,10 @@ export default function About() {
       </div>
 
       <div className="container my-5">
-        <h2 className="text-center mb-4">Our Mission</h2>
-        <p>Our library is not just a treasure trove of knowledge but also an open space where everyone can come to learn, explore, and develop themselves. We are committed to providing rich and reliable resources to serve the learning and research needs of the community.</p>
+        
 
-        <h2 className="text-center mb-4">Our History</h2>
-        <p>The library was founded with the initial goal of creating a place to preserve and share knowledge. Over the years, we have continuously expanded and updated our collection, becoming one of the leading information and cultural centers in the region.</p>
-
-        <h2 className="text-center mb-4">Privacy Policy</h2>
-        <p>Your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your personal information when you visit our website or use our services.</p>
-
-        <h2 className="text-center mb-4">Question</h2>
+        <h2 className="text-center mb-4">FAQ</h2>
+        <h2 className="text-center mb-4">Giải đáp về thư viện</h2>
         {about?.map((a: any) => (
           <>
             <ContainerAbout>
