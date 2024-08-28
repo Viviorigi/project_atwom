@@ -261,35 +261,35 @@ const Return = () => {
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Student
+                    Họ tên
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Status
+                    Trạng thái
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Start Time
+                    Ngày mượn
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Update Time
+                    Cập nhật
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Expired Date
+                    Ngày trả
                   </th>
                   {/* <th
                     className="sort align-middle text-center"
@@ -303,7 +303,7 @@ const Return = () => {
                     scope="col"
                     style={{ width: "20%" }}
                   >
-                    Action
+                    Hành động
                   </th>
                 </tr>
               </thead>

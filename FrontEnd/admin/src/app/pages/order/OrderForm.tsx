@@ -442,12 +442,12 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
       )}
       {!isAddMode && (
         <div className="row mb-3">
-          <div className="col-2">Status</div>
+          <div className="col-2">Trạng thái</div>
           <div className="col-9">
-            <label className="me-2">Current Status: {currentOrder.status}</label>
+            <label className="me-2">Trạng thái hiện tại: {currentOrder.status}</label>
             <select
               className="form-control"
-              name="status"
+              name="Trạng thái"
               value={newStatus}
               onChange={handleChange}
               required
@@ -464,10 +464,10 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
       )}
       <div className="text-center mt-3">
         <button onClick={handleSave} className="btn btn-primary btn-sm me-2">
-          {isAddMode ? 'Save' : 'Update'}
+          {isAddMode ? 'Lưu' : 'Chỉnh sửa'}
         </button>
         <button onClick={handleCancel} className="btn btn-secondary btn-sm">
-          Cancel
+          Đóng
         </button>
       </div>
     </div>

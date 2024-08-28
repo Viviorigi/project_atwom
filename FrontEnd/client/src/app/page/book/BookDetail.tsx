@@ -351,14 +351,14 @@ const BookDetail = (props: any) => {
       const itemExists = cartItems.some((item: any) => item.bookId === book.id);
   
       if (itemExists) {
-        toast.error("This book is already in your cart");
+        toast.error("Quyển sách này đã có trong giỏ hàng");
       } else {
         await CartService.getInstance().addBookToCart(book.id, quantity);
-        toast.success("Added to cart successfully");
+        toast.success("Thêm vào giỏ hàng thành công");
       }
     } catch (error) {
       console.error("Error adding book to cart", error);
-      toast.error("An error occurred while adding the book to the cart");
+      toast.error("Lỗi khi thêm vào giỏ hàng");
     }
   };
 
