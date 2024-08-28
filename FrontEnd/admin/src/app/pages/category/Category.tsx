@@ -94,7 +94,7 @@ export default function Book() {
     }).then((result) => {
       if (result.value) {
         dispatch(setLoading(true));
-        let url = `http://localhost:8080/category/delete?id=${id}`;
+        let url = `${process.env.REACT_APP_API_URL}/category/delete?id=${id}`;
         axios.delete(url).then((resp: any) => {
           // if (resp.data === "success") {
           dispatch(setLoading(false));
@@ -115,7 +115,7 @@ export default function Book() {
 
   //Lây du lieu
   useEffect(() => {
-    let url = `http://localhost:8080/category/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
+    let url = `${process.env.REACT_APP_API_URL}/category/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}`;
     axios.get(url).then((resp: any) => {
       // console.log(resp.data);
       if (resp.data) {

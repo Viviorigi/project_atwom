@@ -75,7 +75,7 @@ const Feedback = () => {
   const [feedBackList, setFeedBackList] = useState([]);
 
   useEffect(() => {
-    let url = `http://localhost:8080/feedback/new`;
+    let url = `${process.env.REACT_APP_API_URL}/feedback/new`;
     axios
       .get(url)
       .then((resp: any) => {
@@ -132,7 +132,7 @@ const Feedback = () => {
                       {/* Avatar Section */}
                       <div className="feedback-icon">
                         <img
-                          src={feedback.user_avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${feedback.user_avatar}` : defaultPersonImage}
+                          src={feedback.user_avatar ? `${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${feedback.user_avatar}` : defaultPersonImage}
                           alt="PersonAvatar"
                           style={{
                             width: '50px',

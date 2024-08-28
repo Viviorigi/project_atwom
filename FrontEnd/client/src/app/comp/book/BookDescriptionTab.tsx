@@ -201,7 +201,7 @@ const BookDescriptionTab = (props: any) => {
   const fetchFeedbackList = () => {
     if (!book?.id) return; // Không làm gì nếu book.id không tồn tại
 
-    const url = `http://localhost:8080/feedback/list?id=${book.id}`;
+    const url = `${process.env.REACT_APP_API_URL}/feedback/list?id=${book.id}`;
     axios.get(url)
       .then((resp: any) => {
         // console.log("Số lượng");
@@ -220,7 +220,7 @@ const BookDescriptionTab = (props: any) => {
   // ----------------------Lấy ra myFeedBack---------------------------------
   useEffect(() => {
     if (book?.id && userInfo?.userUid) {
-      const url = `http://localhost:8080/feedback/myFeedBack?book_id=${book.id}&user_id=${userInfo.userUid}`;
+      const url = `${process.env.REACT_APP_API_URL}/feedback/myFeedBack?book_id=${book.id}&user_id=${userInfo.userUid}`;
 
       axios.get(url)
         .then(response => {
@@ -267,7 +267,7 @@ const BookDescriptionTab = (props: any) => {
   const fetchRatingList = () => {
     if (!book?.id) return; // Không làm gì nếu book.id không tồn tại
 
-    const url = `http://localhost:8080/feedback/rating-counts?id=${book.id}`;
+    const url = `${process.env.REACT_APP_API_URL}/feedback/rating-counts?id=${book.id}`;
     axios.get(url)
       .then((resp: any) => {
         // console.log("data: ");
@@ -278,7 +278,7 @@ const BookDescriptionTab = (props: any) => {
         toast.error("Không thể lấy feedback");
       });
 
-    const url_rating = `http://localhost:8080/feedback/book-rating?id=${book.id}`;
+    const url_rating = `${process.env.REACT_APP_API_URL}/feedback/book-rating?id=${book.id}`;
     axios.get(url_rating)
       .then((resp: any) => {
         // console.log("rating is: ");
@@ -322,7 +322,7 @@ const BookDescriptionTab = (props: any) => {
       // comment: event.target.value,
       upd_dt: new Date().toISOString()
     }));
-    let url = `http://localhost:8080/feedback/add`;
+    let url = `${process.env.REACT_APP_API_URL}/feedback/add`;
     axios.post(url, feedBack, {
       headers: {
         'Content-Type': 'application/json'
@@ -484,7 +484,7 @@ const BookDescriptionTab = (props: any) => {
                           <div className="feedback-header d-flex align-items-center">
                             <div className="avatar-container">
                               <img
-                                src={fb.user_avatar ? `http://localhost:8080/api/auth/getImage?atchFleSeqNm=${fb.user_avatar}` : defaultPersonImage}
+                                src={fb.user_avatar ? `${process.env.REACT_APP_API_URL}/api/auth/getImage?atchFleSeqNm=${fb.user_avatar}` : defaultPersonImage}
                                 alt="PersonAvatar"
                                 style={{
                                   width: '50px',

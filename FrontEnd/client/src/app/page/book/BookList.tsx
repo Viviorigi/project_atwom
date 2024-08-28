@@ -151,7 +151,7 @@ const BookListItem = () => {
   };
 
   useEffect(() => {
-    let url = `http://localhost:8080/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}&cateName=${searchDto.cate_name}&publicYear=${searchDto.public_year}&nxb=${searchDto.nxb}`;
+    let url = `${process.env.REACT_APP_API_URL}/book/list/all?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}&cateName=${searchDto.cate_name}&publicYear=${searchDto.public_year}&nxb=${searchDto.nxb}`;
     axios.get(url).then((resp: any) => {
       if (resp.data) {
         // console.log("Test dữ liệu");
@@ -284,7 +284,7 @@ const BookListItem = () => {
                       <Link to={`/book/details/?bookId=${book.id}`}>
                         <img
                           // className="object-fit-cover"
-                          src={book.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book.image}` : imageBookDefault} onError={(e) => {
+                          src={book.image ? `${process.env.REACT_APP_API_URL}/getImage?atchFleSeqNm=${book.image}` : imageBookDefault} onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.onerror = null; // Prevent infinite loop in case fallback image also fails
                             target.src = imageBookDefault; // Set the fallback image

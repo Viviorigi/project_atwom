@@ -74,7 +74,7 @@ export default function UserForm(props: any) {
   const imageSource = image
     ? image
     : user.avatar !== null
-    ? `http://localhost:8080/files/${user.avatar}`
+    ? `${process.env.REACT_APP_API_URL}/files/${user.avatar}`
     : defaultPersonImage;
 
   const handleFileChange = (event: any) => {

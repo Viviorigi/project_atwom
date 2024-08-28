@@ -118,7 +118,7 @@ export default function AddCategory(props: any) {
         }).then((result) => {
             if (result.value) {
                 // logic
-                let url = `http://localhost:8080/category/add`;
+                let url = `${process.env.REACT_APP_API_URL}/category/add`;
                 axios.post(url, category).then((resp: any) => {
                     if (resp.data === "success") {
                         dispatch(setLoading(true));
