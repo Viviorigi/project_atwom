@@ -3,7 +3,7 @@ import { CheckoutDTO } from '../../model/CheckoutDTO';
 import { CheckoutStatus } from '../../model/CheckoutStatus';
 import { CheckoutBookDTO } from '../../model/CheckoutBookDTO';
 
-const BASE_URL = 'http://localhost:8080/api/checkout';
+const BASE_URL = process.env.REACT_APP_API_URL + '/api/checkout';
 
 export const CheckoutService = {
   findAll: async (params?: { keySearch?: string; limit?: number; page?: number; }): Promise<CheckoutDTO[]> => {

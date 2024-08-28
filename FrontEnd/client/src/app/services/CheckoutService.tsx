@@ -2,7 +2,7 @@ import axios from 'axios';
 import { CheckoutDTO } from '../model/checkout/CheckoutDTO';
 import { CheckoutDetailDTO } from '../model/checkout/CheckoutDTO';
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = process.env.REACT_APP_API_URL + '/api';
 
 export const getAllCheckouts = async (keySearch: string, limit: number, page: number): Promise<CheckoutDTO[]> => {
     const response = await axios.get(`${BASE_URL}/checkout/list`, {
