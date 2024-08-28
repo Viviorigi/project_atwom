@@ -42,7 +42,8 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
 
   const [selectedFilters, setSelectedFilters] = useState<FilterState>({
     nxb: '',
-    public_year: 0,
+    // public_year: 0,
+    public_year: -1,
     cate_name: '',
   });
 
@@ -231,6 +232,9 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isProductFilterOpen ? "hide" : "show"}`}>
+          {nxbList.length === 0 &&
+            <div className="no-results">Không tìm thấy trường nào</div>
+          }
           {nxbList?.map((data, index) => {
             return (
               <div className="product-filter-item" key={index}>
@@ -282,6 +286,9 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
 
         <FilterWrap
           className={`range filter-wrap ${!isPriceFilterOpen ? "hide" : "show"}`}>
+          {publishYearList.length === 0 &&
+            <div className="no-results">Không tìm thấy trường nào</div>
+          }
           {publishYearList?.map((data, index) => {
             return (
               <div className="product-filter-item" key={index}>
@@ -354,6 +361,9 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isSizeFilterOpen ? "hide" : "show"}`}>
+          {cateNameList.length === 0 &&
+            <div className="no-results">Không tìm thấy trường nào</div>
+          }
           {cateNameList?.map((data, index) => {
             return (
               <div className="product-filter-item" key={index}>
@@ -401,7 +411,7 @@ const BookFilter: React.FC<BookFilterProps> = ({ searchDto, setSearchDto }) => {
         <FilterWrap className={`${!isStyleFilterOpen ? "hide" : "show"}`}>
         </FilterWrap>
       </StyleFilter> */}
-      
+
     </>
   );
 };
