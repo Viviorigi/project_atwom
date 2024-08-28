@@ -46,4 +46,6 @@ public interface CheckoutService {
     CheckoutDTO penaltyCheckout(Integer id);
     
     Page<CheckoutDTO> findCheckoutNeedReturn(String keySearch, PageRequest pageRequest);
+
+    List<Object[]> getMostBorrowedBooksInLast30Days();
 }

@@ -41,6 +41,15 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
             @Param("keySearch") String keySearch,
             Pageable pageable);
     
-    @Query("SELECT c FROM Checkout c WHERE c.status IN ('EXPIRED','RETURNED','PENALTY') ")
+    @Query("SELECT c FROM Checkout c WHERE c.status IN ('BORROWED','EXPIRED','RETURNED','PENALTY') ")
 	    Page<Checkout> searchNotification(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT cd.book.id, SUM(cd.quantity) as totalQuantity " +
+            "FROM Checkout c " +
+            "JOIN c.checkoutDetails cd " +
+            "WHERE c.status IN ('BORROWED', 'EXPIRED', 'RETURNED', 'PENALTY') " +
+            "AND c.startTime >= :startDate " +
+            "GROUP BY cd.book.id " +
+            "ORDER BY totalQuantity DESC")
+     List<Object[]> findMostBorrowedBooksInLast30Days(@Param("startDate") LocalDateTime startDate);
 }

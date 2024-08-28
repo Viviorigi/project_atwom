@@ -33,7 +33,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 	List<Book> findAllActiveBooksSortedByCreatedDate();
 
 	@Query("SELECT u FROM Book u WHERE " + "(u.title LIKE %:keyword% OR " + "u.description LIKE %:keyword%) AND "
-			+ "u.active = true AND " + "(:cateId = 0 OR u.category.id = :cateId)")
+			 + "(:cateId = 0 OR u.category.id = :cateId)")
 	Page<Book> searchBook(@Param("keyword") String keyword, @Param("cateId") int cateId, Pageable pageable);
 
 	@Query("SELECT u FROM Book u WHERE " + "(u.title LIKE %:keySearch% OR " + "u.description LIKE %:keySearch% OR "

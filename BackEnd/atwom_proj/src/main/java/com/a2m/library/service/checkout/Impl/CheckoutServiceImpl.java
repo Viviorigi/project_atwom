@@ -33,7 +33,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,6 +65,11 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    public List<Object[]> getMostBorrowedBooksInLast30Days() {
+        LocalDateTime startDate = LocalDateTime.now().minus(30, ChronoUnit.DAYS);
+        return checkoutRepository.findMostBorrowedBooksInLast30Days(startDate);
+    }
 
     public List<CheckoutDTO> findAll(String keySearch, int limit, int page) {
         Pageable pageable = PageRequest.of(page, limit);
@@ -107,10 +114,12 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            if(detail.getQuantity() - book.getQuantity() < 0){
+            if(detail.getQuantity() - book.getQuantity() <= 0){
+                book.setQuantity(book.getQuantity() - detail.getQuantity());
                 return detail;
             } else {
-                throw new IllegalStateException("Order quantity must > Book quantity.");
+                book.setActive(false);
+                throw new IllegalStateException("That book is out of stock.");
             }
         }).collect(Collectors.toList());
         
@@ -138,10 +147,12 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            if(detail.getQuantity() - book.getQuantity() < 0){
+            if(detail.getQuantity() - book.getQuantity() <= 0){
+                book.setQuantity(book.getQuantity() - detail.getQuantity());
                 return detail;
             } else {
-                throw new IllegalStateException("Order quantity must > Book quantity.");
+                book.setActive(false);
+                throw new IllegalStateException("That book is out of stock.");
             }
         }).collect(Collectors.toList());
         
