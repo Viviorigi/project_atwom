@@ -1,5 +1,7 @@
 package com.a2m.library.service.admin;
 
+import com.a2m.library.model.Checkout;
+
 import jakarta.mail.MessagingException;
 
 public interface EmailService {
@@ -7,4 +9,6 @@ public interface EmailService {
 	void SendEmailVerificationUrl(String to, String subject, String verificationUrl) throws MessagingException;
 	void sendPasswordResetRequestEmail(String to, String subject, String resetLink);
 	void sendEmailResponseContact(String to, String subject,String fullName,String resp, String url) throws MessagingException;
+	
+	void sendEmailCheckoutExpired(String to, String subject,String fullName,Checkout checkout) throws MessagingException;
 }

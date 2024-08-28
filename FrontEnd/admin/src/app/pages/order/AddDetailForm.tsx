@@ -8,7 +8,6 @@ import Swal from "sweetalert2";
 const BASE_URL = process.env.REACT_APP_API_URL + "/api/checkoutdt";
 
 interface AddDetailFormProps {
-  onSave: (detail: CheckoutDetailDTO) => void;
   checkoutId: number;
   detail?: CheckoutDetailDTO | null;
   onClose: (status: boolean) => void;
@@ -17,7 +16,6 @@ interface AddDetailFormProps {
 
 const AddDetailForm: React.FC<AddDetailFormProps> = ({
   checkoutId,
-  onSave,
   detail,
   onClose,
   mode,
@@ -79,18 +77,18 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
   
     if (mode === "add") {
       if (!selectedCategory) {
-        errors.category = "Please select a category";
+        errors.category = "Hãy chọn một danh mục";
         valid = false;
       }
   
       if (!selectedBook) {
-        errors.book = "Please select a book";
+        errors.book = "Hãy chọn một sách";
         valid = false;
       }
     }
   
     if (!quantity || quantity <= 0) {
-      errors.quantity = "Quantity must be greater than zero";
+      errors.quantity = "Số lượng phải lớn hơn 0";
       valid = false;
     }
   
@@ -117,13 +115,13 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
 
     const bookExists = await checkIfBookExists();
     if (bookExists) {
-      toast.error("Book already exists in the order detail");
+      toast.error("Sách đã tồn tại trong đơn mượn. Hãy chọn sách khác!");
       return;
     }
 
     Swal.fire({
       title: "Confirm Save",
-      text: "Are you sure you want to add this record?",
+      text: "Xác nhận thêm bản ghi này?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -143,15 +141,15 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
           checkoutId: checkoutId,
         };
 
-        try {
-          await axios.post(`${BASE_URL}/add/${checkoutId}`, newDetail);
-          onSave(newDetail);
-          toast.success("Detail added successfully");
-          onClose(true);
-        } catch (error) {
-          console.error("Error adding checkout detail", error);
-          toast.error("Failed to add detail");
-        }
+
+          await axios.post(`${BASE_URL}/add/${checkoutId}`, newDetail)
+            .then((resp) => {
+              toast.success("Đã xóa thành công");
+              onClose(true);
+            }).catch((e) => {
+              // toast.error("Failed to add detail");
+            });
+
       }
     });
   };
@@ -161,7 +159,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
 
     Swal.fire({
       title: "Confirm Save",
-      text: "Are you sure you want to save the changes?",
+      text: "Lưu lại thay đổi?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -183,12 +181,12 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
 
         try {
           await axios.put(`${BASE_URL}/update/${updatedDetail.id}`, updatedDetail);
-          onSave(updatedDetail);
-          toast.success("Detail updated successfully");
+
+          toast.success("Cập nhật thành công");
           onClose(true);
         } catch (error) {
           console.error("Error updating checkout detail", error);
-          toast.error("Failed to update detail");
+          toast.error("Cập nhật thất bại");
         }
       }
     });
@@ -206,7 +204,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
     <div>
       <h2>{mode === "add" ? "Add Detail" : "Edit Detail"}</h2>
       <div className="form-group">
-        <label htmlFor="category">Category</label>
+        <label htmlFor="category">Danh mục</label>
         <select
           id="category"
           className="form-control"
@@ -214,7 +212,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
           onChange={(e) => setSelectedCategory(Number(e.target.value))}
           disabled={mode === "edit"}
         >
-          <option value="">Select Category</option>
+          <option value="">Lựa chọn danh mục</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -224,7 +222,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
         {errors.category && <div className="text-danger">{errors.category}</div>}
       </div>
       <div className="form-group">
-        <label htmlFor="book">Book</label>
+        <label htmlFor="book">Sách</label>
         <select
           id="book"
           className="form-control"
@@ -232,7 +230,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
           onChange={(e) => setSelectedBook(Number(e.target.value))}
           disabled={mode === "edit"}
         >
-          <option value="">Select Book</option>
+          <option value="">Lựa chọn sách</option>
           {books.map((book) => (
             <option key={book.id} value={book.id}>
               {book.title}
@@ -242,7 +240,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
         {errors.book && <div className="text-danger">{errors.book}</div>}
       </div>
       <div className="form-group">
-        <label htmlFor="quantity">Quantity</label>
+        <label htmlFor="quantity">Số lượng</label>
         <input
           id="quantity"
           type="number"
@@ -254,10 +252,10 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
       </div>
       <div className="form-group text-right">
         <button className="btn btn-primary me-2" onClick={handleSave}>
-          Save
+          Lưu
         </button>
         <button className="btn btn-secondary" onClick={() => onClose(false)}>
-          Cancel
+          Hủy
         </button>
       </div>
     </div>

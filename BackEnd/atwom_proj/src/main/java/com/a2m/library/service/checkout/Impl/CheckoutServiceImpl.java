@@ -16,10 +16,13 @@ import com.a2m.library.repository.BookRepository;
 import com.a2m.library.repository.CheckoutRepository;
 import com.a2m.library.repository.UserFineRepository;
 import com.a2m.library.repository.UserRepository;
+import com.a2m.library.service.admin.EmailService;
 import com.a2m.library.service.checkout.CheckoutDetailService;
 import com.a2m.library.service.checkout.CheckoutService;
 import com.a2m.library.service.notification.SeeNotificationService;
 import com.a2m.library.util.JwtUtil;
+
+import jakarta.mail.MessagingException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -55,6 +58,9 @@ public class CheckoutServiceImpl implements CheckoutService {
     
     @Autowired
     private SeeNotificationService seeNotificationService;
+    
+    @Autowired
+	private EmailService emailService;
 
     
 
@@ -76,8 +82,12 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         List<CheckoutDTO> checkouts = checkoutPage.stream()
                 .map(this::toDTO)
+                .peek(checkoutDTO -> {
+                    if ((checkoutDTO.getStatus()).equals("EXPIRED")) {
+                        checkoutDTO.setFine(200.0);
+                    }
+                })
                 .collect(Collectors.toList());
-
         return checkouts;
     }
 
@@ -97,8 +107,9 @@ public class CheckoutServiceImpl implements CheckoutService {
         checkout.setUser(user);
         checkout.setStatus(CheckoutStatus.REQUESTED);
         checkout.setStartTime(LocalDateTime.now());
-        checkout.setEndTime(LocalDateTime.now());
-        checkout.setExpiredTime(LocalDateTime.now().plusMonths(1));
+
+        checkout.setEndTime(LocalDateTime.now().plusDays(7));
+        checkout.setExpiredTime(checkout.getEndTime().plusMonths(1));
         
         List<CheckoutDetail> issueDetails = checkoutDTO.getCheckoutDetails().stream().map((detailDTO) -> {
             Book book = bookRepository.findById(detailDTO.getBookId())
@@ -128,7 +139,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         checkout.setUser(user);
         checkout.setStatus(CheckoutStatus.REQUESTED);
         checkout.setStartTime(LocalDateTime.now());
-        checkout.setEndTime(LocalDateTime.now());
+        checkout.setEndTime(LocalDateTime.now().plusDays(7));
         checkout.setExpiredTime(checkoutDTO.getExpiredTime());
         
         List<CheckoutDetail> issueDetails = checkoutDTO.getCheckoutDetails().stream().map((detailDTO) -> {
@@ -208,7 +219,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         if (checkout.getStatus() == CheckoutStatus.REQUESTED || checkout.getStatus() == CheckoutStatus.REJECTED) {
             checkout.setStatus(CheckoutStatus.APPROVED);
-            checkout.setEndTime(LocalDateTime.now());
             checkoutRepository.save(checkout);
             return toDTO(checkout);
         } else {
@@ -238,13 +248,16 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
         if (checkout.getStatus() == CheckoutStatus.REJECTED || checkout.getStatus() == CheckoutStatus.APPROVED) {
             checkout.setStatus(CheckoutStatus.BORROWED);
-            checkout.setEndTime(LocalDateTime.now());
+            checkout.setEndTime(LocalDateTime.now().plusMonths(1));
             checkout.setExpiredTime(LocalDateTime.now().plusDays(30));
             checkoutRepository.save(checkout);
+        
             return toDTO(checkout);
         } else {
             throw new IllegalStateException("Checkout must be in REQUESTED status to be rejected.");
         }
+        
+        
     }
 
     @Override
@@ -252,13 +265,34 @@ public class CheckoutServiceImpl implements CheckoutService {
     public CheckoutDTO expiredCheckout(Integer id) {
         Checkout checkout = checkoutRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
+        UserFine uFine = new UserFine();
+        uFine.setCheckout(checkout);
+        uFine.setAmount(200.0);
+        userFineRepository.save(uFine);
+        
+        User user = userRepository.findById(checkout.getUser().getUserUid())
+        		.orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+        user.setActive(false);
+        userRepository.save(user);
+        
+        new Thread(() -> {
+		    try {
+				emailService.sendEmailCheckoutExpired(user.getEmail(), "Warning, Pay fine", user.getFullName(), checkout);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}).start();
+        
         if (checkout.getStatus() == CheckoutStatus.BORROWED) {
-            checkout.setEndTime(LocalDateTime.now());
             checkout.setStatus(CheckoutStatus.EXPIRED);
+            checkout.setUserFine(null);
             checkoutRepository.save(checkout);
         } else {
             throw new IllegalStateException("Only BORROWED checkouts can be marked as EXPIRED.");
         }
+        
+        
 
         return toDTO(checkout);
     }
@@ -270,7 +304,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseThrow(() -> new ResourceNotFoundException("Checkout not found with id " + id));
         
         // checkout.getStatus() == CheckoutStatus.BORROWED || checkout.getStatus() == CheckoutStatus.EXPIRED
-        if (checkout.getStatus() == CheckoutStatus.BORROWED) {
+        if (checkout.getStatus() == CheckoutStatus.BORROWED || checkout.getStatus() == CheckoutStatus.EXPIRED) {
             checkout.setEndTime(LocalDateTime.now());
             checkout.setStatus(CheckoutStatus.RETURNED);
             checkoutRepository.save(checkout);

@@ -28,6 +28,7 @@ const AuthHeader = () => {
           <div className="flex items-center">
             <ButtonGroupWrapper className="flex items-center">
               <BaseLinkGreen to="/login">Đăng nhập</BaseLinkGreen>
+              <span>|</span>
               <BaseLinkOutlineDark to="/register">Đăng ký</BaseLinkOutlineDark>
             </ButtonGroupWrapper>
           </div>

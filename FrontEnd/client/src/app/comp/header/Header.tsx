@@ -280,7 +280,8 @@ const Header = () => {
             
             {!isLoggedIn &&
               <div className="flex items-center ">
-                <BaseLinkGreen to="/login">Đăng nhập</BaseLinkGreen>
+                <BaseLinkGreen to="/login" className="justify-content-end">Đăng nhập</BaseLinkGreen>
+                <span>|</span>
                 <BaseLinkOutlineDark to="/register">Đăng ký</BaseLinkOutlineDark>
               </div>}
 

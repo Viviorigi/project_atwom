@@ -11,6 +11,7 @@ const BASE_URL = process.env.REACT_APP_API_URL + "/api/checkoutdt";
 interface OrderDetailProps {
   orderId: number;
   onHide: () => void;
+  tab: string
 }
 
 interface OrderSearchParams {
@@ -18,7 +19,7 @@ interface OrderSearchParams {
   limit: number;
 }
 
-const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
+const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide, tab }) => {
   const [details, setDetails] = useState<CheckoutDetailDTO[]>([]);
   const [addDetailOpen, setAddDetailOpen] = useState(false);
   const [totalDetails, setTotalDetails] = useState<number>(0);
@@ -63,7 +64,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
   const handleDelete = async (id: number) => {
     Swal.fire({
       title: "Confirm Delete",
-      text: "Are you sure you want to delete this record?",
+      text: "Xóa bản ghi này?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -74,10 +75,10 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
         try {
           await axios.delete(`${BASE_URL}/delete/${id}`);
           fetchOrderDetails();
-          Swal.fire("Deleted!", "The record has been deleted.", "success");
+          Swal.fire("Đã xóa!", "Bản ghi đã xóa.", "success");
         } catch (error) {
           console.error("Error deleting checkout detail", error);
-          Swal.fire("Error!", "Failed to delete the record.", "error");
+          Swal.fire("Error!", "Xóa bản ghi thất bại.", "error");
         }
       }
     });
@@ -90,10 +91,10 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
     try {
       if (action === "update") {
         await axios.put(url, detail);
-        Swal.fire("Updated!", "The record has been updated.", "success");
+        Swal.fire("Đã cập nhật!", "Bản ghi này đã được cập nhật.", "success");
       } else {
         await axios.post(url, detail);
-        Swal.fire("Added!", "The record has been added.", "success");
+        Swal.fire("Đã thêm!", "Bản ghi này đã được thêm.", "success");
       }
       setAddDetailOpen(false);
       fetchOrderDetails();
@@ -108,13 +109,9 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
 
   return (
     <div className="container mt-4">
-      {/* <div className="row mb-3">
-        <div className="col-md-12 text-end">
-          <button className="btn btn-primary" onClick={handleAdd}>
-            Add New Book
-          </button>
-        </div>
-      </div> */}
+      <div className="row mb-3">
+
+      </div>
       <div className="table-responsive">
         <table className="table">
           <thead>
@@ -123,6 +120,8 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
               <th>Tên danh mục</th>
               <th>Tên sách</th>
               <th>Số lượng sách</th>
+              {tab === "ORDER" ? <th>Hành động</th>: ""}
+              
               {/* <th>Actions</th> */}
             </tr>
           </thead>
@@ -134,27 +133,16 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
                   <td>{detail.categoryName}</td>
                   <td>{detail.bookTitle}</td>
                   <td>{detail.quantity}</td>
-                  {/* <td>
-                    <button
-                      className="btn btn-warning btn-sm me-2"
-                      onClick={() => handleEdit(detail)}
-                    >
-                      Edit
-                    </button>
+                  <td>
+                    {tab === "ORDER" ? <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => handleDelete(detail.id)}><i className="fa-solid fa-trash"></i></button> : ""}
 
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleDelete(detail.id)}
-                    >
-                      Delete
-                    </button>
-                  </td> */}
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan={5} className="text-center">
-                  No details found
+                  Không tìm thấy
                 </td>
               </tr>
             )}
@@ -169,7 +157,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId, onHide }) => {
           onPageChange={handlePageClick}
         />
       </div>
-      
+      {tab === "ORDER" ? 
+      <AddDetailForm  checkoutId={orderId} onClose={function (status: boolean): void {
+        throw new Error("Function not implemented.");
+      } } mode={"add"} />
+      :""
+    }
     </div>
   );
 };

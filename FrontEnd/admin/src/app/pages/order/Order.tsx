@@ -22,7 +22,7 @@ const Order = () => {
   const [searchDto, setSearchDto] = useState({
     keySearch: "",
     page: 1,
-    limit: 5,
+    limit: 20,
   });
   const [users, setUsers] = useState<UserDTO[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -51,7 +51,7 @@ const Order = () => {
       setTotalOrders(filteredOrders.length);
       setTotalPage(Math.ceil(filteredOrders.length / searchDto.limit));
     } catch (error) {
-      console.error("Error fetching orders", error);
+      console.error("Lỗi lấy dữ liệu đơn mượn", error);
       dispatch(setLoading(false));
     }
   };
@@ -116,7 +116,7 @@ const Order = () => {
   const deleteOrder = (id: number) => {
     Swal.fire({
       title: "Confirm",
-      text: "Do you want to delete this order?",
+      text: "Xóa đơn mượn này?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -133,7 +133,7 @@ const Order = () => {
             ...prevParams,
             page: 1,
           }));
-          toast.success("Order deleted successfully");
+          toast.success("Đã xóa thành công đơn mượn!");
         } catch (error) {
           dispatch(setLoading(false));
           toast.error("Error deleting order");
@@ -167,7 +167,7 @@ const Order = () => {
         <div className="card mx-n4 px-4 mx-lg-n6 px-lg-6 bg-white">
           <div className="row g-2 mb-4">
             <div className="col-auto">
-              <h2 className="mt-4">List Orders</h2>
+              <h2 className="mt-4">Danh sách đơn mượn</h2>
             </div>
           </div>
           <div className="row g-3">
@@ -200,7 +200,7 @@ const Order = () => {
             <div className="col-auto">
               <button className="btn btn-primary" onClick={addOrder}>
                 <span className="fas fa-plus me-2" />
-                Create Order
+                Tạo đơn mượn
               </button>
             </div>
           </div>
@@ -221,28 +221,28 @@ const Order = () => {
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Student
+                    Người mượn
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "5%" }}
                   >
-                    Status
+                    Trạng thái
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Start Time
+                    Ngày mượn
                   </th>
                   <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Update Time
+                    Ngày trả
                   </th>
                   <th
                     className="sort align-middle text-center"
@@ -256,7 +256,7 @@ const Order = () => {
                     scope="col"
                     style={{ width: "10%" }}
                   >
-                    Action
+                    Hành động
                   </th>
                 </tr>
               </thead>
@@ -310,7 +310,7 @@ const Order = () => {
           <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
             <div className="col-auto d-flex">
               <p className="mb-0">
-                Total orders: <strong>{totalOrders}</strong>
+                Tổng số đơn mượn: <strong>{totalOrders}</strong>
               </p>
             </div>
             <div className="col-auto d-flex">
@@ -369,6 +369,7 @@ const Order = () => {
         header="Order Details"
       >
         <OrderDetail
+          tab={"ORDER"}
           orderId={orderRef.current ? orderRef.current.id : 0}
           onHide={() => setOrderDetailOpen(false)}
         />

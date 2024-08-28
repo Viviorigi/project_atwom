@@ -18,4 +18,5 @@ public class CheckoutDTO{
     private CheckoutStatus status;
     private List<CheckoutDetailDTO> checkoutDetails;
     private UserFine userFine;
+    private Double fine;
 }
