@@ -92,8 +92,8 @@ export default function ContactForm(props: any) {
       title: `Confirm`,
       text:
       contact === null
-          ? "Do you want to create a new contact?"
-          : `Do you want to update the contact?`,
+          ? "Tạo liên hệ mới?"
+          : `Cập nhật liên hệ này?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -146,13 +146,13 @@ export default function ContactForm(props: any) {
   };
   return (
     <div>
-      <h3>{contact === null ? "Add User" : "Edit User"}</h3>
+      <h3>{contact === null ? "Tạo liên hệ" : "Cập nhật liên hệ"}</h3>
       <div className="row">
         {/* Column 1 */}
         <div className="col-md-12 mb-5">
           <div className="form-group">
             <label>
-              Firstname <span className="text-danger">(*)</span>
+              Họ <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -160,7 +160,7 @@ export default function ContactForm(props: any) {
               className="form-control"
               value={contactSave?.firstName || ""}
               onChange={handleChangeText}
-              placeholder="Enter FirstName"
+              placeholder="Nhập họ"
               readOnly={contact !== null ? true : false}
             />
             <div
@@ -168,14 +168,13 @@ export default function ContactForm(props: any) {
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Firstname must not be empty and must be between 3 and 50
-              characters.
+              Họ không được rỗng!
             </div>
           </div>
 
             <div className="form-group">
               <label>
-                LastName <span className="text-danger">(*)</span>
+                Tên <span className="text-danger">(*)</span>
               </label>
               <input
                 type="text"
@@ -183,14 +182,14 @@ export default function ContactForm(props: any) {
                 className="form-control"
                 value={contactSave?.lastName || ""}
                 onChange={handleChangeText}
-                placeholder="Enter LastName"
+                placeholder="Nhập tên"
               />
               <div
                 className={`invalid-feedback ${contactSave?.lastName?.toString() === "" ? "d-block" : ""
                   }`}
                 style={{ fontSize: "100%", color: "red" }}
               >
-                Lastname must not be empty and must be at least 6 characters.
+                Tên không được rỗng!
               </div>
             </div>
 
@@ -205,20 +204,20 @@ export default function ContactForm(props: any) {
               className="form-control"
               value={contactSave?.email || ""}
               onChange={handleChangeText}
-              placeholder="Enter Email"
+              placeholder="Nhập email"
             />
             <div
               className={`invalid-feedback ${contactSave?.email?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Email must not be empty.
+              Email không được rỗng!
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Question <span className="text-danger">(*)</span>
+              Câu hỏi <span className="text-danger">(*)</span>
             </label>
             <input
               type="text"
@@ -226,34 +225,34 @@ export default function ContactForm(props: any) {
               className="form-control"
               value={contactSave?.question || ""}
               onChange={handleChangeText}
-              placeholder="Enter Question"
+              placeholder="Nhập câu hỏi"
             />
             <div
               className={`invalid-feedback ${contactSave?.question?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-              Question must not be empty.
+              Câu hỏi không được rỗng!
             </div>
           </div>
 
           <div className="form-group">
             <label>
-              Response <span className="text-danger">(*)</span>
+              Phản hổi <span className="text-danger">(*)</span>
             </label>
             <textarea
               name="response"
               className="form-control"
               value={contactSave?.response || ""}
               onChange={handleChangeNumber}
-              placeholder="Enter Response"
+              placeholder="Nhập phản hồi"
             />
             <div
               className={`invalid-feedback ${contactSave?.response?.toString() === "" ? "d-block" : ""
                 }`}
               style={{ fontSize: "100%", color: "red" }}
             >
-                Response must not be empty.
+                Phản hổi không được rỗng!
             </div>
           </div>
 
@@ -263,7 +262,7 @@ export default function ContactForm(props: any) {
       </div>
 
       <button type="submit" className="btn btn-primary mt-5" onClick={save}>
-        {contact ? "Update" : "Save"}
+        {contact ? "Cập nhật" : "Lưu"}
       </button>
     </div>
   );
