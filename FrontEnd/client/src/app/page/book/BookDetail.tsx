@@ -376,9 +376,9 @@ const BookDetail = (props: any) => {
   ));
 
   const breadcrumbItems = [
-    { label: "Home", link: "/home" },
-    { label: "ListBook", link: "/book" },
-    { label: "Book", link: `${location.pathname}?id=${id}` },
+    { label: "Trang chủ", link: "/home" },
+    { label: "Danh sách sách", link: "/book" },
+    { label: "Chi tiết", link: `${location.pathname}?id=${id}` },
   ];
 
   return (

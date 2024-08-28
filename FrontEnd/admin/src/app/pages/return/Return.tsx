@@ -36,6 +36,8 @@ const Return = () => {
   const indexOfLastItem = orderSearchParams.page * orderSearchParams.limit;
   const indexOfFirstItem = indexOfLastItem - orderSearchParams.limit;
 
+  const [mode,setMode] = useState('RETURN');
+
   useEffect(() => {
     fetchOrders();
     fetchAllUsers();
@@ -367,6 +369,7 @@ const Return = () => {
         onHide={() => setOrderDetailOpen(false)}
       >
         <OrderDetail
+          tab={mode}
           orderId={orderRef.current ? orderRef.current.id : 0}
           onHide={() => setOrderDetailOpen(false)}
         />

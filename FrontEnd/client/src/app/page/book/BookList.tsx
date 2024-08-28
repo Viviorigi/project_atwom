@@ -275,6 +275,7 @@ const BookListItem = () => {
 
             {/* đổ dữ liệu ở đây  */}
             {/* <BookList products={books.slice(0, 12)} /> */}
+            <div className="no-records">Có <span>{bookList.length}</span> bản ghi </div>
             <BookListWrapper className="grid">
               <div className="book-grid">
                 {bookList.map((book: any) => (

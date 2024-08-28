@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.a2m.library.model.Checkout;
 import com.a2m.library.service.admin.EmailService;
 
 import jakarta.mail.MessagingException;
@@ -164,6 +165,61 @@ public class EmailServiceImpl implements EmailService {
 			    "<p>Cảm ơn bạn đã gửi cho chúng tôi một tin nhắn. Vui lòng nhấp vào liên kết dưới đây để truy cập thư viện của chúng tôi:</p>" +
 			    "<a href='" + url + "' class='btn'>Tiếp Tục Vấn Đề</a>" +
 			    "<p>Chúc bạn một ngày tốt lành.</p>" +
+			    "</div>" +
+			    "<div class='footer'>" +
+			    "<p>&copy; 2024 Thư Viện Atwom. Tất cả quyền được bảo lưu.</p>" +
+			    "</div>" +
+			    "</div>" +
+			    "</body>" +
+			    "</html>";
+
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+		helper.setTo(to);
+		helper.setSubject(subject);
+		helper.setText(htmlContent, true); // Set to true to send HTML
+
+		mailSender.send(message);
+	}
+	
+	@Override
+	public void sendEmailCheckoutExpired(String to, String subject,String fullName, Checkout checkout) throws MessagingException {
+
+		String htmlContent = "<!DOCTYPE html>" +
+			    "<html lang='vi'>" +
+			    "<head>" +
+			    "<meta charset='UTF-8'>" +
+			    "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+			    "<title>Biểu Mẫu Phản Hồi Tại Thư Viện AtWOM</title>" +
+			    "<style>" +
+			    "body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }" +
+			    ".container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }" +
+			    ".header { background-color: #007bff; color: #fff; padding: 20px; text-align: center; }" +
+			    ".header h1 { margin: 0; }" +
+			    ".content { padding: 20px; text-align: center; }" +
+			    ".content p { font-size: 16px; line-height: 1.5; }" +
+			    ".btn { display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: #007bff; background-color: #fff; border: 2px solid #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s, color 0.3s; }" +
+			    ".btn:hover { background-color: #007bff; color: #fff; }" +
+			    ".footer { background-color: #f1f1f1; color: #777; padding: 10px; text-align: center; font-size: 14px; }" +
+			    "</style>" +
+			    "</head>" +
+			    "<body>" +
+			    "<div class='container'>" +
+			    "<div class='header'>" +
+			    "<h1>Biểu Mẫu Phản Hồi Thư Viện ATWOM</h1>" +
+			    "</div>" +
+			    "<div class='content'>" +
+			    "<p>Xin chào <strong>" + fullName + "</strong>,</p>"
+	            + "<p>Đây là thông báo về việc bạn đã quá hạn trả sách cho hệ thống thư viện.</p>"
+	            + "<p>Vậy nên chúng tôi muốn bạn phải thanh toán ngay lập tức cho chúng tôi. "
+	            + "Tài khoản của bạn cũng sẽ bị cấm nếu bạn không nộp tiền phạt.</p>"
+	            + "<p>Dưới đây là thông tin về đơn mượn của bạn:</p>"
+	            + "<div style=\"list-style-type: none; padding-left: 0;\">" 
+	            + "Mã đơn mượn: " +checkout.getId() + "<br>"
+	            + "Ngày mượn sách: "+checkout.getStartTime() + "<br>"
+	            + "Hạn trả sách: " + checkout.getEndTime()
+	            + "</div>"
+	            + "<p>Trân trọng,</p>" +
 			    "</div>" +
 			    "<div class='footer'>" +
 			    "<p>&copy; 2024 Thư Viện Atwom. Tất cả quyền được bảo lưu.</p>" +

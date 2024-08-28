@@ -193,17 +193,17 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
     let errors = { user: '', status: '', issue: '' };
 
     if (isAddMode && !selectedUser) {
-      errors.user = 'User is required';
+      errors.user = 'Sinh viên không để rỗng';
       valid = false;
     }
 
     if (!currentOrder.status) {
-      errors.status = 'Status is required';
+      errors.status = 'Trạng thái không để rỗng';
       valid = false;
     }
 
     if (selectedProductIds.size === 0){
-      errors.issue = 'Book not null';
+      errors.issue = 'Sách không để rỗng';
       valid = false;
     }
 
@@ -225,7 +225,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
     Swal.fire({
       title: "Confirm",
-      text: "Do you want to add this order?",
+      text: "Xác nhận thêm?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -246,10 +246,10 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
         try {
           await CheckoutService.save(newOrder);
-          toast.success("Order added successfully");
+          toast.success("Thêm đơn mượn thành công");
           onClose(true);
         } catch (error) {
-          toast.error("Failed to add order");
+          toast.error("Thêm đơn mượn thất bại");
         }
       }
     });
@@ -260,7 +260,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
     Swal.fire({
       title: "Confirm",
-      text: "Do you want to save changes?",
+      text: "Xác nhận lưu lại thay đổi?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#89B449",
@@ -303,9 +303,9 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
 
           onSave(updatedOrder);
           onClose(true);
-          toast.success("Order saved successfully");
+          toast.success("Lưu đơn mượn thành công");
         } catch (error) {
-          toast.error("Failed to update order");
+          toast.error("Lưu đơn mượn thất bại");
         }
       }
     });
@@ -336,7 +336,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
       {isAddMode && (
         <>
           <div className="row mb-3" >
-          <div className="col-2">User</div>
+          <div className="col-2">Sinh viên</div>
           <div className="col-10" >
             <select
               className="form-select overflow-y-auto"
@@ -346,7 +346,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
               
               required
             >
-              <option value="" >Select User</option>
+              <option value="" >Lựa chọn sinh viên</option>
               {users.map(user => (
                 <option key={user.userUid} value={user.userUid}>
                   {user.fullName}
@@ -358,7 +358,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
         </div>
 
         <div className="row mb-3" >
-          <div className="col-2">Book</div>
+          <div className="col-2">Sách</div>
           <div className="search-box d-flex">
                     {/* search input */}
                     <input className="form-control search-input search" type="search" placeholder="Search students" name="keySearch" aria-label="Search"
@@ -381,12 +381,12 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
                   <thead>
                     <tr>
                       <th className="sort align-middle text-center" scope="col" style={{ width: '3%' }}>#</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>TITLE</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>PUBLISHER</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>QUANTITY</th>
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>PRICE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '11%' }}>Tiêu đề</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '13%' }}>Tác giả</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '9%' }}>Số lượng</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '6%' }}>Giá mặc định</th>
                       {/* <th className="sort align-middle text-center" scope="col" style={{ width: '14%' }}>DESCRIPTION</th> */}
-                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>ACTIVE</th>
+                      <th className="sort align-middle text-center" scope="col" style={{ width: '5%' }}>Hành động</th>
                     </tr>
                   </thead>
                   <tbody className="list" id="customers-table-body">
@@ -429,7 +429,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
               </div>
               <div className="row align-items-center justify-content-between py-2 pe-0 fs--1">
                 <div className="col-auto d-flex">
-                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Total order: </span>  {totalPages} </p>
+                  <p className="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"><span className='fw-bold'>Tổng số đơn mượn: </span>  {totalPages} </p>
                 </div>
                 <div className="col-auto d-flex">
                   <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={prev} next={next} />

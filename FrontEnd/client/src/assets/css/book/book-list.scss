@@ -30,3 +30,28 @@
     margin-right: 5px;
     /* Khoảng cách giữa icon và điểm rating */
 }
+
+// File SCSS (e.g., book-list.scss)
+
+// .no-records {
+//     text-align: right;
+//     font-size: 18px;
+//     font-weight: 500;
+//     margin: 20px 0;
+// }
+
+.no-records {
+    text-align: right;
+    font-size: 18px;
+    font-weight: 500; // Đậm vừa phải
+    color: #4a4e52; // Màu sắc tối hơn cho dễ đọc
+    margin: 20px 0; // Khoảng cách trên và dưới
+  
+    // Thay đổi kiểu chữ để thêm phần phong cách
+    font-family: 'Roboto', sans-serif; // Chọn font chữ đẹp và hiện đại
+    line-height: 1.5; // Khoảng cách giữa các dòng
+  
+    // Thêm hiệu ứng văn bản (tuỳ chọn)
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); // Đổ bóng nhẹ để làm nổi bật
+  }
+  
