@@ -246,7 +246,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ checkoutId, onRefresh }) => {
       </div>
       <div className="order-overview">
         <div className="order-overview-img">
-          <img className="rounded-circle" src={book?.image ? `http://localhost:8080/getImage?atchFleSeqNm=${book?.image}` : defaultimage} alt="PersonAvatar" onError={(e) => {
+          <img className="rounded-circle" src={book?.image ? process.env.REACT_APP_API_URL + `/getImage?atchFleSeqNm=${book?.image}` : defaultimage} alt="PersonAvatar" onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
             target.src = defaultimage;

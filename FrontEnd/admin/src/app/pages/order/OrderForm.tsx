@@ -102,7 +102,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
       setCurrentOrder(defaultCheckout);
     }
 
-    let url = `http://localhost:8080/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
+    let url = process.env.REACT_APP_API_URL + `/book/list?page=${searchDto.page}&keySearch=${searchDto.keySearch}&cateId=${searchDto.cate_id}`;
     axios.get(url).then((resp: any) => {
       console.log(resp.data);
       if (resp.data) {
@@ -117,7 +117,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
   }, [order,searchDto.page, searchDto.timer]);
 
   useEffect(() => {
-    let url = `http://localhost:8080/category/list?page=1&keySearch=`;
+    let url = process.env.REACT_APP_API_URL + `/category/list?page=1&keySearch=`;
     axios.get(url).then((resp: any) => {
       // console.log(resp.data.name);
       if (resp.data) {
@@ -400,7 +400,7 @@ export default function OrderForm({ order, users, onSave, onClose }: OrderFormPr
                       <td className="align-middle text-center">
                         <div className="d-flex align-items-center">
                           <div className="avatar avatar-m">
-                            <img className="rounded-circle" src={u.image ? `http://localhost:8080/getImage?atchFleSeqNm=${u.image}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
+                            <img className="rounded-circle" src={u.image ? process.env.REACT_APP_API_URL + `/getImage?atchFleSeqNm=${u.image}` : defaultPersonImage} alt="PersonAvatar" onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.onerror = null; // Prevent infinite loop in case fallback image also fails
                               target.src = noImageAvailable; // Set the fallback image

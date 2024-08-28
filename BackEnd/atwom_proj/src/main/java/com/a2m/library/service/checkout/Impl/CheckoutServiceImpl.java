@@ -107,7 +107,11 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            return detail;
+            if(detail.getQuantity() - book.getQuantity() > 0){
+                return detail;
+            } else {
+                throw new IllegalStateException("Order quantity must > Book quantity.");
+            }
         }).collect(Collectors.toList());
         
         checkout.setCheckoutDetails(issueDetails);
@@ -134,7 +138,11 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            return detail;
+            if(detail.getQuantity() - book.getQuantity() > 0){
+                return detail;
+            } else {
+                throw new IllegalStateException("Order quantity must > Book quantity.");
+            }
         }).collect(Collectors.toList());
         
         checkout.setCheckoutDetails(issueDetails);

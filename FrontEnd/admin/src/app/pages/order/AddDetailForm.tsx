@@ -5,7 +5,7 @@ import { BookSearch } from "../book/book-search";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-const BASE_URL = "http://localhost:8080/api/checkoutdt";
+const BASE_URL = process.env.REACT_APP_API_URL + "/api/checkoutdt";
 
 interface AddDetailFormProps {
   onSave: (detail: CheckoutDetailDTO) => void;
@@ -50,7 +50,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/category/list/all`);
+      const response = await axios.get(process.env.REACT_APP_API_URL + `/category/list/all`);
       setCategories(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching categories", error);
@@ -60,7 +60,7 @@ const AddDetailForm: React.FC<AddDetailFormProps> = ({
 
   const fetchBooks = async (cate_id: number) => {
     try {
-      const response = await axios.get(`http://localhost:8080/book/list`, {
+      const response = await axios.get(process.env.REACT_APP_API_URL + `/book/list`, {
         params: {
           page: 1,
           keySearch: '',
