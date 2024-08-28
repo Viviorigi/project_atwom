@@ -327,6 +327,17 @@ public class CheckoutServiceImpl implements CheckoutService {
                                       .collect(Collectors.toList());
         return new PageImpl<>(checkoutReturn, pageRequest, checkouts.getTotalElements());
 	}
+
+	@Override
+	public List<CheckoutDTO> findByUser(Long userUid) {
+		// TODO Auto-generated method stub
+		List<Checkout> c = checkoutRepository.findByUIdIn(userUid);
+		
+		List<CheckoutDTO> checkoutDTOs = c.stream()
+		        .map(this::toDTO) 
+		        .collect(Collectors.toList());
+		return checkoutDTOs;
+	}
 	
 	
 	

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import imageBookDefault from "../../../assets/images/imageBookDefault.png"
 import { Link } from "react-router-dom";
+import { FaStar } from "react-icons/fa";
 
 
 const ProductCardBoxWrapper = styled.div`
@@ -80,9 +81,9 @@ const Category = () => {
     let url_book_love = process.env.REACT_APP_API_URL + `/book/love`;
     axios.get(url_book_love).then((resp: any) => {
       if (resp.data)
-        
-        
-      setBookLoveList(resp.data);
+
+
+        setBookLoveList(resp.data);
     }).catch((err: any) => {
     })
 
@@ -156,6 +157,12 @@ const Category = () => {
                         width="100px"
                         height="100px"
                       />
+                      {/* <div>{u.ave_rating}</div>
+                      {u.ave_rating &&
+                        <div className="rating-badge">
+                          <FaStar style={{ marginRight: '5px' }} />
+                          {u.ave_rating && u.ave_rating.toFixed(1)}
+                        </div>} */}
                     </Link>
                   </div>
                   <div className="product-info">

@@ -4,23 +4,27 @@ import { Link } from "react-router-dom";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 
 const FooterWrapper = styled.footer`
-  padding-top: 60px;
-  padding-bottom: 20px;
+  padding-top: 30px; /* Giảm từ 60px */
+  padding-bottom: 10px; /* Giảm từ 20px */
   background-color: ${defaultTheme.color_outerspace};
   color: ${defaultTheme.color_whitesmoke};
+<<<<<<< HEAD
   height: auto;
   margin-top: auto;
+=======
+  height: auto; /* Giữ chiều cao tự động */
+>>>>>>> 712ce7a7682a179cd2db09a6fb78171e80bfba46
 
   @media (max-width: ${breakpoints.lg}) {
-    padding-top: 40px;
-    padding-bottom: 20px;
+    padding-top: 20px; /* Giảm từ 40px */
+    padding-bottom: 10px; /* Giảm từ 20px */
   }
 
   .footer-top {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 15px; /* Giảm từ 20px */
+    margin-bottom: 15px; /* Giảm từ 20px */
 
     @media (max-width: ${breakpoints.md}) {
       grid-template-columns: repeat(2, 1fr);
@@ -33,8 +37,8 @@ const FooterWrapper = styled.footer`
 
     .footer-item {
       &-title {
-        margin-bottom: 12px;
-        font-size: 18px;
+        margin-bottom: 8px; /* Giảm từ 12px */
+        font-size: 16px; /* Giảm từ 18px */
         font-weight: 700;
       }
 
@@ -44,7 +48,7 @@ const FooterWrapper = styled.footer`
         margin: 0;
 
         .ftr-link-item {
-          margin-bottom: 8px;
+          margin-bottom: 6px; /* Giảm từ 8px */
 
           a {
             color: ${defaultTheme.color_whitesmoke};
@@ -62,12 +66,12 @@ const FooterWrapper = styled.footer`
   .footer-middle {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Giảm từ 20px */
 
     .ftr-social-links {
       display: flex;
       justify-content: space-between;
-      column-gap: 10px;
+      column-gap: 8px; /* Giảm từ 10px */
 
       @media (max-width: ${breakpoints.xs}) {
         justify-content: center;
@@ -77,12 +81,12 @@ const FooterWrapper = styled.footer`
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 35px;
-        height: 35px;
+        width: 30px; /* Giảm từ 35px */
+        height: 30px; /* Giảm từ 35px */
         border-radius: 50%;
         background-color: ${defaultTheme.color_white};
         color: ${defaultTheme.color_outerspace};
-        font-size: 18px;
+        font-size: 16px; /* Giảm từ 18px */
         transition: background-color 0.3s, color 0.3s;
 
         &:hover {
@@ -96,14 +100,14 @@ const FooterWrapper = styled.footer`
   .footer-bottom {
     border-top: 1px solid rgba(190, 188, 189, 0.4);
     text-align: center;
-    padding-top: 20px;
+    padding-top: 15px; /* Giảm từ 20px */
 
     @media (max-width: ${breakpoints.lg}) {
-      padding-top: 15px;
+      padding-top: 10px; /* Giảm từ 15px */
     }
 
     p {
-      font-size: 14px;
+      font-size: 12px; /* Giảm từ 14px */
       color: ${defaultTheme.color_whitesmoke};
 
       a {

@@ -8,6 +8,8 @@ import com.a2m.library.dto.response.NotificationListResponse;
 import com.a2m.library.dto.response.ResourceNotFoundException;
 import com.a2m.library.model.Checkout;
 import com.a2m.library.service.checkout.CheckoutService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import jakarta.validation.Valid;
 
@@ -45,12 +47,20 @@ public class CheckoutController {
         List<CheckoutDTO> checkouts = checkoutService.findAll(keySearch, limit, page - 1);
         return ResponseEntity.ok(checkouts);
     }
+    
+    
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<CheckoutDTO>> findCheckoutById(@PathVariable Integer id) {
         Optional<CheckoutDTO> checkout = checkoutService.findById(id);
         return ResponseEntity.ok(checkout);
     }
+    
+    @GetMapping(value = "/getCheckoutInfo")
+	public ResponseEntity<?> getUserCheckoutInfo(@RequestParam Long userUid)
+			throws JsonMappingException, JsonProcessingException {
+		return ResponseEntity.ok(checkoutService.findByUser(userUid));
+	}
     
     
 

@@ -1,7 +1,9 @@
 package com.a2m.library.repository;
 
-import com.a2m.library.constant.CheckoutStatus; 
+import com.a2m.library.constant.CheckoutStatus;
+import com.a2m.library.dto.CheckoutDTO;
 import com.a2m.library.model.Checkout;
+import com.a2m.library.model.User;
 
 import jakarta.transaction.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
@@ -24,6 +27,9 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
     List<Checkout> findByEndTimeBeforeAndStatus(LocalDateTime endTime, CheckoutStatus status);
 
     List<Checkout> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
+    
+    @Query(value = "SELECT * FROM checkout WHERE user_uid = :uIds", nativeQuery = true)
+    List<Checkout> findByUIdIn(@Param("uIds") Long uIds);
 
     @Modifying
     @Transactional
