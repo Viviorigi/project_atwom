@@ -114,8 +114,8 @@ export default function About() {
           <div className="row">
             <div className="col-12">
               <div className="shop-details text-center align-items-center">
-                <h1 className="text-white">#About the Library</h1>
-                <p className="text-white fs-3">Explore Our Growth and Mission</p>
+                <h1 className="text-white"># Về thư viện ATWOM BOOK</h1>
+                
               </div>
             </div>
           </div>
