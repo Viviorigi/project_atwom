@@ -98,6 +98,28 @@ public class CheckoutServiceImpl implements CheckoutService {
         return checkouts;
     }
 
+    public Page<CheckoutDTO> findAll(String keySearch, CheckoutStatus status, int limit, int page) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Checkout> checkoutPage;
+
+        if (keySearch == null || keySearch.isEmpty()) {
+            if (status == null) {
+                checkoutPage = checkoutRepository.findAll(pageable);
+            } else {
+                checkoutPage = checkoutRepository.findByStatus(status, pageable);
+            }
+        } else {
+            if (status == null) {
+                checkoutPage = checkoutRepository.findByKeySearch(keySearch, pageable);
+            } else {
+                checkoutPage = checkoutRepository.findByKeySearchAndStatus(keySearch, status, pageable);
+            }
+        }
+
+        return checkoutPage.map(this::toDTO);
+    }
+    
+
     @Override
     public Optional<CheckoutDTO> findById(Integer id) {
         return checkoutRepository.findById(id)

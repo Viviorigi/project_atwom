@@ -13,12 +13,14 @@ import java.util.Optional;
 import java.util.List;
 
 public interface CheckoutService {
+
     List<CheckoutDTO> findAll(String keySearch, int limit, int page);
+
+    Page<CheckoutDTO> findAll(String keySearch, CheckoutStatus status, int limit, int page);
+
     Optional<CheckoutDTO> findById(Integer id);
     
     List<CheckoutDTO> findByUser(Long userUid);
-    
-    
 
     @Transactional
     Checkout add(CheckoutDTO checkoutDTO);

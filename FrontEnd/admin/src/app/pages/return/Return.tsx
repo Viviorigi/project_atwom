@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { CheckoutDTO } from "../../model/CheckoutDTO";
+import { CheckoutDTO, CheckoutStatus } from "../../model/CheckoutDTO";
 import { format } from "date-fns";
 import ReturnForm from "./ReturnForm";
 import Pagination from "../../comp/common/Pagination";
@@ -24,10 +24,11 @@ const Return = () => {
   const [orderSearchParams, setOrderSearchParams] = useState({
     keySearch: "",
     page: 1,
-    limit: 10,
+    limit: 5,
     timer: new Date().getTime(),
   });
   const [users, setUsers] = useState<UserDTO[]>([]);
+  const [statusFilter, setStatusFilter] = useState<CheckoutStatus>(CheckoutStatus.BORROWED);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [fines, setFines] = useState<Map<number, number>>(new Map());
@@ -51,20 +52,24 @@ const Return = () => {
 
   const fetchOrders = async () => {
     try {
-      const resp = await CheckoutService.findAll({
+      const params: {
+        keySearch?: string;
+        status: CheckoutStatus;
+        limit?: number;
+        page?: number;
+      } = {
         keySearch: orderSearchParams.keySearch,
+        status: CheckoutStatus.BORROWED,
         limit: orderSearchParams.limit,
-        page: orderSearchParams.page,
-      });
+        page: orderSearchParams.page - 1,
+      };
+  
+      const data = await CheckoutService.findAll(params);
 
-      const filteredOrders = resp.filter((order) =>
-        ["BORROWED", "EXPIRED", "RETURNED", "PENALTY"].includes(order.status)
-      );
-
+      setOrders(data.content);
+      setTotalOrders(data.totalElements);
+      setTotalPages(data.totalPages);
       dispatch(setLoading(false));
-      setOrders(filteredOrders);
-      setTotalOrders(filteredOrders.length);
-      setTotalPage(Math.ceil(filteredOrders.length / orderSearchParams.limit));
     } catch (error) {
       console.error("Error fetching orders", error);
       dispatch(setLoading(false));
@@ -80,10 +85,9 @@ const Return = () => {
       };
 
       const response = await AuthService.getInstance().getList(modelSearch);
-      const { users, totalPages, totalUsers } = response.data;
+      const { users, totalUsers } = response.data;
 
       setUsers(users);
-      setTotalPages(totalPages);
       setTotalUsers(totalUsers);
     } catch (error) {
       console.error("Error fetching all users", error);
@@ -105,6 +109,10 @@ const Return = () => {
     } catch (error) {
       console.error("Error fetching fines", error);
     }
+  };
+
+  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatusFilter(event.target.value as CheckoutStatus);
   };
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,6 +171,31 @@ const Return = () => {
     setOpen(true);
   }
 
+  const handlePageClick = (pageNumber: number) => {
+    setOrderSearchParams((prevParams) => ({
+      ...prevParams,
+      page: pageNumber,
+    }));
+  };
+
+  const handlePrevClick = () => {
+    if (orderSearchParams.page > 1) {
+      setOrderSearchParams((prevParams) => ({
+        ...prevParams,
+        page: orderSearchParams.page - 1,
+      }));
+    }
+  };
+
+  const handleNextClick = () => {
+    if (orderSearchParams.page < totalPages) {
+      setOrderSearchParams((prevParams) => ({
+        ...prevParams,
+        page: orderSearchParams.page + 1,
+      }));
+    }
+  };
+
   return (
     <div>
       <div className="mb-9">
@@ -197,6 +230,18 @@ const Return = () => {
                   <span className="fas fa-search" />
                 </button>
               </div>
+            </div>
+            <div className="col-auto">
+              <select
+                className="form-select"
+                value={statusFilter}
+                onChange={handleStatusChange}
+              >
+                <option value={CheckoutStatus.BORROWED}>Borrowed</option>
+                <option value={CheckoutStatus.EXPIRED}>Expired</option>
+                <option value={CheckoutStatus.RETURNED}>Reuturned</option>
+                {/* <option value={CheckoutStatus.PENALTY}>Penalty</option> */}
+              </select>
             </div>
           </div>
 
@@ -246,13 +291,13 @@ const Return = () => {
                   >
                     Expired Date
                   </th>
-                  <th
+                  {/* <th
                     className="sort align-middle text-center"
                     scope="col"
                     style={{ width: "10%" }}
                   >
                     Fine
-                  </th>
+                  </th> */}
                   <th
                     className="sort align-middle text-center"
                     scope="col"
@@ -299,11 +344,11 @@ const Return = () => {
                         ? format(new Date(order.endTime), "dd/MM/yyyy")
                         : "N/A"}
                     </td>
-                    <td className="align-middle text-center">
+                    {/* <td className="align-middle text-center">
                       {order.status === "PENALTY" && fines.has(order.id)
                         ? fines.get(order.id)?.toFixed(2) + " VNĐ"
                         : "N/A"}
-                    </td>
+                    </td> */}
                     <td className="align-middle text-center">
                     <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>
                       <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i></button>
@@ -321,13 +366,7 @@ const Return = () => {
               </p>
             </div>
             <div className="col-auto d-flex">
-              <Pagination
-                currentPage={orderSearchParams.page}
-                totalPages={totalPage}
-                onPageChange={(page: any) =>
-                  setOrderSearchParams({ ...orderSearchParams, page })
-                }
-              />
+            <Pagination totalPage={totalPages} currentPage={orderSearchParams.page} handlePageClick={handlePageClick} prev={handlePrevClick} next={handleNextClick} />
             </div>
           </div>
         </div>

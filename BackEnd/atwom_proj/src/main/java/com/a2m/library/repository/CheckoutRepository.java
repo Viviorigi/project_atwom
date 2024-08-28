@@ -24,6 +24,17 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
 
     List<Checkout> findByStatus(CheckoutStatus status);
 
+    @Query("SELECT c FROM Checkout c WHERE c.status = :status")
+        Page<Checkout> findByStatus(@Param("status") CheckoutStatus status, Pageable pageable);
+
+    @Query("SELECT c FROM Checkout c WHERE " +
+        "(:keySearch IS NULL OR c.user.fullName LIKE CONCAT('%', :keySearch, '%')) AND " +
+        "(c.status = :status)")
+        Page<Checkout> findByKeySearchAndStatus(
+        @Param("keySearch") String keySearch,
+        @Param("status") CheckoutStatus status,
+        Pageable pageable);
+
     List<Checkout> findByEndTimeBeforeAndStatus(LocalDateTime endTime, CheckoutStatus status);
 
     List<Checkout> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
