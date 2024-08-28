@@ -11,6 +11,7 @@ public class FeedBackDTO {
 	private Integer rating;
 	private String comment;
 	private int book_id;
+	private String bookName;
 	private Long user_id;
 	private String user_avatar;
 	private String user_name;

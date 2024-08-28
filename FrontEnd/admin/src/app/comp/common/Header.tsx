@@ -37,7 +37,7 @@ export default function Header() {
                 }).then((resp) => {
                     const reversedNotifications = [...resp.data.notis].reverse();
                     setNotifications(reversedNotifications);
-                    console.log(resp.data.notis);
+                    // console.log(resp.data.notis);
                     
                     isDataFetched.current = true;
                 }).catch(error => {
@@ -48,14 +48,14 @@ export default function Header() {
           NotificationService.getInstance().getTotal().then((resp:any) => {
             total.current = resp.data
           }).catch((e:any) => {
-            console.log(e);
+            // console.log(e);
             
           })
 
         const events = new EventSource(`${process.env.REACT_APP_API_URL}/api/public/subscribe/admin`);  
         events.onmessage = event => {
             const newNotification = new NotificationDTO(event.data);
-            console.log(event.data);
+            // console.log(event.data);
             total.current = total.current + 1;
             setNotifications(prevNotifications => {
                 const updatedNotifications = [...prevNotifications, newNotification];
@@ -67,7 +67,7 @@ export default function Header() {
                 return updatedNotifications;
             });
       }
-      console.log(notifications);
+    //   console.log(notifications);
       return () => {
         events.close();
     };

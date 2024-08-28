@@ -156,19 +156,6 @@ public class BookServiceImpl implements BookService {
 		return bookDTO;
 	}
 
-	public Category convertToCategory(CategoryDTO categoryDTO) {
-		// TODO Auto-generated method stub
-		Category category = new Category();
-		category.setId(categoryDTO.getId());
-		category.setName(categoryDTO.getName());
-		category.setDescription(categoryDTO.getDescription());
-		category.setActive(categoryDTO.getActive());
-		category.setCre_dt(categoryDTO.getCre_dt());
-		category.setUpd_dt(categoryDTO.getUpd_dt());
-
-		return category;
-	}
-
 	@Override
 	public Book convertToBook(BookDTO bookDTO) {
 		CategoryDTO category = categoryService.findById(bookDTO.getCateId());
@@ -186,9 +173,23 @@ public class BookServiceImpl implements BookService {
 		book.setUpd_dt(bookDTO.getUpd_dt());
 		book.setCre_dt(bookDTO.getCre_dt());
 		book.setCategory(convertToCategory(category));
+		book.setImagebooks(bookDTO.getImagebooks());
 		return book;
 	}
 
+	public Category convertToCategory(CategoryDTO categoryDTO) {
+		// TODO Auto-generated method stub
+		Category category = new Category();
+		category.setId(categoryDTO.getId());
+		category.setName(categoryDTO.getName());
+		category.setDescription(categoryDTO.getDescription());
+		category.setActive(categoryDTO.getActive());
+		category.setCre_dt(categoryDTO.getCre_dt());
+		category.setUpd_dt(categoryDTO.getUpd_dt());
+
+		return category;
+	}
+	
 	@Override
 	public List<Book> findAllActiveNew() {
 		// TODO Auto-generated method stub

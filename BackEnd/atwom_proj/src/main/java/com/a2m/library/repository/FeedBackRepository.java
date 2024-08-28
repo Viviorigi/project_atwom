@@ -23,4 +23,8 @@ public interface FeedBackRepository extends JpaRepository<FeedBack, Integer> {
 	
 	@Query("SELECT COUNT(b) FROM FeedBack   b WHERE FUNCTION('DATE', b.updDt) = CURRENT_DATE")
     long countFeedBackAddedToday();
+	
+//	@Query("SELECT u FROM FeedBack u WHERE " + "(u.title LIKE %:keyword% OR " + "u.description LIKE %:keyword%) AND "
+//			 + "(:cateId = 0 OR u.category.id = :cateId)")
+//	Page<Book> searchBook(@Param("keyword") String keyword, @Param("cateId") int cateId, Pageable pageable);
 }

@@ -20,7 +20,7 @@ export default function RoleGuard(props: any) {
       })
       .then(async (resp) => {
         setRoles(resp.data);
-        console.log(resp.data);
+        // console.log(resp.data);
       })
       .catch((error) => {
         if (error == 'Network Error') {

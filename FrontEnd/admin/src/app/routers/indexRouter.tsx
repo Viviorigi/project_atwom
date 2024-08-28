@@ -11,6 +11,7 @@ import RoleGuard from '../guard/roleGuard';
 import Banner from '../pages/banner/Banner';
 import Contact from '../pages/contact/Contact';
 import About from '../pages/about/About';
+import FeedBack from '../pages/feedback/FeedBack';
 import Notification from '../pages/notification/Notification';
 export const indexRouter: any = {
     path: '',
@@ -27,6 +28,7 @@ export const indexRouter: any = {
         { path: 'banner', element: <RoleGuard role="ADMIN"><Banner /></RoleGuard> },
         { path: 'contact', element: <RoleGuard role="ADMIN"><Contact /></RoleGuard> },
         { path: 'about', element: <RoleGuard role="ADMIN"><About /></RoleGuard> },
-        { path: 'notification', element: <RoleGuard role="ADMIN"><Notification /></RoleGuard> }
+        { path: 'notification', element: <RoleGuard role="ADMIN"><Notification /></RoleGuard> },
+        { path: 'feedback', element: <RoleGuard role="ADMIN"><FeedBack /></RoleGuard> }
     ],
 };

@@ -5,8 +5,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a2m.library.dto.BookDTO;
 import com.a2m.library.dto.FeedBackDTO;
 import com.a2m.library.dto.RatingOfFeedBackDTO;
+import com.a2m.library.dto.response.MessageResponse;
 import com.a2m.library.dto.response.UserResponse;
 import com.a2m.library.dto.response.WishListResponse;
 import com.a2m.library.model.WishList;
@@ -108,5 +114,23 @@ public class FeedBackController {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
+	}
+	
+	@GetMapping("/feedback/list-page")
+	public ResponseEntity<?> bookGetList(@RequestParam("page") Integer page) {
+		PageRequest pageRequest = PageRequest.of(page - 1, 5);
+		Page<FeedBackDTO> fePage = feedBackService.searchFeedBack(pageRequest);
+		return ResponseEntity.ok().body(fePage);
+	}
+	
+	@DeleteMapping("/feedback/delete")
+	public ResponseEntity<?> bookDelete(@RequestParam Integer id) {
+		try {
+			feedBackService.deleteById(id);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+		}
+		return ResponseEntity.ok().body(new MessageResponse("success"));
 	}
 }
