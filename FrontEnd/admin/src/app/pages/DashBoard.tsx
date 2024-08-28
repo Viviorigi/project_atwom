@@ -128,8 +128,8 @@ export default function DashBoard() {
                             <tr key={book.id}>
                               <th scope="row">{index + 1}</th>
                               <td>{book.title}</td>
-                              <td>{book.author}</td>
                               <td>{book.publisher}</td>
+                              <td>{book.nxb}</td>
                             </tr>
                           ))}
                         </tbody>
