@@ -230,8 +230,8 @@ export default function Header() {
                                         <div className="card-body p-0">
                                         <div className="scrollbar-overlay" style={{ height: '27rem' }}>
                                             <div className="border-300">
-                                            {notifications.slice().reverse().map((n:any) => (
-                                                <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative read border-bottom">
+                                            {notifications.slice().reverse().map((n:any, index: any) => (
+                                                <div className="px-2 px-sm-3 py-3 border-300 notification-card position-relative read border-bottom" key={index}>
                                                 
                                                     <div className="d-flex align-items-center justify-content-between position-relative">
 

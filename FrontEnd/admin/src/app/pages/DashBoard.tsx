@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router-dom';
+import BookBorrowChart from './BookBorrowChart';
+
 
 export default function DashBoard() {
   const [bookToday, setBookToday] = useState(0);
@@ -43,16 +45,16 @@ export default function DashBoard() {
     }).catch((err: any) => {
     })
 
-     //-------------------order thích -------------------------
-     let url_order = process.env.REACT_APP_API_URL + `/order/month`;
-     axios.get(url_order).then((resp: any) => {
-       if (resp.data)
-         setOrderList(resp.data);
-        console.log("đơn");
-        console.log(resp.data);
-        
-     }).catch((err: any) => {
-     })
+    //-------------------order thích-chi tiết -------------------------
+    let url_order_details = process.env.REACT_APP_API_URL + `/order-details/month`;
+    axios.get(url_order_details).then((resp: any) => {
+      if (resp.data) {
+        setOrderList(resp.data);
+        // console.log("Sách yêu là");
+        // console.log(resp.data);
+      }
+    }).catch((err: any) => {
+    })
 
   }, [])
 
@@ -115,6 +117,10 @@ export default function DashBoard() {
                     </div>
                   </div>
 
+                  {/* Thêm đồ thị vào đây */}
+                  <div className="container-fluid mt-4">
+                    <BookBorrowChart data={orderList} />
+                  </div>
                   {/* ------------------------------------------------------------------ */}
 
                   <hr className="bg-200 mb-6 mt-4" style={{ marginTop: '10px' }} />

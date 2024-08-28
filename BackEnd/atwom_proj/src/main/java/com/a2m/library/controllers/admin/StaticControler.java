@@ -59,4 +59,9 @@ public class StaticControler {
     public List<Object[]> getMostBorrowedBooksInLast30Days() {
         return checkoutService.getMostBorrowedBooksInLast30Days();
     }
+    
+    @GetMapping("/order-details/month")
+    public List<Object[]> getMostBorrowedDeatilsBooksInLast30Days() {
+        return checkoutService.getMostBorrowedDeatilsBooksInLast30Days();
+    }
 }

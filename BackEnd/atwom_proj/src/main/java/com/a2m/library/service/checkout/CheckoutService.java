@@ -50,4 +50,6 @@ public interface CheckoutService {
     Page<CheckoutDTO> findCheckoutNeedReturn(String keySearch, PageRequest pageRequest);
 
     List<Object[]> getMostBorrowedBooksInLast30Days();
+    
+    List<Object[]> getMostBorrowedDeatilsBooksInLast30Days();
 }

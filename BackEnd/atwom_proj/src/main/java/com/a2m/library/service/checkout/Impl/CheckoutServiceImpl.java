@@ -76,6 +76,17 @@ public class CheckoutServiceImpl implements CheckoutService {
         LocalDateTime startDate = LocalDateTime.now().minus(30, ChronoUnit.DAYS);
         return checkoutRepository.findMostBorrowedBooksInLast30Days(startDate);
     }
+    
+    @Override
+    public List<Object[]> getMostBorrowedDeatilsBooksInLast30Days() {
+        LocalDateTime startDate = LocalDateTime.now().minus(30, ChronoUnit.DAYS);
+//        return checkoutRepository.findMostBorrowedDetailsBooksInLast30Days(startDate);
+        
+        List<Object[]> allResults = checkoutRepository.findMostBorrowedDetailsBooksInLast30Days(startDate);
+
+        return allResults.stream().limit(20).collect(Collectors.toList());
+    }
+
 
     public List<CheckoutDTO> findAll(String keySearch, int limit, int page) {
         Pageable pageable = PageRequest.of(page, limit);
