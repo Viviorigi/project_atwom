@@ -24,6 +24,17 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
 
     List<Checkout> findByStatus(CheckoutStatus status);
 
+    @Query("SELECT c FROM Checkout c WHERE c.status = :status")
+        Page<Checkout> findByStatus(@Param("status") CheckoutStatus status, Pageable pageable);
+
+    @Query("SELECT c FROM Checkout c WHERE " +
+        "(:keySearch IS NULL OR c.user.fullName LIKE CONCAT('%', :keySearch, '%')) AND " +
+        "(c.status = :status)")
+        Page<Checkout> findByKeySearchAndStatus(
+        @Param("keySearch") String keySearch,
+        @Param("status") CheckoutStatus status,
+        Pageable pageable);
+
     List<Checkout> findByEndTimeBeforeAndStatus(LocalDateTime endTime, CheckoutStatus status);
 
     List<Checkout> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
@@ -41,6 +52,15 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Integer> {
             @Param("keySearch") String keySearch,
             Pageable pageable);
     
-    @Query("SELECT c FROM Checkout c WHERE c.status IN ('EXPIRED','RETURNED','PENALTY') ")
+    @Query("SELECT c FROM Checkout c WHERE c.status IN ('BORROWED','EXPIRED','RETURNED','PENALTY') ")
 	    Page<Checkout> searchNotification(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT cd.book.id, SUM(cd.quantity) as totalQuantity " +
+            "FROM Checkout c " +
+            "JOIN c.checkoutDetails cd " +
+            "WHERE c.status IN ('BORROWED', 'EXPIRED', 'RETURNED', 'PENALTY') " +
+            "AND c.startTime >= :startDate " +
+            "GROUP BY cd.book.id " +
+            "ORDER BY totalQuantity DESC")
+     List<Object[]> findMostBorrowedBooksInLast30Days(@Param("startDate") LocalDateTime startDate);
 }

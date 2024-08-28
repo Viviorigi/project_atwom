@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { CheckoutDTO } from "../../model/CheckoutDTO";
+import { CheckoutDTO, CheckoutStatus } from "../../model/CheckoutDTO";
 import { format } from "date-fns";
 import OrderForm from "./OrderForm";
 import Pagination from "../../comp/common/Pagination";
@@ -16,40 +16,42 @@ import { UserDTO } from "../../model/UserDTO";
 const Order = () => {
   const [orders, setOrders] = useState<CheckoutDTO[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
-  const [totalPage, setTotalPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [open, setOpen] = useState(false);
   const [orderDetailOpen, setOrderDetailOpen] = useState(false);
   const [searchDto, setSearchDto] = useState({
     keySearch: "",
     page: 1,
-    limit: 20,
+    limit: 5,
+    timer: new Date().getTime(),
   });
+  const [statusFilter, setStatusFilter] = useState<CheckoutStatus>(CheckoutStatus.REQUESTED);
   const [users, setUsers] = useState<UserDTO[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [totalUsers, setTotalUsers] = useState<number>(0);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const dispatch = useAppDispatch();
+  const [totalUsers, setTotalUsers] = useState<number>(0);
   const indexOfLastItem = searchDto.page * searchDto.limit;
   const indexOfFirstItem = indexOfLastItem - searchDto.limit;
+  const dispatch = useAppDispatch();
   const orderRef = useRef<CheckoutDTO | null>(null);
 
   useEffect(() => {
     fetchOrders();
-    fetchAllUsers();
-  }, [searchDto]);
+  }, [searchDto.page, searchDto.timer, statusFilter]);
 
   const fetchOrders = async () => {
     try {
-      const resp = await CheckoutService.findAll(searchDto);
+      const params = {
+        keySearch: searchDto.keySearch,
+        status: statusFilter,
+        limit: searchDto.limit,
+        page: searchDto.page - 1,
+      };
 
-      const filteredOrders = resp.filter((order) =>
-        ["REQUESTED", "APPROVED", "REJECTED"].includes(order.status)
-      );
+      const data = await CheckoutService.findAll(params);
 
-      dispatch(setLoading(false));
-      setOrders(filteredOrders);
-      setTotalOrders(filteredOrders.length);
-      setTotalPage(Math.ceil(filteredOrders.length / searchDto.limit));
+      setOrders(data.content);
+      setTotalOrders(data.totalElements);
+      setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Lỗi lấy dữ liệu đơn mượn", error);
       dispatch(setLoading(false));
@@ -59,23 +61,22 @@ const Order = () => {
   const fetchAllUsers = async () => {
     try {
       const modelSearch = {
-        keySearch: searchDto.keySearch,
+        keySearch: "",
         page: 1,
-        limit: 100,
+        limit: 50,
       };
 
       const response = await AuthService.getInstance().getListActive(modelSearch);
-      const { users, totalPages, totalUsers } = response.data;
+      const { users, totalUsers } = response.data;
 
       setUsers(users);
-      setTotalPages(totalPages);
       setTotalUsers(totalUsers);
     } catch (error) {
       console.error("Error fetching all users", error);
     }
   };
 
-  useEffect(() => {
+  useEffect (() => {
     fetchAllUsers();
   }, []);
 
@@ -94,6 +95,10 @@ const Order = () => {
         page: 1,
       }));
     }
+  };
+
+  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatusFilter(event.target.value as CheckoutStatus);
   };
 
   const addOrder = () => {
@@ -132,6 +137,7 @@ const Order = () => {
           setSearchDto((prevParams) => ({
             ...prevParams,
             page: 1,
+            timer: new Date().getTime(),
           }));
           toast.success("Đã xóa thành công đơn mượn!");
         } catch (error) {
@@ -143,21 +149,27 @@ const Order = () => {
   };
 
   const handlePageClick = (pageNumber: number) => {
-    setSearchDto((prevDto) => ({
-      ...prevDto,
+    setSearchDto((prevParams) => ({
+      ...prevParams,
       page: pageNumber,
     }));
   };
 
   const handlePrevClick = () => {
     if (searchDto.page > 1) {
-      handlePageClick(searchDto.page - 1);
+      setSearchDto((prevParams) => ({
+        ...prevParams,
+        page: searchDto.page - 1,
+      }));
     }
   };
 
   const handleNextClick = () => {
     if (searchDto.page < totalPages) {
-      handlePageClick(searchDto.page + 1);
+      setSearchDto((prevParams) => ({
+        ...prevParams,
+        page: searchDto.page + 1,
+      }));
     }
   };
 
@@ -196,7 +208,17 @@ const Order = () => {
                 </button>
               </div>
             </div>
-            <div className="col-auto"></div>
+            <div className="col-auto">
+              <select
+                className="form-select"
+                value={statusFilter}
+                onChange={handleStatusChange}
+              >
+                <option value={CheckoutStatus.REQUESTED}>Requested</option>
+                <option value={CheckoutStatus.APPROVED}>Approved</option>
+                <option value={CheckoutStatus.REJECTED}>Rejected</option>
+              </select>
+            </div>
             <div className="col-auto">
               <button className="btn btn-primary" onClick={addOrder}>
                 <span className="fas fa-plus me-2" />
@@ -206,7 +228,7 @@ const Order = () => {
           </div>
 
           <div className="table-responsive scrollbar-overlay mx-n1 px-1 mt-5">
-            <table className="table table-bordered fs--1 mb-2">
+          <table className="table table-bordered fs--1 mb-2">
               <thead>
                 <tr>
                   <th
@@ -263,28 +285,23 @@ const Order = () => {
               <tbody>
                 {orders.map((order, index) => (
                   <tr key={order.id}>
-                    <td className="align-middle text-end pe-3">
-                      {indexOfFirstItem + index + 1}
-                    </td>
-                    <td className="align-middle">
-                      {" "}
-                      {order.user ? order.user.fullName : "N/A"}
-                    </td>
-                    <td className="text-center align-middle">
+                    <td className="align-middle text-center">{indexOfFirstItem + index + 1}</td>
+                    <td className="align-middle text-center">{order.user?.fullName}</td>
+                    <td className="align-middle text-center">
                       <span
-                        className={` ${order.status === "REQUESTED"
-                          ? "badge badge-phoenix fs--2 badge-phoenix-info"
-                          : order.status === "APPROVED" ||
-                            order.status === "BORROWED"
-                            ? "badge badge-phoenix fs--2 badge-phoenix-success"
-                            : order.status === "REJECTED"
-                              ? "badge badge-phoenix fs--2 badge-phoenix-danger"
-                              : "badge badge-phoenix fs--2 badge-phoenix"
-                          }`}
+                        className={`badge ${
+                          order.status === CheckoutStatus.REQUESTED
+                            ? "bg-info"
+                            : order.status === CheckoutStatus.APPROVED
+                            ? "bg-warning"
+                            : order.status === CheckoutStatus.REJECTED
+                            ? "bg-danger"
+                            : ""
+                        }`}
                       >
-                        <span className="badge-label">{order.status}</span>
+                        {order.status}
                       </span>
-                    </td>
+                      </td>
                     <td className="align-middle text-center">
                       {format(new Date(order.startTime), "dd/MM/yyyy, hh:mm")}
                     </td>
@@ -297,9 +314,15 @@ const Order = () => {
                         : "N/A"}
                     </td>
                     <td className="align-middle text-center">
-                      <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i></button>
-                      <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i></button>
-                      <button aria-label='d' className="btn btn-phoenix-secondary me-1 mb-1" type="button" onClick={() => viewOrderDetail(order)}><i className="far fa-eye"></i></button>
+                      <button aria-label='d' className="btn btn-phoenix-primary me-1 mb-1" type="button" 
+                        onClick={() => editOrder(order)}><i className="fa-solid fa-pen"></i>
+                      </button>
+                      <button aria-label='d' className="btn btn-phoenix-danger me-1 mb-1" type="button" 
+                        onClick={() => deleteOrder(order.id)}><i className="fa-solid fa-trash"></i>
+                      </button>
+                      <button aria-label='d' className="btn btn-phoenix-secondary me-1 mb-1" type="button" 
+                        onClick={() => viewOrderDetail(order)}><i className="far fa-eye"></i>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -314,13 +337,7 @@ const Order = () => {
               </p>
             </div>
             <div className="col-auto d-flex">
-            <Pagination
-              totalPage={totalPages}
-              currentPage={searchDto.page}
-              handlePageClick={handlePageClick}
-              prev={handlePrevClick}
-              next={handleNextClick}
-            />
+            <Pagination totalPage={totalPages} currentPage={searchDto.page} handlePageClick={handlePageClick} prev={handlePrevClick} next={handleNextClick} />
             </div>
           </div>
         </div>

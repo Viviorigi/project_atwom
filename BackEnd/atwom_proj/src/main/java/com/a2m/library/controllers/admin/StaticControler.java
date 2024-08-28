@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import com.a2m.library.dto.BookDTO;
 import com.a2m.library.model.Book;
+import com.a2m.library.repository.CheckoutRepository;
 import com.a2m.library.repository.FeedBackRepository;
 import com.a2m.library.repository.UserRepository;
 import com.a2m.library.repository.WishlistRepository;
 import com.a2m.library.service.book.BookService;
+import com.a2m.library.service.checkout.CheckoutService;
 import com.a2m.library.service.student.WishlistService;
 
 @RestController
@@ -29,6 +32,8 @@ public class StaticControler {
 	@Autowired
 	WishlistService wishlistService;
 	
+	@Autowired
+	CheckoutService checkoutService;
 	
 	@GetMapping("/book/today")
 	public Long bookToday() {
@@ -49,4 +54,9 @@ public class StaticControler {
 	public List<BookDTO> bookLove() {
 		return bookService.bookLove();
 	}
+
+	@GetMapping("/order/month")
+    public List<Object[]> getMostBorrowedBooksInLast30Days() {
+        return checkoutService.getMostBorrowedBooksInLast30Days();
+    }
 }

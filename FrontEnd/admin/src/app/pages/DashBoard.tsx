@@ -8,6 +8,7 @@ export default function DashBoard() {
   const [borrowToday, setBorrowToday] = useState(0);
   const [userToday, setUserToday] = useState(0);
   const [bookLoveList, setBookLoveList] = useState([]);
+  const [orderList, setOrderList] = useState([]);
   useEffect(() => {
     //----------------số sách mới----------------------------
     // let url_book_today = process.env.REACT_APP_API_URL + `/api/admin/book/today`;
@@ -41,6 +42,17 @@ export default function DashBoard() {
         setBookLoveList(resp.data);
     }).catch((err: any) => {
     })
+
+     //-------------------order thích -------------------------
+     let url_order = process.env.REACT_APP_API_URL + `/order/month`;
+     axios.get(url_order).then((resp: any) => {
+       if (resp.data)
+         setOrderList(resp.data);
+        console.log("đơn");
+        console.log(resp.data);
+        
+     }).catch((err: any) => {
+     })
 
   }, [])
 

@@ -36,7 +36,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,6 +72,11 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    public List<Object[]> getMostBorrowedBooksInLast30Days() {
+        LocalDateTime startDate = LocalDateTime.now().minus(30, ChronoUnit.DAYS);
+        return checkoutRepository.findMostBorrowedBooksInLast30Days(startDate);
+    }
+
     public List<CheckoutDTO> findAll(String keySearch, int limit, int page) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Checkout> checkoutPage;
@@ -90,6 +97,28 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .collect(Collectors.toList());
         return checkouts;
     }
+
+    public Page<CheckoutDTO> findAll(String keySearch, CheckoutStatus status, int limit, int page) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Checkout> checkoutPage;
+
+        if (keySearch == null || keySearch.isEmpty()) {
+            if (status == null) {
+                checkoutPage = checkoutRepository.findAll(pageable);
+            } else {
+                checkoutPage = checkoutRepository.findByStatus(status, pageable);
+            }
+        } else {
+            if (status == null) {
+                checkoutPage = checkoutRepository.findByKeySearch(keySearch, pageable);
+            } else {
+                checkoutPage = checkoutRepository.findByKeySearchAndStatus(keySearch, status, pageable);
+            }
+        }
+
+        return checkoutPage.map(this::toDTO);
+    }
+    
 
     @Override
     public Optional<CheckoutDTO> findById(Integer id) {
@@ -118,10 +147,12 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            if(detail.getQuantity() - book.getQuantity() < 0){
+            if(detail.getQuantity() - book.getQuantity() <= 0){
+                book.setQuantity(book.getQuantity() - detail.getQuantity());
                 return detail;
             } else {
-                throw new IllegalStateException("Order quantity must > Book quantity.");
+                book.setActive(false);
+                throw new IllegalStateException("That book is out of stock.");
             }
         }).collect(Collectors.toList());
         
@@ -149,10 +180,12 @@ public class CheckoutServiceImpl implements CheckoutService {
             detail.setCheckout(checkout);
             detail.setBook(book);
             detail.setQuantity(1);
-            if(detail.getQuantity() - book.getQuantity() < 0){
+            if(detail.getQuantity() - book.getQuantity() <= 0){
+                book.setQuantity(book.getQuantity() - detail.getQuantity());
                 return detail;
             } else {
-                throw new IllegalStateException("Order quantity must > Book quantity.");
+                book.setActive(false);
+                throw new IllegalStateException("That book is out of stock.");
             }
         }).collect(Collectors.toList());
         

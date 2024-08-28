@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,8 +48,18 @@ public class CheckoutController {
         List<CheckoutDTO> checkouts = checkoutService.findAll(keySearch, limit, page - 1);
         return ResponseEntity.ok(checkouts);
     }
-    
-    
+
+    @GetMapping("/lists")
+    public ResponseEntity<Page<CheckoutDTO>> getAllCheckouts(
+            @RequestParam(value = "keySearch", required = false, defaultValue = "") String keySearch,
+            @RequestParam(value = "status", required = false) CheckoutStatus status,
+            @RequestParam(value = "limit", defaultValue = "5") int limit,
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+
+        Page<CheckoutDTO> checkouts = checkoutService.findAll(keySearch, status, limit, page);
+        return ResponseEntity.ok(checkouts);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<CheckoutDTO>> findCheckoutById(@PathVariable Integer id) {

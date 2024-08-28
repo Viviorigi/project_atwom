@@ -75,10 +75,12 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         checkoutDetail.setCheckout(checkout);
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
 
-        if(checkoutDetail.getQuantity() - book.getQuantity() < 0){
+        if(checkoutDetail.getQuantity() - book.getQuantity() <= 0 ){
+            book.setQuantity(book.getQuantity() - checkoutDetail.getQuantity());
             return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
         } else {
-            throw new IllegalStateException("Order quantity must > Book quantity.");
+            book.setActive(false);
+            throw new IllegalStateException("That book is out of stock.");
         }
     }
 
@@ -90,11 +92,15 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         checkoutDetail.setBook(bookRepository.findById(checkoutDetailDTO.getBookId()).orElseThrow(() -> new ResourceNotFoundException("Book not found")));
         checkoutDetail.setCheckout(checkoutRepository.findById(checkoutDetailDTO.getCheckoutId()).orElseThrow(() -> new ResourceNotFoundException("Checkout not found")));
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
+        int newQuantity = checkoutDetailDTO.getQuantity();
+        int currentQuantity = checkoutDetail.getQuantity();
 
-        if(checkoutDetail.getQuantity() - book.getQuantity() < 0){
+        if(checkoutDetail.getQuantity() - book.getQuantity() <= 0 ){
+            checkoutDetail.setQuantity(newQuantity);
+            book.setQuantity(book.getQuantity() - (newQuantity - currentQuantity));
             return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
         } else {
-            throw new IllegalStateException("Order quantity must > Book quantity.");
+            throw new IllegalStateException("That book is out of stock.");
         }
     }
 
@@ -105,11 +111,15 @@ public class CheckoutDetailServiceImpl implements CheckoutDetailService {
         CheckoutDetail checkoutDetail = checkoutDetailRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("CheckoutDetail not found"));
         checkoutDetail.setQuantity(checkoutDetailDTO.getQuantity());
+        int newQuantity = checkoutDetailDTO.getQuantity();
+        int currentQuantity = checkoutDetail.getQuantity();
 
-        if(checkoutDetail.getQuantity() - book.getQuantity() < 0){
+        if(checkoutDetail.getQuantity() - book.getQuantity() <= 0){
+            checkoutDetail.setQuantity(newQuantity);
+            book.setQuantity(book.getQuantity() - (newQuantity - currentQuantity));
             return mapToDTO(checkoutDetailRepository.save(checkoutDetail));
         } else {
-            throw new IllegalStateException("Order quantity must > Book quantity.");
+            throw new IllegalStateException("That book is out of stock.");
         }
     }
 

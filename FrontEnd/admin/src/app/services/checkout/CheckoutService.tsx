@@ -6,9 +6,9 @@ import { CheckoutBookDTO } from '../../model/CheckoutBookDTO';
 const BASE_URL = process.env.REACT_APP_API_URL + '/api/checkout';
 
 export const CheckoutService = {
-  findAll: async (params?: { keySearch?: string; limit?: number; page?: number; }): Promise<CheckoutDTO[]> => {
+  findAll: async (params?: { keySearch?: string; status: CheckoutStatus; limit?: number; page?: number; }) => {
     try {
-      const response = await axios.get<CheckoutDTO[]>(`${BASE_URL}/list`, { params });
+      const response = await axios.get(`${BASE_URL}/lists`, { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching checkouts", error);
