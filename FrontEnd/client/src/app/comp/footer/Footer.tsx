@@ -8,7 +8,12 @@ const FooterWrapper = styled.footer`
   padding-bottom: 10px; /* Giảm từ 20px */
   background-color: ${defaultTheme.color_outerspace};
   color: ${defaultTheme.color_whitesmoke};
+<<<<<<< HEAD
+  height: auto;
+  margin-top: auto;
+=======
   height: auto; /* Giữ chiều cao tự động */
+>>>>>>> 712ce7a7682a179cd2db09a6fb78171e80bfba46
 
   @media (max-width: ${breakpoints.lg}) {
     padding-top: 20px; /* Giảm từ 40px */
