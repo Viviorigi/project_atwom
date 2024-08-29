@@ -160,12 +160,15 @@ public class EmailServiceImpl implements EmailService {
 			    "<div class='header'>" +
 			    "<h1>Biểu Mẫu Phản Hồi Thư Viện ATWOM</h1>" +
 			    "</div>" +
-			    "<div class='content'>" +
+			    "" +
 			    "<p>Xin chào " + fullName.toUpperCase() + "</p>" +
+			   
 			    "<p>Cảm ơn bạn đã gửi cho chúng tôi một tin nhắn. Vui lòng nhấp vào liên kết dưới đây để truy cập thư viện của chúng tôi:</p>" +
+			    "<br><p>Chúng tôi xin phép giải đáp cho bạn như sau:</p> <br>  " +
+			    "" + resp +
 			    "<a href='" + url + "' class='btn'>Tiếp Tục Vấn Đề</a>" +
 			    "<p>Chúc bạn một ngày tốt lành.</p>" +
-			    "</div>" +
+			    "" +
 			    "<div class='footer'>" +
 			    "<p>&copy; 2024 Thư Viện Atwom. Tất cả quyền được bảo lưu.</p>" +
 			    "</div>" +

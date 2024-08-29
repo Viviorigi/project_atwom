@@ -8,7 +8,7 @@ const BASE_URL = process.env.REACT_APP_API_URL + '/api/checkout';
 export const CheckoutService = {
   findAll: async (params?: { keySearch?: string; status: CheckoutStatus; limit?: number; page?: number; }) => {
     try {
-      const response = await axios.get(`${BASE_URL}/lists`, { params });
+      const response = await axios.get(`${BASE_URL}/list`, { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching checkouts", error);

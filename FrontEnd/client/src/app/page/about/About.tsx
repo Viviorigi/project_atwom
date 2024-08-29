@@ -97,7 +97,7 @@ export default function About() {
   useEffect(() => {
     AboutService.getInstance().getList({
       keySearch: "",
-      limit: 5,
+      limit: 10,
       page: 1,
     }).then((resp: any) => {
       setAbout(resp.data.abouts);
