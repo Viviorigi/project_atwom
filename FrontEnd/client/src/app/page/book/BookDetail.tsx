@@ -539,7 +539,7 @@ const BookDetail = (props: any) => {
             {/* //-----------------------------Sharring----------------------- */}
 
             <div className="btn-and-price flex items-center flex-wrap">
-              <FacebookShareButton url={`https://12a2-2402-800-61c3-327e-282c-168b-9d4a-47e.ngrok-free.app/book/details/?bookId=${book?.id}`} quote={"Sharing"} />
+              <FacebookShareButton url={` https://lib-stu.atwom.edu.vn/book/details/?bookId=${book?.id}`} quote={"Sharing"} />
             </div>
             <BookServices />
           </BookDetailsWrapper>
