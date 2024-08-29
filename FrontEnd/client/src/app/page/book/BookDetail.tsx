@@ -23,6 +23,7 @@ import { CartService } from "../../services/CartService";
 import QuickBorrowDialog from './QuickBorrowDialog';
 import { AuthService } from "../../services/AuthService";
 import { UserDetail } from "../../model/auth/UserDetail";
+import FacebookShareButton from './FacebookShareButton';
 
 const DetailsScreenWrapper = styled.main`
   margin: 40px 0;
@@ -242,7 +243,7 @@ const BookDetail = (props: any) => {
           setBook(resp.data);
         }
       })
-      .catch((err: any) => {});
+      .catch((err: any) => { });
   }, [id]);
 
   const [isFavorited, setIsFavorited] = useState(false);
@@ -340,16 +341,16 @@ const BookDetail = (props: any) => {
 
   const handleBorrowClick = async () => {
     if (!book || book.id === undefined) return;
-    
+
     try {
       const quantity = 1;
-  
+
       const cartResponse = await CartService.getInstance().getCart();
 
       const cartItems = cartResponse.data || [];
-  
+
       const itemExists = cartItems.some((item: any) => item.bookId === book.id);
-  
+
       if (itemExists) {
         toast.error("Quyển sách này đã có trong giỏ hàng");
       } else {
@@ -365,13 +366,12 @@ const BookDetail = (props: any) => {
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
       key={index}
-      className={`text-yellow ${
-        index < Math.floor(product_one.rating)
-          ? "bi bi-star-fill"
-          : index + 0.5 === product_one.rating
+      className={`text-yellow ${index < Math.floor(product_one.rating)
+        ? "bi bi-star-fill"
+        : index + 0.5 === product_one.rating
           ? "bi bi-star-half"
           : "bi bi-star"
-      }`}
+        }`}
     ></span>
   ));
 
@@ -535,6 +535,12 @@ const BookDetail = (props: any) => {
                 Mượn nhanh
               </button>
             </div>
+
+            {/* //-----------------------------Sharring----------------------- */}
+
+            <div className="btn-and-price flex items-center flex-wrap">
+              <FacebookShareButton url={`https://12a2-2402-800-61c3-327e-282c-168b-9d4a-47e.ngrok-free.app/book/details/?bookId=${book?.id}`} quote={"Sharing"} />
+            </div>
             <BookServices />
           </BookDetailsWrapper>
           {/* <BookDetailsWrapper>
@@ -617,7 +623,7 @@ const BookDetail = (props: any) => {
       <QuickBorrowDialog
         visible={showQuickBorrowDialog}
         onHide={() => setShowQuickBorrowDialog(false)}
-        book = {book}
+        book={book}
         userDetail={userDetail}
         isLoggedIn={isLoggedIn}
         cateid={book?.cateId}

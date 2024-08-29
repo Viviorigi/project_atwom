@@ -11,8 +11,15 @@ import defaultPersonImage from "../../../assets/images/imagePerson.png"
 import noImageAvailable from "../../../assets/images/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 import { useAppDispatch } from '../../store/hook';
 import { setLoading } from '../../reducers/spinnerSlice';
+import FacebookShareButton from './FacebookShareButton';
 
 export default function Book() {
+
+    // const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Thay thế bằng video URL của bạn
+    // const videoUrl = "http://localhost:3000/feedback"; // Thay thế bằng video URL của bạn
+    const videoUrl = "https://422e-2402-800-61c3-327e-282c-168b-9d4a-47e.ngrok-free.app/feedback";
+
+    const quote = "Check out this amazing video!";
 
     const [searchDto, setSearchDto] = useState(new FeedSearch('', 1, 0, new Date().getTime()))
     const [feedBackList, setFeedBackList] = useState([]);
@@ -166,6 +173,7 @@ export default function Book() {
                                                     <button className="btn btn-phoenix-danger me-1 mb-1" type="button" onClick={() => delBook(u.id)}>
                                                         <i className="fa-solid fa-trash"></i>
                                                     </button>
+                                                    {/* <FacebookShareButton url={videoUrl} quote={quote} /> */}
                                                 </td>
                                             </tr>
                                         ))}
