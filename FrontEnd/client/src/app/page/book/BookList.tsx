@@ -143,6 +143,9 @@ const BookListItem = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [selectedFilter, setSelectedFilter] = useState(0);
 
+  const [totalItemsElements, setTotalItemsElements] = useState(0);
+
+
   // Hàm xử lý dữ liệu từ BookFilter
   const handleFilterChange = (filterSelect: any) => {
     // console.log("đã truyền thành công");
@@ -275,7 +278,7 @@ const BookListItem = () => {
 
             {/* đổ dữ liệu ở đây  */}
             {/* <BookList products={books.slice(0, 12)} /> */}
-            <div className="no-records">Có <span>{bookList.length}</span> bản ghi </div>
+            <div className="no-records">Có <span>{totalItems}</span> bản ghi </div>
             <BookListWrapper className="grid">
               <div className="book-grid">
                 {bookList.map((book: any) => (
